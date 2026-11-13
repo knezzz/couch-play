@@ -6,10 +6,12 @@ import 'package:flame/game.dart';
 /// Runs [sim] on a fixed 60 Hz accumulator and draws trails and heads.
 /// The arena is scaled to fit the screen, letterboxed.
 class CurveGame extends FlameGame {
-  CurveGame(this.sim, this.colors, {this.onEvents});
+  CurveGame(this.sim, this.colors, {this.onBeforeTick, this.onEvents});
 
   final CurveSim sim;
   final List<Color> colors;
+  /// Called before every sim tick, e.g. `bots.tick`.
+  final void Function()? onBeforeTick;
   final void Function(List<CurveEvent>)? onEvents;
 
   final _paths = <int, Path>{};
@@ -30,6 +32,7 @@ class CurveGame extends FlameGame {
     if (_acc > 0.25) _acc = 0.25;
     while (_acc >= step) {
       _acc -= step;
+      onBeforeTick?.call();
       final events = sim.tick();
       if (events.isNotEmpty) onEvents?.call(events);
     }
