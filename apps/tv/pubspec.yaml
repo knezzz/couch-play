@@ -39,6 +39,7 @@ dependencies:
   core: ^0.0.1
   archive: ^4.7.1
   flame: ^1.38.2
+  path_provider: ^2.1.6
 
 dev_dependencies:
   flutter_test:
