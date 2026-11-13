@@ -1,0 +1,24 @@
+# Seat template. Add with (from the repo root):
+#   rig add couchplay check rigs/seats/design.member.yaml --rig-root rigs
+id: design
+role: design-reviewer
+model: claude-sonnet-5-5
+effort: medium
+agent_ref: local:agents/couchplay
+profile: reviewer
+runtime: claude-code
+cwd: /Users/llama/Documents/CouchPlay
+claude_permissions:
+  deny:
+    - Bash(git push --force*)
+    - Bash(git push -f*)
+    - Bash(git reset --hard*)
+    - Bash(git add -A*)
+    - Bash(git add .)
+    - Bash(git commit -a*)
+    - Bash(adb -s 28051JEGR09026 *)
+startup:
+  files:
+    - path: roles/design-reviewer.md
+      delivery_hint: send_text
+      required: true
