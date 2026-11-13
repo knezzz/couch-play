@@ -88,6 +88,7 @@ class CurveSim {
   final Uint32List _paintTick;
   final Map<int, _Head> _heads = {};
   final List<_Head> _pending = []; // deaths to resolve this tick
+  final Set<int> _gone = {}; // killed via kill(): dead for the rest of the match
   var _segments = <TrailSegment>[];
   int _tick = 0, _countdownLeft = 0, _dead = 0;
 
@@ -114,7 +115,9 @@ class CurveSim {
 
   void kill(int id) {
     final h = _heads[id];
-    if (h == null || !h.alive || roundOver) return;
+    if (h == null) return;
+    _gone.add(id);
+    if (!h.alive || roundOver) return;
     h.alive = false;
     _pending.add(h);
   }
@@ -133,12 +136,12 @@ class CurveSim {
     _segments = <TrailSegment>[];
     _pending.clear();
     _tick = 0;
-    _dead = 0;
+    _dead = _gone.length; // everyone still racing has outlived them
     roundOver = false;
     _countdownLeft = (config.countdown * config.tickHz).round();
     final placed = <_Head>[];
     for (final h in _heads.values) {
-      h.alive = true;
+      h.alive = !_gone.contains(h.id);
       h.inGap = false;
       h.left = h.right = false;
       h.gapTicks = _nextGap();

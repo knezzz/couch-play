@@ -15,6 +15,9 @@ int _run(CurveSim s, bool Function() pred, int max) {
   return n;
 }
 
+/// Puts [id] at the left wall facing out, so it dies on the next tick.
+void _crash(CurveSim s, int id) => s.place(id, 1, 450, pi);
+
 bool _alive(CurveSim s, int id) => s.heads.firstWhere((h) => h.id == id).alive;
 
 void main() {
@@ -92,14 +95,33 @@ void main() {
     expect([for (var i = 0; i < 4; i++) s.scores[i]], [3, 0, 1, 2]);
   });
 
+  test('killed_player_stays_dead_in_later_rounds', () {
+    final s = CurveSim([0, 1, 2, 3], config: _noCountdown, random: Random(1));
+    s.kill(3); // disconnects mid-round
+    s.tick();
+    _crash(s, 2);
+    s.tick();
+    _crash(s, 1);
+    s.tick();
+    expect(s.roundOver, isTrue);
+    s.kill(2); // disconnects between rounds
+    s.startRound();
+    expect([for (final h in s.heads) h.alive], [true, true, false, false]);
+    _crash(s, 1);
+    s.tick();
+    // 1 outlived the two gone players; 0 outlived all three.
+    expect(s.roundOver, isTrue);
+    expect(s.scores, {0: 6, 1: 4, 2: 1, 3: 0});
+  });
+
   test('match_over_at_target_with_unique_leader', () {
     final s = CurveSim([0, 1, 2], config: _noCountdown, random: Random(1));
     s.scores
       ..[0] = 19
       ..[1] = 18;
-    s.kill(2);
+    _crash(s, 2);
     s.tick();
-    s.kill(0); // 0 gets 1 -> 20, survivor 1 gets 2 -> 20
+    _crash(s, 0); // 0 gets 1 -> 20, survivor 1 gets 2 -> 20
     s.tick();
     expect(s.roundOver, isTrue);
     expect(s.scores[0], 20);
@@ -108,9 +130,9 @@ void main() {
 
     // Next round: player 1 outlives player 0 and takes the lead.
     s.startRound();
-    s.kill(2);
+    _crash(s, 2);
     s.tick();
-    s.kill(0);
+    _crash(s, 0);
     s.tick();
     expect(s.matchOver, isTrue);
     expect(s.winner, 1);
