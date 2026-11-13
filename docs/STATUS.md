@@ -8,9 +8,9 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 |---|---|---|---|
 | 1 | Toolchain and workspace | done (4123738) | lead |
 | 2 | Protocol | done (d4e99fd) | core |
-| 3 | TV server and LAN address | review (583a11f) | core |
-| 4 | Curve simulation | review (f9f01df, merged 16e268a, export 48c5b94) | app |
-| 5 | Curve end-to-end + **real-TV perf gate** | in progress (Steps 1–5; Step 6 held for person's adb yes) | core + app |
+| 3 | TV server and LAN address | review: fix pending (WS ping 5 s, by core) | core |
+| 4 | Curve simulation | re-review (fix c2bf7f2) | app, lead |
+| 5 | Curve end-to-end + **real-TV perf gate** | in progress: 689c1d0 (app), 5d55aa7 (bots); TV main.dart wiring next. Step 6 held for person's adb yes | core + app |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
@@ -76,3 +76,6 @@ No added seats.
   hand-back.
 - 2026-11-13: Task 3 built (583a11f, 64 KB WS frame cap), in review. Task 4 worktree removed, in review. Task 5
   queued (core: Bots + TV wiring; app: Flame renderer + controller). Reviewer told to stop `cd && git` prompts.
+- 2026-11-14: Reviews found 1 medium issue each. Task 4: disconnected Curve player returned next round, fixed by
+  lead (c2bf7f2), re-review. Task 3: no WS ping, so silent drops stay "connected"; core adding 5 s ping. Lead will
+  no longer approve other seats' prompts.
