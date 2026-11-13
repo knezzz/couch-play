@@ -32,6 +32,9 @@ Answered:
 
 - Task 1 Step 3 says `git init` and Step 6 says to add the spec and plan; the repo already exists and both are
   committed (`cff0b20`). Skip those parts.
+- Plan and CLAUDE.md say Flutter isn't installed. It is: fvm stable 3.47.7, Dart 3.13.5, licenses already accepted.
+  Task 1 Step 1's brew install is skipped.
+- Disk: 15 GiB free on 2026-11-13. Re-check before emulator and release builds.
 
 ## Seats
 
@@ -47,3 +50,5 @@ No added seats.
 
 - 2026-11-13: STATUS created. Task 1 routed to lead, blocked on the person's install approval.
 - 2026-11-13: Person approved the Task 1 installs. Task 1 unblocked.
+- 2026-11-13: Kickoff received from setup-agent. Existing fvm Flutter used; brew step dropped. Only the Android TV
+  system image and AVD get installed.
