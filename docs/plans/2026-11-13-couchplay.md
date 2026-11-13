@@ -166,17 +166,17 @@ couchplay/
     - `/ws` upgrades to a WebSocket. Frames that fail to decode are dropped.
     - `POST /packs?token=…`: a body over 5 MB returns 413. Otherwise it calls `onPackUpload`, which returns null on success (200) or an error string (400 with that text as the body).
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `picks_wlan_private_ipv4`: from fake interfaces `docker0 172.17.0.1`, `wlan0 192.168.1.20` and `lo 127.0.0.1`, it returns `192.168.1.20`.
   - `returns_null_without_lan`: only loopback gives null.
   - `serves_index_and_404s_traversal`: start on `firstPort: 0` with a temp webRoot containing `index.html`. `GET /` returns 200 with the contents. `GET /../secret` returns 404.
   - `falls_back_to_next_port`: hold port X open, then start with `firstPort: X`. Expect `port == X + 1`.
   - `ws_roundtrip`: a client connects to `/ws` and sends `Ping(5)`. `onPeer` echoes `Pong(5)` back, and the client receives it.
   - `pack_upload_too_big_413`.
-- [ ] **Step 2: Run** `flutter test` in `apps/tv`. Expected: FAIL.
-- [ ] **Step 3: Implement.** Use `HttpServer.bind(InternetAddress.anyIPv4, port)` and `WebSocketTransformer.upgrade`, with only `dart:io` and no extra packages. Content types come from the file extension: html, js, mjs, wasm (`application/wasm`), json, png, svg, css, ttf, otf.
-- [ ] **Step 4: Run** the tests. Expected: PASS.
-- [ ] **Step 5: Commit.** Message: `feat(tv): http/ws server and lan address`.
+- [x] **Step 2: Run** `flutter test` in `apps/tv`. Expected: FAIL.
+- [x] **Step 3: Implement.** Use `HttpServer.bind(InternetAddress.anyIPv4, port)` and `WebSocketTransformer.upgrade`, with only `dart:io` and no extra packages. Content types come from the file extension: html, js, mjs, wasm (`application/wasm`), json, png, svg, css, ttf, otf.
+- [x] **Step 4: Run** the tests. Expected: PASS.
+- [x] **Step 5: Commit.** Message: `feat(tv): http/ws server and lan address`.
 
 ---
 

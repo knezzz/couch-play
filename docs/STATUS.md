@@ -8,7 +8,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 |---|---|---|---|
 | 1 | Toolchain and workspace | done (4123738) | lead |
 | 2 | Protocol | done (d4e99fd) | core |
-| 3 | TV server and LAN address | review: fix pending (WS ping 5 s, by core) | core |
+| 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
 | 5 | Curve end-to-end + **real-TV perf gate** | in progress: 689c1d0 (app), 5d55aa7 (bots); TV main.dart wiring next. Step 6 held for person's adb yes | core + app |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
@@ -41,11 +41,12 @@ Answered:
 
 ## Carry-overs (from reviews; check at acceptance)
 
-- Task 3: extractControllerZip skips directory entries and guards paths; cap each WebSocket frame's size.
 - Task 5: renderer does moveTo at each segment start (segments skip gaps), skips dead heads, ids stay in 0..65534.
 - Task 6: Session ignores TV→phone message types sent by a phone; range-check the Kick player id.
 - Task 6: when ≤ 1 connected Curve player remains, Session calls `finishGame(sim.scores)` at once (with 0 left the
   sim never ends a round).
+- Task 6 Step 6 (by hand): a phone that drops off Wi-Fi without closing is marked disconnected within ~10 s (5 s
+  WS ping from Task 3 has no unit test), host passes on, Curve player dies.
 - Task 10/11: range-check the Answer index.
 - Disk: 20 GiB free on 2026-11-13 (after Task 1). Re-check before emulator and release builds.
 - avdmanager needs `JAVA_HOME` pointed at Android Studio's bundled jbr (env var only).
@@ -83,3 +84,5 @@ No added seats.
   lead (c2bf7f2), re-review. Task 3: no WS ping, so silent drops stay "connected"; core adding 5 s ping. Lead will
   no longer approve other seats' prompts.
 - 2026-11-14: Task 4 accepted (re-review clean; PM ran core tests, 12/12). Plan boxes ticked.
+- 2026-11-14: Task 3 accepted (review clean after ping fix 9c29d02; PM ran tv tests, 11/11). Plan boxes ticked.
+  Tasks 1–4 done; Task 5 in progress.
