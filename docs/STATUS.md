@@ -7,9 +7,9 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | # | Task | State | Owner |
 |---|---|---|---|
 | 1 | Toolchain and workspace | done (4123738) | lead |
-| 2 | Protocol | review (d4e99fd) | core |
+| 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | in progress | core |
-| 4 | Curve simulation | in progress (worktree `../CouchPlay-task4`, branch `task4-curve`) | app |
+| 4 | Curve simulation | review (f9f01df, merged 16e268a) | app |
 | 5 | Curve end-to-end + **real-TV perf gate** | todo | — |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
@@ -37,6 +37,12 @@ Answered:
   Global Constraints line is corrected.
 - Task 3 note from Task 1 review: controller.zip has directory entries and `.last_build_id`, so
   `extractControllerZip` must skip directories and guard entry paths. Lead is passing this to core.
+
+## Carry-overs (from reviews; check at acceptance)
+
+- Task 3: extractControllerZip skips directory entries and guards paths; cap each WebSocket frame's size.
+- Task 6: Session ignores TV→phone message types sent by a phone; range-check the Kick player id.
+- Task 10/11: range-check the Answer index.
 - Disk: 20 GiB free on 2026-11-13 (after Task 1). Re-check before emulator and release builds.
 - avdmanager needs `JAVA_HOME` pointed at Android Studio's bundled jbr (env var only).
 
@@ -65,3 +71,5 @@ No added seats.
   merges.
 - 2026-11-13: Task 1 accepted (tests shown for core/tv/controller, review clean, zip untracked). Plan boxes ticked.
 - 2026-11-13: Task 2 built (d4e99fd), in review. Task 3 queued to lead for core.
+- 2026-11-13: Task 2 accepted (review clean; PM re-ran protocol tests, 2/2 pass). Task 4 merged to main, awaiting
+  hand-back.

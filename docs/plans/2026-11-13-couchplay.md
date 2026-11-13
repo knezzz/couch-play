@@ -138,13 +138,13 @@ couchplay/
     - `Placement(playerId, place, gameScore, sessionPoints)`
     - `enum GameKind { quiz, curve }`
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `roundtrip_all_messages`: for one instance of every subclass, `Message.decode(m.encode()) == m`. Use `==` via a Dart 3 record-based equality or hand-written `==`.
   - `decode_rejects_garbage`: `decode('not json')`, `decode('{"type":"nope"}')` and `decode('{"type":"answer","index":"2"}')` are all `null`.
-- [ ] **Step 2: Run** `flutter test test/protocol_test.dart` in `packages/core`. Expected: FAIL (undefined).
-- [ ] **Step 3: Implement** `protocol.dart` as above and export it from `core.dart`.
-- [ ] **Step 4: Run** the tests. Expected: PASS.
-- [ ] **Step 5: Commit.** Message: `feat(core): wire protocol`.
+- [x] **Step 2: Run** `flutter test test/protocol_test.dart` in `packages/core`. Expected: FAIL (undefined).
+- [x] **Step 3: Implement** `protocol.dart` as above and export it from `core.dart`.
+- [x] **Step 4: Run** the tests. Expected: PASS.
+- [x] **Step 5: Commit.** Message: `feat(core): wire protocol`.
 
 ---
 
