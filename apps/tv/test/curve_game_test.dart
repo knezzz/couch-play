@@ -17,6 +17,6 @@ void main() {
     }
     // ~2 s with one 0.5 s gap: 2 subpaths, not ~90.
     final n = game.debugSubpathCount(0);
-    expect(n, inInclusiveRange(1, 3));
+    expect(n, 2);
   });
 }
