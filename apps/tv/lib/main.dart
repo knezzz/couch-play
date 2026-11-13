@@ -39,6 +39,7 @@ class _TvAppState extends State<TvApp> {
   CurveSim? _sim;
   Bots? _bots;
   PeerSocket? _driver; // the phone that started the match
+  String? _driverToken;
   GameServer? _server;
 
   @override
@@ -86,15 +87,26 @@ class _TvAppState extends State<TvApp> {
         case Ping(:final t):
           peer.send(Pong(t));
         case Join(:final token):
-          if (_sim != null) return;
-          peer.send(Welcome(0, 0, token));
-          _driver = peer;
-          peer.done.then((_) => _sim?.kill(0));
-          _startMatch();
+          if (_sim == null) {
+            _driverToken = token;
+            _attach(peer, token);
+            _startMatch();
+          } else if (token == _driverToken) {
+            _attach(peer, token); // phone woke up or reloaded
+          }
         case Steer(:final left, :final right):
           if (peer == _driver) _sim?.setInput(0, left: left, right: right);
         default:
       }
+    });
+  }
+
+  void _attach(PeerSocket peer, String token) {
+    _driver = peer;
+    peer.send(Welcome(0, 0, token));
+    // Let go of the keys if the socket drops; a reconnect takes over again.
+    peer.done.then((_) {
+      if (_driver == peer) _sim?.setInput(0, left: false, right: false);
     });
   }
 
