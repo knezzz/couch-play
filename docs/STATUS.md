@@ -6,7 +6,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 | # | Task | State | Owner |
 |---|---|---|---|
-| 1 | Toolchain and workspace | review (4123738) | lead |
+| 1 | Toolchain and workspace | done (4123738) | lead |
 | 2 | Protocol | in progress | core |
 | 3 | TV server and LAN address | todo (after Task 2) | core |
 | 4 | Curve simulation | in progress (worktree `../CouchPlay-task4`, branch `task4-curve`) | app |
@@ -33,8 +33,10 @@ Answered:
 
 - Task 1 Step 3 says `git init` and Step 6 says to add the spec and plan; the repo already exists and both are
   committed (`cff0b20`). Skip those parts.
-- Plan and CLAUDE.md say Flutter isn't installed. It is: fvm stable 3.47.7, Dart 3.13.5, licenses already accepted.
-  Task 1 Step 1's brew install is skipped.
+- Flutter was already installed (fvm stable 3.47.7, Dart 3.13.5). Task 1's brew install was skipped; the plan's
+  Global Constraints line is corrected.
+- Task 3 note from Task 1 review: controller.zip has directory entries and `.last_build_id`, so
+  `extractControllerZip` must skip directories and guard entry paths. Lead is passing this to core.
 - Disk: 20 GiB free on 2026-11-13 (after Task 1). Re-check before emulator and release builds.
 - avdmanager needs `JAVA_HOME` pointed at Android Studio's bundled jbr (env var only).
 
@@ -61,3 +63,4 @@ No added seats.
   parallel (both need only Task 1).
 - 2026-11-13: Lead routed Task 2 → core (main), Task 4 → app (worktree, both edit packages/core). Person OK'd local
   merges.
+- 2026-11-13: Task 1 accepted (tests shown for core/tv/controller, review clean, zip untracked). Plan boxes ticked.

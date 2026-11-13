@@ -20,7 +20,7 @@
 - Curve: 60 Hz fixed tick, left/right steering, trails with random gaps, +1 point for each player you outlive. The match target is `10 × (players − 1)`, fixed when the match starts. No power-ups.
 - Session scoreboard: placement points after each game (1st = N, …, last = 1, where N = players in that game). Scores last only for the session.
 - The D-pad only moves focus and backs out of a game. A phone host runs the session.
-- Dev machine: Intel Mac (x86_64). Xcode and Android Studio are installed. Flutter is not installed and `adb` is not on PATH.
+- Dev machine: Intel Mac (x86_64). Xcode and Android Studio are installed. Flutter 3.47.7 (Dart 3.13.5) is installed via fvm. `avdmanager` needs `JAVA_HOME` set to Android Studio's bundled jbr.
 - Copy rules for UI text: plain words, active voice, and errors that say how to fix the problem.
 
 ## Review Focus
@@ -87,9 +87,9 @@ couchplay/
 **Interfaces:**
 - Produces: a workspace where `flutter test` passes in every member, plus `tool/build_controller.sh`, which writes `apps/tv/assets/controller.zip`.
 
-- [ ] **Step 1: Install Flutter.** Run `brew install --cask flutter`, then `flutter doctor`. Expected: the Flutter, Xcode and Android toolchain checks pass. If Android licenses are missing, run `flutter doctor --android-licenses`. Add `~/Library/Android/sdk/platform-tools` to PATH so `adb` works.
-- [ ] **Step 2: Create an Android TV emulator.** Run `sdkmanager "system-images;android-34;android-tv;x86"`, then `avdmanager create avd -n tv -k "system-images;android-34;android-tv;x86" -d tv_1080p`. Expected: `flutter emulators` lists `tv`.
-- [ ] **Step 3: Scaffold the workspace.**
+- [x] **Step 1: Install Flutter.** Run `brew install --cask flutter`, then `flutter doctor`. Expected: the Flutter, Xcode and Android toolchain checks pass. If Android licenses are missing, run `flutter doctor --android-licenses`. Add `~/Library/Android/sdk/platform-tools` to PATH so `adb` works.
+- [x] **Step 2: Create an Android TV emulator.** Run `sdkmanager "system-images;android-34;android-tv;x86"`, then `avdmanager create avd -n tv -k "system-images;android-34;android-tv;x86" -d tv_1080p`. Expected: `flutter emulators` lists `tv`.
+- [x] **Step 3: Scaffold the workspace.**
   - `git init`.
   - `flutter create --platforms=android,macos --org dev.couchplay apps/tv`.
   - `flutter create --platforms=web apps/controller`.
@@ -97,9 +97,9 @@ couchplay/
   - Root `pubspec.yaml` with `workspace: [packages/core, apps/tv, apps/controller]`, and `resolution: workspace` in each member.
   - `core` is a Flutter package because `effects.dart` holds widgets.
   - `.gitignore`: `build/`, `.dart_tool/`, `apps/tv/assets/controller.zip`.
-- [ ] **Step 4: Write `tool/build_controller.sh`.** It runs `flutter build web --release --no-web-resources-cdn` in `apps/controller`, then zips `build/web/*` (paths relative to `build/web`) into `apps/tv/assets/controller.zip`. Use `set -euo pipefail`.
-- [ ] **Step 5: Verify.** Run `flutter pub get` at the root, then `flutter test` in each member, then `tool/build_controller.sh && unzip -l apps/tv/assets/controller.zip | grep -E "index.html|canvaskit"`. Expected: all pass, and the zip lists `index.html` and the `canvaskit/` files.
-- [ ] **Step 6: Commit.** Commit message: `chore: scaffold flutter workspace and controller build`. Also copy the spec and this plan into the commit.
+- [x] **Step 4: Write `tool/build_controller.sh`.** It runs `flutter build web --release --no-web-resources-cdn` in `apps/controller`, then zips `build/web/*` (paths relative to `build/web`) into `apps/tv/assets/controller.zip`. Use `set -euo pipefail`.
+- [x] **Step 5: Verify.** Run `flutter pub get` at the root, then `flutter test` in each member, then `tool/build_controller.sh && unzip -l apps/tv/assets/controller.zip | grep -E "index.html|canvaskit"`. Expected: all pass, and the zip lists `index.html` and the `canvaskit/` files.
+- [x] **Step 6: Commit.** Commit message: `chore: scaffold flutter workspace and controller build`. Also copy the spec and this plan into the commit.
 
 ---
 
