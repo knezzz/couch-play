@@ -32,7 +32,7 @@ plan disagree, say so to your lead instead of quietly picking one.
 
 ## This machine
 
-- Intel Mac (x86_64). Xcode and Android Studio are installed. Flutter isn't installed until Task 1.
+- Intel Mac (x86_64). Xcode, Android Studio and Flutter 3.47.7 (through fvm) are installed.
 - Check `df -h` before emulator or release builds. A nearly full disk makes installs hang without an error.
 - Run Gradle as `./gradlew --no-daemon` if you run it directly.
 - The Pixel 6a (adb device `28051JEGR09026`) is the person's own phone. Never install to it or drive it. Phones only
