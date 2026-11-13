@@ -208,7 +208,7 @@ couchplay/
   - `CurveHead(id, x, y, heading, alive, inGap)`.
   - `TrailSegment(id, x1, y1, x2, y2)`.
 
-- [ ] **Step 1: Write the failing tests.** Use a seeded `Random(1)` and a small arena where useful.
+- [x] **Step 1: Write the failing tests.** Use a seeded `Random(1)` and a small arena where useful.
   - `target_is_10_times_players_minus_one`: 3 players gives 20. The target stays 20 after `kill`.
   - `straight_line_hits_wall_and_dies`: one head aims at the wall with no input. It dies within the expected number of ticks (distance / speed × 60, ±2).
   - `turning_left_changes_heading_by_turnRate_per_second`: 60 ticks with left held change the heading by π (±0.01).
@@ -218,15 +218,15 @@ couchplay/
   - `outlive_scoring`: with 4 players, the deaths of 1, 2 and 3 in order give scores 0, 1, 2, 3.
   - `match_over_at_target_with_unique_leader`: if two players reach the target in the same round with equal scores, `matchOver` stays false until there's a unique leader.
   - `countdown_freezes_movement`: heads don't move during the first `countdown × 60` ticks after `startRound`.
-- [ ] **Step 2: Run** the tests. Expected: FAIL.
-- [ ] **Step 3: Implement.**
+- [x] **Step 2: Run** the tests. Expected: FAIL.
+- [x] **Step 3: Implement.**
   - Occupancy is a `Uint16List` grid of `(owner + 1)` plus a `Uint32List` grid of paint ticks.
   - Each tick, paint the cells under the new segment unless the player is in a gap.
   - Collision happens when a head's cell is the wall, or is painted by someone else, or is painted by itself more than `selfGraceTicks` ago.
   - Spawn points are at least 100 units from the walls and 150 units from each other, with a random heading.
   - Gap timing is random within the min–max range.
-- [ ] **Step 4: Run** the tests. Expected: PASS.
-- [ ] **Step 5: Commit.** Message: `feat(core): curve simulation`.
+- [x] **Step 4: Run** the tests. Expected: PASS.
+- [x] **Step 5: Commit.** Message: `feat(core): curve simulation`.
 
 ---
 
