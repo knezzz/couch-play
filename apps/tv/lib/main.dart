@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'server/controller_files.dart';
 import 'server/game_server.dart';
 import 'server/lan_address.dart';
-import 'session/bots.dart';
+import 'session/curve_wiring.dart';
 import 'ui/curve/curve_game.dart';
 
 const _perf = bool.fromEnvironment('PERF');
@@ -36,11 +36,9 @@ class TvApp extends StatefulWidget {
 class _TvAppState extends State<TvApp> {
   String _status = 'Starting…';
   CurveGame? _game;
-  CurveSim? _sim;
-  Bots? _bots;
-  PeerSocket? _driver; // the phone that started the match
-  String? _driverToken;
   GameServer? _server;
+  late final _wiring = CurveWiring(
+      botCount: _botCount, random: Random(), onMatch: () => _newGame());
 
   @override
   void initState() {
@@ -63,7 +61,7 @@ class _TvAppState extends State<TvApp> {
       await extractControllerZip(zip.buffer.asUint8List(), web);
       final server = await GameServer.start(
         webRoot: web,
-        onPeer: _onPeer,
+        onPeer: _wiring.onPeer,
         onPackUpload: (_, _) async => 'Packs are not available yet.',
       );
       _server = server;
@@ -80,58 +78,24 @@ class _TvAppState extends State<TvApp> {
     if (mounted) setState(() => _status = s);
   }
 
-  // Temporary wiring, replaced by the session in Task 6.
-  void _onPeer(PeerSocket peer) {
-    peer.messages.listen((m) {
-      switch (m) {
-        case Ping(:final t):
-          peer.send(Pong(t));
-        case Join(:final token):
-          if (_sim == null) {
-            _driverToken = token;
-            _attach(peer, token);
-            _startMatch();
-          } else if (token == _driverToken) {
-            _attach(peer, token); // phone woke up or reloaded
-          }
-        case Steer(:final left, :final right):
-          if (peer == _driver) _sim?.setInput(0, left: left, right: right);
-        default:
-      }
-    });
-  }
-
-  void _attach(PeerSocket peer, String token) {
-    _driver = peer;
-    peer.send(Welcome(0, 0, token));
-    // Let go of the keys if the socket drops; a reconnect takes over again.
-    peer.done.then((_) {
-      if (_driver == peer) _sim?.setInput(0, left: false, right: false);
-    });
-  }
-
-  void _startMatch() {
-    final n = _botCount.clamp(0, 7);
-    final sim = CurveSim([for (var i = 0; i <= n; i++) i]);
-    _sim = sim;
-    _bots = Bots(sim, [for (var i = 1; i <= n; i++) i], Random());
-    _newGame();
-  }
+  void _startMatch() => _wiring.startMatch();
 
   // Trails are never cleared, so every round gets a fresh CurveGame.
   void _newGame() {
-    setState(() => _game = CurveGame(_sim!, _colors,
-        onBeforeTick: _bots!.tick, onEvents: _onEvents));
+    if (!mounted) return;
+    setState(() => _game = CurveGame(_wiring.sim!, _colors,
+        onBeforeTick: _wiring.bots!.tick, onEvents: _onEvents));
   }
 
   void _onEvents(List<CurveEvent> events) {
     if (!events.any((e) => e is RoundOver)) return;
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
-      if (_sim!.matchOver) {
+      final sim = _wiring.sim!;
+      if (sim.matchOver) {
         _startMatch();
       } else {
-        _sim!.startRound();
+        sim.startRound();
         _newGame();
       }
     });
