@@ -17,6 +17,8 @@ class CurveScreen extends StatefulWidget {
 
 class _CurveScreenState extends State<CurveScreen> {
   bool _left = false, _right = false;
+  // Pointer counts live here, not in build(): the 1 s Pong rebuild must not reset them.
+  final _held = [0, 0];
   int? _rtt;
   Timer? _ping;
   StreamSubscription<Message>? _sub;
@@ -44,19 +46,18 @@ class _CurveScreenState extends State<CurveScreen> {
     widget.conn.send(Steer(left: _left, right: _right));
   }
 
-  Widget _half(String label, void Function(bool) set, Color color) {
-    var held = 0;
+  Widget _half(int side, String label, void Function(bool) set, Color color) {
     return Expanded(
       child: Listener(
         behavior: HitTestBehavior.opaque,
         onPointerDown: (_) {
-          if (held++ == 0) set(true);
+          if (_held[side]++ == 0) set(true);
         },
         onPointerUp: (_) {
-          if (--held == 0) set(false);
+          if (--_held[side] == 0) set(false);
         },
         onPointerCancel: (_) {
-          if (--held == 0) set(false);
+          if (--_held[side] == 0) set(false);
         },
         child: Container(
           color: color,
@@ -71,8 +72,8 @@ class _CurveScreenState extends State<CurveScreen> {
   Widget build(BuildContext context) => Scaffold(
         body: Stack(children: [
           Row(children: [
-            _half('◀', (v) => _set(left: v), const Color(0xFF1E3A5F)),
-            _half('▶', (v) => _set(right: v), const Color(0xFF5F1E3A)),
+            _half(0, '◀', (v) => _set(left: v), const Color(0xFF1E3A5F)),
+            _half(1, '▶', (v) => _set(right: v), const Color(0xFF5F1E3A)),
           ]),
           Positioned(
             top: 4,
