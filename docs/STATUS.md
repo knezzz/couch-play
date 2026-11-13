@@ -10,7 +10,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
-| 5 | Curve end-to-end + **real-TV perf gate** | in progress: 689c1d0 (app), 5d55aa7 (bots); TV main.dart wiring next. Step 6 held for person's adb yes | core + app |
+| 5 | Curve end-to-end + **real-TV perf gate** | in progress: review fixes (HIGH sticky steering; MEDIUM reconnect can't steer; MEDIUM ~29k trail subpaths/round). QA running. Step 6 held for person's adb yes | core + app |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
@@ -86,3 +86,5 @@ No added seats.
 - 2026-11-14: Task 4 accepted (re-review clean; PM ran core tests, 12/12). Plan boxes ticked.
 - 2026-11-14: Task 3 accepted (review clean after ping fix 9c29d02; PM ran tv tests, 11/11). Plan boxes ticked.
   Tasks 1–4 done; Task 5 in progress.
+- 2026-11-14: Task 5 review: 1 HIGH, 2 MEDIUM, all being fixed before the gate. PM: keep the plan's Path renderer
+  (merge continuous segments); the ui.Image fallback only if the real TV drops frames. Person given TV dev-mode steps.
