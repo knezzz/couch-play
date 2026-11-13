@@ -7,9 +7,9 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | # | Task | State | Owner |
 |---|---|---|---|
 | 1 | Toolchain and workspace | review (4123738) | lead |
-| 2 | Protocol | in progress (queued to lead) | lead → core |
-| 3 | TV server and LAN address | todo (after Task 2) | — |
-| 4 | Curve simulation | in progress (queued to lead) | lead |
+| 2 | Protocol | in progress | core |
+| 3 | TV server and LAN address | todo (after Task 2) | core |
+| 4 | Curve simulation | in progress (worktree `../CouchPlay-task4`, branch `task4-curve`) | app |
 | 5 | Curve end-to-end + **real-TV perf gate** | todo | — |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
@@ -27,6 +27,7 @@ None open.
 
 Answered:
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
+- 2026-11-13: Local merges of team branches into main: **fine without asking**. Pushes, PRs, GitHub merges still ask.
 
 ## Plan notes (minor, not blocking)
 
@@ -58,3 +59,5 @@ No added seats.
   system image and AVD get installed.
 - 2026-11-13: Task 1 committed (4123738), in code review. Full team running. Tasks 2 and 4 queued to lead in
   parallel (both need only Task 1).
+- 2026-11-13: Lead routed Task 2 → core (main), Task 4 → app (worktree, both edit packages/core). Person OK'd local
+  merges.
