@@ -8,9 +8,9 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 |---|---|---|---|
 | 1 | Toolchain and workspace | done (4123738) | lead |
 | 2 | Protocol | done (d4e99fd) | core |
-| 3 | TV server and LAN address | in progress | core |
-| 4 | Curve simulation | review (f9f01df, merged 16e268a) | app |
-| 5 | Curve end-to-end + **real-TV perf gate** | todo | — |
+| 3 | TV server and LAN address | review (583a11f) | core |
+| 4 | Curve simulation | review (f9f01df, merged 16e268a, export 48c5b94) | app |
+| 5 | Curve end-to-end + **real-TV perf gate** | in progress (Steps 1–5; Step 6 held for person's adb yes) | core + app |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
@@ -23,7 +23,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 ## Open questions for the person
 
-None open.
+- Coming at Task 5 Step 6: yes to adb-connect to your TV this session (enable developer mode + network debugging
+  on the TV first).
 
 Answered:
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
@@ -73,3 +74,5 @@ No added seats.
 - 2026-11-13: Task 2 built (d4e99fd), in review. Task 3 queued to lead for core.
 - 2026-11-13: Task 2 accepted (review clean; PM re-ran protocol tests, 2/2 pass). Task 4 merged to main, awaiting
   hand-back.
+- 2026-11-13: Task 3 built (583a11f, 64 KB WS frame cap), in review. Task 4 worktree removed, in review. Task 5
+  queued (core: Bots + TV wiring; app: Flame renderer + controller). Reviewer told to stop `cd && git` prompts.
