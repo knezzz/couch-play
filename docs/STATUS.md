@@ -6,7 +6,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 | # | Task | State | Owner |
 |---|---|---|---|
-| 1 | Toolchain and workspace | blocked (needs person's yes to install Flutter + Android TV system image) | lead |
+| 1 | Toolchain and workspace | in progress | lead |
 | 2 | Protocol | todo | — |
 | 3 | TV server and LAN address | todo | — |
 | 4 | Curve simulation | todo | — |
@@ -23,9 +23,10 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 ## Open questions for the person
 
-1. **Installs for Task 1 (blocking).** OK to run `brew install --cask flutter`, accept Android licenses
-   (`flutter doctor --android-licenses`), and install the SDK image `system-images;android-34;android-tv;x86` via
-   `sdkmanager`?
+None open.
+
+Answered:
+- 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
 
 ## Plan notes (minor, not blocking)
 
@@ -45,3 +46,4 @@ No added seats.
 ## Changelog
 
 - 2026-11-13: STATUS created. Task 1 routed to lead, blocked on the person's install approval.
+- 2026-11-13: Person approved the Task 1 installs. Task 1 unblocked.
