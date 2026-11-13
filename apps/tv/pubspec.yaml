@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   core: ^0.0.1
   archive: ^4.7.1
+  flame: ^1.38.2
 
 dev_dependencies:
   flutter_test:
