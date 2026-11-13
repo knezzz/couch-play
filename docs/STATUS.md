@@ -7,8 +7,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | # | Task | State | Owner |
 |---|---|---|---|
 | 1 | Toolchain and workspace | done (4123738) | lead |
-| 2 | Protocol | in progress | core |
-| 3 | TV server and LAN address | todo (after Task 2) | core |
+| 2 | Protocol | review (d4e99fd) | core |
+| 3 | TV server and LAN address | in progress | core |
 | 4 | Curve simulation | in progress (worktree `../CouchPlay-task4`, branch `task4-curve`) | app |
 | 5 | Curve end-to-end + **real-TV perf gate** | todo | — |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
@@ -64,3 +64,4 @@ No added seats.
 - 2026-11-13: Lead routed Task 2 → core (main), Task 4 → app (worktree, both edit packages/core). Person OK'd local
   merges.
 - 2026-11-13: Task 1 accepted (tests shown for core/tv/controller, review clean, zip untracked). Plan boxes ticked.
+- 2026-11-13: Task 2 built (d4e99fd), in review. Task 3 queued to lead for core.
