@@ -15,11 +15,14 @@ class CurveGame extends FlameGame {
   final void Function(List<CurveEvent>)? onEvents;
 
   final _paths = <int, Path>{};
+  final _ends = <int, Offset>{}; // where each player's last segment ended
   final _trail = Paint()
     ..style = PaintingStyle.stroke
     ..strokeCap = StrokeCap.round;
   final _head = Paint();
   double _acc = 0;
+
+  int debugSubpathCount(int id) => _paths[id]!.computeMetrics().length;
 
   Color _color(int id) => colors[id % colors.length];
 
@@ -37,9 +40,15 @@ class CurveGame extends FlameGame {
       if (events.isNotEmpty) onEvents?.call(events);
     }
     for (final s in sim.takeNewSegments()) {
-      (_paths[s.id] ??= Path())
-        ..moveTo(s.x1, s.y1)
-        ..lineTo(s.x2, s.y2);
+      final path = _paths[s.id] ??= Path();
+      // Continue the subpath unless a gap (or round start) broke the line.
+      // Sim computes x1 as x - vx, so ends differ by float rounding: use a tolerance.
+      final e = _ends[s.id];
+      if (e == null || (e.dx - s.x1).abs() > 0.01 || (e.dy - s.y1).abs() > 0.01) {
+        path.moveTo(s.x1, s.y1);
+      }
+      path.lineTo(s.x2, s.y2);
+      _ends[s.id] = Offset(s.x2, s.y2);
     }
   }
 
