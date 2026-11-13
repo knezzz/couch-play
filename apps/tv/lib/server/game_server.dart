@@ -22,6 +22,8 @@ const _types = {
 
 class PeerSocket {
   PeerSocket._(this._ws) {
+    // A phone that drops without closing is noticed within ~2 intervals.
+    _ws.pingInterval = const Duration(seconds: 5);
     _ws.listen(
       (data) {
         // dart:io has no frame limit, so the frame is already in memory here;
