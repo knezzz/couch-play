@@ -171,6 +171,27 @@ void main() {
     await b.close();
   });
 
+  test('names_come_from_the_join_and_bots_are_numbered', () async {
+    final a = await _Phone.connect(server.port);
+    await a.send(const Join('  Ana  ', 'tokA'));
+    expect(wiring.sim!.names, {0: 'Ana', 1: 'Bot 1'});
+    await a.close();
+  });
+
+  test('long_or_empty_names_are_cut_or_replaced', () async {
+    final a = await _Phone.connect(server.port);
+    await a.send(Join('x' * 40, 'tokA'));
+    expect(wiring.sim!.names[0], 'x' * 16);
+    await a.close();
+    final b = await _Phone.connect(server.port);
+    final end = DateTime.now().add(const Duration(seconds: 5));
+    while (!b.welcomed && DateTime.now().isBefore(end)) {
+      await b.send(const Join('   ', 'tokB'));
+    }
+    expect(wiring.sim!.names[0], 'Player');
+    await b.close();
+  });
+
   test('ping_gets_pong_without_joining', () async {
     final a = await _Phone.connect(server.port);
     await a.send(const Ping(9));

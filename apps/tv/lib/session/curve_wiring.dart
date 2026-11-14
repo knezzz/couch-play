@@ -19,6 +19,7 @@ class CurveWiring {
   Bots? bots;
   PeerSocket? _driver;
   String? _token;
+  String _name = 'Player';
   bool _driverOpen = false;
   // Held buttons, kept only so a new match (a new sim) starts with them.
   // Rounds keep inputs inside CurveSim.
@@ -29,9 +30,10 @@ class CurveWiring {
       switch (m) {
         case Ping(:final t):
           peer.send(Pong(t));
-        case Join(:final token):
+        case Join(:final name, :final token):
           if (sim == null) {
             _token = token;
+            _name = _cleanName(name);
             _attach(peer, token);
             startMatch();
           } else if (token == _token) {
@@ -41,6 +43,7 @@ class CurveWiring {
             // over with it. Dropping this Join silently left a phone that
             // looked connected but could never steer.
             _token = token;
+            _name = _cleanName(name);
             _left = _right = false;
             _attach(peer, token);
             startMatch();
@@ -71,9 +74,17 @@ class CurveWiring {
     });
   }
 
+  // Temporary; Task 6's cleanName replaces it.
+  static String _cleanName(String raw) {
+    final t = raw.trim();
+    return t.isEmpty ? 'Player' : String.fromCharCodes(t.runes.take(16));
+  }
+
   void startMatch() {
     final n = botCount.clamp(0, 7);
-    final s = CurveSim([for (var i = 0; i <= n; i++) i], random: random);
+    final s = CurveSim([for (var i = 0; i <= n; i++) i],
+        random: random,
+        names: {0: _name, for (var i = 1; i <= n; i++) i: 'Bot $i'});
     sim = s;
     bots = Bots(s, [for (var i = 1; i <= n; i++) i], random);
     s.setInput(0, left: _left, right: _right);
