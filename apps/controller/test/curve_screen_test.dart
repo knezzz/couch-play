@@ -38,14 +38,14 @@ void main() {
     await t.pumpWidget(const SizedBox());
   });
 
-  testWidgets('pings at 10 Hz while shown and stops when disposed', (t) async {
+  testWidgets('pings at 20 Hz while shown and stops when disposed', (t) async {
     final c = _Fake();
     await t.pumpWidget(MaterialApp(home: CurveScreen(c)));
     await t.pump(const Duration(seconds: 1));
-    expect(c.sent.whereType<Ping>().length, 10);
+    expect(c.sent.whereType<Ping>().length, 20);
     await t.pumpWidget(const SizedBox());
     await t.pump(const Duration(seconds: 1));
-    expect(c.sent.whereType<Ping>().length, 10);
+    expect(c.sent.whereType<Ping>().length, 20);
   });
 
   test('percentile', () {
