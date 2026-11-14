@@ -717,6 +717,6 @@ The person approved the reference screens and wants Curve to match them, with th
 
 The TV goes into its screensaver during a game: players use their phones, so the TV sees no remote input.
 
-- [ ] **Step 1:** Keep the screen on while CouchPlay is in the foreground (lobby, games and results), and let the TV sleep normally once the app is closed or in the background. Smallest fix: `FLAG_KEEP_SCREEN_ON` on the activity window in `MainActivity.kt`; no new package.
+- [x] **Step 1:** Keep the screen on while CouchPlay is in the foreground (lobby, games and results), and let the TV sleep normally once the app is closed or in the background. Smallest fix: `FLAG_KEEP_SCREEN_ON` on the activity window in `MainActivity.kt`; no new package.
 - [ ] **Step 2: Check.** All tv tests pass. On the real TV (next session, with the person's adb yes): leave a game or the lobby running longer than the TV's screensaver delay; the screensaver doesn't start. After leaving the app, it does.
-- [ ] **Step 3: Commit** by path: `fix(tv): keep the screen on while the app is open`.
+- [x] **Step 3: Commit** by path: `fix(tv): keep the screen on while the app is open`.
