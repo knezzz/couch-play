@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'connection.dart';
 import 'screens/curve_screen.dart';
+import 'theme.dart';
 import 'screens/join_screen.dart';
 import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
@@ -35,6 +36,7 @@ class _AppState extends State<App> {
   bool _alive = true;
   QuizQuestion? _question;
   QuizReveal? _reveal;
+  int _quizTotal = 0; // running total, from the last reveal
   List<Placement> _placements = const [];
   StreamSubscription<Message>? _sub;
 
@@ -87,8 +89,10 @@ class _AppState extends State<App> {
         case QuizQuestion():
           _question = m;
           _reveal = null;
+          if (m.number == 1) _quizTotal = 0;
           _screen = _Screen.quiz;
         case QuizReveal():
+          _quizTotal = m.yourTotal;
           _reveal = m; // also after a reconnect mid-reveal, when there is no question
           _screen = _Screen.quiz;
         case Results():
@@ -112,7 +116,7 @@ class _AppState extends State<App> {
           : LobbyScreen(widget.conn, _lobby!, _myId, addPack: widget.addPack),
     _Screen.wait => WaitScreen(_waitReason),
     _Screen.curve => CurveScreen(widget.conn, alive: _alive),
-    _Screen.quiz => QuizScreen(widget.conn, _question, _reveal, key: ValueKey(_question?.number)),
+    _Screen.quiz => QuizScreen(widget.conn, _question, _reveal, total: _quizTotal, key: ValueKey(_question?.number)),
     _Screen.results => ResultsScreen(_placements, _myId),
     _Screen.kicked => _Kicked(
       onJoinAgain: () => setState(() => _screen = _Screen.join),
@@ -124,7 +128,7 @@ class _AppState extends State<App> {
     title: 'Couchplay',
     navigatorKey: _nav,
     builder: (_, child) => EffectLayer(child: child!),
-    theme: ThemeData.dark(useMaterial3: true),
+    theme: theme,
     // The join screen shows its own errors.
     home: Column(
       children: [

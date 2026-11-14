@@ -43,15 +43,19 @@ void main() {
     expect(find.text('Curve'), findsOneWidget);
     expect(find.text('Quiz'), findsOneWidget);
     expect(
-      find.byIcon(Icons.person_remove),
+      find.widgetWithText(TextButton, 'Remove'),
       findsOneWidget,
     ); // not for yourself
     expect(find.byIcon(Icons.add), findsOneWidget);
+    // Your own chip is on top and not repeated under "Others".
+    expect(find.text('P0'), findsOneWidget);
+    expect(find.text('Others · 1'), findsOneWidget);
+    expect(find.text('★ HOST'), findsOneWidget);
 
     await _pump(t, _lobby(), 1);
     expect(find.text('Curve'), findsNothing);
     expect(find.byIcon(Icons.add), findsNothing);
-    expect(find.byIcon(Icons.person_remove), findsNothing);
+    expect(find.widgetWithText(TextButton, 'Remove'), findsNothing);
     expect(find.textContaining('P0'), findsWidgets); // waiting for the host
   });
 
@@ -80,16 +84,16 @@ void main() {
 
   testWidgets('kick asks first: Keep sends nothing, Remove sends Kick once', (t) async {
     final c = await _pump(t, _lobby(), 0);
-    await t.tap(find.byIcon(Icons.person_remove));
+    await t.tap(find.widgetWithText(TextButton, 'Remove'));
     await t.pumpAndSettle();
     expect(find.text('Remove P1?'), findsOneWidget);
     expect(c.sent.whereType<Kick>(), isEmpty);
     await t.tap(find.text('Keep'));
     await t.pumpAndSettle();
     expect(c.sent.whereType<Kick>(), isEmpty);
-    await t.tap(find.byIcon(Icons.person_remove));
+    await t.tap(find.widgetWithText(TextButton, 'Remove'));
     await t.pumpAndSettle();
-    await t.tap(find.text('Remove'));
+    await t.tap(find.widgetWithText(FilledButton, 'Remove'));
     await t.pumpAndSettle();
     expect(c.sent.whereType<Kick>().map((k) => k.playerId), [1]);
   });
@@ -103,7 +107,7 @@ void main() {
         await _send(t, c, const Kicked());
       }
       expect(t.getSize(find.widgetWithText(FilledButton, label)).height, greaterThanOrEqualTo(64));
-      expect(t.widget<Text>(find.text(label)).style?.fontSize, 24);
+      expect(t.renderObject<RenderParagraph>(find.text(label)).text.style?.fontSize, 24);
     }
   });
 
@@ -174,11 +178,11 @@ void main() {
     await _send(t, c, const QuizQuestion(1, 2, ['a', 'b', 'c', 'd'], 20));
     await t.tap(find.text('b'));
     await t.pump();
-    expect(find.text('Locked in'), findsOneWidget);
+    expect(find.text('Locked in. Watch the TV.'), findsOneWidget);
     await _send(t, c, const QuizReveal(1, 750, 750));
     expect(find.text('+750'), findsOneWidget);
     await _send(t, c, const QuizQuestion(2, 2, ['e', 'f', 'g', 'h'], 20));
-    expect(find.text('Locked in'), findsNothing);
+    expect(find.text('Locked in. Watch the TV.'), findsNothing);
     expect(find.text('e'), findsOneWidget);
     await _send(t, c, const Results([Placement(1, 1, 750, 3)]));
     expect(find.text('e'), findsNothing);
@@ -266,9 +270,9 @@ void main() {
   testWidgets('only the host gets Add quiz pack', (t) async {
     Future<String?> pick(String _) async => null;
     await _pump(t, _lobby(), 0, addPack: pick);
-    expect(find.text('Add quiz pack'), findsOneWidget);
+    expect(find.text('Add quiz pack…'), findsOneWidget);
     await _pump(t, _lobby(), 1, addPack: pick);
-    expect(find.text('Add quiz pack'), findsNothing);
+    expect(find.text('Add quiz pack…'), findsNothing);
   });
 
   testWidgets('Add quiz pack passes the token and shows the TV message', (t) async {
@@ -277,7 +281,7 @@ void main() {
       token = tok;
       return 'Added World Flags (40 questions).';
     });
-    await t.tap(find.text('Add quiz pack'));
+    await t.tap(find.text('Add quiz pack…'));
     await t.pump();
     await t.pump();
     expect(token, 'test'); // FakeConnection's token
@@ -288,12 +292,12 @@ void main() {
     var reply = "The pack isn't valid JSON.";
     String? next() => reply.isEmpty ? null : reply;
     await _pump(t, _lobby(), 0, addPack: (_) async => next());
-    await t.tap(find.text('Add quiz pack'));
+    await t.tap(find.text('Add quiz pack…'));
     await t.pump();
     await t.pump();
     expect(find.text("The pack isn't valid JSON."), findsOneWidget);
     reply = '';
-    await t.tap(find.text('Add quiz pack'));
+    await t.tap(find.text('Add quiz pack…'));
     await t.pump();
     await t.pump();
     expect(find.text("The pack isn't valid JSON."), findsNothing); // old message cleared

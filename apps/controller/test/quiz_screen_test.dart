@@ -16,10 +16,10 @@ void main() {
     }
     await t.tap(find.text('Rijeka'));
     await t.pump();
-    await t.tap(find.text('Split'));
+    await t.tapAt(t.getCenter(find.byType(Scaffold)));
     await t.pump();
     expect(c.sent.whereType<Answer>().map((a) => a.index), [2]);
-    expect(find.text('Locked in'), findsOneWidget);
+    expect(find.text('Locked in. Watch the TV.'), findsOneWidget);
   });
 
   testWidgets('reveal shows points and total, or Not this time', (t) async {
@@ -45,6 +45,32 @@ void main() {
     for (final e in find.text(long).evaluate()) {
       final tile = find.ancestor(of: find.byWidget(e.widget), matching: find.byType(InkWell));
       expect(t.getRect(find.byWidget(e.widget)).bottom, lessThanOrEqualTo(t.getRect(tile).bottom));
+    }
+  });
+
+  testWidgets('header shows the question number and your total; reveal shows the right answer', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(MaterialApp(home: QuizScreen(c, q, null, total: 2710)));
+    expect(find.textContaining('Question 1 of 5'), findsOneWidget);
+    expect(find.text('2710'), findsOneWidget);
+    await t.pumpWidget(MaterialApp(home: QuizScreen(c, q, const QuizReveal(2, 960, 2710), total: 2710)));
+    expect(find.text('Rijeka'), findsOneWidget); // the right answer
+    expect(find.text('Correct'), findsOneWidget);
+  });
+
+  testWidgets('after a tap nothing on screen shows which tile was picked', (t) async {
+    for (final pick in ['Zagreb', 'Osijek']) {
+      final c = FakeConnection();
+      await t.pumpWidget(MaterialApp(home: QuizScreen(c, q, null, key: ValueKey(pick))));
+      await t.tap(find.text(pick));
+      await t.pump(const Duration(seconds: 1));
+      for (final s in [...q.choices, '▲', '◆', '●', '■']) {
+        expect(find.text(s), findsNothing, reason: s);
+      }
+      for (final col in [0xFFFF4D6D, 0xFF22B8F0, 0xFFFFB020, 0xFF2ECC71]) {
+        expect(find.byWidgetPredicate((w) => w is Material && w.color == Color(col)), findsNothing);
+      }
+      expect(find.text('Locked in. Watch the TV.'), findsOneWidget);
     }
   });
 }
