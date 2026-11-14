@@ -9,7 +9,7 @@ abstract final class Strings {
   static const join = 'Pridruži se';
   static const joinAgain = 'Pridruži se ponovno';
   static const emptyName = 'Upiši ime da se pridružiš.';
-  static const removed = 'Uklonjen si iz igre.';
+  static const removed = 'Domaćin te uklonio iz igre.';
   static const ok = 'U redu';
 
   // Lobby
@@ -46,7 +46,7 @@ abstract final class Strings {
   static const yourTotal = 'Tvoj ukupni rezultat';
 
   // Curve
-  static const crashed = 'Zabio si se. Pričekaj sljedeću rundu.';
+  static const crashed = 'Sudar! Pričekaj sljedeću rundu.';
 
   /// Debug readout of the phone-to-TV round trip, not meant for players.
   static String rtt(int now, int p95, int n) =>
@@ -54,8 +54,7 @@ abstract final class Strings {
 
   // Results
   static const gameOver = 'Igra je gotova.';
-  // Non-breaking space: the number stays with "mjestu" when the line wraps.
-  static String placed(int place) => 'Završio si na $place.\u00A0mjestu';
+  static String placed(int place) => 'Tvoje mjesto: $place.';
   static String sessionPoints(int n) => '+$n ${points(n)} za ovu večer';
 
   /// bod, boda, bodova

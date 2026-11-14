@@ -136,31 +136,6 @@ void main() {
         expect(badge.left - name.right, greaterThanOrEqualTo(8));
       },
     );
-
-    testWidgets(
-      '"${Strings.placed(4)}" keeps the number with "mjestu" (wide test font) at ${w.toInt() + 120} px',
-      (t) async {
-        // The Ahem test font is far wider than Roboto, so give it room.
-        t.view.physicalSize = Size(w + 120, 844);
-        t.view.devicePixelRatio = 1;
-        addTearDown(t.view.reset);
-        await t.pumpWidget(
-          MaterialApp(home: ResultsScreen(const [Placement(0, 4, 0, 1)], 0)),
-        );
-        final para = t.renderObject<RenderParagraph>(
-          find.text(Strings.placed(4)),
-        );
-        final text = Strings.placed(4);
-        final from = text.indexOf('4');
-        final tops = para
-            .getBoxesForSelection(
-              TextSelection(baseOffset: from, extentOffset: text.length),
-            )
-            .map((b) => b.top.round())
-            .toSet();
-        expect(tops.length, 1, reason: 'number and mjestu on one line');
-      },
-    );
   }
 
   testWidgets('Curve steering arrows are drawn, not font glyphs', (t) async {
