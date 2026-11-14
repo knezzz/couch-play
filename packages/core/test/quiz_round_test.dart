@@ -191,4 +191,14 @@ void main() {
     expect(asked.every((d) => d >= const Duration(seconds: 20)), isTrue, reason: '$asked');
     expect(revealed.every((d) => d >= const Duration(seconds: 4)), isTrue, reason: '$revealed');
   });
+
+  test('add_player_ignores_unknown_id', () {
+    final r = round(3, [1]);
+    r.addPlayer(99);
+    expect(r.totals.keys, [1]);
+    reply(r, 1, right: true);
+    r.advance(s); // only player 1 counts, and has answered
+    expect(r.step, QuizStep.revealing);
+    expect(r.lastPoints.keys, [1]);
+  });
 }

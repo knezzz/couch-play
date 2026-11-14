@@ -82,10 +82,11 @@ class QuizRound {
   void removePlayer(int id) => _active.remove(id);
 
   /// A player who came back answers again from the current question on, with
-  /// their total intact; questions they missed scored 0.
+  /// their total intact; questions they missed scored 0. Ids that were never
+  /// in the round are ignored.
   void addPlayer(int id) {
+    if (!_totals.containsKey(id)) return;
     _active.add(id);
-    _totals.putIfAbsent(id, () => 0);
   }
 
   void advance(Duration now) {
