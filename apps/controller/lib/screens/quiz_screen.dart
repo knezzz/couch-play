@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import '../connection.dart';
 import '../theme.dart';
 
+// Shapes are drawn (ShapeMark), not typed glyphs: no font fallback needed offline.
 const _tiles = [
-  ('▲', Color(0xFFFF4D6D)),
-  ('◆', Color(0xFF22B8F0)),
-  ('●', Color(0xFFFFB020)),
-  ('■', Color(0xFF2ECC71)),
+  Color(0xFFFF4D6D),
+  Color(0xFF22B8F0),
+  Color(0xFFFFB020),
+  Color(0xFF2ECC71),
 ];
 
 /// Four full-screen tiles. The first tap sends the answer; later taps do nothing.
@@ -82,13 +83,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          _tiles[r.correctIndex].$1,
-                          style: TextStyle(
-                            fontSize: 28,
-                            color: _tiles[r.correctIndex].$2,
-                          ),
-                        ),
+                        ShapeMark(r.correctIndex, 28, _tiles[r.correctIndex]),
                         const SizedBox(width: 12),
                         Flexible(
                           child: Text(
@@ -176,7 +171,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 const SizedBox(height: 12),
                 Expanded(
                   child: Material(
-                    color: _tiles[i].$2,
+                    color: _tiles[i],
                     borderRadius: BorderRadius.circular(20),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(20),
@@ -189,10 +184,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
                           children: [
-                            Text(
-                              _tiles[i].$1,
-                              style: const TextStyle(fontSize: 36, color: ink),
-                            ),
+                            ShapeMark(i, 32, ink),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Text(

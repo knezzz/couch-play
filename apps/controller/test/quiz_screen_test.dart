@@ -14,6 +14,10 @@ void main() {
     for (final s in q.choices) {
       expect(find.text(s), findsOneWidget);
     }
+    expect(find.byType(ShapeMark), findsNWidgets(4)); // drawn, not font glyphs
+    for (final g in ['▲', '◆', '●', '■']) {
+      expect(find.text(g), findsNothing);
+    }
     await t.tap(find.text('Rijeka'));
     await t.pump();
     await t.tapAt(t.getCenter(find.byType(Scaffold)));
@@ -56,6 +60,8 @@ void main() {
     await t.pumpWidget(MaterialApp(home: QuizScreen(c, q, const QuizReveal(2, 960, 2710), total: 2710)));
     expect(find.text('Rijeka'), findsOneWidget); // the right answer
     expect(find.text('Correct'), findsOneWidget);
+    expect(find.byType(ShapeMark), findsOneWidget);
+    expect(find.text('▲'), findsNothing);
   });
 
   testWidgets('after a tap nothing on screen shows which tile was picked', (t) async {
@@ -70,6 +76,7 @@ void main() {
       for (final col in [0xFFFF4D6D, 0xFF22B8F0, 0xFFFFB020, 0xFF2ECC71]) {
         expect(find.byWidgetPredicate((w) => w is Material && w.color == Color(col)), findsNothing);
       }
+      expect(find.byType(ShapeMark), findsNothing);
       expect(find.text('Locked in. Watch the TV.'), findsOneWidget);
     }
   });
