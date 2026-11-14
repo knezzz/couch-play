@@ -41,7 +41,7 @@ class CurveWiring {
             _attach(peer, token);
             startMatch();
           } else {
-            peer.send(const ErrorMsg('Someone is already playing. Wait for the match to end, then reload.'));
+            peer.send(const ErrorMsg('Someone is already playing. Ask them to close their page, then join again.'));
           }
         case Steer(:final left, :final right):
           if (peer == _driver) sim?.setInput(0, left: left, right: right);

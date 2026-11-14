@@ -6,6 +6,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/server/game_server.dart';
 import 'package:tv/session/curve_wiring.dart';
 
+Future<void> waitFor(bool Function() done, String what) async {
+  final end = DateTime.now().add(const Duration(seconds: 5));
+  while (!done()) {
+    if (DateTime.now().isAfter(end)) fail('Timed out waiting for $what');
+    await Future.delayed(const Duration(milliseconds: 10));
+  }
+}
+
 class _Phone {
   _Phone(this.ws) {
     ws.listen((d) {
@@ -19,17 +27,20 @@ class _Phone {
   static Future<_Phone> connect(int port) async =>
       _Phone(await WebSocket.connect('ws://127.0.0.1:$port/ws'));
 
+  var _barrier = 1000;
+
+  /// Sends [m], then a Ping and waits for its Pong. The server handles one
+  /// socket's messages in order, so the Pong means [m] has been handled.
   Future<void> send(Message m) async {
     ws.add(m.encode());
-    await Future.delayed(const Duration(milliseconds: 80));
+    final t = _barrier++;
+    ws.add(Ping(t).encode());
+    await waitFor(() => got.contains(Pong(t)), 'Pong($t) after ${m.runtimeType}');
   }
 
   bool get welcomed => got.any((m) => m is Welcome);
   bool get refused => got.any((m) => m is ErrorMsg);
-  Future<void> close() async {
-    await ws.close();
-    await Future.delayed(const Duration(milliseconds: 150));
-  }
+  Future<void> close() => ws.close();
 }
 
 void main() {
@@ -78,8 +89,12 @@ void main() {
 
     // A fresh browser context has a new token. This used to be ignored,
     // so the phone looked connected but its line ran straight.
+    // The server notices A's close asynchronously, so retry until it does.
     final b = await _Phone.connect(server.port);
-    await b.send(const Join('B', 'tokB'));
+    final end = DateTime.now().add(const Duration(seconds: 5));
+    while (!b.welcomed && DateTime.now().isBefore(end)) {
+      await b.send(const Join('B', 'tokB'));
+    }
     expect(b.welcomed, isTrue);
     await b.send(const Steer(left: true, right: false));
     expect(turnedOver200Ticks(), isTrue);
