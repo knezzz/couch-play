@@ -13,10 +13,10 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT 100+ ms follow-up in progress | lead; RTT: builder-2 |
 | 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | in progress; preview of 9439899 on the TV now | core + app |
 | 6 | Session, lobby, QR join (+ host bot controls) | todo (after 5b) | — |
-| 7 | Session scoring and results | scoring functions in progress (builder-2); finishGame + results screen wait for Task 6 | builder-2 |
+| 7 | Session scoring and results | scoring functions done (f6b19f2); finishGame + results screen wait for Task 6 | builder-2 |
 | 8 | Shared effects | todo | — |
 | 9 | Quiz pack format | done (4b1cbdb, fix 01db6e3, merge a69cb6f) | builder-2 |
-| 10 | Quiz round logic | in progress (early, parallel with 5b) | builder-2 |
+| 10 | Quiz round logic | done (0a679e8, fixes e6b6d64, eae0ec9) | builder-2 |
 | 11 | Quiz screens | todo | — |
 | 12 | Pack store and upload | todo | — |
 | 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | todo | — |
@@ -48,7 +48,8 @@ Answered:
   sim never ends a round).
 - Task 6 Step 6 (by hand): a phone that drops off Wi-Fi without closing is marked disconnected within ~10 s (5 s
   WS ping from Task 3 has no unit test), host passes on, Curve player dies.
-- Task 10/11: range-check the Answer index.
+- Task 11: broadcast `lastPoints` only at the reveal; drive `advance(now)` from one round clock on a 100 ms grid;
+  Session calls `addPlayer` on rejoin and `removePlayer` on disconnect. (Answer range check is done in Task 10.)
 - Disk: 12 GiB free on 2026-11-14 (the android-36 TV x86_64 image is 8.2 GB, not the ~2 GB estimated). QA stops
   under 8 GiB. Re-check before release builds.
 - avdmanager needs `JAVA_HOME` pointed at Android Studio's bundled jbr (env var only).
@@ -135,3 +136,5 @@ Added seats: 1 of 3.
   ~3 s hitch every few minutes, max 26.9 ms, likely the match restart). iPhone RTT ~10 ms typical, p95 50–60 ms
   (was 100+; target 40). Person: steering better; power-ups work; own-trail death and arrows work; bots look
   aimless and robotic. Next: 20 Hz keep-alive; bots get goals and human-like steering (plan updated).
+- 2026-11-14: Plan Task 10 changed (PM, from review): QuizRound.addPlayer for mid-round rejoin (matches the spec)
+  and a monotonic `now`. Task 10 + Task 7 scoring accepted (re-review clean; PM ran core tests, 74/74).
