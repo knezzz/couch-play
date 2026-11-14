@@ -668,11 +668,11 @@ Content rules:
 
 ### Task 13b: Croatian content, harder and verified (added 2026-11-14, user request)
 
-- [ ] **Step 1:** Verify every question in `hr-medimurje`, `hr-geografija`, `hr-povijest` and `hr-kultura-sport` online (hr.wikipedia.org, enciklopedija.hr, official sites); a `tool/packs/<id>.sources.md` per pack lists the source for each question. Fix or drop what can't be confirmed.
-- [ ] **Step 2:** Make the four Croatian packs harder for locals: at most about a third easy questions; plausible wrong answers.
-- [ ] **Step 3:** Add Croatian versions of the six English packs: ids `hr-opce-znanje`, `hr-zemljopis-svijeta`, `hr-znanost`, `hr-film-glazba`, `hr-zastave`, `hr-oblici` (the flags and shapes versions reuse the same SVGs). Natural Croatian, not word-for-word; swap culture questions only where the English one makes no sense in Croatian.
+- [x] **Step 1:** Verify every question in `hr-medimurje`, `hr-geografija`, `hr-povijest` and `hr-kultura-sport` online (hr.wikipedia.org, enciklopedija.hr, official sites); a `tool/packs/<id>.sources.md` per pack lists the source for each question. Fix or drop what can't be confirmed.
+- [x] **Step 2:** Make the four Croatian packs harder for locals: at most about a third easy questions; plausible wrong answers.
+- [x] **Step 3:** Add Croatian versions of the six English packs: ids `hr-opce-znanje`, `hr-zemljopis-svijeta`, `hr-znanost`, `hr-film-glazba`, `hr-zastave`, `hr-oblici` (the flags and shapes versions reuse the same SVGs). Natural Croatian, not word-for-word; swap culture questions only where the English one makes no sense in Croatian.
 - [ ] **Step 4:** The bundled pack test covers the new ids (≥ 30 questions each). The user reviews `hr-medimurje` (and may look at the others) before this is done.
-- [ ] **Step 5: Commit** by path.
+- [x] **Step 5: Commit** by path.
 
 ---
 
@@ -680,7 +680,7 @@ Content rules:
 
 Starts after Task 15 (same screens).
 
-- [ ] **Step 1:** Every user-facing string on the TV and the phone in Croatian, following the copy rules (plain words, active voice, errors that say how to fix the problem): lobby, join, quiz, results, Curve, dialogs, kick, pack upload, "Locked in", waiting and error messages, and the pack validation messages from Task 9/12 (update their tests and `docs/quiz-pack-format.md`). No language switch; Croatian only. No i18n framework: one strings file per app is enough.
-- [ ] **Step 2:** The person (a native speaker) reads the full list of strings before it ships: put them in one file they can review.
-- [ ] **Step 3:** Tests updated and green in every member; QA checks every screen in a release/profile build, including the longest Croatian strings fitting at 1080p and on a 390-wide phone.
-- [ ] **Step 4: Commit** by path: `feat: croatian interface`.
+- [x] **Step 1:** Every user-facing string on the TV and the phone in Croatian, following the copy rules (plain words, active voice, errors that say how to fix the problem): lobby, join, quiz, results, Curve, dialogs, kick, pack upload, "Locked in", waiting and error messages, and the pack validation messages from Task 9/12 (update their tests and `docs/quiz-pack-format.md`). No language switch; Croatian only. No i18n framework: one strings file per app is enough.
+- [x] **Step 2:** The person (a native speaker) reads the full list of strings before it ships: put them in one file they can review.
+- [x] **Step 3:** Tests updated and green in every member; QA checks every screen in a release/profile build, including the longest Croatian strings fitting at 1080p and on a 390-wide phone.
+- [x] **Step 4: Commit** by path: `feat: croatian interface`.

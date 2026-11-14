@@ -23,7 +23,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 14 | TV polish and release install | Steps 1–4 done (5d32880); Step 5 leftovers (3+ phones, Android Chrome) with the person | lead |
 | 15 | Design pass to the reference screens (person, 2026-11-14) | done on macOS (ee77c55, 9cd8631, a7bbada, 7cf32db); see it on the TV next session | lead |
 | 13b | Croatian content: all HR packs verified + harder; Croatian versions of the 6 English packs (person, 2026-11-14) | built (bf474df, e8ec4ed, 617240e, 6f1fe36, a408ee1): 16 packs, 759 questions; hr-medimurje waits on the person | content |
-| 16 | Croatian user interface (person, 2026-11-14) | in progress | lead |
+| 16 | Croatian user interface (person, 2026-11-14) | done on macOS (605053a … 526c98e); see it on the TV next session | lead |
 
 ## Open questions for the person
 
@@ -186,3 +186,6 @@ Added seats running: 2 of 3 (builder-2, content). Each goes when its work is don
   large pieces. Task 16 (Croatian UI) queued.
 - 2026-11-14: check-design removed (reviews done, nothing queued). Task 16 strings (docs/strings-hr.md, ~104): person chose
   neutral wording instead of masculine forms, keep "Curve", Robot/NEMA VEZE OK, ship without a full read (checks on TV).
+- 2026-11-14: Task 16 accepted (PM ran core 96, tv 163, controller 46; no masculine forms or dead strings left; QA
+  fit check on release builds). Everything in the plan is built. Waiting on the person: hr-medimurje review (Task 13),
+  a TV session (see Tasks 15/16, confetti PERF, 3+ phones incl. Android Chrome), Back on results, the 0-point quiz rule.
