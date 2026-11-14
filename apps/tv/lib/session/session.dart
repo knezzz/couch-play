@@ -93,9 +93,6 @@ class Session {
     return (ok: true, message: Strings.packAdded(pack.title, pack.questions.length));
   }
 
-  /// Set false to answer StartGame(quiz) with an ErrorMsg.
-  bool quizAvailable = true;
-
   /// The one place a pack id becomes a pack. No pack picked plays the store's
   /// default pack, or the test pack when there is no store.
   late QuizPack? Function(String? packId) packLookup =
@@ -325,10 +322,6 @@ class Session {
     }
     switch (game) {
       case GameKind.quiz:
-        if (!quizAvailable) {
-          peer.send(const ErrorMsg(Strings.quizNotReady));
-          return;
-        }
         final pack = packLookup(packId);
         if (pack == null || pack.questions.isEmpty) {
           peer.send(const ErrorMsg(Strings.packUnavailable));

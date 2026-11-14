@@ -58,7 +58,7 @@ bool _focused(WidgetTester t, String label) =>
     Focus.of(t.element(find.text(label))).hasPrimaryFocus;
 
 Session _quiz() {
-  final s = Session(random: Random(1))..quizAvailable = true;
+  final s = Session(random: Random(1));
   join(s, 'Ana').say(const StartGame(GameKind.quiz, null));
   return s;
 }

@@ -25,9 +25,7 @@ void main() {
 
   Session fresh() {
     now = Duration.zero;
-    final s = Session(random: Random(1), clock: () => now);
-    s.quizAvailable = true;
-    return s;
+    return Session(random: Random(1), clock: () => now);
   }
 
   testWidgets('start_quiz_asks_humans_and_not_bots', (t) async {

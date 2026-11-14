@@ -61,11 +61,10 @@ abstract final class Strings {
   static const onlyHost = 'To može samo domaćin.';
   static const nextGameSoon = 'Sljedeća igra uskoro počinje.';
   static const gameRunning = 'Igra je već u tijeku.';
-  static const quizNotReady = 'Kviz još nije spreman. Za sada odaberi Curve.';
   static const packUnavailable = 'Taj paket nije dostupan.';
   static const curveNeedsTwo = 'Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja.';
   static const noSuchPlayer = 'Tog igrača nema.';
-  static const cannotKickSelf = 'Ne možeš izbaciti sam sebe.';
+  static const cannotKickSelf = 'Ne možeš izbaciti sebe.';
   static const botsBetweenGames = 'Robote možeš mijenjati samo između igara.';
   static const lockedIn = 'Odgovor je zaključan. Gledaj TV.';
 
