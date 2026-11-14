@@ -24,10 +24,9 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 ## Open questions for the person
 
-- Next TV session (fresh adb yes + pairing code): check the human-like bots (they pick up power-ups in only ~3 of
-  10 rounds; judge whether that's enough) and the 20 Hz keep-alive (RTT p95 target ≤ 40 ms). Combine with Task 14
-  Step 5: release install, at least 3 phones (iPhone Safari + an Android phone's Chrome), one Quiz + one Curve game,
-  lock a phone mid-game.
+- Task 14 Step 5 leftovers, on your own time (no adb needed; the app is installed): play with 3+ phones at once,
+  including an Android phone in Chrome.
+- Back on the results screen: exit the app (Android TV default, as now) or go to the lobby?
 - Quiz: when everyone scores 0, everyone ties for first and gets confetti + session points (the plan's tie rule).
   Should a 0-point game award nothing instead?
 - Task 13: review the `hr-medimurje` pack when it's ready.
@@ -166,3 +165,6 @@ Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 
   Croatian diacritics render on the TV and phones. BUG: no confetti in release builds. effects.dart:185 filled the
   particle tables inside an assert(), which release strips (since af1e3f5; tests and QA ran debug). Fix and reinstall
   approved; check-review greps for other release-vs-debug differences; QA effects/UI checks run in release/profile.
+- 2026-11-14: Confetti fix (6b0378f) confirmed by the person on the TV and phones. Locking + unlocking a real phone
+  reconnects it (Review Focus #1 verified). TV session 2 ended; adb disconnected. 3+ phones and Android Chrome left
+  for the person to try on their own.
