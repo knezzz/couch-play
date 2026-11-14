@@ -500,11 +500,13 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - `QuizStep get step` (`asking | revealing | done`)
     - `int get number`, `int get total`
     - `ShownQuestion get current`: `(q, image, choices, correctIndex)`
-    - `void answer(int playerId, int index, Duration elapsed)`: the first answer counts; later ones are ignored
-    - `void removePlayer(int id)`
-    - `void advance(Duration elapsed)`: asking → revealing when time is up or every remaining player has answered; revealing → the next question after `reveal`, or done
+    - Time (changed 2026-11-14): every call takes `Duration now`, a monotonic time since the round started. `QuizRound` tracks when each phase began, so callers never reset a clock.
+    - `void answer(int playerId, int index, Duration now)`: the first answer counts; later ones are ignored. An index outside 0–3 is ignored.
+    - `void removePlayer(int id)`: the player is inactive. They keep their total, and the round no longer waits for them.
+    - `void addPlayer(int id)` (added 2026-11-14): re-activates a player who reconnects mid-round and keeps their total, so they answer from the current question on (the spec's "restored mid-game").
+    - `void advance(Duration now)`: asking → revealing when time is up or every active player has answered; revealing → the next question after `reveal`, or done
     - `Map<int,int> totals`
-    - `Map<int,int> lastPoints`
+    - `Map<int,int> lastPoints`: final only once the step is `revealing`. Task 11 broadcasts it at the reveal, never during asking.
 - [ ] **Step 1: Write the failing tests.**
   - `picks_min_of_length_and_pack_size`
   - `shuffle_keeps_correct_answer`: the shown choice at `correctIndex` equals the original `choices[answer]`.
@@ -513,6 +515,8 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
   - `timeout_gives_zero`
   - `points_scale_with_speed`: an answer at 10 s gives 750.
   - `disconnected_player_keeps_points_and_scores_zero_after`
+  - `rejoined_player_answers_again_and_keeps_total` (added 2026-11-14)
+  - `instant_answer_on_every_question_scores_1000` and `reveal_lasts_full_reveal_duration`, both driven by one monotonic `now` (added 2026-11-14)
 - [ ] **Step 2: Run.** Expected: FAIL.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run.** Expected: PASS.
