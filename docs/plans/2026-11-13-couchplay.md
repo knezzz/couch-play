@@ -710,3 +710,13 @@ The person approved the reference screens and wants Curve to match them, with th
 - [ ] **Step 4: Run.** Expected: PASS in every member. QA on a macOS release build: each of the 7 power-ups picked up, the indicator seen and seen running out; the wrap border shrinks and the walls come back when it is gone (a line hits the wall after it).
 - [ ] **Step 5: Commit** by path: `feat(tv): show active power-ups and time left`.
 - [ ] **Step 6:** The person sees it on the TV at their next session (with the frame times).
+
+---
+
+### Task 18: Keep the TV awake while CouchPlay is open (added 2026-11-14, user request)
+
+The TV goes into its screensaver during a game: players use their phones, so the TV sees no remote input.
+
+- [ ] **Step 1:** Keep the screen on while CouchPlay is in the foreground (lobby, games and results), and let the TV sleep normally once the app is closed or in the background. Smallest fix: `FLAG_KEEP_SCREEN_ON` on the activity window in `MainActivity.kt`; no new package.
+- [ ] **Step 2: Check.** All tv tests pass. On the real TV (next session, with the person's adb yes): leave a game or the lobby running longer than the TV's screensaver delay; the screensaver doesn't start. After leaving the app, it does.
+- [ ] **Step 3: Commit** by path: `fix(tv): keep the screen on while the app is open`.

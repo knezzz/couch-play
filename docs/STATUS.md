@@ -25,6 +25,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 13b | Croatian content: all HR packs verified + harder; Croatian versions of the 6 English packs (person, 2026-11-14) | built (bf474df, e8ec4ed, 617240e, 6f1fe36, a408ee1): 16 packs, 759 questions; hr-medimurje waits on the person | content |
 | 16 | Croatian user interface (person, 2026-11-14) | done on macOS (605053a … 526c98e); see it on the TV next session | lead |
 | 17 | Show active power-ups and time left; wrap = shrinking white border (person, 2026-11-14) | queued to lead | lead |
+| 18 | Keep the TV awake while the app is open (screensaver started mid-game; person, 2026-11-14) | queued to lead; TV check next session | lead |
 
 ## Open questions for the person
 
@@ -192,3 +193,5 @@ Added seats running: 2 of 3 (builder-2, content). Each goes when its work is don
   a TV session (see Tasks 15/16, confetti PERF, 3+ phones incl. Android Chrome), Back on results, the 0-point quiz rule.
 - 2026-11-14: Person approved the design and asked for obvious active power-ups with time left (wrap: a white border
   that shrinks; walls back when it is gone). Spec + plan Task 17; routed to lead.
+- 2026-11-14: Person: the TV goes to its screensaver during a game. Spec + plan Task 18 (keep the screen on while the
+  app is in the foreground); routed to lead.

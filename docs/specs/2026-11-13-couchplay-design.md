@@ -28,7 +28,7 @@ A party-games console for the living room. An Android TV shows the game; everyon
 
 ## Constraints
 
-- Android TV: the target device model is unknown, and TVs with Android TV built in often have slow chips. So the first build step is a quick Curve performance test on the real TV: 8 trails at 60 Hz, with input-to-screen delay measured from a phone. Everything else waits on that test. If the TV can't keep up, reduce the rendering cost (for example, draw trails to a cached image) before building more. Menus must be usable with a D-pad remote, though phones drive most interaction.
+- Android TV: the target device model is unknown, and TVs with Android TV built in often have slow chips. So the first build step is a quick Curve performance test on the real TV: 8 trails at 60 Hz, with input-to-screen delay measured from a phone. Everything else waits on that test. If the TV can't keep up, reduce the rendering cost (for example, draw trails to a cached image) before building more. Menus must be usable with a D-pad remote, though phones drive most interaction. The TV stays awake while the app is open: phones drive the game, so the TV sees no remote input and must not go to its screensaver (user report, 2026-11-14).
 - Phones: current iOS Safari and Android Chrome, plain HTTP on the LAN.
 - Same Wi-Fi network for TV and phones.
 - Flutter is not installed on the dev Mac yet; setup is part of the plan.
