@@ -268,7 +268,7 @@ couchplay/
 - [x] **Step 5: Run on the Android TV emulator.**
   - `tool/build_controller.sh && cd apps/tv && flutter run -d emulator-… --dart-define=PERF=true`.
   - From a phone on the same Wi-Fi, open the URL the emulator shows (emulator networking may need `adb forward tcp:8080 tcp:8080` and the Mac's address). Steering must work.
-- [ ] **Step 6: GATE: run on the user's real Android TV.**
+- [x] **Step 6: GATE: run on the user's real Android TV.**
   - Enable developer mode and network debugging on the TV, then `adb connect <tv-ip>`.
   - `flutter run --release -d <tv> --dart-define=PERF=true --dart-define=BOTS=7`.
   - Pass criteria, measured over three 60-second rounds:

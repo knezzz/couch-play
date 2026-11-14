@@ -10,8 +10,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
-| 5 | Curve end-to-end + **real-TV perf gate** | Steps 1–5 done. Step 6 (real TV) in progress, person said yes to adb this session | lead |
-| 5b | Curve: die on own old trail, countdown names, 7 power-ups (person, 2026-11-14) | todo (waits on Task 5 gate go) | — |
+| 5 | Curve end-to-end + **real-TV perf gate** | gate GO (frames pass, RTT 100+ ms misses 40 ms); Step 7 commit pending; RTT follow-up with builder-2 | lead, builder-2 |
+| 5b | Curve: die on own old trail, countdown names, 7 power-ups (person, 2026-11-14) | in progress (queued to lead) | core + app |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
@@ -24,11 +24,12 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 ## Open questions for the person
 
-- Task 5 gate: after the real-TV numbers, your go (or not) to continue with Task 6.
+- Task 5b Step 5: adb yes again for the real-TV re-measure with power-ups (when it's ready).
 
 Answered:
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
 - 2026-11-13: Local merges of team branches into main: **fine without asking**. Pushes, PRs, GitHub merges still ask.
+- 2026-11-14: Task 5 gate: **GO**, with the RTT investigated alongside Task 5b.
 
 ## Plan notes (minor, not blocking)
 
@@ -63,7 +64,9 @@ Answered:
 | qa | check-qa@couchplay | 2026-11-13 | starting seat |
 | review | check-review@couchplay | 2026-11-13 | starting seat |
 
-No added seats.
+| builder-2 | build-builder-2@couchplay | 2026-11-14 | **added**: RTT investigation, while core + app are on Task 5b |
+
+Added seats: 1 of 3.
 
 ## Changelog
 
@@ -106,3 +109,8 @@ No added seats.
   (1) bug: you never die on your own old trail (curve_sim.dart:213-215 re-stamps own cells), (2) countdown dots with
   names above (countdown only), (3) power-ups: speed, thin, ghost, slow others, fat others, clear, wrap. Replaces
   "no power-ups in v1". Gets its own real-TV re-measure.
+- 2026-11-14: **Task 5 gate results** (release build on the BRAVIA, 7 bots + person on iPhone Safari): steady play
+  0 frames over 16 ms in ~14,600 frames, worst 4.9–5.6 ms, p50 ~3.8 ms (about 3× headroom); 3 frames just over
+  16 ms (worst 16.9) around match start; Path renderer, no ui.Image fallback. Phone RTT 100+ ms (target ≤ 40 ms:
+  miss). Steering "not immediate but okay"; no visible stutter at round restart; Safari fine. Person: GO, with
+  the RTT investigated alongside. Added builder-2 for the RTT work (core + app on 5b). Task 5b queued.
