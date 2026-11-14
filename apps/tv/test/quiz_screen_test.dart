@@ -193,4 +193,39 @@ void main() {
       expect(find.text('Botty'), findsNothing);
     });
   });
+    testWidgets('8 voters on a wrong tile: at most 3 marks, the answer keeps its room', (t) async {
+      _big(t);
+      await t.pumpWidget(MaterialApp(
+        theme: tvTheme(),
+        home: QuizScreen(
+          question: 'q',
+          packTitle: 'P',
+          choices: const ['The right one', 'A fairly long wrong answer here', 'c', 'd'],
+          number: 1,
+          total: 2,
+          remaining: 0.5,
+          answered: 8,
+          expected: 8,
+          correctIndex: 0,
+          picks: {for (var i = 0; i < 8; i++) i: 1},
+          points: const {},
+          players: [for (var i = 0; i < 8; i++) PlayerInfo(i, 'P$i', i, true, 0)],
+          totals: {for (var i = 0; i < 8; i++) i: 0},
+        ),
+      ));
+      expect(t.takeException(), isNull);
+      final tile = find.byKey(const ValueKey('tile-1'));
+      expect(find.descendant(of: tile, matching: find.byType(PlayerDot)).evaluate().length, lessThanOrEqualTo(3));
+      expect(find.descendant(of: tile, matching: find.text('+6')), findsOneWidget, reason: '8 voters: 2 dots and +6');
+      final answer = find.descendant(of: tile, matching: find.text('A fairly long wrong answer here'));
+      expect(t.getSize(answer).width, greaterThan(150), reason: 'the answer keeps its room');
+      // 1 or 2 voters never show a +N.
+    });
+
+    testWidgets('1 or 2 voters get dots and no +N', (t) async {
+      await _pump(t, _quiz(correct: 2));
+      for (final i in [1, 2]) {
+        expect(find.descendant(of: find.byKey(ValueKey('tile-$i')), matching: find.textContaining('+')), findsNothing);
+      }
+    });
 }

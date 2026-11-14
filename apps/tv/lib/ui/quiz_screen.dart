@@ -53,100 +53,123 @@ class QuizScreen extends StatelessWidget {
   /// Player id -> quiz total, and -> points won on this question.
   final Map<int, int> totals, points;
 
-  Color _color(PlayerInfo p) => playerColors[p.colorIndex % playerColors.length];
+  Color _color(PlayerInfo p) =>
+      playerColors[p.colorIndex % playerColors.length];
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: tvBg,
-        body: FittedBox(
-          child: SizedBox(
-            width: 1920,
-            height: 1080,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(96, 56, 96, 72),
-              child: correctIndex == null ? _asking() : _reveal(),
-            ),
-          ),
+    backgroundColor: tvBg,
+    body: FittedBox(
+      child: SizedBox(
+        width: 1920,
+        height: 1080,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(96, 56, 96, 72),
+          child: correctIndex == null ? _asking() : _reveal(),
         ),
-      );
+      ),
+    ),
+  );
 
   // --- the question ---
 
   Widget _asking() => Column(
+    children: [
+      Row(
         children: [
-          Row(
-            children: [
-              Text('Question $number of $total',
-                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w700, color: tvText)),
-              const SizedBox(width: 32),
-              Expanded(
-                child: Text(packTitle,
-                    maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 40, color: tvMuted)),
-              ),
-              const SizedBox(width: 32),
-              Text('$answered of $expected answered', style: const TextStyle(fontSize: 40, color: tvMuted)),
-            ],
-          ),
-          const SizedBox(height: 36),
-          Container(
-            width: double.infinity,
-            height: 16,
-            decoration: BoxDecoration(color: tvRaised, borderRadius: BorderRadius.circular(999)),
-            child: FractionallySizedBox(
-              key: const ValueKey('timer-bar'),
-              alignment: Alignment.centerLeft,
-              widthFactor: remaining.clamp(0.0, 1.0),
-              child: DecoratedBox(
-                decoration: BoxDecoration(color: tvAccent, borderRadius: BorderRadius.circular(999)),
-              ),
+          Text(
+            'Question $number of $total',
+            style: const TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.w700,
+              color: tvText,
             ),
           ),
-          const SizedBox(height: 36),
+          const SizedBox(width: 32),
           Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    question,
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 80,
-                      fontWeight: FontWeight.w900,
-                      height: 1.1,
-                      letterSpacing: -1,
-                      color: tvText,
-                    ),
-                  ),
-                ),
-                if (svg != null) ...[
-                  const SizedBox(width: 64),
-                  Container(
-                    key: const ValueKey('picture-card'),
-                    width: 520,
-                    height: 347,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-                    child: SvgPicture.memory(svg!, fit: BoxFit.contain),
-                  ),
-                ],
-              ],
+            child: Text(
+              packTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 40, color: tvMuted),
             ),
           ),
-          const SizedBox(height: 36),
-          for (var r = 0; r < 2; r++) ...[
-            if (r == 1) const SizedBox(height: 24),
-            Row(
-              children: [
-                for (var c = 0; c < 2; c++) ...[
-                  if (c == 1) const SizedBox(width: 24),
-                  Expanded(child: _tile(r * 2 + c)),
-                ],
-              ],
-            ),
-          ],
+          const SizedBox(width: 32),
+          Text(
+            '$answered of $expected answered',
+            style: const TextStyle(fontSize: 40, color: tvMuted),
+          ),
         ],
-      );
+      ),
+      const SizedBox(height: 36),
+      Container(
+        width: double.infinity,
+        height: 16,
+        decoration: BoxDecoration(
+          color: tvRaised,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: FractionallySizedBox(
+          key: const ValueKey('timer-bar'),
+          alignment: Alignment.centerLeft,
+          widthFactor: remaining.clamp(0.0, 1.0),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: tvAccent,
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 36),
+      Expanded(
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                question,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 80,
+                  fontWeight: FontWeight.w900,
+                  height: 1.1,
+                  letterSpacing: -1,
+                  color: tvText,
+                ),
+              ),
+            ),
+            if (svg != null) ...[
+              const SizedBox(width: 64),
+              Container(
+                key: const ValueKey('picture-card'),
+                width: 520,
+                height: 347,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: SvgPicture.memory(svg!, fit: BoxFit.contain),
+              ),
+            ],
+          ],
+        ),
+      ),
+      const SizedBox(height: 36),
+      for (var r = 0; r < 2; r++) ...[
+        if (r == 1) const SizedBox(height: 24),
+        Row(
+          children: [
+            for (var c = 0; c < 2; c++) ...[
+              if (c == 1) const SizedBox(width: 24),
+              Expanded(child: _tile(r * 2 + c)),
+            ],
+          ],
+        ),
+      ],
+    ],
+  );
 
   Widget _tile(int i) {
     final long = choices[i].length > 24;
@@ -154,10 +177,13 @@ class QuizScreen extends StatelessWidget {
       key: ValueKey('tile-$i'),
       height: 168,
       padding: const EdgeInsets.symmetric(horizontal: 40),
-      decoration: BoxDecoration(color: _tileColors[i], borderRadius: BorderRadius.circular(24)),
+      decoration: BoxDecoration(
+        color: _tileColors[i],
+        borderRadius: BorderRadius.circular(24),
+      ),
       child: Row(
         children: [
-          _Shape(i, 48, tvInk),
+          ShapeMark(i, 48, tvInk),
           const SizedBox(width: 32),
           Expanded(
             child: Text(
@@ -181,23 +207,27 @@ class QuizScreen extends StatelessWidget {
   // --- the reveal ---
 
   List<PlayerInfo> _voters(int i) => [
-        for (final p in players)
-          if (picks[p.id] == i) p,
-      ];
+    for (final p in players)
+      if (picks[p.id] == i) p,
+  ];
 
   Widget _dots(int i, double size) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final p in _voters(i)) Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: PlayerDot(_color(p), size: size, ring: true),
-          ),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      for (final p in _voters(i))
+        Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: PlayerDot(_color(p), size: size, ring: true),
+        ),
+    ],
+  );
 
   Widget _reveal() {
     final right = correctIndex!;
-    final wrong = [for (var i = 0; i < 4; i++) if (i != right) i];
+    final wrong = [
+      for (var i = 0; i < 4; i++)
+        if (i != right) i,
+    ];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -206,13 +236,18 @@ class QuizScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text.rich(
-                TextSpan(children: [
-                  TextSpan(
-                    text: 'Question $number of $total',
-                    style: const TextStyle(fontWeight: FontWeight.w700, color: tvText),
-                  ),
-                  const TextSpan(text: ' · The answer is'),
-                ]),
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Question $number of $total',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: tvText,
+                      ),
+                    ),
+                    const TextSpan(text: ' · The answer is'),
+                  ],
+                ),
                 style: const TextStyle(fontSize: 40, color: tvMuted),
               ),
               const SizedBox(height: 32),
@@ -240,14 +275,19 @@ class QuizScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    _Shape(right, 48, tvInk),
+                    ShapeMark(right, 48, tvInk),
                     const SizedBox(width: 32),
                     Expanded(
                       child: Text(
                         choices[right],
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w900, height: 1.1, color: tvInk),
+                        style: const TextStyle(
+                          fontSize: 56,
+                          fontWeight: FontWeight.w900,
+                          height: 1.1,
+                          color: tvInk,
+                        ),
                       ),
                     ),
                     _dots(right, 48),
@@ -275,29 +315,47 @@ class QuizScreen extends StatelessWidget {
   }
 
   Widget _wrongTile(int i) => Container(
-        key: ValueKey('tile-$i'),
-        height: 120,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: _tileColors[i].withValues(alpha: 0.25),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          children: [
-            _Shape(i, 30, _tileColors[i]),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                choices[i],
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w500, height: 1.1, color: tvText),
-              ),
-            ),
-            _dots(i, 44),
-          ],
-        ),
-      );
+    key: ValueKey('tile-$i'),
+    height: 120,
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    decoration: BoxDecoration(
+      color: _tileColors[i].withValues(alpha: 0.25),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      children: [
+        ShapeMark(i, 30, _tileColors[i]),
+        const SizedBox(width: 16),
+        Expanded(child: _wrongAnswer(choices[i])),
+        _Voters([for (final p in _voters(i)) _color(p)]),
+      ],
+    ),
+  );
+
+  /// A one-word answer shrinks before it would break mid-word beside the voters.
+  Widget _wrongAnswer(String text) {
+    const style = TextStyle(fontSize: 40, fontWeight: FontWeight.w500, height: 1.1, color: tvText);
+    if (text.contains(' ')) {
+      return Text(text, maxLines: 2, overflow: TextOverflow.ellipsis, style: style);
+    }
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Text(text, maxLines: 1, style: style),
+    );
+  }
+
+  Text _points(PlayerInfo p) {
+    final won = (points[p.id] ?? 0) > 0;
+    return Text(
+      '+${points[p.id] ?? 0}',
+      style: TextStyle(
+        fontSize: 32,
+        fontWeight: won ? FontWeight.w700 : FontWeight.w400,
+        color: won ? _green : tvMuted,
+      ),
+    );
+  }
 
   Widget _scores() {
     final byTotal = [
@@ -307,11 +365,21 @@ class QuizScreen extends StatelessWidget {
     final gap = byTotal.length > 5 ? 12.0 : 24.0;
     return Container(
       padding: const EdgeInsets.all(40),
-      decoration: BoxDecoration(color: tvSurface, borderRadius: BorderRadius.circular(32)),
+      decoration: BoxDecoration(
+        color: tvSurface,
+        borderRadius: BorderRadius.circular(32),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Scores', style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText)),
+          const Text(
+            'Scores',
+            style: TextStyle(
+              fontSize: 44,
+              fontWeight: FontWeight.w700,
+              color: tvText,
+            ),
+          ),
           SizedBox(height: gap),
           for (final p in byTotal) ...[
             Row(
@@ -319,24 +387,33 @@ class QuizScreen extends StatelessWidget {
                 PlayerDot(_color(p)),
                 const SizedBox(width: 20),
                 Expanded(
-                  child: Text(p.name,
-                      maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 40, color: tvText)),
+                  child: Text(
+                    p.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 40, color: tvText),
+                  ),
                 ),
-                Text(grouped(totals[p.id] ?? 0),
-                    style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w700, color: tvText)),
+                // With many players the points share the row; else they sit below.
+                if (byTotal.length > 5) ...[
+                  _points(p),
+                  const SizedBox(width: 16),
+                ],
+                Text(
+                  grouped(totals[p.id] ?? 0),
+                  style: const TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w700,
+                    color: tvText,
+                  ),
+                ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 60),
-              child: Text(
-                '+${points[p.id] ?? 0}',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: (points[p.id] ?? 0) > 0 ? FontWeight.w700 : FontWeight.w400,
-                  color: (points[p.id] ?? 0) > 0 ? _green : tvMuted,
-                ),
+            if (byTotal.length <= 5)
+              Padding(
+                padding: const EdgeInsets.only(left: 60),
+                child: _points(p),
               ),
-            ),
             SizedBox(height: gap),
           ],
         ],
@@ -345,40 +422,57 @@ class QuizScreen extends StatelessWidget {
   }
 }
 
-/// ▲ ◆ ● ■ drawn, not typed: the shapes are the colour-blind channel, so they
-/// must not depend on which symbol fonts the TV has.
-class _Shape extends StatelessWidget {
-  const _Shape(this.index, this.size, this.color);
-  final int index;
-  final double size;
-  final Color color;
+/// Voter dots on a wrong tile (about 280 px of room): overlapped, and past 3
+/// the last one becomes "+N", so the answer keeps its room.
+class _Voters extends StatelessWidget {
+  const _Voters(this.colors);
+  final List<Color> colors;
+
+  static const _dot = 44.0, _step = 24.0, _max = 3;
 
   @override
-  Widget build(BuildContext context) =>
-      CustomPaint(size: Size.square(size), painter: _ShapePainter(index, color));
-}
-
-class _ShapePainter extends CustomPainter {
-  _ShapePainter(this.index, this.color);
-  final int index;
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size s) {
-    final p = Paint()..color = color;
-    final w = s.width, h = s.height;
-    switch (index) {
-      case 0:
-        canvas.drawPath(Path()..moveTo(w / 2, 0)..lineTo(w, h)..lineTo(0, h)..close(), p);
-      case 1:
-        canvas.drawPath(Path()..moveTo(w / 2, 0)..lineTo(w, h / 2)..lineTo(w / 2, h)..lineTo(0, h / 2)..close(), p);
-      case 2:
-        canvas.drawOval(Offset.zero & s, p);
-      default:
-        canvas.drawRect(Offset.zero & s, p);
-    }
+  Widget build(BuildContext context) {
+    if (colors.isEmpty) return const SizedBox.shrink();
+    final more = colors.length > _max;
+    final shown = more ? _max - 1 : colors.length;
+    final count = shown + (more ? 1 : 0);
+    return Padding(
+      padding: const EdgeInsets.only(left: 12),
+      child: SizedBox(
+        width: _dot + _step * (count - 1),
+        height: _dot,
+        child: Stack(
+          children: [
+            for (var i = 0; i < shown; i++)
+              Positioned(
+                left: i * _step,
+                child: PlayerDot(colors[i], size: _dot, ring: true),
+              ),
+            if (more)
+              Positioned(
+                left: shown * _step,
+                child: Container(
+                  width: _dot,
+                  height: _dot,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: tvRaised,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 5),
+                  ),
+                  child: Text(
+                    '+${colors.length - shown}',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: tvText,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
-
-  @override
-  bool shouldRepaint(_ShapePainter old) => old.index != index || old.color != color;
 }

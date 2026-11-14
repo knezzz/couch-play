@@ -6,3 +6,4 @@ export 'src/quiz_round.dart';
 export 'src/effects.dart';
 export 'src/names.dart';
 export 'src/palette.dart';
+export 'src/shape_mark.dart';
