@@ -24,7 +24,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 ## Open questions for the person
 
-- Task 5b Step 5: adb yes again for the real-TV re-measure with power-ups (when it's ready).
+- Next TV session (fresh adb yes + pairing code): check the human-like bots and the 20 Hz keep-alive (RTT p95
+  target ≤ 40 ms).
 
 Answered:
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
@@ -138,3 +139,4 @@ Added seats: 1 of 3.
   aimless and robotic. Next: 20 Hz keep-alive; bots get goals and human-like steering (plan updated).
 - 2026-11-14: Plan Task 10 changed (PM, from review): QuizRound.addPlayer for mid-round rejoin (matches the spec)
   and a monotonic `now`. Task 10 + Task 7 scoring accepted (re-review clean; PM ran core tests, 74/74).
+- 2026-11-14: Person done playing; adb to the TV disconnected. Tonight's TV session is over. The team continues.
