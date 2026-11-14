@@ -15,7 +15,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 6 | Session, lobby, QR join (+ host bot controls) | todo (after 5b) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
-| 9 | Quiz pack format | review (4b1cbdb on branch task9-packs) | builder-2 |
+| 9 | Quiz pack format | done (4b1cbdb, fix 01db6e3, merge a69cb6f) | builder-2 |
 | 10 | Quiz round logic | todo | — |
 | 11 | Quiz screens | todo | — |
 | 12 | Pack store and upload | todo | — |
@@ -127,3 +127,5 @@ Added seats: 1 of 3.
   probe into its own fresh paint; probes can slip through thin diagonal trails). Task 9 built (4b1cbdb), in review.
   Plan fix: the pack class is `PackQuestion` (name clash with the wire message `QuizQuestion`); Task 9 also adds
   validation messages beyond the plan, documented in docs/quiz-pack-format.md.
+- 2026-11-14: Task 9 accepted. Review HIGH fixed: a zip64 size of -1 bypassed the inflate cap (a 5 MB upload could
+  inflate to ~5 GB and crash the TV). PM ran core tests, 54/54. Plan boxes ticked.

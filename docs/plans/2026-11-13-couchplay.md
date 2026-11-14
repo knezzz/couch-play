@@ -470,14 +470,14 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - `image` (optional) is a relative path that ends in `.svg`, has no `..`, doesn't start with `/`, and is present in the zip → "Question N: image flags/x.svg is missing from the zip."
     - a zip with exactly one `.json` at the root → "The zip must contain one .json pack file."
     - total uncompressed size ≤ 20 MB → "The pack is too large when unzipped."
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - The valid example JSON from the spec, as a zip with `flags/japan.svg`, gives `PackOk`.
   - One test per validation message: the JSON form for schema errors, and the zip form for `../x.svg`, the missing image, two `.json` files and the zip-bomb limit.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** with `package:archive`.
-- [ ] **Step 4: Run.** Expected: PASS.
-- [ ] **Step 5: Write `docs/quiz-pack-format.md`.** It covers the schema, the example, and the zip layout, for people writing packs.
-- [ ] **Step 6: Commit.** Message: `feat(core): quiz pack format and validation`.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** with `package:archive`.
+- [x] **Step 4: Run.** Expected: PASS.
+- [x] **Step 5: Write `docs/quiz-pack-format.md`.** It covers the schema, the example, and the zip layout, for people writing packs.
+- [x] **Step 6: Commit.** Message: `feat(core): quiz pack format and validation`.
 
 ---
 
