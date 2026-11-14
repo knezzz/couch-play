@@ -106,6 +106,11 @@ class Session {
 
   Phase get phase => _phase;
 
+  /// The placements of the game that just ended; empty outside the results
+  /// phase. The TV's results screen draws these.
+  List<Placement> get placements => List.unmodifiable(_placements);
+  var _placements = <Placement>[];
+
   /// Session points per player id.
   Map<int, int> get sessionScores => Map.unmodifiable(_scores);
 
@@ -453,6 +458,7 @@ class Session {
             p!.socket?.send(CurveStatus(
                 alive: false, score: status.score, target: status.target));
           }
+          p?.socket?.send(const Effect('colorPulse')); // bots have no socket
         case RoundOver():
           roundOver = true;
         case MatchOver():
@@ -488,9 +494,12 @@ class Session {
       }
     }
     _phase = Phase.results;
+    _placements = placements;
     final results = Results(placements);
+    final winners = {for (final pl in placements) if (pl.place == 1) pl.playerId};
     for (final p in _players) {
       p.socket?.send(results);
+      if (winners.contains(p.id)) p.socket?.send(const Effect('confetti'));
     }
     _notify();
   }
@@ -498,6 +507,7 @@ class Session {
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
   void returnToLobby() {
     _phase = Phase.lobby;
+    _placements = [];
     _sim = null;
     _bots = null;
     _simIdOf.clear();
