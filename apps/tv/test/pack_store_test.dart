@@ -20,7 +20,7 @@ void main() {
   setUp(() => dir = Directory.systemTemp.createTempSync('packs'));
   tearDown(() => dir.deleteSync(recursive: true));
 
-  List<String> files() => dir.listSync().map((e) => e.uri.pathSegments.last).toList()..sort();
+  List<String> files() => dir.listSync().map((e) => e.path.split('/').last).toList()..sort();
 
   test('add_valid_pack_persists_and_reloads', () async {
     final s = await PackStore.load(bundled: [], userDir: dir);
@@ -79,5 +79,38 @@ void main() {
     final s = await PackStore.load(bundled: [pack('x', title: 'Built-in')], userDir: dir);
     expect(s.get('x')!.title, 'Built-in');
     expect(s.infos.length, 1);
+  });
+
+  test('concurrent adds of one id leave disk and memory in agreement', () async {
+    final s = await PackStore.load(bundled: [], userDir: dir);
+    // A big pack and a small one: unserialized writes to one .tmp can mix.
+    final results = await Future.wait([
+      s.add(pack('a', title: 'Big', n: 3000)),
+      s.add(pack('a', title: 'Small', n: 1)),
+    ]);
+    expect(results, [null, null]);
+    expect(files(), ['a.pack']);
+    final again = await PackStore.load(bundled: [], userDir: dir);
+    expect(again.infos, s.infos);
+    expect(s.infos.single.title, 'Small'); // adds run in call order
+  });
+
+  test('a failed write leaves no .tmp and a clear message', () async {
+    Directory('${dir.path}/a.pack').createSync(); // the rename onto it throws
+    final s = await PackStore.load(bundled: [], userDir: dir);
+    expect(await s.add(pack('a')),
+        "The TV couldn't save the pack. Free some space on the TV, then try again.");
+    expect(files(), ['a.pack']); // only the directory we made
+    expect(s.infos, isEmpty);
+    // and the next add still works
+    expect(await s.add(pack('b')), isNull);
+  });
+
+  test('a listing error keeps the bundled packs', () async {
+    final sealed = Directory('${dir.path}/sealed')..createSync();
+    Process.runSync('chmod', ['000', sealed.path]);
+    addTearDown(() => Process.runSync('chmod', ['755', sealed.path]));
+    final s = await PackStore.load(bundled: [pack('x')], userDir: sealed);
+    expect(s.infos.map((i) => i.id), ['x']);
   });
 }
