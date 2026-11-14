@@ -455,8 +455,8 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
 
 **Interfaces:**
 - Produces:
-  - `class QuizPack { String id; String title; List<QuizQuestion> questions; Map<String, Uint8List> images; }`.
-  - `class QuizQuestion { String q; String? image; List<String> choices; int answer; }`.
+  - `class QuizPack { String id; String title; List<PackQuestion> questions; Map<String, Uint8List> images; }`.
+  - `class PackQuestion { String q; String? image; List<String> choices; int answer; }`. (Renamed 2026-11-14 from `QuizQuestion`, which is the Task 2 wire message.)
   - `sealed class PackResult`: `PackOk(QuizPack)` | `PackError(String message)`.
   - `PackResult parsePack(Uint8List bytes)` detects zip by the magic bytes `PK\x03\x04`; otherwise it's JSON.
   - Validation, with messages exactly as written:

@@ -15,7 +15,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 6 | Session, lobby, QR join (+ host bot controls) | todo (after 5b) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
-| 9 | Quiz pack format | in progress (early, parallel with 5b) | builder-2 |
+| 9 | Quiz pack format | review (4b1cbdb on branch task9-packs) | builder-2 |
 | 10 | Quiz round logic | todo | — |
 | 11 | Quiz screens | todo | — |
 | 12 | Pack store and upload | todo | — |
@@ -123,3 +123,7 @@ Added seats: 1 of 3.
   start direction. Spec and plan updated: smarter bots + arrow go into Task 5b, lobby bot controls into Task 6.
 - 2026-11-14: 5b start arrow landed (9d38b3a); RTT keep-alive landed (8954fab, controller pings at 10 Hz in Curve).
   builder-2 moves to Task 9 early (independent pure-core work).
+- 2026-11-14: 5b Step 5 build (872943a) live on the TV; all 5b review clean (2 LOW bot notes left: a fat bot can
+  probe into its own fresh paint; probes can slip through thin diagonal trails). Task 9 built (4b1cbdb), in review.
+  Plan fix: the pack class is `PackQuestion` (name clash with the wire message `QuizQuestion`); Task 9 also adds
+  validation messages beyond the plan, documented in docs/quiz-pack-format.md.
