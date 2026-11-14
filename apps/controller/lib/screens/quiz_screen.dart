@@ -31,15 +31,25 @@ class _QuizScreenState extends State<QuizScreen> {
     if (r != null) {
       final hit = r.yourPoints > 0;
       return Scaffold(
-        backgroundColor: hit ? const Color(0xFF1B5E3A) : const Color(0xFF3A1B1B),
+        backgroundColor: hit
+            ? const Color(0xFF1B5E3A)
+            : const Color(0xFF3A1B1B),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(hit ? '+${r.yourPoints}' : 'Not this time',
-                  style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold)),
+              Text(
+                hit ? '+${r.yourPoints}' : 'Not this time',
+                style: const TextStyle(
+                  fontSize: 64,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 16),
-              Text('Total ${r.yourTotal}', style: const TextStyle(fontSize: 32)),
+              Text(
+                'Total ${r.yourTotal}',
+                style: const TextStyle(fontSize: 32),
+              ),
             ],
           ),
         ),
@@ -47,35 +57,56 @@ class _QuizScreenState extends State<QuizScreen> {
     }
     final c = widget.question?.choices ?? const ['', '', '', ''];
     return Scaffold(
-      body: Column(
-        children: [
-          for (var i = 0; i < 4; i++)
-            Expanded(
-              child: Material(
-                color: _picked == null || _picked == i ? _tiles[i].$2 : _tiles[i].$2.withValues(alpha: 0.25),
-                child: InkWell(
-                  onTap: () {
-                    if (_picked != null) return;
-                    setState(() => _picked = i);
-                    widget.conn.send(Answer(i));
-                  },
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Text(_picked == i ? 'Locked in' : _tiles[i].$1,
-                            style: const TextStyle(fontSize: 40, color: Colors.black87)),
-                        Text(c[i],
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87)),
-                      ]),
+      body: SafeArea(
+        child: Column(
+          children: [
+            for (var i = 0; i < 4; i++)
+              Expanded(
+                child: Material(
+                  color: _picked == null || _picked == i
+                      ? _tiles[i].$2
+                      : _tiles[i].$2.withValues(alpha: 0.25),
+                  child: InkWell(
+                    onTap: () {
+                      if (_picked != null) return;
+                      setState(() => _picked = i);
+                      widget.conn.send(Answer(i));
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _picked == i ? 'Locked in' : _tiles[i].$1,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                c[i],
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

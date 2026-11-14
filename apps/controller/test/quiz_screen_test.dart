@@ -30,4 +30,21 @@ void main() {
     await t.pumpWidget(MaterialApp(home: QuizScreen(c, q, const QuizReveal(2, 0, 900))));
     expect(find.text('Not this time'), findsOneWidget);
   });
+
+  testWidgets('small phone: safe area insets and a 3-line choice fits', (t) async {
+    t.view.physicalSize = const Size(360, 640);
+    t.view.devicePixelRatio = 1;
+    t.view.padding = const FakeViewPadding(top: 40, bottom: 34);
+    addTearDown(t.view.reset);
+    final long = 'A very long answer that needs several lines on a small phone screen ' * 2;
+    final qq = QuizQuestion(1, 5, [long, 'b', long, 'd'], 20);
+    await t.pumpWidget(MaterialApp(home: QuizScreen(FakeConnection(), qq, null)));
+    expect(t.takeException(), isNull);
+    expect(t.getTopLeft(find.byType(InkWell).first).dy, greaterThanOrEqualTo(40));
+    expect(t.getBottomLeft(find.byType(InkWell).last).dy, lessThanOrEqualTo(640 - 34));
+    for (final e in find.text(long).evaluate()) {
+      final tile = find.ancestor(of: find.byWidget(e.widget), matching: find.byType(InkWell));
+      expect(t.getRect(find.byWidget(e.widget)).bottom, lessThanOrEqualTo(t.getRect(tile).bottom));
+    }
+  });
 }
