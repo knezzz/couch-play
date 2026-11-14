@@ -70,8 +70,14 @@ class Session {
 
   /// What the TV lobby shows as the join address; null means no network
   /// ([noWifiText]).
-  String? joinUrl;
-  String get joinHint => joinUrl ?? noWifiText;
+  String? get joinUrl => _joinUrl;
+  set joinUrl(String? v) {
+    _joinUrl = v;
+    _notify();
+  }
+
+  String? _joinUrl;
+  String get joinHint => _joinUrl ?? noWifiText;
 
   void dispose() => _changes.dispose();
 
@@ -327,6 +333,12 @@ class Session {
       peer.send(const ErrorMsg('Change the bots between games.'));
       return;
     }
+    setBotCount(count);
+  }
+
+  /// Sets the number of bots, clamped so players + bots <= 8. Lobby only.
+  void setBotCount(int count) {
+    if (_phase != Phase.lobby) return;
     final humans = _players.where((p) => !p.bot).length;
     final want = count.clamp(0, maxPlayers - humans);
     var bots = _players.where((p) => p.bot).toList();
