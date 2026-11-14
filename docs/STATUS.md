@@ -15,7 +15,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 6 | Session, lobby, QR join (+ host bot controls) | todo (after 5b) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
-| 9 | Quiz pack format | todo | — |
+| 9 | Quiz pack format | in progress (early, parallel with 5b) | builder-2 |
 | 10 | Quiz round logic | todo | — |
 | 11 | Quiz screens | todo | — |
 | 12 | Pack store and upload | todo | — |
@@ -121,3 +121,5 @@ Added seats: 1 of 3.
 - 2026-11-14: Scope change from the person: bots become a real feature (host adds/removes them in the lobby; Curve
   only; count toward the 8 and toward scoring) with "survive + power-ups" skill; countdown also shows each player's
   start direction. Spec and plan updated: smarter bots + arrow go into Task 5b, lobby bot controls into Task 6.
+- 2026-11-14: 5b start arrow landed (9d38b3a); RTT keep-alive landed (8954fab, controller pings at 10 Hz in Curve).
+  builder-2 moves to Task 9 early (independent pure-core work).
