@@ -215,50 +215,70 @@ class QuizScreen extends StatelessWidget {
     // Dim the fill and the text only: the voter dots must stay readable.
     final textColor = dim ? _ink.withValues(alpha: 0.3) : _ink;
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        decoration: BoxDecoration(
-          color: dim ? _tileColors[i].withValues(alpha: 0.3) : _tileColors[i],
-          borderRadius: BorderRadius.circular(32),
-          border: reveal && !dim
-              ? Border.all(color: Colors.white, width: 10)
-              : null,
-        ),
-        child: Row(
-          children: [
-            Text(_shapes[i], style: TextStyle(fontSize: 72, color: textColor)),
-            const SizedBox(width: 24),
-            Expanded(
-              child: Text(
-                choices[i],
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ),
-            if (voters.isNotEmpty)
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  for (final p in voters)
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: _color(p),
-                        shape: BoxShape.circle,
-                        // White: tile colours equal player colours 0-3.
-                        border: Border.all(color: Colors.white, width: 4),
-                      ),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      decoration: BoxDecoration(
+        color: dim ? _tileColors[i].withValues(alpha: 0.3) : _tileColors[i],
+        borderRadius: BorderRadius.circular(32),
+        border: reveal && !dim
+            ? Border.all(color: Colors.white, width: 10)
+            : null,
+      ),
+      child: Row(
+        children: [
+          Text(_shapes[i], style: TextStyle(fontSize: 72, color: textColor)),
+          const SizedBox(width: 24),
+          Expanded(child: _FitText(choices[i], textColor)),
+          if (voters.isNotEmpty)
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final p in voters)
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: _color(p),
+                      shape: BoxShape.circle,
+                      // White: tile colours equal player colours 0-3.
+                      border: Border.all(color: Colors.white, width: 4),
                     ),
-                ],
-              ),
-          ],
-        ),
+                  ),
+              ],
+            ),
+        ],
+      ),
     );
   }
+}
+
+/// Up to 3 lines: the largest size from 48 down to 28 px that shows the whole
+/// answer, so answers that differ only at the end stay distinguishable.
+class _FitText extends StatelessWidget {
+  const _FitText(this.text, this.color);
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) {
+      var size = 48.0;
+      TextStyle style() =>
+          TextStyle(fontSize: size, fontWeight: FontWeight.bold, color: color);
+      for (; size > 28; size -= 4) {
+        final tp = TextPainter(
+          text: TextSpan(text: text, style: style()),
+          textDirection: TextDirection.ltr,
+          maxLines: 3,
+        )..layout(maxWidth: box.maxWidth);
+        if (!tp.didExceedMaxLines) break;
+      }
+      return Text(
+        text,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: style(),
+      );
+    },
+  );
 }

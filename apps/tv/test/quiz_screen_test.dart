@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/ui/quiz_screen.dart';
 
@@ -120,5 +121,31 @@ void main() {
     final name = find.text('Player number 1');
     expect(t.widget<Text>(name.last).style!.fontSize, 40);
     expect(t.widget<Text>(find.text('750').first).style!.fontSize, 40);
+  });
+
+  testWidgets('answers that differ only at the end are shown in full, up to 3 lines', (t) async {
+    t.view.physicalSize = const Size(1920, 1080);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    const stem = 'The river that flows through the old town and then';
+    final choices = ['$stem north', '$stem south', '$stem east', '$stem west'];
+    await t.pumpWidget(MaterialApp(
+      home: QuizScreen(
+        question: 'q',
+        choices: choices,
+        number: 1,
+        total: 2,
+        remaining: 0.5,
+        answered: 0,
+        expected: 1,
+        players: const [],
+      ),
+    ));
+    expect(t.takeException(), isNull);
+    for (final c in choices) {
+      final p = t.renderObject<RenderParagraph>(find.text(c));
+      expect(p.didExceedMaxLines, isFalse, reason: c);
+      expect(p.size.height, lessThanOrEqualTo(3 * p.text.style!.fontSize! * 1.5));
+    }
   });
 }
