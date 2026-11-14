@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +16,23 @@ class JoinScreen extends StatefulWidget {
 
 class _JoinScreenState extends State<JoinScreen> {
   final _name = TextEditingController();
+  StreamSubscription<Message>? _sub;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _sub = widget.conn.messages.listen((m) {
+      if (m is Welcome) widget.onJoined();
+      if (m is ErrorMsg) setState(() => _error = m.message);
+    });
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -26,12 +45,17 @@ class _JoinScreenState extends State<JoinScreen> {
               decoration: const InputDecoration(labelText: 'Your name'),
             ),
             const SizedBox(height: 16),
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(_error!, style: const TextStyle(fontSize: 18, color: Colors.redAccent)),
+              ),
             FilledButton(
               onPressed: () {
                 final name = _name.text.trim();
                 if (name.isEmpty) return;
+                setState(() => _error = null);
                 widget.conn.send(Join(name, widget.conn.token));
-                widget.onJoined();
               },
               child: const Text('Join'),
             ),
