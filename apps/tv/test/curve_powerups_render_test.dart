@@ -57,8 +57,14 @@ void main() {
   });
 
   test('effect icons sit beside or behind the head, never ahead, side by side', () {
+    final o = Float64List(2);
+    Offset pos(double x, double y, double hd, int i) {
+      CurveGame.effectIconPos(x, y, hd, i, 1600, 900, o);
+      return Offset(o[0], o[1]);
+    }
+
     for (final heading in [0.0, 1.0, 2.5, -2.0, 4.0]) {
-      final ps = [for (var i = 0; i < 3; i++) CurveGame.effectIconPos(800, 450, heading, i, 1600, 900)];
+      final ps = [for (var i = 0; i < 3; i++) pos(800, 450, heading, i)];
       final dx = Offset.fromDirection(heading).dx, dy = Offset.fromDirection(heading).dy;
       for (final p in ps) {
         expect((p.dx - 800) * dx + (p.dy - 450) * dy, lessThanOrEqualTo(0.001));
@@ -66,9 +72,23 @@ void main() {
       expect((ps[0] - ps[1]).distance, greaterThan(CurveGame.effectIconRadius * 2));
     }
     // Near a wall they stay inside the arena.
-    final p = CurveGame.effectIconPos(2, 2, -1.57, 0, 1600, 900);
+    final p = pos(2, 2, -1.57, 0);
     expect(p.dx, inInclusiveRange(0, 1600));
     expect(p.dy, inInclusiveRange(0, 900));
+  });
+
+  test('a head running along a wall keeps its icon clear of it, at any distance', () {
+    final o = Float64List(2);
+    const clear = CurveGame.effectIconRadius * 1.35 + 6; // ring + line width
+    for (var x = 6.0; x <= 120; x += 1) {
+      for (final (wx, hd) in [(x, -1.5708), (1600 - x, 1.5708)]) {
+        for (var i = 0; i < 3; i++) {
+          CurveGame.effectIconPos(wx, 450, hd, i, 1600, 900, o);
+          // The line runs along y; the icon must not touch it.
+          expect((o[0] - wx).abs(), greaterThanOrEqualTo(clear - 8), reason: 'x=$wx i=$i');
+        }
+      }
+    }
   });
 
   testWidgets('wrap border is drawn white and shrinks with the time left', (tester) async {
@@ -118,6 +138,24 @@ void main() {
         ..[PowerUpKind.fatOthers] = 1;
       d = await _render(sim);
       expect(_near(_at(d, 800, 410 - ring), const Color(0xFFFF4D4D)), isTrue, reason: 'red = others');
+    });
+  });
+
+  testWidgets('a trail next to the wall stays visible while wrap runs', (tester) async {
+    await tester.runAsync(() async {
+      final sim = _Fx()..wrap = 1;
+      sim.place(0, 4, 800, -1.5708); // up the left wall, 4 units in
+      final game = CurveGame(sim, const [Color(0xFFFF0000)])..onGameResize(Vector2(1600, 900));
+      sim.fx.clear();
+      for (var i = 0; i < 30; i++) {
+        game.update(1 / 60);
+      }
+      final rec = PictureRecorder();
+      game.render(Canvas(rec));
+      final d = (await (await rec.endRecording().toImage(1600, 900)).toByteData())!;
+      // The head moved up from y=800; the trail is on x=4, inside the 10-wide border.
+      expect(_near(_at(d, 4, 780), const Color(0xFFFF0000)), isTrue);
+      expect(_near(_at(d, 800, 5), _white), isTrue, reason: 'border still drawn elsewhere');
     });
   });
 }

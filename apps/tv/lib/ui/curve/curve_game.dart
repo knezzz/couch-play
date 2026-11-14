@@ -89,6 +89,7 @@ class CurveGame extends FlameGame {
       ..scale(k)
       ..drawRect(Rect.fromLTWH(0, 0, w, h), Paint()..color = const Color(0xFF14141E))
       ..clipRect(Rect.fromLTWH(0, 0, w, h));
+    _drawWrapBorder(canvas, w, h, sim.wrapLeft); // under the trails, which stay visible
     final base = sim.config.lineWidth;
     for (final e in _paths.entries) {
       _trail
@@ -99,7 +100,6 @@ class CurveGame extends FlameGame {
     for (final u in sim.powerUps) {
       _drawPowerUp(canvas, u.x, u.y, u.kind, sim.config.powerUpRadius);
     }
-    _drawWrapBorder(canvas, w, h, sim.wrapLeft);
     final counting = sim.countingDown;
     for (final hd in sim.heads) {
       if (!hd.alive) continue;
@@ -209,9 +209,9 @@ class CurveGame extends FlameGame {
         PowerUpKind.clear || PowerUpKind.wrap => _blue,
       };
 
-    /// Draws kind's icon at (x, y); with [left] (0..1) a ring around it drains.
+    /// Draws kind's icon at (x, y); with [left] (0..1; -1 = none) a ring around it drains.
   void _drawPowerUp(Canvas canvas, double x, double y, PowerUpKind kind, double r,
-      [double? left]) {
+      [double left = -1]) {
     canvas
       ..save()
       ..translate(x, y)
@@ -232,7 +232,7 @@ class CurveGame extends FlameGame {
       _icon.style = PaintingStyle.fill;
     }
     canvas.drawPath(g, _icon);
-    if (left != null) {
+    if (left >= 0) {
       // Ring drains clockwise from the top.
       _icon
         ..style = PaintingStyle.stroke
@@ -256,17 +256,22 @@ class CurveGame extends FlameGame {
     PowerUpKind.fatOthers,
   ];
 
-  /// Where the [i]th effect icon of a head sits: beside the line (never ahead),
-  /// icons in a row going back along it. Kept inside the arena.
-  static Offset effectIconPos(double x, double y, double heading, int i, double w, double h) {
-    final dx = cos(heading), dy = sin(heading);
-    // Side: the one with more room.
-    var s = _effectSide;
-    final nx = dy, ny = -dx;
-    if (x + nx * s < 0 || x + nx * s > w || y + ny * s < 0 || y + ny * s > h) s = -s;
+  final _iconPos = Float64List(2);
+
+  /// Writes into [out] where the [i]th effect icon of a head sits: beside the
+  /// line (never ahead), icons in a row going back along it. The icon (with
+  /// its ring) stays inside the arena: the side with room wins; if neither has
+  /// room it is clamped.
+  static void effectIconPos(
+      double x, double y, double heading, int i, double w, double h, Float64List out) {
     const m = effectIconRadius * 1.35;
-    return Offset((x + nx * s - dx * _effectStep * i).clamp(m, w - m),
-        (y + ny * s - dy * _effectStep * i).clamp(m, h - m));
+    final dx = cos(heading), dy = sin(heading);
+    final nx = dy, ny = -dx;
+    var s = _effectSide;
+    final cx = x + nx * s, cy = y + ny * s;
+    if (cx < m || cx > w - m || cy < m || cy > h - m) s = -s;
+    out[0] = (x + nx * s - dx * _effectStep * i).clamp(m, w - m);
+    out[1] = (y + ny * s - dy * _effectStep * i).clamp(m, h - m);
   }
 
   void _drawEffects(Canvas canvas, CurveHead hd, double w, double h) {
@@ -274,8 +279,8 @@ class CurveGame extends FlameGame {
     for (final kind in _effectKinds) {
       final left = sim.effectLeft(hd.id, kind);
       if (left <= 0) continue;
-      final p = effectIconPos(hd.x, hd.y, hd.heading, i++, w, h);
-      _drawPowerUp(canvas, p.dx, p.dy, kind, effectIconRadius, left);
+      effectIconPos(hd.x, hd.y, hd.heading, i++, w, h, _iconPos);
+      _drawPowerUp(canvas, _iconPos[0], _iconPos[1], kind, effectIconRadius, left);
     }
   }
 
