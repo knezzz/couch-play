@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:core/core.dart';
@@ -96,8 +97,9 @@ class CurveGame extends FlameGame {
       canvas.drawPath(e.value, _trail);
     }
     for (final u in sim.powerUps) {
-      _drawPowerUp(canvas, u, sim.config.powerUpRadius);
+      _drawPowerUp(canvas, u.x, u.y, u.kind, sim.config.powerUpRadius);
     }
+    _drawWrapBorder(canvas, w, h, sim.wrapLeft);
     final counting = sim.countingDown;
     for (final hd in sim.heads) {
       if (!hd.alive) continue;
@@ -105,6 +107,7 @@ class CurveGame extends FlameGame {
           _head..color = counting ? _color(hd.id) : const Color(0xFFFFFFFF));
       if (counting) _drawArrow(canvas, hd.x, hd.y, hd.heading, base * 8, _color(hd.id));
       if (counting) _drawName(canvas, hd.id, hd.x, hd.y, hd.heading, base * 2, w, h);
+      if (!counting) _drawEffects(canvas, hd, w, h);
     }
     canvas.restore();
     super.render(canvas);
@@ -206,14 +209,16 @@ class CurveGame extends FlameGame {
         PowerUpKind.clear || PowerUpKind.wrap => _blue,
       };
 
-  void _drawPowerUp(Canvas canvas, CurvePowerUp u, double r) {
+    /// Draws kind's icon at (x, y); with [left] (0..1) a ring around it drains.
+  void _drawPowerUp(Canvas canvas, double x, double y, PowerUpKind kind, double r,
+      [double? left]) {
     canvas
       ..save()
-      ..translate(u.x, u.y)
+      ..translate(x, y)
       ..scale(r);
     _icon
       ..style = PaintingStyle.fill
-      ..color = _powerUpColor(u.kind);
+      ..color = _powerUpColor(kind);
     canvas.drawCircle(Offset.zero, 1, _icon);
     _icon
       ..color = const Color(0xFF14141E)
@@ -221,13 +226,92 @@ class CurveGame extends FlameGame {
       ..strokeWidth = 0.16
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
-    final g = _glyphs[u.kind]!;
+    final g = _glyphs[kind]!;
     // Solid shapes are filled, line glyphs stroked.
-    if (u.kind == PowerUpKind.fatOthers || u.kind == PowerUpKind.thin || u.kind == PowerUpKind.ghost) {
+    if (kind == PowerUpKind.fatOthers || kind == PowerUpKind.thin || kind == PowerUpKind.ghost) {
       _icon.style = PaintingStyle.fill;
     }
-    canvas
-      ..drawPath(g, _icon)
-      ..restore();
+    canvas.drawPath(g, _icon);
+    if (left != null) {
+      // Ring drains clockwise from the top.
+      _icon
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.28
+        ..strokeCap = StrokeCap.butt
+        ..color = _powerUpColor(kind);
+      canvas.drawArc(_ringRect, -pi / 2, 2 * pi * left, false, _icon);
+    }
+    canvas.restore();
+  }
+
+  static const _ringRect = Rect.fromLTRB(-1.35, -1.35, 1.35, 1.35);
+
+  /// Effect icons in arena units: radius, and how far beside the line they sit.
+  static const effectIconRadius = 18.0, _effectSide = 40.0, _effectStep = 50.0;
+  static const _effectKinds = [
+    PowerUpKind.speed,
+    PowerUpKind.thin,
+    PowerUpKind.ghost,
+    PowerUpKind.slowOthers,
+    PowerUpKind.fatOthers,
+  ];
+
+  /// Where the [i]th effect icon of a head sits: beside the line (never ahead),
+  /// icons in a row going back along it. Kept inside the arena.
+  static Offset effectIconPos(double x, double y, double heading, int i, double w, double h) {
+    final dx = cos(heading), dy = sin(heading);
+    // Side: the one with more room.
+    var s = _effectSide;
+    final nx = dy, ny = -dx;
+    if (x + nx * s < 0 || x + nx * s > w || y + ny * s < 0 || y + ny * s > h) s = -s;
+    const m = effectIconRadius * 1.35;
+    return Offset((x + nx * s - dx * _effectStep * i).clamp(m, w - m),
+        (y + ny * s - dy * _effectStep * i).clamp(m, h - m));
+  }
+
+  void _drawEffects(Canvas canvas, CurveHead hd, double w, double h) {
+    var i = 0;
+    for (final kind in _effectKinds) {
+      final left = sim.effectLeft(hd.id, kind);
+      if (left <= 0) continue;
+      final p = effectIconPos(hd.x, hd.y, hd.heading, i++, w, h);
+      _drawPowerUp(canvas, p.dx, p.dy, kind, effectIconRadius, left);
+    }
+  }
+
+  // Wrap border: 4 edges as one raw-points draw, filled in place.
+  final _borderPts = Float32List(16);
+  final _border = Paint()
+    ..color = const Color(0xFFFFFFFF)
+    ..strokeCap = StrokeCap.butt
+    ..strokeWidth = borderWidth;
+  static const borderWidth = 10.0;
+
+  /// Fills [pts] with up to 4 lines (x1,y1,x2,y2 each) covering [frac] of the
+  /// perimeter, clockwise from the top-left corner; the rest is zeroed. Returns the floats used.
+  static int borderLines(Float32List pts, double w, double h, double frac) {
+    final lo = borderWidth / 2, r = w - lo, b = h - lo;
+    var remaining = (2 * (w + h)) * frac, n = 0;
+    for (var e = 0; e < 4 && remaining > 0; e++) {
+      // tl -> tr -> br -> bl -> tl
+      final ax = e == 1 || e == 2 ? r : lo, ay = e >= 2 ? b : lo;
+      final bx = e == 0 || e == 1 ? r : lo, by = e >= 1 && e <= 2 ? b : lo;
+      final len = (bx - ax).abs() + (by - ay).abs();
+      final t = remaining >= len ? 1.0 : remaining / len;
+      pts[n++] = ax;
+      pts[n++] = ay;
+      pts[n++] = ax + (bx - ax) * t;
+      pts[n++] = ay + (by - ay) * t;
+      remaining -= len;
+    }
+    final used = n;
+    pts.fillRange(n, pts.length, 0); // zero-length lines draw nothing
+    return used;
+  }
+
+  void _drawWrapBorder(Canvas canvas, double w, double h, double left) {
+    if (left <= 0) return;
+    borderLines(_borderPts, w, h, left);
+    canvas.drawRawPoints(PointMode.lines, _borderPts, _border);
   }
 }
