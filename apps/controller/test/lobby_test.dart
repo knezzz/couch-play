@@ -131,6 +131,24 @@ void main() {
     },
   );
 
+  testWidgets('quiz question, reveal, next question reset the lock, Results leaves', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(1, 1, 'tok'));
+    await _send(t, c, _lobby());
+    await _send(t, c, const QuizQuestion(1, 2, ['a', 'b', 'c', 'd'], 20));
+    await t.tap(find.text('b'));
+    await t.pump();
+    expect(find.text('Locked in'), findsOneWidget);
+    await _send(t, c, const QuizReveal(1, 750, 750));
+    expect(find.text('+750'), findsOneWidget);
+    await _send(t, c, const QuizQuestion(2, 2, ['e', 'f', 'g', 'h'], 20));
+    expect(find.text('Locked in'), findsNothing);
+    expect(find.text('e'), findsOneWidget);
+    await _send(t, c, const Results([Placement(1, 1, 750, 3)]));
+    expect(find.text('e'), findsNothing);
+  });
+
   testWidgets('LobbyState also leaves the curve screen directly', (t) async {
     final c = FakeConnection();
     await t.pumpWidget(App(c));

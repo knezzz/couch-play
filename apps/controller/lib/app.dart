@@ -7,10 +7,11 @@ import 'connection.dart';
 import 'screens/curve_screen.dart';
 import 'screens/join_screen.dart';
 import 'screens/lobby_screen.dart';
+import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
 
-enum _Screen { join, lobby, wait, curve, results, kicked }
+enum _Screen { join, lobby, wait, curve, quiz, results, kicked }
 
 /// Routes the TV's messages to a screen. No web imports, so it runs in tests.
 class App extends StatefulWidget {
@@ -28,6 +29,8 @@ class _AppState extends State<App> {
   String _waitReason = '';
   String? _error;
   bool _alive = true;
+  QuizQuestion? _question;
+  QuizReveal? _reveal;
   List<Placement> _placements = const [];
   StreamSubscription<Message>? _sub;
 
@@ -59,6 +62,15 @@ class _AppState extends State<App> {
         if (_screen != _Screen.curve) _error = null;
         _alive = m.alive;
         _screen = _Screen.curve;
+      case QuizQuestion():
+        _question = m;
+        _reveal = null;
+        _screen = _Screen.quiz;
+      case QuizReveal():
+        if (_question != null) {
+          _reveal = m;
+          _screen = _Screen.quiz;
+        }
       case Results():
         _placements = m.placements;
         _screen = _Screen.results;
@@ -79,6 +91,7 @@ class _AppState extends State<App> {
           : LobbyScreen(widget.conn, _lobby!, _myId),
     _Screen.wait => WaitScreen(_waitReason),
     _Screen.curve => CurveScreen(widget.conn, alive: _alive),
+    _Screen.quiz => QuizScreen(widget.conn, _question!, _reveal, key: ValueKey(_question!.number)),
     _Screen.results => ResultsScreen(_placements, _myId),
     _Screen.kicked => _Kicked(
       onJoinAgain: () => setState(() => _screen = _Screen.join),
