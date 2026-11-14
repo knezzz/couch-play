@@ -172,3 +172,5 @@ Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 
 - 2026-11-14: Task 14 Steps 1-4 accepted (PM ran tests: core 94, tv 141, controller 34). Person asked for a design
   artifact and a design pass: canvas "CouchPlay screens" (https://claude.ai/artifact/SX8ertCTfhPyLpSpti4PKe), 9 screens,
   copy in docs/design/couchplay-screens/; spec + plan updated (Task 15); routed to lead.
+- 2026-11-14: Person: review hr-medimurje later; first verify it online (Wikipedia etc.) and make it harder, as it's
+  too easy for locals. Revision queued to content (sources file per question; Q5 Grad Zagreb fix).
