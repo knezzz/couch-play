@@ -15,6 +15,12 @@ class CurveConfig {
     this.selfGraceTicks = 12,
     this.tickHz = 60,
     this.countdown = 2.0,
+    this.powerUps = true,
+    this.powerUpEveryMin = 4,
+    this.powerUpEveryMax = 8,
+    this.powerUpMax = 3,
+    this.powerUpRadius = 24,
+    this.effectSeconds = 5,
   });
 
   final int arenaW, arenaH;
@@ -23,6 +29,22 @@ class CurveConfig {
   final double gapEveryMin, gapEveryMax, gapLength;
   final int selfGraceTicks, tickHz;
   final double countdown;
+
+  /// Power-ups: seconds between spawns (min..max, counted after the
+  /// countdown), at most [powerUpMax] on the board, picked up within
+  /// [powerUpRadius] of a head, effects last [effectSeconds].
+  final bool powerUps;
+  final double powerUpEveryMin, powerUpEveryMax, powerUpRadius, effectSeconds;
+  final int powerUpMax;
+}
+
+enum PowerUpKind { speed, thin, ghost, slowOthers, fatOthers, clear, wrap }
+
+class CurvePowerUp {
+  const CurvePowerUp(this.id, this.kind, this.x, this.y);
+  final int id;
+  final PowerUpKind kind;
+  final double x, y;
 }
 
 sealed class CurveEvent {}
@@ -30,6 +52,12 @@ sealed class CurveEvent {}
 class Died extends CurveEvent {
   Died(this.id);
   final int id;
+}
+
+class PickedUp extends CurveEvent {
+  PickedUp(this.playerId, this.kind);
+  final int playerId;
+  final PowerUpKind kind;
 }
 
 class RoundOver extends CurveEvent {
@@ -49,10 +77,11 @@ class CurveHead {
   final bool alive, inGap;
 }
 
+/// [width] is the line width when painted: lineWidth x 0.5 (thin), 1, or 2 (fat).
 class TrailSegment {
-  const TrailSegment(this.id, this.x1, this.y1, this.x2, this.y2);
+  const TrailSegment(this.id, this.x1, this.y1, this.x2, this.y2, [this.width = 6]);
   final int id;
-  final double x1, y1, x2, y2;
+  final double x1, y1, x2, y2, width;
 }
 
 class _Head {
@@ -65,8 +94,11 @@ class _Head {
 
 class CurveSim {
   CurveSim(List<int> playerIds,
-      {this.config = const CurveConfig(), Random? random})
+      {this.config = const CurveConfig(),
+      Random? random,
+      Map<int, String>? names})
       : _random = random ?? Random(),
+        names = names ?? const {},
         target = 10 * (playerIds.length - 1),
         _cols = config.arenaW ~/ config.cell,
         _rows = config.arenaH ~/ config.cell,
@@ -82,6 +114,9 @@ class CurveSim {
   }
 
   final CurveConfig config;
+
+  /// Player names for the renderer; the sim itself never reads them.
+  final Map<int, String> names;
   final Random _random;
   final int _cols, _rows;
   final Uint16List _owner; // player id + 1, 0 = empty
@@ -99,6 +134,20 @@ class CurveSim {
 
   Iterable<CurveHead> get heads => _heads.values
       .map((h) => CurveHead(h.id, h.x, h.y, h.heading, h.alive, h.inGap));
+
+  /// True while the pre-round countdown runs (heads are frozen).
+  bool get countingDown => _countdownLeft > 0;
+
+  Iterable<CurvePowerUp> get powerUps => const [];
+
+  bool hasEffect(int playerId, PowerUpKind kind) => false;
+
+  /// True once after a "clear" pickup, then false. Call it before
+  /// [takeNewSegments] in the same frame: segments after a clear are new trail.
+  bool takeCleared() => false;
+
+  /// Test hook: put a power-up on the board.
+  void placePowerUp(PowerUpKind kind, double x, double y) {}
 
   List<TrailSegment> takeNewSegments() {
     final out = _segments;
