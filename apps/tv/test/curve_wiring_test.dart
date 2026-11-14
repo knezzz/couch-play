@@ -116,6 +116,48 @@ void main() {
     await again.close();
   });
 
+  test('reload_where_the_old_socket_closes_late', () async {
+    final old = await _Phone.connect(server.port);
+    await old.send(const Join('A', 'tokA'));
+    final fresh = await _Phone.connect(server.port); // reloaded page
+    await fresh.send(const Join('A', 'tokA'));
+    expect(fresh.welcomed, isTrue);
+    await old.close(); // unload finishes after the new page joined
+    await fresh.send(const Steer(left: true, right: false));
+    expect(turnedOver200Ticks(), isTrue);
+    await fresh.close();
+  });
+
+  // The phone sends Steer only when a button changes, so a button that is
+  // still held when a round or match starts must keep steering.
+  test('held_button_survives_a_new_round', () async {
+    final a = await _Phone.connect(server.port);
+    await a.send(const Join('A', 'tokA'));
+    await a.send(const Steer(left: true, right: false));
+    wiring.startRound();
+    expect(turnedOver200Ticks(), isTrue);
+    await a.close();
+  });
+
+  test('held_button_survives_a_new_match', () async {
+    final a = await _Phone.connect(server.port);
+    await a.send(const Join('A', 'tokA'));
+    await a.send(const Steer(left: true, right: false));
+    wiring.startMatch();
+    expect(turnedOver200Ticks(), isTrue);
+    await a.close();
+  });
+
+  test('released_button_stays_released_in_a_new_round', () async {
+    final a = await _Phone.connect(server.port);
+    await a.send(const Join('A', 'tokA'));
+    await a.send(const Steer(left: true, right: false));
+    await a.send(const Steer(left: false, right: false));
+    wiring.startRound();
+    expect(turnedOver200Ticks(), isFalse);
+    await a.close();
+  });
+
   test('second_phone_is_told_while_the_first_is_playing', () async {
     final a = await _Phone.connect(server.port);
     await a.send(const Join('A', 'tokA'));
