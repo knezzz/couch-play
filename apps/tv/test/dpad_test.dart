@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/session/session.dart';
 import 'package:tv/ui/back_guard.dart';
 import 'package:tv/ui/lobby_screen.dart';
@@ -12,7 +13,8 @@ import 'package:tv/ui/tv_theme.dart';
 
 import 'session_test.dart' show join;
 
-const _prompt = 'End this game and return to the lobby?';
+const _prompt = Strings.endGameTitle;
+final _firstStep = Strings.howToJoinSteps.split('\n').first;
 
 /// The wiring from main.dart around [home]. The remote's Back arrives as a
 /// pop-route from Android, not as a key.
@@ -75,11 +77,11 @@ void main() {
     await _back(t);
     expect(find.text(_prompt), findsOneWidget);
     expect(_exits, 0, reason: 'Back was handled, the app did not exit');
-    expect(_focused(t, 'No'), isTrue, reason: 'focus starts on No');
+    expect(_focused(t, Strings.no), isTrue, reason: 'focus starts on No');
 
     await t.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     await t.pump();
-    expect(_focused(t, 'Yes'), isTrue);
+    expect(_focused(t, Strings.yes), isTrue);
 
     await t.sendKeyEvent(LogicalKeyboardKey.select);
     await t.pumpAndSettle();
@@ -195,17 +197,17 @@ void main() {
       return (m.shape! as OutlinedBorder).side;
     }
 
-    expect(_focused(t, 'How to join'), isTrue);
-    expect(side('How to join').color, tvAccent);
-    expect(side('How to join').width, 3);
-    expect(side('Quit').width, isNot(3), reason: 'no ring on the unfocused one');
+    expect(_focused(t, Strings.howToJoin), isTrue);
+    expect(side(Strings.howToJoin).color, tvAccent);
+    expect(side(Strings.howToJoin).width, 3);
+    expect(side(Strings.quit).width, isNot(3), reason: 'no ring on the unfocused one');
     // Quit sits beside it with a real font; the wide test font wraps it below.
     await t.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await t.pump(const Duration(milliseconds: 500)); // the ring animates in
-    expect(_focused(t, 'Quit'), isTrue);
-    expect(side('Quit').width, 3);
-    expect(side('How to join').width, isNot(3));
+    expect(_focused(t, Strings.quit), isTrue);
+    expect(side(Strings.quit).width, 3);
+    expect(side(Strings.howToJoin).width, isNot(3));
   });
 
   testWidgets('How to join shows the steps; Quit calls onQuit', (t) async {
@@ -213,13 +215,37 @@ void main() {
     addTearDown(() => t.binding.setSurfaceSize(null));
     var quit = 0;
     await t.pumpWidget(lobby(onQuit: () => quit++));
-    await t.tap(find.text('How to join'));
+    await t.tap(find.text(Strings.howToJoin));
     await t.pumpAndSettle();
-    expect(find.textContaining('same Wi-Fi'), findsOneWidget);
+    expect(find.textContaining(_firstStep), findsOneWidget);
     await t.sendKeyEvent(LogicalKeyboardKey.select); // the dialog's button has focus
     await t.pumpAndSettle();
-    expect(find.textContaining('same Wi-Fi'), findsNothing);
-    await t.tap(find.text('Quit'));
+    expect(find.textContaining(_firstStep), findsNothing);
+    await t.tap(find.text(Strings.quit));
     expect(quit, 1);
+  });
+
+  // The longest Croatian texts fit at 1080p.
+  testWidgets('How to join dialog fits with the Croatian steps', (t) async {
+    await t.binding.setSurfaceSize(const Size(1920, 1080));
+    addTearDown(() => t.binding.setSurfaceSize(null));
+    await t.pumpWidget(lobby());
+    await t.tap(find.text(Strings.howToJoin));
+    await t.pumpAndSettle();
+    expect(t.takeException(), isNull);
+    for (final line in Strings.howToJoinSteps.split('\n')) {
+      expect(find.textContaining(line.substring(0, 12)), findsOneWidget);
+    }
+  });
+
+  testWidgets('End-game dialog fits with the Croatian question', (t) async {
+    final s = _quiz();
+    await t.binding.setSurfaceSize(const Size(1920, 1080));
+    addTearDown(() => t.binding.setSurfaceSize(null));
+    await t.pumpWidget(_app(s));
+    await _back(t);
+    expect(t.takeException(), isNull);
+    expect(find.text(Strings.endGameTitle), findsOneWidget);
+    s.dispose();
   });
 }

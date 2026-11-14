@@ -20,6 +20,7 @@ import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/quiz_screen.dart';
 import 'ui/tv_theme.dart';
+import 'strings.dart';
 
 const _perf = bool.fromEnvironment('PERF');
 // QA/perf: pre-seeds this many bots when the first phone joins, e.g. BOTS=7.
@@ -93,7 +94,7 @@ class _TvAppState extends State<TvApp> {
       final ip = pickLanAddress(await NetworkInterface.list(type: InternetAddressType.IPv4));
       _session.joinUrl = ip == null ? null : 'http://$ip:${server.port}/';
     } catch (e) {
-      if (mounted) setState(() => _error = 'Could not start: $e');
+      if (mounted) setState(() => _error = Strings.startFailed(e));
     }
   }
 

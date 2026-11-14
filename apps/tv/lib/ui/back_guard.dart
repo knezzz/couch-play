@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../strings.dart';
 
 class _EscapeIntent extends Intent {
   const _EscapeIntent();
@@ -99,17 +100,17 @@ class _EndGameDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('End this game and return to the lobby?', style: TextStyle(fontSize: 44)),
+        title: const Text(Strings.endGameTitle, style: TextStyle(fontSize: 44)),
         actionsAlignment: MainAxisAlignment.start,
         actions: [
           FilledButton(
             autofocus: true,
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('No'),
+            child: const Text(Strings.no),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Yes'),
+            child: const Text(Strings.yes),
           ),
         ],
       );

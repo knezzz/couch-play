@@ -4,24 +4,12 @@ import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 import 'tv_theme.dart';
+import '../strings.dart';
 
 /// How long the results stay up before the TV goes back to the lobby.
 const resultsHold = Duration(seconds: 8);
 
 const _green = Color(0xFF2ECC71);
-
-String _ordinal(int n) {
-  final tens = n % 100;
-  if (tens >= 11 && tens <= 13) return '${n}th';
-  return '$n${switch (n % 10) { 1 => 'st', 2 => 'nd', 3 => 'rd', _ => 'th' }}';
-}
-
-/// The headline for the placements: "Ana wins!", "Ana & Bea win!".
-String _headline(List<String> winners) => switch (winners.length) {
-      0 => 'Game over',
-      1 => '${winners[0]} wins!',
-      _ => '${winners.sublist(0, winners.length - 1).join(', ')} & ${winners.last} win!',
-    };
 
 /// Shown for [resultsHold] after a game (TvResults): the placements and the
 /// session scores. Reads only [Placement]s and [PlayerInfo]s, so Curve and the
@@ -72,7 +60,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
     final byScore = [...widget.players]..sort((a, b) => b.sessionScore.compareTo(a.sessionScore));
     final winners = [
       for (final pl in widget.placements)
-        if (pl.place == 1) byId[pl.playerId]?.name ?? 'Player',
+        if (pl.place == 1) byId[pl.playerId]?.name ?? Strings.unknownPlayer,
     ];
     final dense = widget.placements.length > 4;
     final left = (resultsHold - _elapsed).inMilliseconds;
@@ -96,7 +84,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          _headline(winners),
+                          Strings.wins(winners),
                           maxLines: 1,
                           style: const TextStyle(
                             fontSize: 96,
@@ -159,7 +147,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     ),
                     const SizedBox(width: 24),
                     Text(
-                      'Back to the lobby in ${(left / 1000).ceil().clamp(0, 99)} s',
+                      Strings.backToLobby((left / 1000).ceil().clamp(0, 99)),
                       style: const TextStyle(fontSize: 40, color: tvMuted),
                     ),
                   ],
@@ -182,7 +170,7 @@ class _PlaceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final name = Expanded(
-      child: Text(p?.name ?? 'Player', maxLines: 1, overflow: TextOverflow.ellipsis),
+      child: Text(p?.name ?? Strings.unknownPlayer, maxLines: 1, overflow: TextOverflow.ellipsis),
     );
     if (pl.place == 1) {
       return Container(
@@ -196,7 +184,7 @@ class _PlaceRow extends StatelessWidget {
           style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: tvInk),
           child: Row(
             children: [
-              SizedBox(width: 120, child: Text(_ordinal(pl.place), maxLines: 1, softWrap: false)),
+              SizedBox(width: 120, child: Text(Strings.place(pl.place), maxLines: 1, softWrap: false)),
               const SizedBox(width: 28),
               name,
               const SizedBox(width: 28),
@@ -223,7 +211,7 @@ class _PlaceRow extends StatelessWidget {
           children: [
             SizedBox(
               width: 120,
-              child: Text(_ordinal(pl.place), maxLines: 1, softWrap: false, style: const TextStyle(color: tvMuted)),
+              child: Text(Strings.place(pl.place), maxLines: 1, softWrap: false, style: const TextStyle(color: tvMuted)),
             ),
             PlayerDot(playerColors[(p?.colorIndex ?? 0) % playerColors.length]),
             const SizedBox(width: 28),
@@ -252,7 +240,7 @@ class _Tonight extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Tonight', style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText)),
+            const Text(Strings.tonight, style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText)),
             for (final p in byScore) ...[
               SizedBox(height: byScore.length > 5 ? 12 : 20),
               Row(

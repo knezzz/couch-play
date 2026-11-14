@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/session/session.dart';
 
 import 'session_test.dart' show FakePeer, join, idOf;
@@ -55,7 +56,7 @@ void main() {
     expect(title, isNotEmpty);
     s.finishGame({idOf(a): 1});
     expect(s.quizTitle, '', reason: 'the quiz is over');
-    expect(s.lastGameLabel, 'Quiz · $title');
+    expect(s.lastGameLabel, Strings.gameQuiz(title));
     s.dispose();
   });
 
@@ -192,7 +193,7 @@ void main() {
     b2.say(const Join('Ben', 'tb')); // a Wi-Fi blip: same token, new socket
     await t.pump();
     expect(b2.last<QuizQuestion>(), isNull);
-    expect(b2.last<Waiting>(), const Waiting('Locked in. Watch the TV.'));
+    expect(b2.last<Waiting>(), const Waiting(Strings.lockedIn));
     s.dispose();
   });
 

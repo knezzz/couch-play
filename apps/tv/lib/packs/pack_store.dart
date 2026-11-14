@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:core/core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import '../strings.dart';
 
 /// The pack files under assets/packs/.
 Future<List<Uint8List>> loadBundledPacks(AssetBundle bundle) async {
@@ -89,7 +90,7 @@ class PackStore {
     if (r is PackError) return r.message;
     final pack = (r as PackOk).pack;
     if (_bundled.containsKey(pack.id)) {
-      return "A built-in pack already uses the id '${pack.id}'. Pick another id.";
+      return Strings.builtInPackId(pack.id);
     }
     final tmp = File('${_dir.path}/${pack.id}.pack.tmp');
     try {
@@ -101,7 +102,7 @@ class PackStore {
       try {
         if (await tmp.exists()) await tmp.delete();
       } catch (_) {}
-      return "The TV couldn't save the pack. Free some space on the TV, then try again.";
+      return Strings.packSaveFailed;
     }
     _user[pack.id] = pack;
     return null;

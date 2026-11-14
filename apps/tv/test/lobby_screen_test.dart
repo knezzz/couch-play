@@ -2,13 +2,14 @@ import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/ui/lobby_screen.dart';
 import 'package:tv/ui/tv_theme.dart';
 
 const _players = [
   PlayerInfo(0, 'Ana', 0, true, 3),
   PlayerInfo(1, 'Luka', 1, true, 9),
-  PlayerInfo(2, 'Bot 1', 2, true, 5, bot: true),
+  PlayerInfo(2, 'Robot 1', 2, true, 5, bot: true),
 ];
 
 void _noop() {}
@@ -44,7 +45,7 @@ void main() {
     final card = find.ancestor(of: find.byType(QrImageView), matching: find.byType(Container)).first;
     expect(t.getSize(card), const Size(560, 560));
     expect((t.widget<Container>(card).decoration! as BoxDecoration).color, Colors.white);
-    expect(find.text('Scan, or open in your browser:'), findsOneWidget);
+    expect(find.text(Strings.scanCaption), findsOneWidget);
     expect(find.text('192.168.1.5:8080/'), findsOneWidget, reason: 'no http:// on screen');
   });
 
@@ -56,16 +57,17 @@ void main() {
   testWidgets('without a LAN address it asks for Wi-Fi instead of a QR', (t) async {
     await _pump(t, url: null);
     expect(find.byType(QrImageView), findsNothing);
-    expect(find.text('Connect the TV to Wi-Fi to play.'), findsOneWidget);
+    expect(find.text(Strings.noWifi), findsOneWidget);
+    expect(t.takeException(), isNull, reason: 'the Croatian text fits beside no QR code');
   });
 
   testWidgets('players header, HOST and BOT pills, host star', (t) async {
     await _pump(t);
-    expect(find.text('Players · 3 of 8'), findsOneWidget);
-    expect(find.text('HOST'), findsOneWidget);
-    expect(find.text('BOT'), findsOneWidget);
+    expect(find.text(Strings.players(3)), findsOneWidget);
+    expect(find.text(Strings.badgeHost), findsOneWidget);
+    expect(find.text(Strings.badgeBot), findsOneWidget);
     expect(find.byIcon(Icons.star), findsOneWidget);
-    expect(find.text('AWAY'), findsNothing);
+    expect(find.text(Strings.badgeAway), findsNothing);
   });
 
   testWidgets('chips are a 2-column grid', (t) async {
@@ -82,43 +84,54 @@ void main() {
       PlayerInfo(0, 'Ana', 0, true, 0),
       PlayerInfo(1, 'Ben', 1, false, 0),
     ]);
-    expect(find.text('AWAY'), findsOneWidget);
+    expect(find.text(Strings.badgeAway), findsOneWidget);
     final op = t.widget<Opacity>(find.ancestor(of: find.text('Ben'), matching: find.byType(Opacity)).first);
     expect(op.opacity, 0.6);
   });
 
   testWidgets('scoreboard card: ranked, sorted, 44 px header, 40 px rows and dots', (t) async {
     await _pump(t);
-    expect(_fs(t, find.text('Scoreboard')), 44);
+    expect(_fs(t, find.text(Strings.scoreboard)), 44);
     double y(String name) => t.getTopLeft(find.byKey(ValueKey('score-$name'))).dy;
-    expect(y('Luka'), lessThan(y('Bot 1')));
-    expect(y('Bot 1'), lessThan(y('Ana')));
+    expect(y('Luka'), lessThan(y('Robot 1')));
+    expect(y('Robot 1'), lessThan(y('Ana')));
     final row = find.byKey(const ValueKey('score-Luka'));
     expect(_fs(t, find.descendant(of: row, matching: find.text('Luka'))), 40);
     expect(find.descendant(of: row, matching: find.text('1')), findsOneWidget, reason: 'rank');
     final dot = find.descendant(of: row, matching: find.byType(PlayerDot));
     expect(t.getSize(dot), const Size(40, 40));
-    final card = find.ancestor(of: find.text('Scoreboard'), matching: find.byType(Container)).first;
+    final card = find.ancestor(of: find.text(Strings.scoreboard), matching: find.byType(Container)).first;
     expect((t.widget<Container>(card).decoration! as BoxDecoration).color, tvSurface);
   });
 
   testWidgets('before the first game the card says scores come later', (t) async {
     await _pump(t, players: const [PlayerInfo(0, 'Ana', 0, true, 0)]);
-    expect(find.text('Scores appear after the first game.'), findsOneWidget);
+    expect(find.text(Strings.scoreboardEmpty), findsOneWidget);
     expect(find.byKey(const ValueKey('score-Ana')), findsNothing);
     await _pump(t);
-    expect(find.text('Scores appear after the first game.'), findsNothing);
+    expect(find.text(Strings.scoreboardEmpty), findsNothing);
   });
 
   testWidgets('says who picks the game', (t) async {
     await _pump(t);
-    expect(find.text('Waiting for Ana to pick a game.'), findsOneWidget);
+    expect(find.text(Strings.waitingForHost('Ana')), findsOneWidget);
+  });
+
+  testWidgets('the longest Croatian lobby texts fit: 16-character host name, all badges', (t) async {
+    await _pump(t, players: [
+      const PlayerInfo(0, 'WWWWWWWWWWWWWWWW', 0, true, 12480),
+      const PlayerInfo(1, 'Abcdefghijklmnop', 1, false, 3),
+      for (var i = 2; i < 8; i++) PlayerInfo(i, 'Robot ${i - 1}', i, true, 0, bot: true),
+    ]);
+    expect(t.takeException(), isNull);
+    expect(find.text(Strings.waitingForHost('WWWWWWWWWWWWWWWW')), findsOneWidget);
+    expect(find.text(Strings.badgeAway), findsOneWidget);
   });
 
   testWidgets('with nobody joined it says how to join', (t) async {
     await _pump(t, players: const [], hostId: null);
-    expect(find.text('Scan the code with your phone to join.'), findsOneWidget);
-    expect(find.textContaining('Waiting for'), findsNothing);
+    expect(find.text(Strings.scanToJoin), findsOneWidget);
+    expect(find.textContaining('Čekamo da'), findsNothing);
   });
 
   for (final count in [5, 6, 8]) {

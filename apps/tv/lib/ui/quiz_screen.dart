@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'tv_theme.dart';
+import '../strings.dart';
 
 // Fixed by the spec: tile colours are player colours 0, 3, 1, 2.
 const _tileColors = [
@@ -78,7 +79,7 @@ class QuizScreen extends StatelessWidget {
       Row(
         children: [
           Text(
-            'Question $number of $total',
+            Strings.questionOf(number, total),
             style: const TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.w700,
@@ -96,7 +97,7 @@ class QuizScreen extends StatelessWidget {
           ),
           const SizedBox(width: 32),
           Text(
-            '$answered of $expected answered',
+            Strings.answered(answered, expected),
             style: const TextStyle(fontSize: 40, color: tvMuted),
           ),
         ],
@@ -239,13 +240,13 @@ class QuizScreen extends StatelessWidget {
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Question $number of $total',
+                      text: Strings.questionOf(number, total),
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         color: tvText,
                       ),
                     ),
-                    const TextSpan(text: ' · The answer is'),
+                    const TextSpan(text: Strings.answerIs),
                   ],
                 ),
                 style: const TextStyle(fontSize: 40, color: tvMuted),
@@ -373,7 +374,7 @@ class QuizScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Scores',
+            Strings.quizScores,
             style: TextStyle(
               fontSize: 44,
               fontWeight: FontWeight.w700,

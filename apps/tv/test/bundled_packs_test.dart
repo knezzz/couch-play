@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:core/core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/packs/pack_store.dart';
 import 'package:tv/session/session.dart';
 
@@ -44,7 +45,7 @@ void main() {
       'format': 1, 'id': 'general', 'title': 'Mine',
       'questions': [{'q': 'q', 'choices': ['a', 'b', 'c', 'd'], 'answer': 0}],
     })));
-    expect(await store.add(upload), "A built-in pack already uses the id 'general'. Pick another id.");
+    expect(await store.add(upload), Strings.builtInPackId('general'));
     expect(store.get('general')!.title, 'General Knowledge');
   });
 }

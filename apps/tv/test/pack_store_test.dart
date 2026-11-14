@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/packs/pack_store.dart';
 
 Uint8List pack(String id, {String title = 'T', int n = 2}) => Uint8List.fromList(utf8.encode(jsonEncode({
@@ -45,14 +46,14 @@ void main() {
 
   test('invalid_pack_rejected_nothing_written', () async {
     final s = await PackStore.load(bundled: [], userDir: dir);
-    expect(await s.add(Uint8List.fromList(utf8.encode('nope'))), "The pack isn't valid JSON.");
+    expect(await s.add(Uint8List.fromList(utf8.encode('nope'))), PackStrings.notJson);
     expect(files(), isEmpty);
     expect(s.infos, isEmpty);
   });
 
   test('cannot_shadow_bundled_id', () async {
     final s = await PackStore.load(bundled: [pack('x', title: 'Built-in')], userDir: dir);
-    expect(await s.add(pack('x')), "A built-in pack already uses the id 'x'. Pick another id.");
+    expect(await s.add(pack('x')), Strings.builtInPackId('x'));
     expect(files(), isEmpty);
     expect(s.get('x')!.title, 'Built-in');
     expect(s.infos.length, 1);
@@ -114,7 +115,7 @@ void main() {
     Directory('${dir.path}/a.pack').createSync(); // the rename onto it throws
     final s = await PackStore.load(bundled: [], userDir: dir);
     expect(await s.add(pack('a')),
-        "The TV couldn't save the pack. Free some space on the TV, then try again.");
+        Strings.packSaveFailed);
     expect(files(), ['a.pack']); // only the directory we made
     expect(s.infos, isEmpty);
     // and the next add still works

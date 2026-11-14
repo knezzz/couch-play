@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/ui/quiz_screen.dart';
 import 'package:tv/ui/tv_theme.dart';
 
@@ -46,10 +47,10 @@ void main() {
     testWidgets('header row: question N of M, pack title, answered count', (t) async {
       await _pump(t, _quiz());
       expect(t.takeException(), isNull);
-      expect(find.text('Question 3 of 10'), findsOneWidget);
+      expect(find.text(Strings.questionOf(3, 10)), findsOneWidget);
       expect(find.text('World Flags'), findsOneWidget);
-      expect(find.text('2 of 4 answered'), findsOneWidget);
-      expect(_fs(t, find.text('2 of 4 answered')), 40);
+      expect(find.text(Strings.answered(2, 4)), findsOneWidget);
+      expect(_fs(t, find.text(Strings.answered(2, 4))), 40);
     });
 
     testWidgets('accent progress bar follows the countdown', (t) async {
@@ -108,8 +109,8 @@ void main() {
     testWidgets('no overflow with long text; header says The answer is', (t) async {
       await _pump(t, _quiz(correct: 2));
       expect(t.takeException(), isNull);
-      expect(find.textContaining('The answer is'), findsOneWidget);
-      expect(find.text('2 of 4 answered'), findsNothing);
+      expect(find.textContaining(Strings.answerIs), findsOneWidget);
+      expect(find.text(Strings.answered(2, 4)), findsNothing);
     });
 
     testWidgets('the correct tile is large, outlined white, with a check', (t) async {
@@ -154,8 +155,8 @@ void main() {
 
     testWidgets('Scores panel: grouped totals, +points green, +0 muted, 40 px', (t) async {
       await _pump(t, _quiz(correct: 2));
-      expect(find.text('Scores'), findsOneWidget);
-      expect(_fs(t, find.text('Scores')), 44);
+      expect(find.text(Strings.quizScores), findsOneWidget);
+      expect(_fs(t, find.text(Strings.quizScores)), 44);
       expect(find.text('12 480'), findsOneWidget);
       expect(find.text('2 710'), findsOneWidget);
       expect(_fs(t, find.text('12 480')), 40);

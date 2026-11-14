@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'tv_theme.dart';
+import '../strings.dart';
 
 /// Designed on a 1920x1080 canvas (docs/design/couchplay-screens/Main) and
 /// scaled to fit, so type stays readable from the couch on any TV.
@@ -47,12 +48,12 @@ class LobbyScreen extends StatelessWidget {
                     children: [
                       if (players.isEmpty)
                         const Text(
-                          'Scan the code with your phone to join.',
+                          Strings.scanToJoin,
                           style: TextStyle(fontSize: 56, color: tvText),
                         )
                       else ...[
                         Text(
-                          'Players · ${players.length} of 8',
+                          Strings.players(players.length),
                           style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText),
                         ),
                         const SizedBox(height: 24),
@@ -70,7 +71,7 @@ class LobbyScreen extends StatelessWidget {
                         const Spacer(),
                         if (host != null)
                           Text(
-                            'Waiting for ${host.name} to pick a game.',
+                            Strings.waitingForHost(host.name),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontSize: 40, color: tvMuted),
@@ -104,7 +105,7 @@ class _Left extends StatelessWidget {
           const SizedBox(height: 32),
           if (url == null)
             const Text(
-              'Connect the TV to Wi-Fi to play.',
+              Strings.noWifi,
               style: TextStyle(fontSize: 56, color: tvText),
             )
           else ...[
@@ -117,7 +118,7 @@ class _Left extends StatelessWidget {
               child: QrImageView(data: url!, padding: EdgeInsets.zero, backgroundColor: Colors.white),
             ),
             const SizedBox(height: 32),
-            const _OneLine('Scan, or open in your browser:', TextStyle(fontSize: 40, color: tvMuted)),
+            const _OneLine(Strings.scanCaption, TextStyle(fontSize: 40, color: tvMuted)),
             const SizedBox(height: 8),
             // The QR keeps the full URL; the text drops "http://" and never wraps.
             _OneLine(
@@ -136,10 +137,10 @@ class _Left extends StatelessWidget {
                   FilledButton(
                     autofocus: true,
                     onPressed: () => _howToJoin(context),
-                    child: const Text('How to join'),
+                    child: const Text(Strings.howToJoin),
                   ),
                   const SizedBox(width: 24),
-                  FilledButton(onPressed: onQuit, child: const Text('Quit')),
+                  FilledButton(onPressed: onQuit, child: const Text(Strings.quit)),
                 ],
               ),
             ),
@@ -150,11 +151,9 @@ class _Left extends StatelessWidget {
   void _howToJoin(BuildContext context) => showDialog<void>(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('How to join', style: TextStyle(fontSize: 44)),
+          title: const Text(Strings.howToJoin, style: TextStyle(fontSize: 44)),
           content: const Text(
-            '1. Connect your phone to the same Wi-Fi as this TV.\n'
-            "2. Scan the code, or type the address into your phone's browser.\n"
-            '3. Type a name and tap Join.',
+            Strings.howToJoinSteps,
             style: TextStyle(fontSize: 36, height: 1.4),
           ),
           actions: [
@@ -162,7 +161,7 @@ class _Left extends StatelessWidget {
               builder: (c) => FilledButton(
                 autofocus: true,
                 onPressed: () => Navigator.pop(c),
-                child: const Text('Got it'),
+                child: const Text(Strings.gotIt),
               ),
             ),
           ],
@@ -204,9 +203,9 @@ class _Chip extends StatelessWidget {
             children: [
               if (host) const Padding(padding: EdgeInsets.only(right: 12), child: Icon(Icons.star, size: 44, color: tvInk)),
               Expanded(child: _Ink(p.name, ellipsis: true)),
-              if (host) const _Badge('HOST'),
-              if (p.bot) const _Badge('BOT'),
-              if (!p.connected) const _Badge('AWAY'),
+              if (host) const _Badge(Strings.badgeHost),
+              if (p.bot) const _Badge(Strings.badgeBot),
+              if (!p.connected) const _Badge(Strings.badgeAway),
             ],
           ),
         ),
@@ -269,13 +268,13 @@ class _Scoreboard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Scoreboard',
+            Strings.scoreboard,
             style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText),
           ),
           const SizedBox(height: 16),
           if (!scored)
             const Text(
-              'Scores appear after the first game.',
+              Strings.scoreboardEmpty,
               style: TextStyle(fontSize: 32, color: tvMuted),
             )
           else

@@ -8,11 +8,9 @@ import '../packs/pack_store.dart';
 import '../packs/test_pack.dart';
 import '../server/game_server.dart';
 import 'bots.dart';
+import '../strings.dart';
 
 enum Phase { lobby, quiz, curve, results }
-
-/// Shown by the TV lobby instead of the join URL when there is no network.
-const noWifiText = 'Connect the TV to Wi-Fi to play.';
 
 const maxPlayers = 8;
 const _staleAfter = Duration(minutes: 10);
@@ -22,9 +20,9 @@ Duration Function() _monotonic() {
   return () => w.elapsed;
 }
 
-const _onlyHost =ErrorMsg('Only the host can do that.');
-const _full = ErrorMsg('The game is full (8 players).');
-const _waiting = Waiting('Next game starts soon.');
+const _onlyHost = ErrorMsg(Strings.onlyHost);
+const _full = ErrorMsg(Strings.gameFull);
+const _waiting = Waiting(Strings.nextGameSoon);
 
 class Player {
   Player(this.id, this.name, this.colorIndex, {this.token = '', this.bot = false});
@@ -84,16 +82,15 @@ class Session {
   Future<({bool ok, String message})> onPackUpload(String token, Uint8List bytes) async {
     final host = _byId(hostId ?? -1);
     if (host == null || token.isEmpty || host.token != token) {
-      return (ok: false, message: 'Only the host can add packs.');
+      return (ok: false, message: Strings.onlyHostAddsPacks);
     }
     final store = packStore;
-    if (store == null) return (ok: false, message: 'Packs are not available yet.');
+    if (store == null) return (ok: false, message: Strings.packsNotReady);
     final err = await store.add(bytes);
     if (err != null) return (ok: false, message: err);
     final pack = (parsePack(bytes) as PackOk).pack; // add() just accepted it
     if (_phase == Phase.lobby) _broadcastLobby();
-    final n = pack.questions.length;
-    return (ok: true, message: 'Added ${pack.title} ($n ${n == 1 ? 'question' : 'questions'}).');
+    return (ok: true, message: Strings.packAdded(pack.title, pack.questions.length));
   }
 
   /// Set false to answer StartGame(quiz) with an ErrorMsg.
@@ -113,7 +110,7 @@ class Session {
   }
 
   String? _joinUrl;
-  String get joinHint => _joinUrl ?? noWifiText;
+  String get joinHint => _joinUrl ?? Strings.noWifi;
 
   void dispose() {
     _quizTimer?.cancel();
@@ -207,7 +204,7 @@ class Session {
 
   void _join(PeerSocket peer, String rawName, String token) {
     if (token.isEmpty || token.length > 64) {
-      peer.send(const ErrorMsg('Reload the page and try again.'));
+      peer.send(const ErrorMsg(Strings.reloadPage));
       return;
     }
     final attached = _playerOf(peer);
@@ -219,7 +216,7 @@ class Session {
     }
     final name = cleanName(rawName);
     if (name == null) {
-      peer.send(const ErrorMsg('Type a name to join.'));
+      peer.send(const ErrorMsg(Strings.typeName));
       return;
     }
     if (_players.length >= maxPlayers) {
@@ -323,18 +320,18 @@ class Session {
       return;
     }
     if (_phase != Phase.lobby) {
-      peer.send(const ErrorMsg('A game is already running.'));
+      peer.send(const ErrorMsg(Strings.gameRunning));
       return;
     }
     switch (game) {
       case GameKind.quiz:
         if (!quizAvailable) {
-          peer.send(const ErrorMsg("Quiz isn't ready yet. Pick Curve for now."));
+          peer.send(const ErrorMsg(Strings.quizNotReady));
           return;
         }
         final pack = packLookup(packId);
         if (pack == null || pack.questions.isEmpty) {
-          peer.send(const ErrorMsg("That pack isn't available."));
+          peer.send(const ErrorMsg(Strings.packUnavailable));
           return;
         }
         _startQuiz(pack, participants(GameKind.quiz));
@@ -342,8 +339,7 @@ class Session {
       case GameKind.curve:
         final parts = participants(GameKind.curve);
         if (parts.length < 2) {
-          peer.send(const ErrorMsg(
-              'Curve needs at least 2 players. Add a bot or ask a friend to join.'));
+          peer.send(const ErrorMsg(Strings.curveNeedsTwo));
           return;
         }
         _startCurve(parts);
@@ -360,11 +356,11 @@ class Session {
     }
     final target = _byId(playerId);
     if (target == null) {
-      peer.send(const ErrorMsg("That player isn't here."));
+      peer.send(const ErrorMsg(Strings.noSuchPlayer));
       return;
     }
     if (target.id == from.id) {
-      peer.send(const ErrorMsg("You can't kick yourself."));
+      peer.send(const ErrorMsg(Strings.cannotKickSelf));
       return;
     }
     final socket = target.socket;
@@ -385,7 +381,7 @@ class Session {
       return;
     }
     if (_phase != Phase.lobby) {
-      peer.send(const ErrorMsg('Change the bots between games.'));
+      peer.send(const ErrorMsg(Strings.botsBetweenGames));
       return;
     }
     setBotCount(count);
@@ -403,10 +399,10 @@ class Session {
     while (bots.length < want) {
       final names = {for (final p in _players) p.name.toLowerCase()};
       var n = 1;
-      while (names.contains('bot $n')) {
+      while (names.contains(Strings.botName(n).toLowerCase())) {
         n++;
       }
-      final bot = Player(_nextId++, 'Bot $n', _lowestFreeColor(), bot: true);
+      final bot = Player(_nextId++, Strings.botName(n), _lowestFreeColor(), bot: true);
       _players.add(bot);
       _scores[bot.id] = 0;
       bots.add(bot);
@@ -604,7 +600,7 @@ class Session {
     q.addPlayer(p.id);
     if (q.step == QuizStep.asking) {
       p.socket?.send(
-          _picks.containsKey(p.id) ? const Waiting('Locked in. Watch the TV.') : _questionFor(q));
+          _picks.containsKey(p.id) ? const Waiting(Strings.lockedIn) : _questionFor(q));
     } else {
       _sendReveal(p);
     }
@@ -692,14 +688,14 @@ class Session {
 
   String _lastGame = '';
 
-  /// What the results screen is for: 'Curve' or 'Quiz · title'.
+  /// What the results screen is for: 'Curve' or 'Kviz · title'.
   String get lastGameLabel => _lastGame;
 
   /// Ends the running game: adds placement points to [sessionScores], sends
   /// Results, and moves to the results phase. [gameScores] is keyed by player
   /// id. Quiz calls this too (Task 11).
   void finishGame(Map<int, int> gameScores) {
-    _lastGame = _quizPack == null ? 'Curve' : 'Quiz · ${_quizPack!.title}';
+    _lastGame = _quizPack == null ? Strings.gameCurve : Strings.gameQuiz(_quizPack!.title);
     // Someone kicked mid-game is no longer a player and gets no place.
     final placements = placementPoints({
       for (final e in gameScores.entries)

@@ -6,6 +6,7 @@ import 'dart:typed_data';
 
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/packs/pack_store.dart';
 import 'package:tv/server/game_server.dart';
 import 'package:tv/session/session.dart';
@@ -52,8 +53,8 @@ FakePeer join(Session s, String name, {String? token}) {
 
 int idOf(FakePeer p) => p.last<Welcome>()!.playerId;
 
-const onlyHost = ErrorMsg('Only the host can do that.');
-const full = ErrorMsg('The game is full (8 players).');
+const onlyHost = ErrorMsg(Strings.onlyHost);
+const full = ErrorMsg(Strings.gameFull);
 
 void main() {
   late Session s;
@@ -113,7 +114,7 @@ void main() {
   test('empty_or_blank_names_are_rejected', () {
     for (final bad in ['', '   ', ' \n\t ']) {
       final p = join(s, bad);
-      expect(p.sent, contains(const ErrorMsg('Type a name to join.')), reason: '"$bad"');
+      expect(p.sent, contains(const ErrorMsg(Strings.typeName)), reason: '"$bad"');
       expect(p.all<Welcome>(), isEmpty);
     }
     expect(s.players, isEmpty);
@@ -230,9 +231,9 @@ void main() {
     final a = join(s, 'A');
     final b = join(s, 'B');
     a.say(const Kick(999));
-    expect(a.sent.last, const ErrorMsg("That player isn't here."));
+    expect(a.sent.last, const ErrorMsg(Strings.noSuchPlayer));
     a.say(Kick(idOf(a)));
-    expect(a.sent.last, const ErrorMsg("You can't kick yourself."));
+    expect(a.sent.last, const ErrorMsg(Strings.cannotKickSelf));
     expect(s.players.length, 2);
     a.say(Kick(idOf(b)));
     expect(s.players.length, 1);
@@ -306,7 +307,7 @@ void main() {
     expect(s.players.where((p) => p.bot).length, 6);
     a.say(const SetBots(2));
     final bots = s.players.where((p) => p.bot).toList();
-    expect([for (final b in bots) b.name], ['Bot 1', 'Bot 2']);
+    expect([for (final b in bots) b.name], [Strings.botName(1), Strings.botName(2)]);
     expect([for (final b in bots) b.colorIndex], [2, 3]);
     expect(bots.every((b) => b.token.isEmpty && b.socket == null && b.connected), isTrue);
     a.say(const SetBots(-3));
@@ -317,11 +318,11 @@ void main() {
   test('bot_numbers_fill_gaps_and_lobby_state_marks_bots', () {
     final a = join(s, 'A');
     a.say(const SetBots(3));
-    final two = s.players.firstWhere((p) => p.name == 'Bot 2');
+    final two = s.players.firstWhere((p) => p.name == Strings.botName(2));
     a.say(Kick(two.id));
     a.say(const SetBots(3));
     expect([for (final p in s.players.where((p) => p.bot)) p.name],
-        ['Bot 1', 'Bot 3', 'Bot 2']);
+        [Strings.botName(1), Strings.botName(3), Strings.botName(2)]);
     expect(a.last<LobbyState>()!.players.where((p) => p.bot).length, 3);
   });
 
@@ -339,13 +340,13 @@ void main() {
     a.say(const SetBots(6));
     expect(s.players.length, 8);
     final newest = s.players.last;
-    expect(newest.name, 'Bot 6');
+    expect(newest.name, Strings.botName(6));
     final c = join(s, 'C');
     expect(c.all<Welcome>(), isNotEmpty);
     expect(c.sent, isNot(contains(full)));
     expect(s.players.length, 8);
     expect(s.players.where((p) => p.bot).length, 5);
-    expect(s.players.any((p) => p.name == 'Bot 6'), isFalse);
+    expect(s.players.any((p) => p.name == Strings.botName(6)), isFalse);
     expect(c.last<Welcome>()!.colorIndex, newest.colorIndex);
   });
 
@@ -375,7 +376,7 @@ void main() {
     join(s, 'B');
     a.say(const StartGame(GameKind.quiz, null));
     expect(a.sent.last,
-        const ErrorMsg("Quiz isn't ready yet. Pick Curve for now."));
+        const ErrorMsg(Strings.quizNotReady));
     expect(s.phase, Phase.lobby);
     expect(started, isEmpty);
   });
@@ -385,8 +386,7 @@ void main() {
     a.say(const StartGame(GameKind.curve, null));
     expect(
         a.sent.last,
-        const ErrorMsg(
-            'Curve needs at least 2 players. Add a bot or ask a friend to join.'));
+        const ErrorMsg(Strings.curveNeedsTwo));
     expect(s.phase, Phase.lobby);
     expect(started, isEmpty);
     a.say(const SetBots(1));
@@ -403,7 +403,7 @@ void main() {
     expect(started, [(GameKind.curve, null)]);
     final sim = s.sim!;
     // Sim ids are the color indexes, so the renderer's color list lines up.
-    expect(sim.names, {0: 'Ana', 1: 'Bo', 2: 'Bot 1'});
+    expect(sim.names, {0: 'Ana', 1: 'Bo', 2: Strings.botName(1)});
     expect(sim.heads.map((h) => h.id).toSet(), {0, 1, 2});
     expect(s.bots, isNotNull);
     expect(s.curveRound, 1);
@@ -418,10 +418,10 @@ void main() {
     a.say(const StartGame(GameKind.curve, null));
     started.clear();
     a.say(const StartGame(GameKind.curve, null));
-    expect(a.sent.last, const ErrorMsg('A game is already running.'));
+    expect(a.sent.last, const ErrorMsg(Strings.gameRunning));
     expect(started, isEmpty);
     a.say(const SetBots(3));
-    expect(a.sent.last, const ErrorMsg('Change the bots between games.'));
+    expect(a.sent.last, const ErrorMsg(Strings.botsBetweenGames));
   });
 
   test('late_joiner_waits_until_lobby', () {
@@ -429,7 +429,7 @@ void main() {
     a.say(const SetBots(1));
     a.say(const StartGame(GameKind.curve, null));
     final c = join(s, 'Late');
-    expect(c.sent, contains(const Waiting('Next game starts soon.')));
+    expect(c.sent, contains(const Waiting(Strings.nextGameSoon)));
     expect(s.players.any((p) => p.name == 'Late'), isTrue);
     expect(s.sim!.names.values, isNot(contains('Late')));
     // Their steering goes nowhere.
@@ -611,7 +611,7 @@ void main() {
   });
 
   test('join_hint_shows_the_url_or_the_wifi_text', () {
-    expect(s.joinHint, 'Connect the TV to Wi-Fi to play.');
+    expect(s.joinHint, Strings.noWifi);
     s.joinUrl = 'http://192.168.1.20:8080/';
     expect(s.joinHint, 'http://192.168.1.20:8080/');
   });
@@ -679,7 +679,7 @@ void main() {
     a.say(const StartGame(GameKind.curve, null));
     expect(s.quizTitle, '');
     s.finishGame({idOf(a): 1});
-    expect(s.lastGameLabel, 'Curve');
+    expect(s.lastGameLabel, Strings.gameCurve);
   });
 
   test('endGame_returns_to_lobby_without_placement_points', () {
@@ -735,7 +735,7 @@ void main() {
       for (final token in ['tb', 'nobody', '']) {
         final r = await s.onPackUpload(token, bytes());
         expect(r.ok, isFalse, reason: token);
-        expect(r.message, 'Only the host can add packs.');
+        expect(r.message, Strings.onlyHostAddsPacks);
       }
       expect(s.packStore!.infos, isEmpty);
       expect(dir.listSync(), isEmpty);
@@ -746,7 +746,7 @@ void main() {
       final b = join(s, 'Bea', token: 'tb');
       final r = await s.onPackUpload('ta', bytes());
       expect(r.ok, isTrue);
-      expect(r.message, 'Added World Flags (40 questions).');
+      expect(r.message, Strings.packAdded('World Flags', 40));
       const want = [PackInfo('world-flags', 'World Flags', 40)];
       expect(a.last<LobbyState>()!.packs, want);
       expect(b.last<LobbyState>()!.packs, want);
@@ -764,7 +764,7 @@ void main() {
     test('a one-question pack reads right', () async {
       join(s, 'Ana', token: 'ta');
       final r = await s.onPackUpload('ta', bytes(n: 1));
-      expect(r.message, 'Added World Flags (1 question).');
+      expect(r.message, Strings.packAdded('World Flags', 1));
     });
 
     test('the_error_text_is_passed_through', () async {
@@ -772,7 +772,7 @@ void main() {
       final before = a.all<LobbyState>().length;
       final r = await s.onPackUpload('ta', Uint8List.fromList(utf8.encode('nope')));
       expect(r.ok, isFalse);
-      expect(r.message, "The pack isn't valid JSON.");
+      expect(r.message, PackStrings.notJson);
       expect(a.all<LobbyState>().length, before); // nothing changed, nothing sent
     });
 
@@ -790,7 +790,7 @@ void main() {
       a.say(const Join('Ana', 'ta'));
       final r = await bare.onPackUpload('ta', bytes());
       expect(r.ok, isFalse);
-      expect(r.message, 'Packs are not available yet.');
+      expect(r.message, Strings.packsNotReady);
     });
   });
 }
