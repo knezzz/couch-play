@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone quiz</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 16px 40px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 12px">
+  <div style="display: flex; align-items: center; font-size: 16px; color: #A9A9BC; height: 32px"><span style="flex-grow: 1">Question 3 of 10 · look at the TV</span><span style="font-weight: 700; color: #F4F4F8">2 710</span></div>
+  <button style="flex: 1 1 0; font: inherit; color: #14141E; background: #FF4D6D; border: 0; border-radius: 20px; padding: 0 20px; display: flex; align-items: center; gap: 16px; text-align: left"><span style="font-size: 36px">▲</span><span style="font-size: 24px; font-weight: 700; line-height: 1.15">Japan</span></button>
+  <button style="flex: 1 1 0; font: inherit; color: #14141E; background: #22B8F0; border: 0; border-radius: 20px; padding: 0 20px; display: flex; align-items: center; gap: 16px; text-align: left"><span style="font-size: 36px">◆</span><span style="font-size: 24px; font-weight: 700; line-height: 1.15">Bangladesh</span></button>
+  <button style="flex: 1 1 0; font: inherit; color: #14141E; background: #FFB020; border: 0; border-radius: 20px; padding: 0 20px; display: flex; align-items: center; gap: 16px; text-align: left"><span style="font-size: 36px">●</span><span style="font-size: 24px; font-weight: 700; line-height: 1.15">Palau</span></button>
+  <button style="flex: 1 1 0; font: inherit; color: #14141E; background: #2ECC71; border: 0; border-radius: 20px; padding: 0 20px; display: flex; align-items: center; gap: 16px; text-align: left"><span style="font-size: 36px">■</span><span style="font-size: 20px; font-weight: 700; line-height: 1.15">The Democratic Republic of São Tomé and Príncipe</span></button>
+  <div style="font-size: 14px; color: #A9A9BC; text-align: center">After a tap: tiles fade except yours, with “Locked in. Watch the TV.”</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone join</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 64px 24px 48px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="font-size: 40px; font-weight: 900; letter-spacing: -0.5px">CouchPlay</div>
+  <div style="font-size: 20px; color: #A9A9BC; line-height: 1.4">Type your name to join the game on the TV.</div>
+  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px">
+    <label for="name" style="font-size: 18px; font-weight: 500; color: #A9A9BC">Your name</label>
+    <input id="name" value="Ana" style="font: inherit; font-size: 24px; color: #F4F4F8; background: #1F1F2C; border: 2px solid #4DD9FF; border-radius: 16px; padding: 0 20px; height: 64px; box-sizing: border-box; outline: none">
+    <div style="font-size: 16px; color: #A9A9BC">Up to 16 characters.</div>
+  </div>
+  <button style="margin-top: auto; font: inherit; font-size: 24px; font-weight: 700; color: #14141E; background: #4DD9FF; border: 0; border-radius: 16px; height: 64px">Join</button>
+  <div style="font-size: 16px; color: #A9A9BC; text-align: center">If the name is empty: “Type a name to join.”</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

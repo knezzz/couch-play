@@ -636,13 +636,30 @@ Content rules:
     - Back (`LogicalKeyboardKey.goBack` or escape) during a game asks "End this game and return to the lobby?" with Yes and No (focus starts on No). Yes ends the game without placement points.
     - Focus is always visible: a 3 px outline in the accent color.
   - A release APK signed with the debug key, installed on the TV with `flutter install --release -d <tv>`. This is personal use, so no store signing.
-- [ ] **Step 1: Write the failing test.** `back_during_game_confirms_then_returns_to_lobby`: simulate Back as Android TV sends it, `binding.handlePopRoute()` (changed 2026-11-14: the remote's Back arrives as a system pop, not a key; also cover Back during Curve, where Flame takes key events), check the focus is on No, arrow to Yes, select, and check the phase is `lobby`.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** with `Shortcuts`/`Actions`/`FocusTraversalGroup`.
-- [ ] **Step 4: Run all tests.** Run `flutter test` in every member. Expected: all pass.
+- [x] **Step 1: Write the failing test.** `back_during_game_confirms_then_returns_to_lobby`: simulate Back as Android TV sends it, `binding.handlePopRoute()` (changed 2026-11-14: the remote's Back arrives as a system pop, not a key; also cover Back during Curve, where Flame takes key events), check the focus is on No, arrow to Yes, select, and check the phase is `lobby`.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** with `Shortcuts`/`Actions`/`FocusTraversalGroup`.
+- [x] **Step 4: Run all tests.** Run `flutter test` in every member. Expected: all pass.
 - [ ] **Step 5: Final check on the real TV.**
   - Run `tool/build_controller.sh`, then `flutter build apk --release` and install it on the TV.
   - With at least 3 phones (iPhone Safari and Android Chrome), play one Quiz and one Curve game.
   - Lock one phone mid-game and unlock it. It must reconnect.
   - Confirm the results go back to the lobby with the session scoreboard updated.
 - [ ] **Step 6: Commit.** Message: `feat(tv): d-pad navigation and release build`.
+
+---
+
+### Task 15: Design pass to the reference screens (added 2026-11-14, user request)
+
+**Files:**
+- Modify: `apps/tv/lib/ui/lobby_screen.dart`, `quiz_screen.dart`, `results_screen.dart`, `apps/controller/lib/screens/*.dart`, `packages/core/lib/src/effects.dart` (confetti)
+- Reference: `docs/design/couchplay-screens/*.dc.html` (HTML mockups; the px values are TV 1920×1080 and phone 390×844 logical px)
+
+**Interfaces:** none new. Layout and style only; no protocol or game-logic changes.
+
+- [ ] **Step 1: TV lobby** (Main.dc.html): title, QR on a white card with a 4-module quiet zone, URL caption + one-line URL, How to join / Quit buttons; player chips as a 2-column pill grid with HOST / AWAY / BOT pill badges; "Players · N of 8"; a scoreboard card; "Waiting for <host> to pick a game."
+- [ ] **Step 2: TV quiz + reveal** (TvQuiz, TvReveal): header row (question N of M · pack title · answered count), accent progress bar, 80 px question with the picture card on the right, 168 px tiles; reveal: the correct tile large with a white outline, ✓ and its voters; the wrong tiles as a row of 25 % tints with their voters; a scores panel with +points.
+- [ ] **Step 3: TV results** (TvResults): "<name> wins!", the winner row in their color, the others on surface rows with +session points, a "Tonight" session panel, a back-to-lobby countdown bar. Confetti: few large pieces (about 16–24, 22×36 px at 1080p), so it stays cheap on the TV GPU (it cost about 1/3 of frames for 2.5 s on the BRAVIA).
+- [ ] **Step 4: Phone** (PhoneJoin, PhoneLobby, PhoneKick, PhoneQuiz, PhoneReveal): background #14141E (as the TV); join helper text; host lobby with your own chip on top and "Others · N" below (you are not listed twice), 56 px bot steppers, Remove buttons that open the bottom sheet "Remove <name>?" (Remove / Keep); the quiz header with your total; the reveal as a full-color result screen.
+- [ ] **Step 5: Check.** All tests pass in every member; update widget tests that pinned old layout. QA compares each screen with its mockup on a release/profile build (macOS + Chrome) and lists differences; check-design signs off. The person sees it on the TV at their next session.
+- [ ] **Step 6: Commit** by path: `style: design pass to the reference screens`.

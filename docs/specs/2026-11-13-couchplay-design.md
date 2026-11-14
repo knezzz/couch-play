@@ -138,6 +138,11 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 
 Simple, bold vector look: flat colors, 8 high-contrast player colors, rounded shapes, big type readable from the couch.
 
+**Reference screens (user request, 2026-11-14):** the TV and phone screens are drawn in the design canvas "CouchPlay
+screens" (https://claude.ai/artifact/SX8ertCTfhPyLpSpti4PKe), with a copy of its files in `docs/design/couchplay-screens/`.
+The built screens follow it. Tokens: background #14141E, surface #1F1F2C, raised #2A2A3A, text #F4F4F8, muted #A9A9BC,
+accent and focus #4DD9FF; Roboto; TV text at least 40 px, phone text at least 16 px, phone buttons at least 56–64 px.
+
 ## Left to the builder
 
 - Exact Flutter/Flame versions, folder details, build script.
