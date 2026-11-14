@@ -318,6 +318,11 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - If all three headings are clear and a power-up is within a short range, it steers toward the power-up.
     - It needs read access to the grid: a read-only `CurveSim.isBlocked(x, y)` or equivalent.
     - Cost budget: 7 bots at 60 Hz must keep the TV well under 16 ms (re-measured in Step 5).
+    - Human-like play (user feedback 2026-11-14: bots looked aimless and robotic):
+      - Bots pick a goal (open space or a power-up) and keep it for a while instead of re-deciding every tick.
+      - They react with a delay of about 150–250 ms.
+      - They steer in held bursts, with a little randomness and an occasional mistake.
+      - Test: `bot_does_not_flip_steering_every_tick`.
 
 - [ ] **Step 1: Write the failing tests.**
   - `crossing_own_old_trail_kills`: drive a full circle back across your own trail from more than `selfGraceTicks` ago. You die.

@@ -131,3 +131,7 @@ Added seats: 1 of 3.
   inflate to ~5 GB and crash the TV). PM ran core tests, 54/54. Plan boxes ticked.
 - 2026-11-14: Person asked to play the quiz on the TV. It needs Tasks 6, 10 and 11 (plus 13 for real packs).
   builder-2 starts Task 10 plus Task 7's pure scoring functions now.
+- 2026-11-14: **5b TV re-measure** (872943a): frames PASS (worst 5.6–7.8 ms in steady play, ~3× headroom; one
+  ~3 s hitch every few minutes, max 26.9 ms, likely the match restart). iPhone RTT ~10 ms typical, p95 50–60 ms
+  (was 100+; target 40). Person: steering better; power-ups work; own-trail death and arrows work; bots look
+  aimless and robotic. Next: 20 Hz keep-alive; bots get goals and human-like steering (plan updated).
