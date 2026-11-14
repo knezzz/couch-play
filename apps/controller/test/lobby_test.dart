@@ -167,4 +167,20 @@ void main() {
       await t.pumpWidget(const SizedBox());
     },
   );
+
+  testWidgets('the crashed message has a solid backing panel', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(0, 0, 'tok'));
+    await _send(t, c, const CurveStatus(alive: false, score: 0, target: 20));
+    final panel = find.ancestor(
+      of: find.text('You crashed. Wait for the next round.'),
+      matching: find.byWidgetPredicate(
+        (w) =>
+            w is DecoratedBox && (w.decoration as BoxDecoration).color != null,
+      ),
+    );
+    expect(panel, findsOneWidget);
+    await t.pumpWidget(const SizedBox());
+  });
 }

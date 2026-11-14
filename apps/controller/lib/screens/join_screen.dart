@@ -58,7 +58,10 @@ class _JoinScreenState extends State<JoinScreen> {
           FilledButton(
             onPressed: () {
               final name = _name.text.trim();
-              if (name.isEmpty) return;
+              if (name.isEmpty) {
+                setState(() => _error = 'Type a name to join.');
+                return;
+              }
               setState(() => _error = null);
               widget.conn.send(Join(name, widget.conn.token));
             },

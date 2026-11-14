@@ -79,6 +79,31 @@ void main() {
         ),
       );
       expect(t.takeException(), isNull);
+      // Text keeps a couch-readable size; long names are cut, not shrunk.
+      for (final text in t.widgetList<Text>(find.byType(Text))) {
+        expect(
+          text.style!.fontSize,
+          greaterThanOrEqualTo(28),
+          reason: text.data,
+        );
+      }
+      final names = t.widgetList<Text>(
+        find.textContaining(name.substring(0, 4)),
+      );
+      expect(names, isNotEmpty);
+      for (final n in names.where((n) => n.maxLines != null)) {
+        expect(n.overflow, TextOverflow.ellipsis);
+      }
+      // Not scaled down: on screen each name is as tall as its font size.
+      for (final f in find.textContaining(name.substring(0, 4)).evaluate()) {
+        final fin = find.byWidget(f.widget);
+        final h = t.getBottomRight(fin).dy - t.getTopLeft(fin).dy;
+        // >= because the ellipsis glyph falls back to a taller font in tests.
+        expect(
+          h,
+          greaterThanOrEqualTo((f.widget as Text).style!.fontSize! - 1),
+        );
+      }
     });
   }
 }

@@ -45,4 +45,16 @@ void main() {
     expect(find.text('Someone is already playing'), findsOneWidget);
     expect(joined, isEmpty);
   });
+
+  testWidgets('a spaces-only name shows a message and sends nothing', (
+    t,
+  ) async {
+    final c = _Fake();
+    await t.pumpWidget(MaterialApp(home: JoinScreen(c, onJoined: () {})));
+    await t.enterText(find.byType(TextField), '   ');
+    await t.tap(find.text('Join'));
+    await t.pump();
+    expect(find.text('Type a name to join.'), findsOneWidget);
+    expect(c.sent, isEmpty);
+  });
 }

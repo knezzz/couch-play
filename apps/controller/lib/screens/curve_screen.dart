@@ -115,14 +115,23 @@ class _CurveScreenState extends State<CurveScreen> {
           ),
         ),
         if (!widget.alive)
-          const Center(
-            child: Text(
-              'You crashed. Wait for the next round.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+          Center(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xF2000000),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'You crashed. Wait for the next round.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),

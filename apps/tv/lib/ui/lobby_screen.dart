@@ -48,30 +48,26 @@ class LobbyScreen extends StatelessWidget {
                           style: TextStyle(fontSize: 56, color: Colors.white),
                         )
                       else
-                        // Scales down instead of overflowing with 8 long names.
-                        Flexible(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.topLeft,
-                            child: SizedBox(
-                              width: 1088,
-                              child: Wrap(
-                                spacing: 24,
-                                runSpacing: 24,
-                                children: [
-                                  for (final p in players)
-                                    _Chip(p, host: p.id == hostId),
-                                ],
+                        // 5+ players: two fixed-width columns with smaller type.
+                        // Long names are cut with an ellipsis, never scaled down.
+                        Wrap(
+                          spacing: 24,
+                          runSpacing: 16,
+                          children: [
+                            for (final p in players)
+                              _Chip(
+                                p,
+                                host: p.id == hostId,
+                                compact: players.length > 4,
                               ),
-                            ),
-                          ),
+                          ],
                         ),
                       const SizedBox(height: 24),
                       if (players.isNotEmpty) ...[
                         const Text(
                           'Scoreboard',
                           style: TextStyle(
-                            fontSize: 44,
+                            fontSize: 38,
                             color: Colors.white70,
                             fontWeight: FontWeight.bold,
                           ),
@@ -140,17 +136,20 @@ class _Join extends StatelessWidget {
 }
 
 class _Chip extends StatelessWidget {
-  const _Chip(this.p, {required this.host});
+  const _Chip(this.p, {required this.host, required this.compact});
   final PlayerInfo p;
-  final bool host;
+  final bool host, compact;
 
   @override
   Widget build(BuildContext context) => Opacity(
     opacity: p.connected ? 1 : 0.4,
     child: Container(
       // Never wider than the chip area, even for a 16-wide-letter name.
-      constraints: const BoxConstraints(maxWidth: 1088),
-      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 20),
+      constraints: BoxConstraints(maxWidth: compact ? 532 : 1088),
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? 28 : 36,
+        vertical: compact ? 10 : 20,
+      ),
       decoration: BoxDecoration(
         color: playerColors[p.colorIndex % playerColors.length],
         borderRadius: BorderRadius.circular(56),
@@ -163,8 +162,8 @@ class _Chip extends StatelessWidget {
               '${host ? '★ ' : ''}${p.name}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 56,
+              style: TextStyle(
+                fontSize: compact ? 40 : 56,
                 fontWeight: FontWeight.bold,
                 color: _ink,
               ),
@@ -197,7 +196,7 @@ class _ScoreRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     key: ValueKey('score-${p.name}'),
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: const EdgeInsets.symmetric(vertical: 2),
     child: Row(
       children: [
         Container(
@@ -212,13 +211,13 @@ class _ScoreRow extends StatelessWidget {
         Expanded(
           child: Text(
             p.name,
-            style: const TextStyle(fontSize: 40, color: Colors.white),
+            style: const TextStyle(fontSize: 34, color: Colors.white),
           ),
         ),
         Text(
           '${p.sessionScore}',
           style: const TextStyle(
-            fontSize: 40,
+            fontSize: 34,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
