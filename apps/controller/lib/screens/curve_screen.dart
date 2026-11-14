@@ -40,8 +40,10 @@ class _CurveScreenState extends State<CurveScreen> {
         });
       }
     });
+    // 10 Hz, not 1 Hz: sparse traffic lets the TV's Wi-Fi sleep (p95 ~114 ms
+    // at 1 Hz vs ~19 ms at 10 Hz), and this keeps the radio warm for steering.
     _ping = Timer.periodic(
-      const Duration(seconds: 1),
+      const Duration(milliseconds: 100),
       (_) => widget.conn.send(Ping(DateTime.now().millisecondsSinceEpoch)),
     );
   }
