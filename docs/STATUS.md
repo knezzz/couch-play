@@ -22,7 +22,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | built: 10 packs, 449 questions (4c17e2d, a99feee, cd0b775); waits on the person's hr-medimurje review | content |
 | 14 | TV polish and release install | Steps 1–4 done (5d32880); Step 5 leftovers (3+ phones, Android Chrome) with the person | lead |
 | 15 | Design pass to the reference screens (person, 2026-11-14) | in progress | lead |
-| 13b | Croatian content: all HR packs verified + harder; Croatian versions of the 6 English packs (person, 2026-11-14) | in progress | content |
+| 13b | Croatian content: all HR packs verified + harder; Croatian versions of the 6 English packs (person, 2026-11-14) | built (bf474df, e8ec4ed, 617240e, 6f1fe36, a408ee1): 16 packs, 759 questions; hr-medimurje waits on the person | content |
 | 16 | Croatian user interface (person, 2026-11-14) | todo (after Task 15) | — |
 
 ## Open questions for the person
@@ -178,3 +178,6 @@ Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 
   too easy for locals. Revision queued to content (sources file per question; Q5 Grad Zagreb fix).
 - 2026-11-14: Scope change from the person: all Croatian packs verified + harder; Croatian versions of the 6 English
   packs (kept alongside); the whole UI in Croatian. Spec + plan updated (Tasks 13b, 16). 13b with content; 16 after 15.
+- 2026-11-14: Task 13b built: 4 HR packs verified (sources files) and harder; 6 Croatian versions of the English packs.
+  16 packs, 759 questions. PM ran the pack test and spot-read 12 questions. Open: the person's hr-medimurje review (least
+  sure: Mohokos vs Kalec, tiblica, jurjevščak, Prelog speedway); a native skim of the translations is optional.
