@@ -201,6 +201,20 @@ class CurveSim {
       ..heading = heading;
   }
 
+  /// Read-only probe for bots: would a head at (x, y) hit the wall or a painted
+  /// cell? With wrap active the walls are not deadly. [trails] false ignores
+  /// painted cells (ghost).
+  bool isBlocked(double x, double y, {bool trails = true}) {
+    final w = config.arenaW, hh = config.arenaH;
+    if (_wrapLeft > 0) {
+      x %= w;
+      y %= hh;
+    } else if (x < 0 || y < 0 || x >= w || y >= hh) {
+      return true;
+    }
+    return trails && _owner[(y ~/ config.cell) * _cols + (x ~/ config.cell)] != 0;
+  }
+
   /// Test hook: put a power-up on the board (ignores the cap and `powerUps`).
   void placePowerUp(PowerUpKind kind, double x, double y) =>
       _powerUps.add(CurvePowerUp(_nextPowerUpId++, kind, x, y));

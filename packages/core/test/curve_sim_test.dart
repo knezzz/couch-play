@@ -175,4 +175,23 @@ void main() {
     }
     expect((heading() - before).abs(), greaterThan(1.0));
   });
+
+  test('isBlocked_sees_walls_and_painted_cells', () {
+    const cfg = CurveConfig(countdown: 0, gapEveryMin: 1e6, gapEveryMax: 1e6 + 1, powerUps: false);
+    final s = CurveSim([0, 1, 2], config: cfg, random: Random(1));
+    s.place(0, 800, 450, 0);
+    s.place(1, 100, 100, 0);
+    s.place(2, 100, 800, 0);
+    expect(s.isBlocked(-1, 450), isTrue);
+    expect(s.isBlocked(1600, 450), isTrue);
+    expect(s.isBlocked(800, 900), isTrue);
+    expect(s.isBlocked(900, 450), isFalse);
+    for (var i = 0; i < 30; i++) {
+      s.tick();
+    }
+    // Player 0 has painted a trail along y=450 from x=800 to about 870.
+    expect(s.isBlocked(830, 450), isTrue);
+    expect(s.isBlocked(830, 450, trails: false), isFalse);
+    expect(s.isBlocked(830, 500), isFalse);
+  });
 }
