@@ -24,7 +24,7 @@ A quiz pack is either a single `.json` file (text only) or a `.zip` (JSON plus p
 |---|---|
 | `format` | Must be `1`. |
 | `id` | 1–40 characters: lowercase letters, digits, dashes. |
-| `title` | Not empty. |
+| `title` | Not empty, at most 60 characters. |
 | `questions` | At least one. |
 | `q` | Not empty. |
 | `choices` | Exactly 4, none empty. The TV shuffles them each game. |
@@ -51,6 +51,7 @@ A quiz pack is either a single `.json` file (text only) or a `.zip` (JSON plus p
 | Unsupported pack format. Use "format": 1. | `format` is not 1. |
 | The pack id must be lowercase letters, digits or dashes. | Bad `id`. |
 | The pack needs a title. | Empty `title`. |
+| The pack title must be 60 characters or fewer. | `title` is longer than 60 characters. |
 | The pack needs at least one question. | Empty `questions`. |
 | Question N: must be an object with q, choices and answer. | The question isn't a JSON object. |
 | Question N: the question text is empty. | Empty `q`. |
