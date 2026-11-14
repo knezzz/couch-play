@@ -59,7 +59,10 @@ class _EffectLayerState extends State<EffectLayer> {
           Positioned.fill(
             key: ValueKey(e.id),
             child: IgnorePointer(
-              child: _Effect(e, reduced: reduced, onDone: () => _remove(e.id)),
+              // Own layer: the effect repaints every frame, the child must not.
+              child: RepaintBoundary(
+                child: _Effect(e, reduced: reduced, onDone: () => _remove(e.id)),
+              ),
             ),
           ),
       ],
@@ -106,6 +109,8 @@ class _EffectState extends State<_Effect> with SingleTickerProviderStateMixin {
   void dispose() {
     _hold?.cancel();
     _c?.dispose();
+    final p = _painter;
+    if (p is _PopPainter) p.dispose();
     super.dispose();
   }
 
@@ -209,6 +214,8 @@ class _PopPainter extends CustomPainter {
     _text.paint(canvas, Offset.zero);
     canvas.restore();
   }
+
+  void dispose() => _text.dispose();
 
   @override
   bool shouldRepaint(_PopPainter old) => old.t != t;

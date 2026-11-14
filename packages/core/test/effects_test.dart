@@ -66,4 +66,15 @@ void main() {
     }));
     EffectLayer.play(ctx, EffectName.confetti);
   });
+
+  testWidgets('each effect repaints in its own boundary', (t) async {
+    final ctx = await pumpLayer(t);
+    EffectLayer.play(ctx, EffectName.confetti);
+    EffectLayer.play(ctx, EffectName.colorPulse);
+    await t.pump();
+    final boundaries = find.descendant(of: find.byType(EffectLayer), matching: find.byType(RepaintBoundary));
+    expect(boundaries, findsNWidgets(2));
+    expect(find.ancestor(of: effects.first, matching: boundaries), findsOneWidget);
+    await t.pump(const Duration(seconds: 3));
+  });
 }
