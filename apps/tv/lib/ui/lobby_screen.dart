@@ -60,13 +60,13 @@ class LobbyScreen extends StatelessWidget {
                         // Two fixed-width columns; long names are cut, never scaled down.
                         Wrap(
                           spacing: 20,
-                          runSpacing: players.length > 4 ? 12 : 20,
+                          runSpacing: players.length > 4 ? 8 : 20,
                           children: [
                             for (final p in players)
                               _Chip(p, host: p.id == hostId, tight: players.length > 4),
                           ],
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: players.length > 4 ? 20 : 32),
                         _Scoreboard(byScore),
                         const Spacer(),
                         if (host != null)
@@ -192,9 +192,10 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) => Opacity(
         opacity: p.connected ? 1 : 0.6,
         child: Container(
-          // Half of the 992 px column, less the gap.
-          width: 486,
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: tight ? 10 : 20),
+          // Half of the 992 px column, less the gap. A host with a long name
+          // takes the whole row (the star marks the host, no word).
+          width: host && p.name.length > 8 ? 992 : 486,
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: tight ? 6 : 20),
           decoration: BoxDecoration(
             color: playerColors[p.colorIndex % playerColors.length],
             borderRadius: BorderRadius.circular(999),
@@ -203,7 +204,6 @@ class _Chip extends StatelessWidget {
             children: [
               if (host) const Padding(padding: EdgeInsets.only(right: 12), child: Icon(Icons.star, size: 44, color: tvInk)),
               Expanded(child: _Ink(p.name, ellipsis: true)),
-              if (host) const _Badge(Strings.badgeHost),
               if (p.bot) const _Badge(Strings.badgeBot),
               if (!p.connected) const _Badge(Strings.badgeAway),
             ],
@@ -262,7 +262,7 @@ class _Scoreboard extends StatelessWidget {
         );
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+      padding: EdgeInsets.symmetric(horizontal: 48, vertical: byScore.length > 4 ? 24 : 32),
       decoration: BoxDecoration(color: tvSurface, borderRadius: BorderRadius.circular(32)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

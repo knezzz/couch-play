@@ -113,6 +113,10 @@ void main() {
     final head = find.text(Strings.wins(names));
     expect(head, findsOneWidget);
     expect(t.getSize(head).height, lessThan(96 * 1.8), reason: 'one line');
+    // The subtitle keeps clear of the headline: beside it with a gap, or below it.
+    final h = t.getRect(head), l = t.getRect(find.text(Strings.gameQuiz('World Flags')));
+    final below = l.top >= h.bottom - 20, beside = l.left - h.right >= 48;
+    expect(below || beside, isTrue, reason: 'headline $h, subtitle $l');
     await t.pump(const Duration(seconds: 3));
   });
 

@@ -1,5 +1,6 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tv/strings.dart';
@@ -61,10 +62,9 @@ void main() {
     expect(t.takeException(), isNull, reason: 'the Croatian text fits beside no QR code');
   });
 
-  testWidgets('players header, HOST and BOT pills, host star', (t) async {
+  testWidgets('players header, BOT pill, host star (no HOST word)', (t) async {
     await _pump(t);
     expect(find.text(Strings.players(3)), findsOneWidget);
-    expect(find.text(Strings.badgeHost), findsOneWidget);
     expect(find.text(Strings.badgeBot), findsOneWidget);
     expect(find.byIcon(Icons.star), findsOneWidget);
     expect(find.text(Strings.badgeAway), findsNothing);
@@ -126,6 +126,20 @@ void main() {
     expect(t.takeException(), isNull);
     expect(find.text(Strings.waitingForHost('WWWWWWWWWWWWWWWW')), findsOneWidget);
     expect(find.text(Strings.badgeAway), findsOneWidget);
+  });
+
+  testWidgets('a 16-character host name shows in full, whatever the width', (t) async {
+    for (final name in ['WWWWWWWWWWWWWWWW', 'Čedo Šćepanović-K']) {
+      await _pump(t, players: [
+        PlayerInfo(0, name, 0, true, 0),
+        for (var i = 1; i < 8; i++) PlayerInfo(i, 'Igrač $i', i, true, 0),
+      ]);
+      expect(t.takeException(), isNull, reason: name);
+      final para = t.renderObject<RenderParagraph>(find.descendant(
+          of: find.ancestor(of: find.byIcon(Icons.star), matching: find.byType(Row)).first,
+          matching: find.text(name)));
+      expect(para.didExceedMaxLines, isFalse, reason: '$name is cut');
+    }
   });
 
   testWidgets('with nobody joined it says how to join', (t) async {

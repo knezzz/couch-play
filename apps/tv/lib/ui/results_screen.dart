@@ -75,33 +75,37 @@ class _ResultsScreenState extends State<ResultsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 96, vertical: 64),
             child: Column(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          Strings.wins(winners),
-                          maxLines: 1,
-                          style: const TextStyle(
-                            fontSize: 96,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -2,
-                            color: tvText,
+                // The label sits beside the headline if there is room, else below it.
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    spacing: 48,
+                    runSpacing: 4,
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1728),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            Strings.wins(winners),
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 96,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -2,
+                              color: tvText,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    if (widget.label.isNotEmpty) ...[
-                      const SizedBox(width: 32),
-                      Text(widget.label, style: const TextStyle(fontSize: 44, color: tvMuted)),
+                      if (widget.label.isNotEmpty)
+                        Text(widget.label, style: const TextStyle(fontSize: 44, color: tvMuted)),
                     ],
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 32),
                 Expanded(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,7 +246,7 @@ class _Tonight extends StatelessWidget {
           children: [
             const Text(Strings.tonight, style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText)),
             for (final p in byScore) ...[
-              SizedBox(height: byScore.length > 5 ? 12 : 20),
+              SizedBox(height: byScore.length > 5 ? 8 : 20),
               Row(
                 children: [
                   PlayerDot(playerColors[p.colorIndex % playerColors.length]),

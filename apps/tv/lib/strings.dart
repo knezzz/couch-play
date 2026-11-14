@@ -9,7 +9,6 @@ abstract final class Strings {
   static const scanToJoin = 'Skeniraj kod mobitelom i pridruži se.';
   static const scanCaption = 'Skeniraj ili otvori u pregledniku:';
   static String players(int n) => 'Igrači · $n od 8';
-  static const badgeHost = 'DOMAĆIN';
   static const badgeBot = 'ROBOT';
   static const badgeAway = 'NEMA VEZE';
   static const scoreboard = 'Bodovi';
