@@ -15,7 +15,6 @@ abstract final class Strings {
   // Lobby
   static String waitingForHost(String? host) =>
       'Čekaš da ${host ?? 'domaćin'} pokrene igru.';
-  static const hostBadge = '★ DOMAĆIN';
   static const pickGame = 'Odaberi igru';
   static const quiz = 'Kviz';
   static const curve = 'Curve';

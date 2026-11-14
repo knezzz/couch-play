@@ -53,12 +53,16 @@ void main() {
     // Your own chip is on top and not repeated under "Others".
     expect(find.text('P0'), findsOneWidget);
     expect(find.text(Strings.others(1)), findsOneWidget);
-    expect(find.text(Strings.hostBadge), findsOneWidget);
+    expect(
+      find.byIcon(Icons.star),
+      findsOneWidget,
+    ); // the star alone marks the host
 
     await _pump(t, _lobby(), 1);
     expect(find.text(Strings.curve), findsNothing);
     expect(find.byIcon(Icons.add), findsNothing);
     expect(find.widgetWithText(TextButton, Strings.remove), findsNothing);
+    expect(find.byIcon(Icons.star), findsNothing);
     expect(find.textContaining('P0'), findsWidgets); // waiting for the host
   });
 

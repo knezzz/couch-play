@@ -406,23 +406,10 @@ class _MyChip extends StatelessWidget {
             ),
           ),
         ),
+        // The star alone marks the host: no word, so long names keep their room.
         if (host) ...[
-          const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: ink,
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: const Text(
-              Strings.hostBadge,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: textColor,
-              ),
-            ),
-          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.star, size: 28, color: ink),
         ],
       ],
     ),

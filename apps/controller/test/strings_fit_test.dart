@@ -30,6 +30,7 @@ LobbyState _lobby() => const LobbyState(
 );
 
 void main() {
+  _nameFits();
   testWidgets('Croatian host lobby fits at 360 px with 16-letter names', (
     t,
   ) async {
@@ -114,7 +115,7 @@ void main() {
 
   for (final w in [360.0, 390.0]) {
     testWidgets(
-      'host chip name ellipsizes before the badge at ${w.toInt()} px',
+      'host chip name ellipsizes before the star at ${w.toInt()} px',
       (t) async {
         t.view.physicalSize = Size(w, 844);
         t.view.devicePixelRatio = 1;
@@ -131,14 +132,7 @@ void main() {
               )
               .first,
         );
-        final badge = t.getRect(
-          find
-              .ancestor(
-                of: find.text(Strings.hostBadge),
-                matching: find.byType(Container),
-              )
-              .first,
-        );
+        final badge = t.getRect(find.byIcon(Icons.star));
         expect(badge.left - name.right, greaterThanOrEqualTo(8));
       },
     );
@@ -198,4 +192,27 @@ void main() {
       ],
     );
   });
+}
+
+void _nameFits() {
+  testWidgets(
+    'host chip shows a long name without an ellipsis at 360 px (star only)',
+    (t) async {
+      t.view.physicalSize = const Size(360, 844);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      // 8 wide letters in the test font (28 px each) fit; the old 'DOMAĆIN' pill left room for only ~5.
+      const name = 'Čedomir!';
+      final l = LobbyState(
+        hostId: 0,
+        packs: const [],
+        players: const [PlayerInfo(0, name, 0, true, 0)],
+      );
+      await t.pumpWidget(
+        MaterialApp(home: LobbyScreen(FakeConnection(), l, 0)),
+      );
+      final p = t.renderObject<RenderParagraph>(find.text(name).first);
+      expect(p.didExceedMaxLines, isFalse);
+    },
+  );
 }
