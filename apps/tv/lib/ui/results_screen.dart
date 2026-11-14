@@ -1,25 +1,59 @@
+import 'dart:async';
+
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-const _bg = Color(0xFF14141E);
-const _ink = Color(0xFF14141E);
+import 'tv_theme.dart';
 
-/// Shown for 8 s after a game: the placements and the session scoreboard.
-/// Reads only [Placement]s and [PlayerInfo]s, so Curve and the quiz share it.
-/// Designed on 1920x1080 and scaled to fit, like the lobby.
+/// How long the results stay up before the TV goes back to the lobby.
+const resultsHold = Duration(seconds: 8);
+
+const _green = Color(0xFF2ECC71);
+
+String _ordinal(int n) {
+  final tens = n % 100;
+  if (tens >= 11 && tens <= 13) return '${n}th';
+  return '$n${switch (n % 10) { 1 => 'st', 2 => 'nd', 3 => 'rd', _ => 'th' }}';
+}
+
+/// The headline for the placements: "Ana wins!", "Ana & Bea win!".
+String _headline(List<String> winners) => switch (winners.length) {
+      0 => 'Game over',
+      1 => '${winners[0]} wins!',
+      _ => '${winners.sublist(0, winners.length - 1).join(', ')} & ${winners.last} win!',
+    };
+
+/// Shown for [resultsHold] after a game (TvResults): the placements and the
+/// session scores. Reads only [Placement]s and [PlayerInfo]s, so Curve and the
+/// quiz share it; [label] says which game it was. Designed on 1920x1080 and
+/// scaled to fit, like the lobby.
 class ResultsScreen extends StatefulWidget {
-  const ResultsScreen({required this.placements, required this.players, super.key});
+  const ResultsScreen({
+    required this.placements,
+    required this.players,
+    this.label = '',
+    super.key,
+  });
   final List<Placement> placements;
   final List<PlayerInfo> players;
+  final String label;
 
   @override
   State<ResultsScreen> createState() => _ResultsScreenState();
 }
 
 class _ResultsScreenState extends State<ResultsScreen> {
+  static const _tick = Duration(milliseconds: 100);
+  Timer? _timer;
+  var _elapsed = Duration.zero;
+
   @override
   void initState() {
     super.initState();
+    _timer = Timer.periodic(_tick, (_) {
+      if (_elapsed >= resultsHold) return _timer?.cancel();
+      setState(() => _elapsed += _tick);
+    });
     // After the first frame, never during build.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) EffectLayer.play(context, EffectName.confetti);
@@ -27,50 +61,108 @@ class _ResultsScreenState extends State<ResultsScreen> {
   }
 
   @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final byId = {for (final p in widget.players) p.id: p};
-    final byScore = [...widget.players]
-      ..sort((a, b) => b.sessionScore.compareTo(a.sessionScore));
+    final byScore = [...widget.players]..sort((a, b) => b.sessionScore.compareTo(a.sessionScore));
+    final winners = [
+      for (final pl in widget.placements)
+        if (pl.place == 1) byId[pl.playerId]?.name ?? 'Player',
+    ];
+    final dense = widget.placements.length > 4;
+    final left = (resultsHold - _elapsed).inMilliseconds;
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: tvBg,
       body: FittedBox(
         fit: BoxFit.contain,
         child: SizedBox(
           width: 1920,
           height: 1080,
           child: Padding(
-            padding: const EdgeInsets.all(64),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.symmetric(horizontal: 96, vertical: 64),
+            child: Column(
               children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _headline(winners),
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 96,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -2,
+                            color: tvText,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (widget.label.isNotEmpty) ...[
+                      const SizedBox(width: 32),
+                      Text(widget.label, style: const TextStyle(fontSize: 44, color: tvMuted)),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 40),
                 Expanded(
-                  flex: 3,
-                  child: Column(
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Results',
-                        style: TextStyle(fontSize: 64, color: Colors.white, fontWeight: FontWeight.bold),
+                      Expanded(
+                        // Only scales if a big tie would not fit.
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.topLeft,
+                          child: SizedBox(
+                            width: 1104,
+                            child: Column(
+                              children: [
+                                for (final pl in widget.placements) ...[
+                                  _PlaceRow(pl, byId[pl.playerId], dense: dense),
+                                  SizedBox(height: dense ? 12 : 20),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      for (final pl in widget.placements) _PlaceRow(pl, byId[pl.playerId]),
+                      const SizedBox(width: 64),
+                      _Tonight(byScore),
                     ],
                   ),
                 ),
-                const SizedBox(width: 64),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Scoreboard',
-                        style: TextStyle(fontSize: 44, color: Colors.white70, fontWeight: FontWeight.bold),
+                const SizedBox(height: 40),
+                Row(
+                  children: [
+                    Container(
+                      width: 360,
+                      height: 12,
+                      decoration: BoxDecoration(color: tvRaised, borderRadius: BorderRadius.circular(999)),
+                      child: FractionallySizedBox(
+                        key: const ValueKey('countdown-bar'),
+                        alignment: Alignment.centerLeft,
+                        widthFactor: (1 - left / resultsHold.inMilliseconds).clamp(0.0, 1.0),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(color: tvAccent, borderRadius: BorderRadius.circular(999)),
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      for (final p in byScore) _ScoreRow(p),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 24),
+                    Text(
+                      'Back to the lobby in ${(left / 1000).ceil().clamp(0, 99)} s',
+                      style: const TextStyle(fontSize: 40, color: tvMuted),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -82,80 +174,101 @@ class _ResultsScreenState extends State<ResultsScreen> {
 }
 
 class _PlaceRow extends StatelessWidget {
-  const _PlaceRow(this.pl, this.p);
+  const _PlaceRow(this.pl, this.p, {required this.dense});
   final Placement pl;
   final PlayerInfo? p;
+  final bool dense;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    key: ValueKey('place-${pl.playerId}'),
-    padding: const EdgeInsets.symmetric(vertical: 6),
-    child: Row(
-      children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            '${pl.place}',
-            style: const TextStyle(fontSize: 60, color: Colors.white, fontWeight: FontWeight.bold),
+  Widget build(BuildContext context) {
+    final name = Expanded(
+      child: Text(p?.name ?? 'Player', maxLines: 1, overflow: TextOverflow.ellipsis),
+    );
+    if (pl.place == 1) {
+      return Container(
+        key: ValueKey('place-${pl.playerId}'),
+        padding: EdgeInsets.symmetric(horizontal: 40, vertical: dense ? 16 : 28),
+        decoration: BoxDecoration(
+          color: playerColors[(p?.colorIndex ?? 0) % playerColors.length],
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: DefaultTextStyle.merge(
+          style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: tvInk),
+          child: Row(
+            children: [
+              SizedBox(width: 120, child: Text(_ordinal(pl.place), maxLines: 1, softWrap: false)),
+              const SizedBox(width: 28),
+              name,
+              const SizedBox(width: 28),
+              Text(grouped(pl.gameScore), style: const TextStyle(fontSize: 44)),
+              const SizedBox(width: 28),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                decoration: BoxDecoration(color: tvInk, borderRadius: BorderRadius.circular(999)),
+                child: Text('+${pl.sessionPoints}',
+                    style: const TextStyle(fontSize: 44, color: tvText)),
+              ),
+            ],
           ),
         ),
-        Flexible(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 720),
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-            decoration: BoxDecoration(
-              color: playerColors[(p?.colorIndex ?? 0) % playerColors.length],
-              borderRadius: BorderRadius.circular(48),
+      );
+    }
+    return Container(
+      key: ValueKey('place-${pl.playerId}'),
+      padding: EdgeInsets.symmetric(horizontal: 40, vertical: dense ? 8 : 24),
+      decoration: BoxDecoration(color: tvSurface, borderRadius: BorderRadius.circular(24)),
+      child: DefaultTextStyle.merge(
+        style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w700, color: tvText),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 120,
+              child: Text(_ordinal(pl.place), maxLines: 1, softWrap: false, style: const TextStyle(color: tvMuted)),
             ),
-            child: Text(
-              p?.name ?? 'Player',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 44, fontWeight: FontWeight.bold, color: _ink),
-            ),
-          ),
+            PlayerDot(playerColors[(p?.colorIndex ?? 0) % playerColors.length]),
+            const SizedBox(width: 28),
+            name,
+            const SizedBox(width: 28),
+            Text(grouped(pl.gameScore), style: const TextStyle(fontSize: 40)),
+            const SizedBox(width: 28),
+            Text('+${pl.sessionPoints}', style: const TextStyle(fontSize: 40, color: _green)),
+          ],
         ),
-        const SizedBox(width: 32),
-        Text(
-          '+${pl.sessionPoints}',
-          style: const TextStyle(fontSize: 52, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
-class _ScoreRow extends StatelessWidget {
-  const _ScoreRow(this.p);
-  final PlayerInfo p;
+class _Tonight extends StatelessWidget {
+  const _Tonight(this.byScore);
+  final List<PlayerInfo> byScore;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: playerColors[p.colorIndex % playerColors.length],
-            shape: BoxShape.circle,
-          ),
+  Widget build(BuildContext context) => Container(
+        key: const ValueKey('tonight'),
+        width: 560,
+        padding: const EdgeInsets.all(40),
+        decoration: BoxDecoration(color: tvSurface, borderRadius: BorderRadius.circular(32)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Tonight', style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText)),
+            for (final p in byScore) ...[
+              SizedBox(height: byScore.length > 5 ? 12 : 20),
+              Row(
+                children: [
+                  PlayerDot(playerColors[p.colorIndex % playerColors.length]),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Text(p.name,
+                        maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 40, color: tvText)),
+                  ),
+                  Text(grouped(p.sessionScore),
+                      style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w700, color: tvText)),
+                ],
+              ),
+            ],
+          ],
         ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Text(
-            p.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 40, color: Colors.white),
-          ),
-        ),
-        Text(
-          '${p.sessionScore}',
-          style: const TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ],
-    ),
-  );
+      );
 }

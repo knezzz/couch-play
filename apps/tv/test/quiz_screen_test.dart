@@ -2,150 +2,195 @@ import 'dart:convert';
 
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/ui/quiz_screen.dart';
+import 'package:tv/ui/tv_theme.dart';
 
 const _svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="red"/></svg>';
 final _long = 'Extraordinarily long answer text that goes on and on ' * 3;
 
-Widget _screen(WidgetTester t, {int? correct, bool svg = true}) => MaterialApp(
-      home: QuizScreen(
-        question: 'Which of these is the capital of the country in the picture? ' * 2,
-        svg: svg ? utf8.encode(_svg) : null,
-        choices: [_long, 'Split', _long, 'Osijek'],
-        number: 3,
-        total: 10,
-        remaining: 0.6,
-        answered: 2,
-        expected: 4,
-        correctIndex: correct,
-        picks: correct == null ? const {} : {0: 1, 1: 2, 2: 2},
-        players: [for (var i = 0; i < 4; i++) PlayerInfo(i, 'Player number $i', i, true, 0)],
-        totals: const {0: 0, 1: 750, 2: 750, 3: 0},
-      ),
+void _big(WidgetTester t) {
+  t.view
+    ..physicalSize = const Size(1920, 1080)
+    ..devicePixelRatio = 1;
+  addTearDown(t.view.reset);
+}
+
+QuizScreen _quiz({int? correct, bool svg = true, Map<int, int>? picks, Map<int, int>? points, double remaining = 0.6}) =>
+    QuizScreen(
+      question: 'Which of these is the capital of the country in the picture? ' * 2,
+      packTitle: 'World Flags',
+      svg: svg ? utf8.encode(_svg) : null,
+      choices: [_long, 'Split', _long, 'Osijek'],
+      number: 3,
+      total: 10,
+      remaining: remaining,
+      answered: 2,
+      expected: 4,
+      correctIndex: correct,
+      picks: picks ?? (correct == null ? const {} : const {0: 1, 1: 2, 2: 2}),
+      points: points ?? const {0: 0, 1: 960, 2: 771, 3: 0},
+      players: [for (var i = 0; i < 4; i++) PlayerInfo(i, 'Player number $i', i, true, 0)],
+      totals: const {0: 0, 1: 2710, 2: 12480, 3: 0},
     );
 
+Future<void> _pump(WidgetTester t, QuizScreen s) {
+  _big(t);
+  return t.pumpWidget(MaterialApp(theme: tvTheme(), home: s));
+}
+
+double _fs(WidgetTester t, Finder f) => t.widget<Text>(f).style!.fontSize!;
+
 void main() {
-  for (final correct in [null, 2]) {
-    testWidgets('1080p long choices, no overflow (correct=$correct)', (t) async {
-      t.view.physicalSize = const Size(1920, 1080);
-      t.view.devicePixelRatio = 1;
-      addTearDown(t.view.reset);
-      await t.pumpWidget(_screen(t, correct: correct));
-      await t.pump();
+  group('question', () {
+    testWidgets('header row: question N of M, pack title, answered count', (t) async {
+      await _pump(t, _quiz());
       expect(t.takeException(), isNull);
-      // Row doesn't flag vertical overflow, so check long answers stay in their tile (two lines).
-      for (final e in find.text(_long).evaluate()) {
-        expect(t.getSize(find.byWidget(e.widget)).height, lessThanOrEqualTo(2 * 48 * 1.5));
-      }
-      expect(find.text('2 of 4 answered'), correct == null ? findsOneWidget : findsNothing);
       expect(find.text('Question 3 of 10'), findsOneWidget);
+      expect(find.text('World Flags'), findsOneWidget);
+      expect(find.text('2 of 4 answered'), findsOneWidget);
+      expect(_fs(t, find.text('2 of 4 answered')), 40);
     });
-  }
 
-  testWidgets('reveal scoreboard lists only players in the quiz', (t) async {
-    t.view.physicalSize = const Size(1920, 1080);
-    t.view.devicePixelRatio = 1;
-    addTearDown(t.view.reset);
-    await t.pumpWidget(MaterialApp(
-      home: QuizScreen(
-        question: 'q',
-        choices: const ['a', 'b', 'c', 'd'],
-        number: 1,
-        total: 2,
-        remaining: 0.5,
-        answered: 1,
-        expected: 1,
-        correctIndex: 0,
-        players: [
-          PlayerInfo(0, 'Quizzer', 0, true, 0),
-          PlayerInfo(1, 'Latecomer', 1, true, 0),
-          PlayerInfo(2, 'Botty', 2, true, 0, bot: true),
-        ],
-        totals: const {0: 750},
-      ),
-    ));
-    expect(find.text('Quizzer'), findsOneWidget);
-    expect(find.text('Latecomer'), findsNothing);
-    expect(find.text('Botty'), findsNothing);
+    testWidgets('accent progress bar follows the countdown', (t) async {
+      await _pump(t, _quiz(remaining: 0.6));
+      final bar = t.widget<FractionallySizedBox>(find.byKey(const ValueKey('timer-bar')));
+      expect(bar.widthFactor, 0.6);
+      expect(t.getSize(find.byKey(const ValueKey('timer-bar'))).height, 16);
+      final deco = t.widget<DecoratedBox>(find.descendant(of: find.byKey(const ValueKey('timer-bar')), matching: find.byType(DecoratedBox)));
+      expect((deco.decoration as BoxDecoration).color, tvAccent);
+    });
+
+    testWidgets('80 px question, 520 px picture card on the right', (t) async {
+      await _pump(t, _quiz());
+      expect(_fs(t, find.textContaining('Which of these')), 80);
+      expect(t.getSize(find.byKey(const ValueKey('picture-card'))).width, 520);
+      expect(t.getTopLeft(find.byKey(const ValueKey('picture-card'))).dx,
+          greaterThan(t.getTopLeft(find.textContaining('Which of these')).dx + 400));
+    });
+
+    testWidgets('four 168 px tiles in a 2x2 grid; long answers wrap to 3 lines inside the tile', (t) async {
+      await _pump(t, _quiz(svg: false));
+      for (var i = 0; i < 4; i++) {
+        expect(t.getSize(find.byKey(ValueKey('tile-$i'))).height, 168);
+      }
+      expect(t.getTopLeft(find.byKey(const ValueKey('tile-0'))).dy, t.getTopLeft(find.byKey(const ValueKey('tile-1'))).dy);
+      expect(t.getTopLeft(find.byKey(const ValueKey('tile-2'))).dy, greaterThan(t.getTopLeft(find.byKey(const ValueKey('tile-0'))).dy));
+      for (final e in find.text(_long).evaluate()) {
+        final h = t.getSize(find.byWidget(e.widget)).height;
+        expect(h, lessThanOrEqualTo(168));
+        expect((e.widget as Text).maxLines, 3);
+        expect((e.widget as Text).style!.fontSize, greaterThanOrEqualTo(28));
+      }
+      expect(_fs(t, find.text('Split')), 52, reason: 'short answers are big');
+    });
+
+    testWidgets('the tile shapes are drawn, not typed', (t) async {
+      await _pump(t, _quiz());
+      for (final g in ['▲', '◆', '●', '■']) {
+        expect(find.text(g), findsNothing, reason: 'a glyph needs a symbol font on the TV');
+      }
+      expect(find.descendant(of: find.byKey(const ValueKey('tile-0')), matching: find.byType(CustomPaint)), findsWidgets);
+    });
+
+    testWidgets('timer bar spans the full width', (t) async {
+      await _pump(t, _quiz(remaining: 1));
+      expect(t.getSize(find.byKey(const ValueKey('timer-bar'))).width, 1728);
+    });
+
+    testWidgets('answers stay at 40 px or more up to 3 lines', (t) async {
+      await _pump(t, _quiz());
+      expect(_fs(t, find.text('Split')), greaterThanOrEqualTo(40));
+    });
   });
 
-  testWidgets('tiles fill the grid, not just their text', (t) async {
-    t.view.physicalSize = const Size(1920, 1080);
-    t.view.devicePixelRatio = 1;
-    addTearDown(t.view.reset);
-    await t.pumpWidget(_screen(t));
-    final tile = find.ancestor(of: find.text('Split'), matching: find.byType(Container)).first;
-    expect(t.getSize(tile).height, greaterThan(200));
-  });
+  group('reveal', () {
+    testWidgets('no overflow with long text; header says The answer is', (t) async {
+      await _pump(t, _quiz(correct: 2));
+      expect(t.takeException(), isNull);
+      expect(find.textContaining('The answer is'), findsOneWidget);
+      expect(find.text('2 of 4 answered'), findsNothing);
+    });
 
-  testWidgets('answer text is at least 40 px on the TV', (t) async {
-    t.view.physicalSize = const Size(1920, 1080);
-    t.view.devicePixelRatio = 1;
-    addTearDown(t.view.reset);
-    await t.pumpWidget(_screen(t));
-    final fs = t.widget<Text>(find.text('Split')).style!.fontSize!;
-    expect(fs, greaterThanOrEqualTo(40));
-  });
+    testWidgets('the correct tile is large, outlined white, with a check', (t) async {
+      await _pump(t, _quiz(correct: 2));
+      final big = find.byKey(const ValueKey('tile-2'));
+      expect(t.getSize(big).height, 168);
+      expect(find.descendant(of: big, matching: find.byIcon(Icons.check)), findsOneWidget);
+      final deco = t.widget<Container>(big).decoration! as BoxDecoration;
+      expect(deco.border!.top.color, tvText);
+      for (final i in [0, 1, 3]) {
+        expect(t.getSize(find.byKey(ValueKey('tile-$i'))).height, 120);
+        expect(find.descendant(of: find.byKey(ValueKey('tile-$i')), matching: find.byIcon(Icons.check)), findsNothing);
+      }
+    });
 
-  testWidgets('reveal: wrong tiles dim their fill, voter dots stay at full strength', (t) async {
-    t.view.physicalSize = const Size(1920, 1080);
-    t.view.devicePixelRatio = 1;
-    addTearDown(t.view.reset);
-    await t.pumpWidget(_screen(t, correct: 2)); // players 1 and 2 picked tiles 1 and 2; 0 picked 1
-    // No Opacity wraps a whole tile any more.
-    expect(find.byType(Opacity), findsNothing);
-    final dots = find.byWidgetPredicate((w) =>
-        w is Container &&
-        w.decoration is BoxDecoration &&
-        (w.decoration! as BoxDecoration).shape == BoxShape.circle &&
-        (w.constraints?.maxWidth == 40));
-    expect(dots, findsNWidgets(3));
-    for (final d in dots.evaluate()) {
-      final deco = (d.widget as Container).decoration! as BoxDecoration;
-      expect(deco.color!.a, 1.0, reason: 'dot fill is opaque');
-      expect((deco.border! as Border).top.color, Colors.white, reason: 'white ring');
-      expect((deco.border! as Border).top.width, 4);
-    }
-    // The wrong tile's fill is the dimmed colour.
-    final wrong = t.widget<Container>(find.ancestor(of: find.text('Split'), matching: find.byType(Container)).first);
-    expect((wrong.decoration! as BoxDecoration).color!.a, closeTo(0.3, 0.01));
-  });
+    testWidgets('the 3 wrong tiles sit in one row as 25% tints', (t) async {
+      await _pump(t, _quiz(correct: 2));
+      final ys = [0, 1, 3].map((i) => t.getTopLeft(find.byKey(ValueKey('tile-$i'))).dy).toSet();
+      expect(ys.length, 1);
+      expect(ys.single, greaterThan(t.getTopLeft(find.byKey(const ValueKey('tile-2'))).dy));
+      final fill = (t.widget<Container>(find.byKey(const ValueKey('tile-1'))).decoration! as BoxDecoration).color!;
+      expect(fill.a, closeTo(0.25, 0.01));
+      expect(find.byType(Opacity), findsNothing, reason: 'the voter dots must not be dimmed');
+    });
 
-  testWidgets('reveal scoreboard: 40 px text, 36 px dots', (t) async {
-    t.view.physicalSize = const Size(1920, 1080);
-    t.view.devicePixelRatio = 1;
-    addTearDown(t.view.reset);
-    await t.pumpWidget(_screen(t, correct: 2));
-    final name = find.text('Player number 1');
-    expect(t.widget<Text>(name.last).style!.fontSize, 40);
-    expect(t.widget<Text>(find.text('750').first).style!.fontSize, 40);
-  });
+    testWidgets('voters: white-ringed dots, 48 px on the correct tile, 44 px on wrong ones', (t) async {
+      await _pump(t, _quiz(correct: 2)); // picks {0:1, 1:2, 2:2}
+      Iterable<Size> dots(int tile) => find
+          .descendant(of: find.byKey(ValueKey('tile-$tile')), matching: find.byType(PlayerDot))
+          .evaluate()
+          .map((e) => t.getSize(find.byWidget(e.widget)));
+      expect(dots(2), [const Size(48, 48), const Size(48, 48)]);
+      expect(dots(1), [const Size(44, 44)]);
+      expect(dots(0), isEmpty);
+      for (final e in find.byType(PlayerDot).evaluate().where((e) => (e.widget as PlayerDot).ring)) {
+        final box = (find.descendant(of: find.byWidget(e.widget), matching: find.byType(Container)).evaluate().first.widget as Container)
+            .decoration! as BoxDecoration;
+        expect(box.border!.top.color, Colors.white);
+        expect(box.color!.a, 1.0);
+      }
+    });
 
-  testWidgets('answers that differ only at the end are shown in full, up to 3 lines', (t) async {
-    t.view.physicalSize = const Size(1920, 1080);
-    t.view.devicePixelRatio = 1;
-    addTearDown(t.view.reset);
-    const stem = 'The river that flows through the old town and then';
-    final choices = ['$stem north', '$stem south', '$stem east', '$stem west'];
-    await t.pumpWidget(MaterialApp(
-      home: QuizScreen(
-        question: 'q',
-        choices: choices,
-        number: 1,
-        total: 2,
-        remaining: 0.5,
-        answered: 0,
-        expected: 1,
-        players: const [],
-      ),
-    ));
-    expect(t.takeException(), isNull);
-    for (final c in choices) {
-      final p = t.renderObject<RenderParagraph>(find.text(c));
-      expect(p.didExceedMaxLines, isFalse, reason: c);
-      expect(p.size.height, lessThanOrEqualTo(3 * p.text.style!.fontSize! * 1.5));
-    }
+    testWidgets('Scores panel: grouped totals, +points green, +0 muted, 40 px', (t) async {
+      await _pump(t, _quiz(correct: 2));
+      expect(find.text('Scores'), findsOneWidget);
+      expect(_fs(t, find.text('Scores')), 44);
+      expect(find.text('12 480'), findsOneWidget);
+      expect(find.text('2 710'), findsOneWidget);
+      expect(_fs(t, find.text('12 480')), 40);
+      expect(t.widget<Text>(find.text('+960')).style!.color, const Color(0xFF2ECC71));
+      expect(t.widget<Text>(find.text('+0').first).style!.color, tvMuted);
+      double y(String s) => t.getTopLeft(find.text(s)).dy;
+      expect(y('12 480'), lessThan(y('2 710')), reason: 'sorted by total');
+    });
+
+    testWidgets('Scores lists only players in the quiz', (t) async {
+      _big(t);
+      await t.pumpWidget(MaterialApp(
+        theme: tvTheme(),
+        home: QuizScreen(
+          question: 'q',
+          packTitle: 'P',
+          choices: const ['a', 'b', 'c', 'd'],
+          number: 1,
+          total: 2,
+          remaining: 0.5,
+          answered: 1,
+          expected: 1,
+          correctIndex: 0,
+          players: [
+            PlayerInfo(0, 'Quizzer', 0, true, 0),
+            PlayerInfo(1, 'Latecomer', 1, true, 0),
+            PlayerInfo(2, 'Botty', 2, true, 0, bot: true),
+          ],
+          totals: const {0: 750},
+          points: const {0: 750},
+        ),
+      ));
+      expect(find.text('Quizzer'), findsOneWidget);
+      expect(find.text('Latecomer'), findsNothing);
+      expect(find.text('Botty'), findsNothing);
+    });
   });
 }

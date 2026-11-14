@@ -673,6 +673,15 @@ void main() {
     expect(s.placements, isEmpty);
   });
 
+  test('lastGameLabel_names_the_curve_game', () {
+    final a = join(s, 'A');
+    a.say(const SetBots(1));
+    a.say(const StartGame(GameKind.curve, null));
+    expect(s.quizTitle, '');
+    s.finishGame({idOf(a): 1});
+    expect(s.lastGameLabel, 'Curve');
+  });
+
   test('endGame_returns_to_lobby_without_placement_points', () {
     final a = join(s, 'A');
     a.say(const SetBots(1));

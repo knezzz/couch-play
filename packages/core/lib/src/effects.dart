@@ -160,25 +160,26 @@ class _ConfettiPainter extends CustomPainter {
   _ConfettiPainter(this.t) : super(repaint: t);
   final Animation<double> t;
 
-  // Fixed particles, built once: painting allocates nothing per frame but
-  // the Offsets passed to the canvas.
-  static const _n = 60;
+  // A few large pieces, built once: painting allocates nothing per frame but
+  // one RRect each. (Dozens of small specks cost a third of the frames on the
+  // TV's GPU.)
+  static const _n = 20;
   static final _x0 = List<double>.filled(_n, 0), _dx = List<double>.filled(_n, 0);
   static final _vy = List<double>.filled(_n, 0), _spin = List<double>.filled(_n, 0);
-  static final _size = List<double>.filled(_n, 0);
+  static final _rot0 = List<double>.filled(_n, 0);
   static final _ready = () {
     final r = Random(7);
     for (var i = 0; i < _n; i++) {
       _x0[i] = r.nextDouble();
       _dx[i] = (r.nextDouble() - .5) * .3;
       _vy[i] = .35 + r.nextDouble() * .35; // >= .35 so all are off screen at t=1
-      _spin[i] = (r.nextDouble() - .5) * 14;
-      _size[i] = 5 + r.nextDouble() * 5;
+      _spin[i] = (r.nextDouble() - .5) * 8;
+      _rot0[i] = r.nextDouble() * pi;
     }
     return true;
   }();
 
-  final _paint = Paint()..strokeCap = StrokeCap.round;
+  final _paint = Paint();
 
   @override
   void paint(Canvas canvas, Size s) {
@@ -186,22 +187,18 @@ class _ConfettiPainter extends CustomPainter {
     // reading this is what fills the particle tables (all zeros otherwise).
     if (!_ready) return;
     final v = t.value;
-    // Sized for the screen. The TV is ~540 logical px tall (2x density), so
-    // this gives it 10-20 logical (20-40 physical) px specks.
-    final k = 4 * s.shortestSide / 1080;
+    // 22x36 px at 1080p (the mockup), never smaller than a phone can read.
+    final k = max(.55, s.shortestSide / 1080);
+    final piece = RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: 22 * k, height: 36 * k), Radius.circular(4 * k));
     for (var i = 0; i < _n; i++) {
-      final size = _size[i] * k;
-      final x = s.width * (_x0[i] + _dx[i] * v);
-      final y = s.height * (-.1 + _vy[i] * v + v * v);
       _paint.color = _colors[i % _colors.length];
-      if (i.isEven) {
-        canvas.drawCircle(Offset(x, y), size, _paint);
-      } else {
-        // A rounded bar, turning as it falls.
-        final a = _spin[i] * v, dx = cos(a) * size * 1.5, dy = sin(a) * size * 1.5;
-        _paint.strokeWidth = size;
-        canvas.drawLine(Offset(x - dx, y - dy), Offset(x + dx, y + dy), _paint);
-      }
+      canvas
+        ..save()
+        ..translate(s.width * (_x0[i] + _dx[i] * v), s.height * (-.1 + _vy[i] * v + v * v))
+        ..rotate(_rot0[i] + _spin[i] * v)
+        ..drawRRect(piece, _paint)
+        ..restore();
     }
   }
 

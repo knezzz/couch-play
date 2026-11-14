@@ -503,6 +503,9 @@ class Session {
     return (1 - spent.inMilliseconds / q.limit.inMilliseconds).clamp(0.0, 1.0);
   }
 
+  /// The running quiz pack's title, or ''.
+  String get quizTitle => _quizPack?.title ?? '';
+
   /// The SVG of the current question, if it has one.
   Uint8List? get quizSvg {
     final img = _quiz?.current.image;
@@ -687,10 +690,16 @@ class Session {
 
   // --- the end of a game ---
 
+  String _lastGame = '';
+
+  /// What the results screen is for: 'Curve' or 'Quiz · title'.
+  String get lastGameLabel => _lastGame;
+
   /// Ends the running game: adds placement points to [sessionScores], sends
   /// Results, and moves to the results phase. [gameScores] is keyed by player
   /// id. Quiz calls this too (Task 11).
   void finishGame(Map<int, int> gameScores) {
+    _lastGame = _quizPack == null ? 'Curve' : 'Quiz · ${_quizPack!.title}';
     // Someone kicked mid-game is no longer a player and gets no place.
     final placements = placementPoints({
       for (final e in gameScores.entries)

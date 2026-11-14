@@ -186,7 +186,12 @@ void main() {
 
     addTearDown(t.view.reset);
     final small = await coverage(const Size(800, 600));
-    expect(await coverage(const Size(960, 540)), greaterThan(0.05), reason: 'TV: 540 logical px tall');
+    // The TV is 960x540 logical (2x): a few large pieces, not a haze of specks.
+    final tv = await coverage(const Size(960, 540));
+    expect(tv, inInclusiveRange(0.003, 0.03), reason: 'tv=$tv');
+    // A phone (390x844) keeps pieces readable.
+    final phone = await coverage(const Size(390, 844));
+    expect(phone, inInclusiveRange(0.003, 0.03), reason: 'phone=$phone');
     final big = await coverage(const Size(1600, 1200));
     expect(small, greaterThan(0));
     expect(big / small, inInclusiveRange(0.7, 1.4), reason: 'small=$small big=$big');

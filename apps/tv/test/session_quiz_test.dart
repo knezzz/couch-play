@@ -46,6 +46,19 @@ void main() {
     s.dispose();
   });
 
+  testWidgets('quizTitle_and_lastGameLabel_name_the_pack', (t) async {
+    s = fresh();
+    final a = join(s, 'Ana');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    final title = s.quizTitle;
+    expect(title, isNotEmpty);
+    s.finishGame({idOf(a): 1});
+    expect(s.quizTitle, '', reason: 'the quiz is over');
+    expect(s.lastGameLabel, 'Quiz · $title');
+    s.dispose();
+  });
+
   testWidgets('endGame_stops_the_quiz_timer_and_keeps_scores', (t) async {
     s = fresh();
     final a = join(s, 'Ana'), b = join(s, 'Ben');

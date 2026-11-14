@@ -106,7 +106,7 @@ class _TvAppState extends State<TvApp> {
     }
     // Results stay up for 8 s, then back to the lobby.
     if (_session.phase == Phase.results) {
-      _resultsTimer ??= Timer(const Duration(seconds: 8), () {
+      _resultsTimer ??= Timer(resultsHold, () {
         _resultsTimer = null;
         _session.returnToLobby();
       });
@@ -195,7 +195,9 @@ class _TvAppState extends State<TvApp> {
                     expected: _session.quizExpected,
                     correctIndex:
                         quiz.step == QuizStep.asking ? null : quiz.current.correctIndex,
+                    packTitle: _session.quizTitle,
                     picks: _session.quizPicks,
+                    points: quiz.lastPoints,
                     players: _session.playerInfos,
                     totals: quiz.totals,
                   ),
@@ -203,7 +205,10 @@ class _TvAppState extends State<TvApp> {
           : game != null
               ? Scaffold(body: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false))
               : _session.phase == Phase.results
-              ? ResultsScreen(placements: _session.placements, players: _session.playerInfos)
+              ? ResultsScreen(
+                  placements: _session.placements,
+                  players: _session.playerInfos,
+                  label: _session.lastGameLabel)
               : LobbyScreen(
                   joinUrl: _session.joinUrl,
                   players: _session.playerInfos,
