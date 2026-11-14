@@ -61,8 +61,9 @@ class PackStore {
     return PackStore._(userDir, b, u);
   }
 
+  /// The default pack first: the phone picker preselects the first entry.
   List<PackInfo> get infos => [
-        for (final p in [..._bundled.values, ..._user.values])
+        for (final p in {?defaultPack, ..._bundled.values, ..._user.values})
           PackInfo(p.id, p.title, p.questions.length),
       ];
 

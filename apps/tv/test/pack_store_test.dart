@@ -66,6 +66,21 @@ void main() {
     expect(s.infos.map((i) => i.id), ['good']);
   });
 
+  test('infos lists general first, then the other bundled packs, then user packs', () async {
+    File('${dir.path}/mine.pack').writeAsBytesSync(pack('mine'));
+    final s = await PackStore.load(
+        bundled: [pack('film-music'), pack('flags'), pack('general')], userDir: dir);
+    expect(s.infos.map((i) => i.id), ['general', 'film-music', 'flags', 'mine']);
+    expect(s.defaultPack!.id, 'general');
+  });
+
+  test('an old user pack with a bundled id is skipped at load', () async {
+    File('${dir.path}/general.pack').writeAsBytesSync(pack('general', title: 'Old upload'));
+    final s = await PackStore.load(bundled: [pack('general', title: 'Built-in')], userDir: dir);
+    expect(s.infos.map((i) => i.title), ['Built-in']);
+    expect(s.get('general')!.title, 'Built-in');
+  });
+
   test('a missing user dir is created on first add', () async {
     final sub = Directory('${dir.path}/packs');
     final s = await PackStore.load(bundled: [], userDir: sub);
