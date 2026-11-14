@@ -22,7 +22,8 @@ class LobbyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final byScore = [...players]..sort((a, b) => b.sessionScore.compareTo(a.sessionScore));
+    final byScore = [...players]
+      ..sort((a, b) => b.sessionScore.compareTo(a.sessionScore));
     return Scaffold(
       backgroundColor: _bg,
       body: FittedBox(
@@ -32,28 +33,57 @@ class LobbyScreen extends StatelessWidget {
           height: 1080,
           child: Padding(
             padding: const EdgeInsets.all(64),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              SizedBox(width: 640, child: _Join(joinUrl)),
-              const SizedBox(width: 64),
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  if (players.isEmpty)
-                    const Text('Scan the code with your phone to join.',
-                        style: TextStyle(fontSize: 56, color: Colors.white))
-                  else
-                    Wrap(spacing: 24, runSpacing: 24, children: [
-                      for (final p in players) _Chip(p, host: p.id == hostId),
-                    ]),
-                  const Spacer(),
-                  if (players.isNotEmpty) ...[
-                    const Text('Scoreboard',
-                        style: TextStyle(fontSize: 44, color: Colors.white70, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    for (final p in byScore) _ScoreRow(p),
-                  ],
-                ]),
-              ),
-            ]),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: 640, child: _Join(joinUrl)),
+                const SizedBox(width: 64),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (players.isEmpty)
+                        const Text(
+                          'Scan the code with your phone to join.',
+                          style: TextStyle(fontSize: 56, color: Colors.white),
+                        )
+                      else
+                        // Scales down instead of overflowing with 8 long names.
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.topLeft,
+                            child: SizedBox(
+                              width: 1088,
+                              child: Wrap(
+                                spacing: 24,
+                                runSpacing: 24,
+                                children: [
+                                  for (final p in players)
+                                    _Chip(p, host: p.id == hostId),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 24),
+                      if (players.isNotEmpty) ...[
+                        const Text(
+                          'Scoreboard',
+                          style: TextStyle(
+                            fontSize: 44,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        for (final p in byScore) _ScoreRow(p),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -69,20 +99,43 @@ class _Join extends StatelessWidget {
   Widget build(BuildContext context) {
     if (url == null) {
       return const Center(
-        child: Text('Connect the TV to Wi-Fi to play.',
-            textAlign: TextAlign.center, style: TextStyle(fontSize: 64, color: Colors.white)),
+        child: Text(
+          'Connect the TV to Wi-Fi to play.',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 64, color: Colors.white),
+        ),
       );
     }
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-        padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(40)),
-        child: QrImageView(data: url!, size: 512, backgroundColor: Colors.white),
-      ),
-      const SizedBox(height: 32),
-      const Text('Scan to join', style: TextStyle(fontSize: 44, color: Colors.white70)),
-      Text(url!, style: const TextStyle(fontSize: 52, color: Colors.white, fontWeight: FontWeight.bold)),
-    ]);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: QrImageView(
+            data: url!,
+            size: 512,
+            backgroundColor: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 32),
+        const Text(
+          'Scan to join',
+          style: TextStyle(fontSize: 44, color: Colors.white70),
+        ),
+        Text(
+          url!,
+          style: const TextStyle(
+            fontSize: 52,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -93,27 +146,48 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Opacity(
-        opacity: p.connected ? 1 : 0.4,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 20),
-          decoration: BoxDecoration(
-            color: playerColors[p.colorIndex % playerColors.length],
-            borderRadius: BorderRadius.circular(56),
-          ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Text('${host ? '★ ' : ''}${p.name}',
-                style: const TextStyle(fontSize: 56, fontWeight: FontWeight.bold, color: _ink)),
-            if (p.bot) ...[
-              const SizedBox(width: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(color: _ink, borderRadius: BorderRadius.circular(12)),
-                child: const Text('bot', style: TextStyle(fontSize: 28, color: Colors.white)),
+    opacity: p.connected ? 1 : 0.4,
+    child: Container(
+      // Never wider than the chip area, even for a 16-wide-letter name.
+      constraints: const BoxConstraints(maxWidth: 1088),
+      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 20),
+      decoration: BoxDecoration(
+        color: playerColors[p.colorIndex % playerColors.length],
+        borderRadius: BorderRadius.circular(56),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              '${host ? '★ ' : ''}${p.name}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 56,
+                fontWeight: FontWeight.bold,
+                color: _ink,
               ),
-            ],
-          ]),
-        ),
-      );
+            ),
+          ),
+          if (p.bot) ...[
+            const SizedBox(width: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: _ink,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'bot',
+                style: TextStyle(fontSize: 28, color: Colors.white),
+              ),
+            ),
+          ],
+        ],
+      ),
+    ),
+  );
 }
 
 class _ScoreRow extends StatelessWidget {
@@ -122,19 +196,34 @@ class _ScoreRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        key: ValueKey('score-${p.name}'),
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-                color: playerColors[p.colorIndex % playerColors.length], shape: BoxShape.circle),
+    key: ValueKey('score-${p.name}'),
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      children: [
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: playerColors[p.colorIndex % playerColors.length],
+            shape: BoxShape.circle,
           ),
-          const SizedBox(width: 20),
-          Expanded(child: Text(p.name, style: const TextStyle(fontSize: 40, color: Colors.white))),
-          Text('${p.sessionScore}',
-              style: const TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold)),
-        ]),
-      );
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Text(
+            p.name,
+            style: const TextStyle(fontSize: 40, color: Colors.white),
+          ),
+        ),
+        Text(
+          '${p.sessionScore}',
+          style: const TextStyle(
+            fontSize: 40,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
 }

@@ -55,9 +55,11 @@ class _CurveScreenState extends State<CurveScreen> {
   void didUpdateWidget(CurveScreen old) {
     super.didUpdateWidget(old);
     if (old.alive && !widget.alive) {
-      // Ignored pointers never send their release, so forget them now.
+      // Ignored pointers never send their release, so release for them or the
+      // TV keeps turning this player.
+      final held = _left || _right;
       _held[0] = _held[1] = 0;
-      _left = _right = false;
+      if (held) _set(left: false, right: false);
     }
   }
 

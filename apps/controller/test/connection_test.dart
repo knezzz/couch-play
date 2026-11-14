@@ -60,4 +60,35 @@ void main() {
       const Steer(left: true, right: false),
     ]);
   });
+
+  testWidgets('Kicked stops reconnecting until Join again sends a fresh Join', (
+    t,
+  ) async {
+    final chans = <_Ch>[];
+    final c = Connection(
+      Uri.parse('ws://x/ws'),
+      'tok',
+      connect: (_) {
+        final ch = _Ch();
+        chans.add(ch);
+        return ch;
+      },
+    );
+    await t.pump();
+    c.send(const Join('Ana', 'tok'));
+    c.send(const Steer(left: true, right: false));
+    chans[0].incoming.add(const Kicked().encode());
+    await chans[0].incoming.close(); // the TV closes the socket after Kicked
+    await t.pump(const Duration(seconds: 10));
+    expect(chans.length, 1, reason: 'no auto-reconnect after a kick');
+
+    c.send(const Join('Ana', 'tok')); // Join again
+    await t.pump();
+    await t.pump();
+    expect(chans.length, 2);
+    // Only the fresh Join: the old Steer must not come back.
+    expect(chans[1].sink.sent.map((s) => Message.decode(s)), [
+      const Join('Ana', 'tok'),
+    ]);
+  });
 }

@@ -65,4 +65,17 @@ void main() {
     expect(find.textContaining('p95'), findsOneWidget);
     await t.pumpWidget(const SizedBox());
   });
+
+  testWidgets('crashing while holding a side sends Steer(false, false)', (
+    t,
+  ) async {
+    final c = _Fake();
+    await t.pumpWidget(MaterialApp(home: CurveScreen(c)));
+    final g = await t.startGesture(const Offset(50, 300));
+    expect(c.sent.last, const Steer(left: true, right: false));
+    await t.pumpWidget(MaterialApp(home: CurveScreen(c, alive: false)));
+    expect(c.sent.last, const Steer(left: false, right: false));
+    await g.up();
+    await t.pumpWidget(const SizedBox());
+  });
 }

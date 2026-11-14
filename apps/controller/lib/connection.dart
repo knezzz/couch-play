@@ -28,10 +28,19 @@ class Connection {
   Join? _join;
   Steer? _steer; // re-sent after a reconnect so a held finger keeps steering
   int _attempt = 0;
+  bool _stopped = false; // kicked: no reconnect until a fresh Join
 
   Stream<Message> get messages => _messages.stream;
 
   void send(Message m) {
+    if (m is Join && _stopped) {
+      // Join again after a kick: reconnect; _open sends this Join once ready.
+      _stopped = false;
+      _attempt = 0;
+      _join = m;
+      _open();
+      return;
+    }
     if (m is Join) _join = m;
     if (m is Steer) _steer = m;
     try {
@@ -49,6 +58,12 @@ class Connection {
     ch.stream.listen(
       (raw) {
         final m = Message.decode(raw as String);
+        if (m is Kicked) {
+          // The TV forgot our token: reconnecting would re-create the player.
+          _stopped = true;
+          _join = null;
+          _steer = null;
+        }
         if (m != null) _messages.add(m);
       },
       onDone: _retry,
@@ -57,6 +72,7 @@ class Connection {
   }
 
   void _retry() {
+    if (_stopped) return;
     final secs = min(0.5 * pow(2, _attempt), 4.0);
     _attempt++;
     Timer(Duration(milliseconds: (secs * 1000).round()), _open);
