@@ -143,7 +143,6 @@ class CurveSim {
     for (final h in _heads.values) {
       h.alive = !_gone.contains(h.id);
       h.inGap = false;
-      h.left = h.right = false;
       h.gapTicks = _nextGap();
       // Rejection sampling; after 100 tries accept the spot (tiny arenas).
       for (var i = 0; i < 100; i++) {

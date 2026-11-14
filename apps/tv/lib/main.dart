@@ -95,7 +95,7 @@ class _TvAppState extends State<TvApp> {
       if (sim.matchOver) {
         _startMatch();
       } else {
-        _wiring.startRound();
+        sim.startRound();
         _newGame();
       }
     });

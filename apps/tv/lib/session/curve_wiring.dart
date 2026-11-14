@@ -20,8 +20,8 @@ class CurveWiring {
   PeerSocket? _driver;
   String? _token;
   bool _driverOpen = false;
-  // Held buttons. The phone sends Steer only on change, but a new round or
-  // match clears the sim's inputs, so they are applied again after each start.
+  // Held buttons, kept only so a new match (a new sim) starts with them.
+  // Rounds keep inputs inside CurveSim.
   bool _left = false, _right = false;
 
   void onPeer(PeerSocket peer) {
@@ -69,12 +69,6 @@ class CurveWiring {
       _left = _right = false;
       sim?.setInput(0, left: false, right: false);
     });
-  }
-
-  /// The next round of the same match.
-  void startRound() {
-    sim!.startRound();
-    sim!.setInput(0, left: _left, right: _right);
   }
 
   void startMatch() {

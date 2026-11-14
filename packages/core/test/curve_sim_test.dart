@@ -148,4 +148,18 @@ void main() {
     s.tick();
     expect([for (final h in s.heads) (h.x, h.y)], isNot(before));
   });
+
+  test('held_input_survives_startRound', () {
+    // Phones send input only when a button changes, so a button held across
+    // a round boundary must keep steering.
+    final s = CurveSim([0, 1], random: Random(1));
+    s.setInput(0, left: true, right: false);
+    s.startRound();
+    double heading() => s.heads.firstWhere((h) => h.id == 0).heading;
+    final before = heading();
+    for (var i = 0; i < 120 + 30; i++) { // 2 s countdown, then 0.5 s of play
+      s.tick();
+    }
+    expect((heading() - before).abs(), greaterThan(1.0));
+  });
 }

@@ -134,7 +134,7 @@ void main() {
     final a = await _Phone.connect(server.port);
     await a.send(const Join('A', 'tokA'));
     await a.send(const Steer(left: true, right: false));
-    wiring.startRound();
+    wiring.sim!.startRound();
     expect(turnedOver200Ticks(), isTrue);
     await a.close();
   });
@@ -153,7 +153,7 @@ void main() {
     await a.send(const Join('A', 'tokA'));
     await a.send(const Steer(left: true, right: false));
     await a.send(const Steer(left: false, right: false));
-    wiring.startRound();
+    wiring.sim!.startRound();
     expect(turnedOver200Ticks(), isFalse);
     await a.close();
   });
