@@ -85,6 +85,19 @@ void main() {
     expect(_alive(s, 0), isTrue);
   });
 
+  test('crossing_own_old_trail_kills', () {
+    // No gaps, so the full circle really does cross the start of the trail.
+    const noGaps = CurveConfig(countdown: 0, gapEveryMin: 1e6, gapEveryMax: 1e6 + 1);
+    final s = CurveSim([0, 1, 2], config: noGaps, random: Random(1));
+    s.place(0, 800, 450, 0);
+    s.place(1, 100, 100, 0);
+    s.place(2, 100, 800, 0);
+    s.setInput(0, left: true, right: false);
+    // A full circle takes 2 s = 120 ticks; give it a little extra to arrive.
+    _run(s, () => !_alive(s, 0), 150);
+    expect(_alive(s, 0), isFalse);
+  });
+
   test('outlive_scoring', () {
     final s = CurveSim([0, 1, 2, 3], config: _noCountdown, random: Random(1));
     for (final id in [1, 2, 3]) {

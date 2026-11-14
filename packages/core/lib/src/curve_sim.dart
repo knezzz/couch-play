@@ -210,7 +210,11 @@ class CurveSim {
       for (var cy = r0; cy <= r1; cy++) {
         for (var cx = c0; cx <= c1; cx++) {
           final i = cy * _cols + cx;
-          if (_owner[i] == 0 || _owner[i] == h.id + 1) {
+          // Own cells are refreshed only while fresh; re-stamping old ones
+          // made a line immune to its own old trail.
+          if (_owner[i] == 0 ||
+              (_owner[i] == h.id + 1 &&
+                  _tick - _paintTick[i] <= config.selfGraceTicks)) {
             _owner[i] = h.id + 1;
             _paintTick[i] = _tick;
           }
