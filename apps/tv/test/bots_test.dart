@@ -48,11 +48,12 @@ CurveHead _head(CurveSim s, int id) => s.heads.firstWhere((h) => h.id == id);
 
 void main() {
   test('bots_turn_away_from_walls', () {
-    // Head 70 units from the left wall, flying straight at it.
+    // Head 130 units from the left wall, flying straight at it. A bot reacts
+    // 150-250 ms late (21-35 units), so this is the closest it should handle.
     for (final startY in [450.0, 60.0, 840.0]) {
       final sim = CurveSim([1, 2], random: Random(1));
       final bots = Bots(sim, [1], Random(2));
-      sim.place(1, 70, startY, pi);
+      sim.place(1, 130, startY, pi);
       sim.place(2, 1500, 450, 0);
       for (var i = 0; i < 100; i++) {
         bots.tick();
@@ -63,17 +64,22 @@ void main() {
   });
 
   test('bot_turns_away_from_wall_ahead', () {
-    // 90 units from the wall the old bot had not reacted yet (it waits for
-    // 80). Every seed must already be turning after one tick.
+    // 110 units from the wall the old bot had not reacted yet (it waits for
+    // 80). Every seed must start turning within 25 ticks and live to tick 100.
     for (var seed = 0; seed < 10; seed++) {
       final sim = CurveSim([0, 1, 2], config: _cfg, random: Random(1));
       final bots = Bots(sim, [0], Random(seed));
-      sim.place(0, 90, 450, pi);
+      sim.place(0, 110, 450, pi);
       sim.place(1, 1500, 100, 0);
       sim.place(2, 1500, 800, pi);
-      bots.tick();
-      sim.tick();
-      expect((_head(sim, 0).heading - pi).abs(), greaterThan(0.01), reason: 'seed=$seed');
+      var turned = false;
+      for (var i = 0; i < 100; i++) {
+        bots.tick();
+        sim.tick();
+        if (i < 25 && (_head(sim, 0).heading - pi).abs() > 0.1) turned = true;
+      }
+      expect(turned, isTrue, reason: 'seed=$seed');
+      expect(_head(sim, 0).alive, isTrue, reason: 'seed=$seed');
     }
   });
 
@@ -87,7 +93,7 @@ void main() {
       sim.tick();
     }
     sim.kill(1);
-    sim.place(0, 620, 450, 0); // 80 units from the trail, flying at it
+    sim.place(0, 590, 450, 0); // 110 units from the trail, flying at it
     return sim;
   }
 
@@ -107,7 +113,7 @@ void main() {
     // A normal bot swerves from this trail (bot_avoids_trail_ahead). A ghost
     // sees it as open and goes straight for the item on the far side.
     final sim = withTrail();
-    sim.placePowerUp(PowerUpKind.ghost, 621, 450);
+    sim.placePowerUp(PowerUpKind.ghost, 595, 450);
     final bots = Bots(sim, [0], Random(1));
     sim.tick(); // picks the ghost up
     expect(sim.hasEffect(0, PowerUpKind.ghost), isTrue);
@@ -134,6 +140,65 @@ void main() {
       final bots = Bots(sim, [0], Random(seed));
       var picked = false;
       for (var i = 0; i < 150 && !picked; i++) {
+        bots.tick();
+        picked = sim.tick().any((e) => e is PickedUp && e.playerId == 0);
+      }
+      expect(picked, isTrue, reason: 'seed=$seed');
+    }
+  });
+
+  test('bots_do_not_flip_steering_every_tick', () {
+    // Three bots in open space for up to 5 s. Steering is read back from the
+    // heading change each tick; no held steer (or straight run) may be shorter
+    // than 9 ticks, apart from the first, which the window starts in the middle
+    // of, and the last, which it cuts.
+    for (var seed = 0; seed < 5; seed++) {
+      final sim = CurveSim([0, 1, 2], config: _cfg, random: Random(seed));
+      final bots = Bots(sim, [0, 1, 2], Random(seed));
+      sim.place(0, 400, 450, 0);
+      sim.place(1, 800, 450, pi / 2);
+      sim.place(2, 1200, 450, pi);
+      final last = [for (var i = 0; i < 3; i++) _head(sim, i).heading];
+      final prev = [0, 0, 0], run = [0, 0, 0];
+      final runs = <List<int>>[[], [], []];
+      final seen = [false, false, false];
+      for (var i = 0; i < 300 && !sim.roundOver; i++) {
+        bots.tick();
+        sim.tick();
+        for (var id = 0; id < 3; id++) {
+          final h = _head(sim, id);
+          if (!h.alive) continue;
+          final d = h.heading - last[id];
+          last[id] = h.heading;
+          final cur = d.abs() < 1e-9 ? 0 : (d > 0 ? 1 : -1);
+          if (i > 0 && cur != prev[id]) {
+            if (seen[id]) runs[id].add(run[id]);
+            seen[id] = true;
+            run[id] = 0;
+          }
+          run[id]++;
+          prev[id] = cur;
+        }
+      }
+      for (var id = 0; id < 3; id++) {
+        expect(runs[id].where((r) => r < 9), isEmpty,
+            reason: 'seed=$seed id=$id runs=${runs[id]}');
+      }
+    }
+  });
+
+  test('bot_commits_to_a_power_up_target', () {
+    // The item is 300 units away, off to the side, with nothing in the way.
+    // Within 6 s every seed must have picked it up.
+    for (var seed = 0; seed < 10; seed++) {
+      final sim = CurveSim([0, 1, 2], config: _cfg, random: Random(1));
+      sim.place(0, 600, 450, 0);
+      sim.place(1, 100, 100, 0);
+      sim.place(2, 100, 800, 0);
+      sim.placePowerUp(PowerUpKind.speed, 750, 700);
+      final bots = Bots(sim, [0], Random(seed));
+      var picked = false;
+      for (var i = 0; i < 360 && !picked && _head(sim, 0).alive; i++) {
         bots.tick();
         picked = sim.tick().any((e) => e is PickedUp && e.playerId == 0);
       }
