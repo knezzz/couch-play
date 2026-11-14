@@ -163,8 +163,8 @@ class QuizScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                width: 28,
-                                height: 28,
+                                width: 36,
+                                height: 36,
                                 decoration: BoxDecoration(
                                   color: _color(p),
                                   shape: BoxShape.circle,
@@ -177,7 +177,7 @@ class QuizScreen extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    fontSize: 34,
+                                    fontSize: 40,
                                     color: Colors.white,
                                   ),
                                 ),
@@ -186,7 +186,7 @@ class QuizScreen extends StatelessWidget {
                               Text(
                                 '${totals[p.id] ?? 0}',
                                 style: const TextStyle(
-                                  fontSize: 34,
+                                  fontSize: 40,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -212,12 +212,12 @@ class QuizScreen extends StatelessWidget {
       for (final p in players)
         if (reveal && picks[p.id] == i) p,
     ];
-    return Opacity(
-      opacity: dim ? 0.3 : 1,
-      child: Container(
+    // Dim the fill and the text only: the voter dots must stay readable.
+    final textColor = dim ? _ink.withValues(alpha: 0.3) : _ink;
+    return Container(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         decoration: BoxDecoration(
-          color: _tileColors[i],
+          color: dim ? _tileColors[i].withValues(alpha: 0.3) : _tileColors[i],
           borderRadius: BorderRadius.circular(32),
           border: reveal && !dim
               ? Border.all(color: Colors.white, width: 10)
@@ -225,17 +225,17 @@ class QuizScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(_shapes[i], style: const TextStyle(fontSize: 72, color: _ink)),
+            Text(_shapes[i], style: TextStyle(fontSize: 72, color: textColor)),
             const SizedBox(width: 24),
             Expanded(
               child: Text(
                 choices[i],
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: _ink,
+                  color: textColor,
                 ),
               ),
             ),
@@ -246,19 +246,19 @@ class QuizScreen extends StatelessWidget {
                 children: [
                   for (final p in voters)
                     Container(
-                      width: 36,
-                      height: 36,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
                         color: _color(p),
                         shape: BoxShape.circle,
-                        border: Border.all(color: _ink, width: 4),
+                        // White: tile colours equal player colours 0-3.
+                        border: Border.all(color: Colors.white, width: 4),
                       ),
                     ),
                 ],
               ),
           ],
         ),
-      ),
     );
   }
 }

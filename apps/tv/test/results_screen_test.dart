@@ -71,4 +71,13 @@ void main() {
     await t.pump(const Duration(seconds: 3));
     expect(t.binding.transientCallbackCount, 0);
   });
+
+  testWidgets('scoreboard: 44 px header, 40 px rows', (t) async {
+    bigScreen(t);
+    await t.pumpWidget(app(const [Placement(0, 1, 9, 3)], const [PlayerInfo(0, 'Ana', 0, true, 3)]));
+    expect(t.widget<Text>(find.text('Scoreboard')).style!.fontSize, 44);
+    expect(t.widgetList<Text>(find.text('Ana')).map((x) => x.style!.fontSize), contains(40));
+    expect(t.widget<Text>(find.text('3')).style!.fontSize, 40);
+    await t.pump(const Duration(seconds: 3));
+  });
 }

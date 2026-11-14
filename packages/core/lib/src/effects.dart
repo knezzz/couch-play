@@ -162,7 +162,7 @@ class _ConfettiPainter extends CustomPainter {
 
   // Fixed particles, built once: painting allocates nothing per frame but
   // the Offsets passed to the canvas.
-  static const _n = 36;
+  static const _n = 60;
   static final _x0 = List<double>.filled(_n, 0), _dx = List<double>.filled(_n, 0);
   static final _vy = List<double>.filled(_n, 0), _spin = List<double>.filled(_n, 0);
   static final _size = List<double>.filled(_n, 0);
@@ -184,16 +184,19 @@ class _ConfettiPainter extends CustomPainter {
   void paint(Canvas canvas, Size s) {
     assert(_ready);
     final v = t.value;
+    // Sized for the screen: ~2x the base size on a 1080p TV, smaller on a phone.
+    final k = 2 * s.shortestSide / 1080;
     for (var i = 0; i < _n; i++) {
+      final size = _size[i] * k;
       final x = s.width * (_x0[i] + _dx[i] * v);
       final y = s.height * (-.1 + _vy[i] * v + v * v);
       _paint.color = _colors[i % _colors.length];
       if (i.isEven) {
-        canvas.drawCircle(Offset(x, y), _size[i], _paint);
+        canvas.drawCircle(Offset(x, y), size, _paint);
       } else {
         // A rounded bar, turning as it falls.
-        final a = _spin[i] * v, dx = cos(a) * _size[i] * 1.5, dy = sin(a) * _size[i] * 1.5;
-        _paint.strokeWidth = _size[i];
+        final a = _spin[i] * v, dx = cos(a) * size * 1.5, dy = sin(a) * size * 1.5;
+        _paint.strokeWidth = size;
         canvas.drawLine(Offset(x - dx, y - dy), Offset(x + dx, y + dy), _paint);
       }
     }

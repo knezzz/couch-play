@@ -673,6 +673,32 @@ void main() {
     expect(s.placements, isEmpty);
   });
 
+  test('endGame_returns_to_lobby_without_placement_points', () {
+    final a = join(s, 'A');
+    a.say(const SetBots(1));
+    a.say(const StartGame(GameKind.curve, null));
+    expect(s.phase, Phase.curve);
+    final before = s.sessionScores;
+    s.endGame();
+    expect(s.phase, Phase.lobby);
+    expect(s.sessionScores, before, reason: 'no placement points');
+    expect(s.placements, isEmpty);
+    expect(s.sim, isNull);
+    expect(a.last<LobbyState>(), isNotNull, reason: 'phones go back to the lobby');
+    expect(a.last<Results>(), isNull);
+  });
+
+  test('endGame_does_nothing_outside_a_game', () {
+    final a = join(s, 'A');
+    s.endGame(); // lobby
+    expect(s.phase, Phase.lobby);
+    s.finishGame({idOf(a): 1});
+    final scores = s.sessionScores;
+    s.endGame(); // results keep their 8 s
+    expect(s.phase, Phase.results);
+    expect(s.sessionScores, scores);
+  });
+
 
   // --- pack upload ---
 

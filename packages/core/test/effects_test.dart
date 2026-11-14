@@ -147,4 +147,47 @@ void main() {
       await t.pump(const Duration(seconds: 3));
     });
   }
+
+  // --- confetti is sized for the screen, not for pixels ---
+
+  testWidgets('confetti covers the same share of a big screen as of a small one', (t) async {
+    Future<double> coverage(Size size) async {
+      final key = GlobalKey();
+      late BuildContext ctx;
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      await t.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: RepaintBoundary(
+            key: key,
+            child: EffectLayer(
+              child: Builder(builder: (c) {
+                ctx = c;
+                return const ColoredBox(color: Color(0xFF000000), child: SizedBox.expand());
+              }),
+            ),
+          ),
+        ),
+      ));
+      EffectLayer.play(ctx, EffectName.confetti);
+      await t.pump();
+      await t.pump(const Duration(milliseconds: 1000));
+      final (d, w, h) = await shot(t, key);
+      var lit = 0;
+      for (var i = 0; i < w * h; i++) {
+        if (d.getUint8(i * 4) + d.getUint8(i * 4 + 1) + d.getUint8(i * 4 + 2) > 0) lit++;
+      }
+      await t.pump(const Duration(seconds: 3));
+      return lit / (w * h);
+    }
+
+    addTearDown(t.view.reset);
+    final small = await coverage(const Size(800, 600));
+    final big = await coverage(const Size(1600, 1200));
+    expect(small, greaterThan(0));
+    expect(big / small, inInclusiveRange(0.7, 1.4), reason: 'small=$small big=$big');
+  });
 }

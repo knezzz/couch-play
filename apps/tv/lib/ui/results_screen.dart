@@ -135,8 +135,8 @@ class _ScoreRow extends StatelessWidget {
     child: Row(
       children: [
         Container(
-          width: 28,
-          height: 28,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             color: playerColors[p.colorIndex % playerColors.length],
             shape: BoxShape.circle,
@@ -148,12 +148,12 @@ class _ScoreRow extends StatelessWidget {
             p.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 36, color: Colors.white),
+            style: const TextStyle(fontSize: 40, color: Colors.white),
           ),
         ),
         Text(
           '${p.sessionScore}',
-          style: const TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ],
     ),

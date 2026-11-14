@@ -87,4 +87,38 @@ void main() {
     final fs = t.widget<Text>(find.text('Split')).style!.fontSize!;
     expect(fs, greaterThanOrEqualTo(40));
   });
+
+  testWidgets('reveal: wrong tiles dim their fill, voter dots stay at full strength', (t) async {
+    t.view.physicalSize = const Size(1920, 1080);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    await t.pumpWidget(_screen(t, correct: 2)); // players 1 and 2 picked tiles 1 and 2; 0 picked 1
+    // No Opacity wraps a whole tile any more.
+    expect(find.byType(Opacity), findsNothing);
+    final dots = find.byWidgetPredicate((w) =>
+        w is Container &&
+        w.decoration is BoxDecoration &&
+        (w.decoration! as BoxDecoration).shape == BoxShape.circle &&
+        (w.constraints?.maxWidth == 40));
+    expect(dots, findsNWidgets(3));
+    for (final d in dots.evaluate()) {
+      final deco = (d.widget as Container).decoration! as BoxDecoration;
+      expect(deco.color!.a, 1.0, reason: 'dot fill is opaque');
+      expect((deco.border! as Border).top.color, Colors.white, reason: 'white ring');
+      expect((deco.border! as Border).top.width, 4);
+    }
+    // The wrong tile's fill is the dimmed colour.
+    final wrong = t.widget<Container>(find.ancestor(of: find.text('Split'), matching: find.byType(Container)).first);
+    expect((wrong.decoration! as BoxDecoration).color!.a, closeTo(0.3, 0.01));
+  });
+
+  testWidgets('reveal scoreboard: 40 px text, 36 px dots', (t) async {
+    t.view.physicalSize = const Size(1920, 1080);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    await t.pumpWidget(_screen(t, correct: 2));
+    final name = find.text('Player number 1');
+    expect(t.widget<Text>(name.last).style!.fontSize, 40);
+    expect(t.widget<Text>(find.text('750').first).style!.fontSize, 40);
+  });
 }

@@ -13,11 +13,13 @@ import 'server/controller_files.dart';
 import 'server/game_server.dart';
 import 'server/lan_address.dart';
 import 'session/session.dart';
+import 'ui/back_guard.dart';
 import 'ui/curve/curve_game.dart';
 import 'ui/lobby_screen.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/quiz_screen.dart';
+import 'ui/tv_theme.dart';
 
 const _perf = bool.fromEnvironment('PERF');
 // QA/perf: pre-seeds this many bots when the first phone joins, e.g. BOTS=7.
@@ -169,8 +171,13 @@ class _TvAppState extends State<TvApp> {
       title: 'Couchplay',
       showPerformanceOverlay: _perf,
       navigatorKey: _nav,
-      builder: (_, child) => EffectLayer(child: child!),
-      theme: ThemeData.dark(),
+      builder: (_, child) => BackGuard(
+        navigatorKey: _nav,
+        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve,
+        onEnd: _session.endGame,
+        child: EffectLayer(child: child!),
+      ),
+      theme: tvTheme(),
       home: _error != null
           ? Scaffold(body: Center(child: Text(_error!, style: const TextStyle(fontSize: 40))))
           : quiz != null
@@ -198,7 +205,8 @@ class _TvAppState extends State<TvApp> {
               : LobbyScreen(
                   joinUrl: _session.joinUrl,
                   players: _session.playerInfos,
-                  hostId: _session.hostId),
+                  hostId: _session.hostId,
+                  onQuit: SystemNavigator.pop),
     );
   }
 }

@@ -46,6 +46,27 @@ void main() {
     s.dispose();
   });
 
+  testWidgets('endGame_stops_the_quiz_timer_and_keeps_scores', (t) async {
+    s = fresh();
+    final a = join(s, 'Ana'), b = join(s, 'Ben');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    await step(t, const Duration(seconds: 2));
+    answerRight(a);
+    answerRight(b);
+    await step(t, const Duration(milliseconds: 300));
+    s.endGame();
+    expect(s.phase, Phase.lobby);
+    expect(s.quiz, isNull);
+    expect(s.sessionScores.values.every((v) => v == 0), isTrue);
+    expect(a.last<Results>(), isNull);
+    expect(a.last<LobbyState>(), isNotNull);
+    // A running timer would trip the pending-timer check at the test's end.
+    await step(t, const Duration(seconds: 30));
+    expect(s.phase, Phase.lobby);
+    s.dispose();
+  });
+
   testWidgets('unknown_pack_is_an_error_and_stays_in_lobby', (t) async {
     s = fresh();
     final a = join(s, 'Ana');

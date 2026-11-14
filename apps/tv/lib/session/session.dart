@@ -713,6 +713,12 @@ class Session {
     _notify();
   }
 
+  /// The host's Back + Yes: abandons a running quiz or Curve match. No
+  /// placement points, scores stay as they were; phones go back to the lobby.
+  void endGame() {
+    if (_phase == Phase.quiz || _phase == Phase.curve) returnToLobby();
+  }
+
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
   void returnToLobby() {
     _phase = Phase.lobby;

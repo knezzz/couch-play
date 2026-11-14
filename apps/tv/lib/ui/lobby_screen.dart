@@ -12,6 +12,7 @@ class LobbyScreen extends StatelessWidget {
     required this.joinUrl,
     required this.players,
     required this.hostId,
+    required this.onQuit,
     super.key,
   });
 
@@ -19,6 +20,9 @@ class LobbyScreen extends StatelessWidget {
   final String? joinUrl;
   final List<PlayerInfo> players;
   final int? hostId;
+
+  /// The Quit item: exits the app.
+  final VoidCallback onQuit;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,32 @@ class LobbyScreen extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(width: 640, child: _Join(joinUrl)),
+                SizedBox(
+                  width: 640,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: _Join(joinUrl)),
+                      const SizedBox(height: 24),
+                      FocusTraversalGroup(
+                        child: Wrap(
+                          spacing: 24,
+                          runSpacing: 16,
+                          children: [
+                            FilledButton(
+                              onPressed: () => _howToJoin(context),
+                              child: const Text('How to join'),
+                            ),
+                            FilledButton(
+                              onPressed: onQuit,
+                              child: const Text('Quit'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(width: 64),
                 Expanded(
                   child: Column(
@@ -63,11 +92,13 @@ class LobbyScreen extends StatelessWidget {
                           ],
                         ),
                       const SizedBox(height: 24),
-                      if (players.isNotEmpty) ...[
+                      // Nothing to rank before the first game.
+                      if (byScore.isNotEmpty &&
+                          byScore.first.sessionScore > 0) ...[
                         const Text(
                           'Scoreboard',
                           style: TextStyle(
-                            fontSize: 38,
+                            fontSize: 44,
                             color: Colors.white70,
                             fontWeight: FontWeight.bold,
                           ),
@@ -85,6 +116,28 @@ class LobbyScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _howToJoin(BuildContext context) => showDialog<void>(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text('How to join', style: TextStyle(fontSize: 44)),
+      content: const Text(
+        '1. Connect your phone to the same Wi-Fi as this TV.\n'
+        '2. Scan the code, or type the address into your phone\'s browser.\n'
+        '3. Type a name and tap Join.',
+        style: TextStyle(fontSize: 36, height: 1.4),
+      ),
+      actions: [
+        Builder(
+          builder: (c) => FilledButton(
+            autofocus: true,
+            onPressed: () => Navigator.pop(c),
+            child: const Text('Got it'),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _Join extends StatelessWidget {
@@ -122,12 +175,18 @@ class _Join extends StatelessWidget {
           'Scan to join',
           style: TextStyle(fontSize: 44, color: Colors.white70),
         ),
-        Text(
-          url!,
-          style: const TextStyle(
-            fontSize: 52,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        // The QR keeps the full URL; the text drops "http://" and never wraps.
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            url!.replaceFirst('http://', ''),
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 52,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -142,7 +201,7 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Opacity(
-    opacity: p.connected ? 1 : 0.4,
+    opacity: p.connected ? 1 : 0.6,
     child: Container(
       // Never wider than the chip area, even for a 16-wide-letter name.
       constraints: BoxConstraints(maxWidth: compact ? 532 : 1088),
@@ -169,22 +228,31 @@ class _Chip extends StatelessWidget {
               ),
             ),
           ),
-          if (p.bot) ...[
+          if (p.bot) ...[const SizedBox(width: 16), const _Badge('bot')],
+          if (!p.connected) ...[
             const SizedBox(width: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: _ink,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                'bot',
-                style: TextStyle(fontSize: 28, color: Colors.white),
-              ),
-            ),
+            const _Badge('away'),
           ],
         ],
       ),
+    ),
+  );
+}
+
+class _Badge extends StatelessWidget {
+  const _Badge(this.label);
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    decoration: BoxDecoration(
+      color: _ink,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(fontSize: 28, color: Colors.white),
     ),
   );
 }
@@ -200,8 +268,8 @@ class _ScoreRow extends StatelessWidget {
     child: Row(
       children: [
         Container(
-          width: 28,
-          height: 28,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: playerColors[p.colorIndex % playerColors.length],
             shape: BoxShape.circle,
@@ -211,13 +279,13 @@ class _ScoreRow extends StatelessWidget {
         Expanded(
           child: Text(
             p.name,
-            style: const TextStyle(fontSize: 34, color: Colors.white),
+            style: const TextStyle(fontSize: 40, color: Colors.white),
           ),
         ),
         Text(
           '${p.sessionScore}',
           style: const TextStyle(
-            fontSize: 34,
+            fontSize: 40,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
