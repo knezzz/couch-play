@@ -704,11 +704,11 @@ The person approved the reference screens and wants Curve to match them, with th
   - Colors and type follow the reference-screen tokens (spec, Visual style).
 - Cost: still cheap on the TV (one draw per effect per frame, no per-frame allocation, no text layout per frame).
 
-- [ ] **Step 1: Failing tests:** `effect_time_left_drains_to_zero` (a picked-up effect reports 1.0, then about 0.5 halfway, then is gone after `effectSeconds`); `second_pickup_restarts_time_left`; `wrap_reports_everyone`.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** the sim getter, then the renderer.
-- [ ] **Step 4: Run.** Expected: PASS in every member. QA on a macOS release build: each of the 7 power-ups picked up, the indicator seen and seen running out; the wrap border shrinks and the walls come back when it is gone (a line hits the wall after it).
-- [ ] **Step 5: Commit** by path: `feat(tv): show active power-ups and time left`.
+- [x] **Step 1: Failing tests:** `effect_time_left_drains_to_zero` (a picked-up effect reports 1.0, then about 0.5 halfway, then is gone after `effectSeconds`); `second_pickup_restarts_time_left`; `wrap_reports_everyone`.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** the sim getter, then the renderer.
+- [x] **Step 4: Run.** Expected: PASS in every member. QA on a macOS release build: each of the 7 power-ups picked up, the indicator seen and seen running out; the wrap border shrinks and the walls come back when it is gone (a line hits the wall after it).
+- [x] **Step 5: Commit** by path: `feat(tv): show active power-ups and time left`.
 - [ ] **Step 6:** The person sees it on the TV at their next session (with the frame times).
 
 ---
