@@ -7,6 +7,10 @@ import '../connection.dart';
 
 /// Two full-height halves; holding one steers. Each half tracks its own
 /// pointers so two thumbs work.
+/// Value at fraction [q] (0..1) of [sorted] ascending; 0 when empty.
+int percentile(List<int> sorted, double q) =>
+    sorted.isEmpty ? 0 : sorted[((sorted.length - 1) * q).round()];
+
 class CurveScreen extends StatefulWidget {
   const CurveScreen(this.conn, {super.key});
   final Connection conn;
@@ -20,6 +24,7 @@ class _CurveScreenState extends State<CurveScreen> {
   // Pointer counts live here, not in build(): the 1 s Pong rebuild must not reset them.
   final _held = [0, 0];
   int? _rtt;
+  final _samples = <int>[]; // last 300 round trips, ms
   Timer? _ping;
   StreamSubscription<Message>? _sub;
 
@@ -27,10 +32,18 @@ class _CurveScreenState extends State<CurveScreen> {
   void initState() {
     super.initState();
     _sub = widget.conn.messages.listen((m) {
-      if (m is Pong) setState(() => _rtt = DateTime.now().millisecondsSinceEpoch - m.t);
+      if (m is Pong) {
+        setState(() {
+          _rtt = DateTime.now().millisecondsSinceEpoch - m.t;
+          _samples.add(_rtt!);
+          if (_samples.length > 300) _samples.removeAt(0);
+        });
+      }
     });
-    _ping = Timer.periodic(const Duration(seconds: 1), (_) => widget.conn
-        .send(Ping(DateTime.now().millisecondsSinceEpoch)));
+    _ping = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => widget.conn.send(Ping(DateTime.now().millisecondsSinceEpoch)),
+    );
   }
 
   @override
@@ -62,7 +75,10 @@ class _CurveScreenState extends State<CurveScreen> {
         child: Container(
           color: color,
           alignment: Alignment.center,
-          child: Text(label, style: const TextStyle(fontSize: 96, color: Colors.white)),
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 96, color: Colors.white),
+          ),
         ),
       ),
     );
@@ -70,17 +86,25 @@ class _CurveScreenState extends State<CurveScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Stack(children: [
-          Row(children: [
+    body: Stack(
+      children: [
+        Row(
+          children: [
             _half(0, '◀', (v) => _set(left: v), const Color(0xFF1E3A5F)),
             _half(1, '▶', (v) => _set(right: v), const Color(0xFF5F1E3A)),
-          ]),
-          Positioned(
-            top: 4,
-            right: 8,
-            child: Text(_rtt == null ? '' : '$_rtt ms',
-                style: const TextStyle(fontSize: 12, color: Colors.white54)),
+          ],
+        ),
+        Positioned(
+          top: 4,
+          right: 8,
+          child: Text(
+            _rtt == null
+                ? ''
+                : 'rtt ${_rtt}ms · p95 ${percentile([..._samples]..sort(), .95)}ms · n=${_samples.length}',
+            style: const TextStyle(fontSize: 12, color: Colors.white54),
           ),
-        ]),
-      );
+        ),
+      ],
+    ),
+  );
 }

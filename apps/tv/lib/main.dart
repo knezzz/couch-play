@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'ui/perf_log.dart';
 import 'server/controller_files.dart';
 import 'server/game_server.dart';
 import 'server/lan_address.dart';
@@ -24,6 +25,7 @@ const _colors = [
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  if (_perf) PerfLog.start();
   runApp(const TvApp());
 }
 

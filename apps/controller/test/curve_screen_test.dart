@@ -37,4 +37,20 @@ void main() {
     expect(c.sent.last, const Steer(left: false, right: false));
     await t.pumpWidget(const SizedBox());
   });
+
+  test('percentile', () {
+    final v = List.generate(100, (i) => i + 1);
+    expect(percentile(v, .95), 95);
+    expect(percentile([], .95), 0);
+  });
+
+  testWidgets('shows rtt, p95 and sample count', (t) async {
+    final c = _Fake();
+    await t.pumpWidget(MaterialApp(home: CurveScreen(c)));
+    c.inbox.add(Pong(DateTime.now().millisecondsSinceEpoch));
+    await t.pump();
+    expect(find.textContaining('n=1'), findsOneWidget);
+    expect(find.textContaining('p95'), findsOneWidget);
+    await t.pumpWidget(const SizedBox());
+  });
 }
