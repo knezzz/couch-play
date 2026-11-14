@@ -20,7 +20,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 11 | Quiz screens | done on macOS (e0f899d, 4c9f22a, 8ba1b0c, a22faec); design review 2 in progress | core + app |
 | 12 | Pack store and upload | done (3e49ecb, e5fcb49, 0606039, 729b9a9, e06c9fe) | builder-2 |
 | 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | built: 10 packs, 449 questions (4c17e2d, a99feee, cd0b775); waits on the person's hr-medimurje review | content |
-| 14 | TV polish and release install | Steps 1–4 + design fixes in progress; Step 5 (real TV, 3+ phones) needs the person | lead |
+| 14 | TV polish and release install | Steps 1–4 done (5d32880); Step 5 leftovers (3+ phones, Android Chrome) with the person | lead |
+| 15 | Design pass to the reference screens (person, 2026-11-14) | in progress | lead |
 
 ## Open questions for the person
 
@@ -168,3 +169,6 @@ Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 
 - 2026-11-14: Confetti fix (6b0378f) confirmed by the person on the TV and phones. Locking + unlocking a real phone
   reconnects it (Review Focus #1 verified). TV session 2 ended; adb disconnected. 3+ phones and Android Chrome left
   for the person to try on their own.
+- 2026-11-14: Task 14 Steps 1-4 accepted (PM ran tests: core 94, tv 141, controller 34). Person asked for a design
+  artifact and a design pass: canvas "CouchPlay screens" (https://claude.ai/artifact/SX8ertCTfhPyLpSpti4PKe), 9 screens,
+  copy in docs/design/couchplay-screens/; spec + plan updated (Task 15); routed to lead.
