@@ -306,6 +306,56 @@ void main() {
     expect(most, greaterThan(0));
   });
 
+  test('effect_time_left_drains_to_zero', () {
+    final s = _sim(); // 1 s effects = 60 ticks
+    expect(s.effectLeft(0, PowerUpKind.speed), 0);
+    _pickUp(s, PowerUpKind.speed);
+    expect(s.effectLeft(0, PowerUpKind.speed), 1.0);
+    _ticks(s, 30);
+    expect(s.effectLeft(0, PowerUpKind.speed), closeTo(0.5, 0.02));
+    _ticks(s, 30);
+    expect(s.effectLeft(0, PowerUpKind.speed), 0);
+    expect(s.effectLeft(1, PowerUpKind.speed), 0, reason: 'only the picker had it');
+    expect(s.effectLeft(99, PowerUpKind.speed), 0, reason: 'unknown player');
+  });
+
+  test('others_effects_report_for_the_others_only', () {
+    final s = _sim();
+    _pickUp(s, PowerUpKind.slowOthers);
+    expect(s.effectLeft(0, PowerUpKind.slowOthers), 0);
+    expect(s.effectLeft(1, PowerUpKind.slowOthers), 1.0);
+    expect(s.effectLeft(2, PowerUpKind.slowOthers), 1.0);
+  });
+
+  test('second_pickup_restarts_time_left', () {
+    final s = _sim();
+    _pickUp(s, PowerUpKind.speed);
+    _ticks(s, 40);
+    expect(s.effectLeft(0, PowerUpKind.speed), lessThan(0.4));
+    _pickUp(s, PowerUpKind.speed);
+    expect(s.effectLeft(0, PowerUpKind.speed), 1.0);
+  });
+
+  test('wrap_reports_everyone', () {
+    final s = _sim();
+    expect(s.wrapLeft, 0);
+    _pickUp(s, PowerUpKind.wrap);
+    expect(s.wrapLeft, 1.0);
+    for (final id in [0, 1, 2]) {
+      expect(s.effectLeft(id, PowerUpKind.wrap), 1.0);
+    }
+    _ticks(s, 30);
+    expect(s.wrapLeft, closeTo(0.5, 0.02));
+    _ticks(s, 30);
+    expect(s.wrapLeft, 0);
+  });
+
+  test('clear_has_no_time_left', () {
+    final s = _sim();
+    _pickUp(s, PowerUpKind.clear);
+    expect(s.effectLeft(0, PowerUpKind.clear), 0);
+  });
+
   test('names_are_kept_for_the_renderer', () {
     final s = CurveSim([0, 1], names: {0: 'Ana', 1: 'Bot 1'});
     expect(s.names[0], 'Ana');

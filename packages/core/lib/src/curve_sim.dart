@@ -162,6 +162,21 @@ class CurveSim {
     return _heads[playerId]?.has(kind) ?? false;
   }
 
+  int get _effectTicks => (config.effectSeconds * config.tickHz).round();
+
+  /// Time left on [kind] for [playerId], 1 (just picked up) down to 0; 0 when
+  /// it isn't running, the player is unknown, or the kind is [PowerUpKind.clear]
+  /// (instant). Wrap is global: any id gets the wrap fraction. Allocates nothing,
+  /// so the renderer can ask for every head and kind each frame.
+  double effectLeft(int playerId, PowerUpKind kind) {
+    if (kind == PowerUpKind.wrap) return wrapLeft;
+    final ticks = _heads[playerId]?.fx[kind.index] ?? 0;
+    return ticks <= 0 ? 0 : ticks / _effectTicks;
+  }
+
+  /// The wrap fraction left, 1 down to 0 (0 when wrap is off).
+  double get wrapLeft => _wrapLeft <= 0 ? 0 : _wrapLeft / _effectTicks;
+
   /// True once after a "clear" pickup or a round start, then false. Call it
   /// before [takeNewSegments] in the same frame: segments dropped at the clear
   /// were old trail, anything returned afterwards is new.
