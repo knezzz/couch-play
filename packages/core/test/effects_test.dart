@@ -186,6 +186,7 @@ void main() {
 
     addTearDown(t.view.reset);
     final small = await coverage(const Size(800, 600));
+    expect(await coverage(const Size(960, 540)), greaterThan(0.05), reason: 'TV: 540 logical px tall');
     final big = await coverage(const Size(1600, 1200));
     expect(small, greaterThan(0));
     expect(big / small, inInclusiveRange(0.7, 1.4), reason: 'small=$small big=$big');

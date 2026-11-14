@@ -53,6 +53,7 @@ class LobbyScreen extends StatelessWidget {
                           runSpacing: 16,
                           children: [
                             FilledButton(
+                              autofocus: true,
                               onPressed: () => _howToJoin(context),
                               child: const Text('How to join'),
                             ),

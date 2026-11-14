@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:core/core.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,8 +14,9 @@ import 'session_test.dart' show join;
 
 const _prompt = 'End this game and return to the lobby?';
 
-/// The real wiring from main.dart, around a screen that reads the session.
-Widget _app(Session s) {
+/// The wiring from main.dart around [home]. The remote's Back arrives as a
+/// pop-route from Android, not as a key.
+Widget _app(Session s, {Widget? home}) {
   final nav = GlobalKey<NavigatorState>();
   return MaterialApp(
     theme: tvTheme(),
@@ -22,63 +24,104 @@ Widget _app(Session s) {
     builder: (_, child) => BackGuard(
       navigatorKey: nav,
       active: () => s.phase == Phase.quiz || s.phase == Phase.curve,
+      changes: s.changes,
       onEnd: s.endGame,
       child: child!,
     ),
-    home: ListenableBuilder(
-      listenable: s.changes,
-      builder: (_, _) => Scaffold(body: Center(child: Text('phase ${s.phase.name}'))),
-    ),
+    home: home ??
+        ListenableBuilder(
+          listenable: s.changes,
+          builder: (_, _) => Scaffold(body: Center(child: Text('phase ${s.phase.name}'))),
+        ),
   );
 }
 
-/// flutter_test has no physical key for the remote's Back, so give it one.
-Future<void> _press(WidgetTester t, LogicalKeyboardKey key) async {
-  if (key != LogicalKeyboardKey.goBack) {
-    await t.sendKeyEvent(key);
-    return;
-  }
-  await simulateKeyDownEvent(key, physicalKey: PhysicalKeyboardKey.f24);
-  await simulateKeyUpEvent(key, physicalKey: PhysicalKeyboardKey.f24);
+/// Counts the times nothing handled a pop-route (the app would exit).
+int _exits = 0;
+void _watchExit(WidgetTester t) {
+  _exits = 0;
+  t.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (c) async {
+    if (c.method == 'SystemNavigator.pop') _exits++;
+    return null;
+  });
+  addTearDown(() => t.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
+}
+
+Future<void> _back(WidgetTester t) async {
+  await t.binding.handlePopRoute();
+  await t.pump();
 }
 
 bool _focused(WidgetTester t, String label) =>
     Focus.of(t.element(find.text(label))).hasPrimaryFocus;
 
+Session _quiz() {
+  final s = Session(random: Random(1))..quizAvailable = true;
+  join(s, 'Ana').say(const StartGame(GameKind.quiz, null));
+  return s;
+}
+
 void main() {
-  for (final key in [LogicalKeyboardKey.goBack, LogicalKeyboardKey.escape]) {
-    testWidgets('back_during_game_confirms_then_returns_to_lobby (${key.keyLabel})', (t) async {
-      final s = Session(random: Random(1))..quizAvailable = true;
-      final a = join(s, 'Ana');
-      a.say(const StartGame(GameKind.quiz, null));
-      await t.pumpWidget(_app(s));
-      expect(s.phase, Phase.quiz);
-      expect(find.text(_prompt), findsNothing);
+  setUp(() => FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional);
+  tearDown(() => FocusManager.instance.highlightStrategy = FocusHighlightStrategy.automatic);
 
-      await _press(t, key);
-      await t.pump();
-      expect(find.text(_prompt), findsOneWidget);
-      expect(_focused(t, 'No'), isTrue, reason: 'focus starts on No');
+  testWidgets('back_during_game_confirms_then_returns_to_lobby', (t) async {
+    _watchExit(t);
+    final s = _quiz();
+    await t.pumpWidget(_app(s));
+    expect(s.phase, Phase.quiz);
+    expect(find.text(_prompt), findsNothing);
 
-      await t.sendKeyEvent(LogicalKeyboardKey.arrowRight);
-      await t.pump();
-      expect(_focused(t, 'Yes'), isTrue);
+    await _back(t);
+    expect(find.text(_prompt), findsOneWidget);
+    expect(_exits, 0, reason: 'Back was handled, the app did not exit');
+    expect(_focused(t, 'No'), isTrue, reason: 'focus starts on No');
 
-      await t.sendKeyEvent(LogicalKeyboardKey.select);
-      await t.pumpAndSettle();
-      expect(find.text(_prompt), findsNothing);
-      expect(s.phase, Phase.lobby);
-      expect(s.sessionScores.values.every((v) => v == 0), isTrue);
-      s.dispose();
-    });
-  }
+    await t.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await t.pump();
+    expect(_focused(t, 'Yes'), isTrue);
+
+    await t.sendKeyEvent(LogicalKeyboardKey.select);
+    await t.pumpAndSettle();
+    expect(find.text(_prompt), findsNothing);
+    expect(s.phase, Phase.lobby);
+    expect(s.sessionScores.values.every((v) => v == 0), isTrue);
+    s.dispose();
+  });
+
+  testWidgets('Escape asks too (macOS)', (t) async {
+    final s = _quiz();
+    await t.pumpWidget(_app(s));
+    await t.sendKeyEvent(LogicalKeyboardKey.escape);
+    await t.pump();
+    expect(find.text(_prompt), findsOneWidget);
+    s.dispose();
+  });
+
+  testWidgets('Back or Escape while the dialog is open counts as No, never a second dialog', (t) async {
+    _watchExit(t);
+    final s = _quiz();
+    await t.pumpWidget(_app(s));
+    await _back(t);
+    expect(find.text(_prompt), findsOneWidget);
+    await _back(t); // again: closes it
+    await t.pumpAndSettle();
+    expect(find.text(_prompt), findsNothing);
+    expect(s.phase, Phase.quiz);
+    expect(_exits, 0);
+
+    await _back(t);
+    await t.sendKeyEvent(LogicalKeyboardKey.escape);
+    await t.pumpAndSettle();
+    expect(find.text(_prompt), findsNothing, reason: 'Escape closes it too');
+    expect(s.phase, Phase.quiz);
+    s.dispose();
+  });
 
   testWidgets('choosing No keeps the game going', (t) async {
-    final s = Session(random: Random(1))..quizAvailable = true;
-    join(s, 'Ana').say(const StartGame(GameKind.quiz, null));
+    final s = _quiz();
     await t.pumpWidget(_app(s));
-    await _press(t, LogicalKeyboardKey.goBack);
-    await t.pump();
+    await _back(t);
     await t.sendKeyEvent(LogicalKeyboardKey.select); // focus is on No
     await t.pumpAndSettle();
     expect(find.text(_prompt), findsNothing);
@@ -86,13 +129,44 @@ void main() {
     s.dispose();
   });
 
-  testWidgets('back in the lobby asks nothing', (t) async {
+  testWidgets('back in the lobby is left to the system (exits the app)', (t) async {
+    _watchExit(t);
     final s = Session(random: Random(1));
     await t.pumpWidget(_app(s));
-    await _press(t, LogicalKeyboardKey.goBack);
-    await t.pump();
+    await _back(t);
     expect(find.text(_prompt), findsNothing);
-    expect(s.phase, Phase.lobby);
+    expect(_exits, 1);
+    s.dispose();
+  });
+
+  testWidgets('the dialog closes when the game ends on its own', (t) async {
+    final s = _quiz();
+    await t.pumpWidget(_app(s));
+    await _back(t);
+    expect(find.text(_prompt), findsOneWidget);
+    s.finishGame({for (final p in s.players) p.id: 5});
+    await t.pumpAndSettle();
+    expect(find.text(_prompt), findsNothing);
+    expect(s.phase, Phase.results);
+    s.dispose();
+  });
+
+  testWidgets('Back and Escape work with a Flame GameWidget on screen (Curve)', (t) async {
+    // Flame takes keyboard focus by default and swallows every key.
+    _watchExit(t);
+    final s = _quiz();
+    await t.pumpWidget(_app(s, home: Scaffold(body: GameWidget(game: FlameGame(), autofocus: false))));
+    await t.pump();
+    await t.sendKeyEvent(LogicalKeyboardKey.escape);
+    await t.pump();
+    expect(find.text(_prompt), findsOneWidget);
+    await t.sendKeyEvent(LogicalKeyboardKey.escape);
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text(_prompt), findsNothing);
+    await t.pump(const Duration(seconds: 1)); // the game keeps ticking: no settle
+    await _back(t);
+    expect(find.text(_prompt), findsOneWidget);
+    expect(_exits, 0);
     s.dispose();
   });
 
@@ -108,10 +182,11 @@ void main() {
         ),
       );
 
-  testWidgets('d-pad reaches How to join and Quit; focus is a 3 px accent outline', (t) async {
+  testWidgets('How to join has focus from the start; Quit is a d-pad step away; focus is a 3 px accent ring', (t) async {
     await t.binding.setSurfaceSize(const Size(1920, 1080));
     addTearDown(() => t.binding.setSurfaceSize(null));
     await t.pumpWidget(lobby());
+    await t.pump(); // autofocus lands after the first frame
 
     BorderSide side(String label) {
       final m = t.widget<Material>(find
@@ -120,23 +195,17 @@ void main() {
       return (m.shape! as OutlinedBorder).side;
     }
 
-    expect(side('Quit').width, isNot(3), reason: 'no ring until focused');
-    await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await t.pump();
-    final first = _focused(t, 'How to join') ? 'How to join' : 'Quit';
-    for (final label in ['How to join', 'Quit']) {
-      final ring = side(label);
-      if (label == first) {
-        expect(ring.color, tvAccent);
-        expect(ring.width, 3);
-      } else {
-        expect(ring.width, isNot(3));
-      }
-    }
+    expect(_focused(t, 'How to join'), isTrue);
+    expect(side('How to join').color, tvAccent);
+    expect(side('How to join').width, 3);
+    expect(side('Quit').width, isNot(3), reason: 'no ring on the unfocused one');
+    // Quit sits beside it with a real font; the wide test font wraps it below.
     await t.sendKeyEvent(LogicalKeyboardKey.arrowRight);
-    await t.pump();
-    expect(_focused(t, 'Quit') || _focused(t, 'How to join'), isTrue);
-    expect(side(_focused(t, 'Quit') ? 'Quit' : 'How to join').width, 3);
+    await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await t.pump(const Duration(milliseconds: 500)); // the ring animates in
+    expect(_focused(t, 'Quit'), isTrue);
+    expect(side('Quit').width, 3);
+    expect(side('How to join').width, isNot(3));
   });
 
   testWidgets('How to join shows the steps; Quit calls onQuit', (t) async {

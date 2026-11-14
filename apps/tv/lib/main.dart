@@ -31,6 +31,8 @@ const _qaPowerUp = String.fromEnvironment('QA_POWERUP');
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // A TV has no touch: focus rings show from the start, not after a key press.
+  FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
   if (_perf) PerfLog.start();
   runApp(const TvApp());
 }
@@ -173,6 +175,7 @@ class _TvAppState extends State<TvApp> {
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
         active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve,
+        changes: _session.changes,
         onEnd: _session.endGame,
         child: EffectLayer(child: child!),
       ),
@@ -198,7 +201,7 @@ class _TvAppState extends State<TvApp> {
                   ),
                 )
           : game != null
-              ? Scaffold(body: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game))
+              ? Scaffold(body: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false))
               : _session.phase == Phase.results
               ? ResultsScreen(placements: _session.placements, players: _session.playerInfos)
               : LobbyScreen(

@@ -184,8 +184,9 @@ class _ConfettiPainter extends CustomPainter {
   void paint(Canvas canvas, Size s) {
     assert(_ready);
     final v = t.value;
-    // Sized for the screen: ~2x the base size on a 1080p TV, smaller on a phone.
-    final k = 2 * s.shortestSide / 1080;
+    // Sized for the screen. The TV is ~540 logical px tall (2x density), so
+    // this gives it 10-20 logical (20-40 physical) px specks.
+    final k = 4 * s.shortestSide / 1080;
     for (var i = 0; i < _n; i++) {
       final size = _size[i] * k;
       final x = s.width * (_x0[i] + _dx[i] * v);
