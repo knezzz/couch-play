@@ -1,0 +1,62 @@
+# hr-geografija: sources
+
+Checked online on 2026-11-14, read-only (page wikitext fetched through the Wikipedia API). One line per question, in pack order. Q1–Q11 are the easy ones.
+
+1. Sinjal (Dinara), 1831 m, najviši vrh RH: https://hr.wikipedia.org/wiki/Dinara
+2. Sveti Jure (1762 m) najviši vrh Biokova: https://hr.wikipedia.org/wiki/Biokovo and https://hr.wikipedia.org/wiki/Sveti_Jure_(Biokovo)
+3. Velebit najduža planina (145 km): https://hr.wikipedia.org/wiki/Velebit
+4. Vransko jezero kod Pakoštana "najveće je jezero u Hrvatskoj": https://hr.wikipedia.org/wiki/Vransko_jezero_(Dalmacija)
+5. Granica s BiH najduža kopnena granica (932 km): https://en.wikipedia.org/wiki/Bosnia_and_Herzegovina–Croatia_border
+6. Skradinski buk, sedrena barijera na Krki: https://hr.wikipedia.org/wiki/Skradinski_buk
+7. Ilok najistočniji grad: https://hr.wikipedia.org/wiki/Ilok
+8. Plitvice na UNESCO-ovu popisu 1979.: https://hr.wikipedia.org/wiki/Nacionalni_park_Plitvička_jezera
+9. Hum "se često navodi kao najmanji grad na svijetu": https://hr.wikipedia.org/wiki/Hum_(Buzet)
+10. Brijuni nasuprot Fažane: https://hr.wikipedia.org/wiki/Brijuni
+11. Veliko i Malo jezero u NP Mljet: https://hr.wikipedia.org/wiki/Nacionalni_park_Mljet
+12. Zlatni rat u Bolu na Braču: https://hr.wikipedia.org/wiki/Zlatni_rat ; Supetar, Milna, Postira also on Brač: https://hr.wikipedia.org/wiki/Brač
+13. Pazin upravno sjedište Istarske županije (Pula političko i gospodarsko): https://hr.wikipedia.org/wiki/Istarska_županija
+14. Vukovar sjedište Vukovarsko-srijemske županije: https://hr.wikipedia.org/wiki/Vukovarsko-srijemska_županija
+15. Cetina "izvire sjeverno od Vrlike", ulijeva se kod Omiša: https://hr.wikipedia.org/wiki/Cetina
+16. Zrmanja se ulijeva u Novigradsko more: https://hr.wikipedia.org/wiki/Zrmanja ; Prokljansko jezero is where the Krka flows: https://hr.wikipedia.org/wiki/Krka
+17. Mirna najduža rijeka Istarske županije (53 km): https://hr.wikipedia.org/wiki/Mirna
+18. Vaganski vrh (1757 m) najviši vrh Velebita: https://hr.wikipedia.org/wiki/Vaganski_vrh
+19. Bjelolasica (Kula, 1534 m) najviša planina Gorskog kotara; Klek 1182 m: https://hr.wikipedia.org/wiki/Bjelolasica
+20. Vidova gora (778 m) na Braču, najviši otočni vrh na Jadranu: https://hr.wikipedia.org/wiki/Vidova_gora and https://hr.wikipedia.org/wiki/Brač
+21. Bašćanska ploča pronađena 1851. u crkvi sv. Lucije u Jurandvoru kod Baške: https://hr.wikipedia.org/wiki/Bašćanska_ploča
+22. Slatkovodno Vransko jezero na Cresu: https://hr.wikipedia.org/wiki/Vransko_jezero_(Cres)
+23. PP Telašćica na Dugom otoku, slano jezero Mir: https://hr.wikipedia.org/wiki/Telašćica
+24. Pelješki kanal između Pelješca i Korčule: https://hr.wikipedia.org/wiki/Pelješki_kanal
+25. Pelješki most između Komarne i Brijeste: https://hr.wikipedia.org/wiki/Pelješki_most
+26. Modra špilja na Biševu: https://hr.wikipedia.org/wiki/Modra_špilja
+27. Crveno jezero kod Imotskog: https://hr.wikipedia.org/wiki/Crveno_jezero
+28. Čigoć proglašen prvim Europskim selom roda: https://hr.wikipedia.org/wiki/Čigoć
+29. Izvor Kupe u NP Risnjak: https://hr.wikipedia.org/wiki/Nacionalni_park_Risnjak and https://hr.wikipedia.org/wiki/Kupa
+30. Visovac s franjevačkim samostanom u NP Krka: https://hr.wikipedia.org/wiki/Visovac
+31. Korana: izvor u NP Plitvička jezera, ušće u Karlovcu: https://hr.wikipedia.org/wiki/Korana and https://hr.wikipedia.org/wiki/Plitvička_jezera
+32. Rastoke u Gradu Slunju, slapovi Slunjčice: https://hr.wikipedia.org/wiki/Rastoke and https://hr.wikipedia.org/wiki/Slunj
+33. Mura se ulijeva u Dravu kod Legrada: https://hr.wikipedia.org/wiki/Mura and https://hr.wikipedia.org/wiki/Legrad
+34. Đulin ponor, ponor ponornice Dobre u Ogulinu: https://hr.wikipedia.org/wiki/Đulin_ponor and https://hr.wikipedia.org/wiki/Dobra
+35. Jabuka vulkanski otočić (uz Brusnik jedini eruptivni jadranski otok): https://hr.wikipedia.org/wiki/Jabuka_(otok)
+36. Hajdučki i Rožanski kukovi u NP Sjeverni Velebit: https://hr.wikipedia.org/wiki/Nacionalni_park_Sjeverni_Velebit
+37. Neretva: ušće u blizini Rogotina i Ploča, plovna od Metkovića: https://hr.wikipedia.org/wiki/Neretva
+38. Šipan najveći od Elafita (s Lopudom, Koločepom, Jakljanom): https://hr.wikipedia.org/wiki/Elafitski_otoci
+39. Bajakovo (A3) – Batrovci, granica sa Srbijom: https://en.wikipedia.org/wiki/Croatia–Serbia_border
+40. Karasovići – Debeli Brijeg, granica s Crnom Gorom: https://en.wikipedia.org/wiki/Croatia–Montenegro_border and https://en.wikipedia.org/wiki/Debeli_Brijeg
+
+## Dropped and why
+
+- Broj županija, broj susjednih država, morem koje pripada obala, broj otoka, Arena u Puli, Dioklecijanova palača, Morske orgulje, Medvednica nad Zagrebom, Učka u Istri, Gorski kotar između Karlovca i Rijeke, Pag (sir, čipka, sol), Kornati, Osijek (Tvrđa, Drava), Vukovar na Dunavu, delta Neretve i mandarine: true but too easy; made way for harder questions.
+- Drugi najveći grad po broju stanovnika: population fact, not stable.
+- Broj nacionalnih parkova (8): a count that can change.
+- Površina kopna (~56.600 km²): sources give 56.561 (hr.wikipedia / HE) and 56.594 km² (older DZS).
+- Kopački rit "na ušću Drave u Dunav": the page says "između Dunava i Drave"; dropped rather than reworded (the pack has enough rivers).
+- Karlovac i četiri rijeke, Kupa u Savu kod Siska: true, but overlap with Q29 and Q31.
+- Gospić, sjedište Ličko-senjske: confirmed, dropped only to keep the count near 40.
+- Papuk, UNESCO geopark: the page dates the licence to 2007–2011 renewals; current status not confirmed.
+
+## Least sure
+
+- Q4: "najveće jezero" is the hr.wikipedia wording; I removed "prirodno" from the question and kept no artificial lake larger than Vransko among the choices (Peruća is a reservoir, smaller).
+- Q15: only one page checked; it says "izvire sjeverno od Vrlike". Not cross-checked on enciklopedija.hr.
+- Q28: Krapje and Mužilovčica (distractors) exist on hr.wikipedia, but I did not confirm on a page that they lie inside PP Lonjsko polje.
+- Q34: Since 1957 the Dobra's water is partly diverted to HE Gojak; the question says "završava u Đulinu ponoru", which the page states ("kanjonom svoj tok završava rijeka Dobra").
