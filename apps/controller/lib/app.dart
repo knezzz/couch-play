@@ -7,9 +7,10 @@ import 'connection.dart';
 import 'screens/curve_screen.dart';
 import 'screens/join_screen.dart';
 import 'screens/lobby_screen.dart';
+import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
 
-enum _Screen { join, lobby, wait, curve, kicked }
+enum _Screen { join, lobby, wait, curve, results, kicked }
 
 /// Routes the TV's messages to a screen. No web imports, so it runs in tests.
 class App extends StatefulWidget {
@@ -26,6 +27,8 @@ class _AppState extends State<App> {
   LobbyState? _lobby;
   String _waitReason = '';
   String? _error;
+  bool _alive = true;
+  List<Placement> _placements = const [];
   StreamSubscription<Message>? _sub;
 
   @override
@@ -48,16 +51,17 @@ class _AppState extends State<App> {
         _screen = _Screen.lobby;
       case LobbyState():
         _lobby = m;
-        // A lobby update must not pull someone out of a running game.
-        if (_screen == _Screen.wait || _screen == _Screen.join) {
-          _screen = _Screen.lobby;
-        }
+        if (_screen != _Screen.kicked) _screen = _Screen.lobby;
       case Waiting():
         _waitReason = m.reason;
         _screen = _Screen.wait;
       case CurveStatus():
         if (_screen != _Screen.curve) _error = null;
+        _alive = m.alive;
         _screen = _Screen.curve;
+      case Results():
+        _placements = m.placements;
+        _screen = _Screen.results;
       case Kicked():
         _screen = _Screen.kicked;
       case ErrorMsg():
@@ -74,7 +78,8 @@ class _AppState extends State<App> {
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : LobbyScreen(widget.conn, _lobby!, _myId),
     _Screen.wait => WaitScreen(_waitReason),
-    _Screen.curve => CurveScreen(widget.conn),
+    _Screen.curve => CurveScreen(widget.conn, alive: _alive),
+    _Screen.results => ResultsScreen(_placements, _myId),
     _Screen.kicked => _Kicked(
       onJoinAgain: () => setState(() => _screen = _Screen.join),
     ),

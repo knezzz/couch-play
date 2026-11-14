@@ -107,4 +107,64 @@ void main() {
     expect(find.text('◀'), findsOneWidget);
     await t.pumpWidget(const SizedBox()); // stop the ping timer
   });
+
+  testWidgets(
+    'Results leaves the curve screen; LobbyState returns to the lobby',
+    (t) async {
+      final c = FakeConnection();
+      await t.pumpWidget(App(c));
+      await _send(t, c, const Welcome(1, 1, 'tok'));
+      await _send(t, c, _lobby());
+      await _send(t, c, const CurveStatus(alive: true, score: 0, target: 20));
+      expect(find.text('◀'), findsOneWidget);
+      await _send(
+        t,
+        c,
+        const Results([Placement(0, 1, 20, 3), Placement(1, 2, 14, 2)]),
+      );
+      expect(find.text('◀'), findsNothing);
+      expect(find.text('You placed 2nd'), findsOneWidget);
+      expect(find.text('+2 session points'), findsOneWidget);
+      await _send(t, c, _lobby());
+      expect(find.byType(LobbyScreen), findsOneWidget);
+      await t.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('LobbyState also leaves the curve screen directly', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(0, 0, 'tok'));
+    await _send(t, c, const CurveStatus(alive: true, score: 0, target: 20));
+    await _send(t, c, _lobby());
+    expect(find.byType(LobbyScreen), findsOneWidget);
+    await t.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
+    'when you crash, a message shows and steering is inert until next round',
+    (t) async {
+      final c = FakeConnection();
+      await t.pumpWidget(App(c));
+      await _send(t, c, const Welcome(0, 0, 'tok'));
+      await _send(t, c, const CurveStatus(alive: false, score: 1, target: 20));
+      expect(
+        find.text('You crashed. Wait for the next round.'),
+        findsOneWidget,
+      );
+      c.sent.clear();
+      final g = await t.startGesture(const Offset(50, 300));
+      await g.up();
+      expect(
+        c.sent.whereType<Steer>().where((s) => s.left || s.right),
+        isEmpty,
+      );
+      await _send(t, c, const CurveStatus(alive: true, score: 1, target: 20));
+      expect(find.text('You crashed. Wait for the next round.'), findsNothing);
+      final g2 = await t.startGesture(const Offset(50, 300));
+      expect(c.sent.last, const Steer(left: true, right: false));
+      await g2.up();
+      await t.pumpWidget(const SizedBox());
+    },
+  );
 }

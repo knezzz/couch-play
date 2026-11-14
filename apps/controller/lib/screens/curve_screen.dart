@@ -12,8 +12,11 @@ int percentile(List<int> sorted, double q) =>
     sorted.isEmpty ? 0 : sorted[((sorted.length - 1) * q).round()];
 
 class CurveScreen extends StatefulWidget {
-  const CurveScreen(this.conn, {super.key});
+  const CurveScreen(this.conn, {this.alive = true, super.key});
   final Connection conn;
+
+  /// False after a crash: steering is inert until the next round.
+  final bool alive;
 
   @override
   State<CurveScreen> createState() => _CurveScreenState();
@@ -46,6 +49,16 @@ class _CurveScreenState extends State<CurveScreen> {
       const Duration(milliseconds: 50),
       (_) => widget.conn.send(Ping(DateTime.now().millisecondsSinceEpoch)),
     );
+  }
+
+  @override
+  void didUpdateWidget(CurveScreen old) {
+    super.didUpdateWidget(old);
+    if (old.alive && !widget.alive) {
+      // Ignored pointers never send their release, so forget them now.
+      _held[0] = _held[1] = 0;
+      _left = _right = false;
+    }
   }
 
   @override
@@ -90,12 +103,27 @@ class _CurveScreenState extends State<CurveScreen> {
   Widget build(BuildContext context) => Scaffold(
     body: Stack(
       children: [
-        Row(
-          children: [
-            _half(0, '◀', (v) => _set(left: v), const Color(0xFF1E3A5F)),
-            _half(1, '▶', (v) => _set(right: v), const Color(0xFF5F1E3A)),
-          ],
+        IgnorePointer(
+          ignoring: !widget.alive,
+          child: Row(
+            children: [
+              _half(0, '◀', (v) => _set(left: v), const Color(0xFF1E3A5F)),
+              _half(1, '▶', (v) => _set(right: v), const Color(0xFF5F1E3A)),
+            ],
+          ),
         ),
+        if (!widget.alive)
+          const Center(
+            child: Text(
+              'You crashed. Wait for the next round.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
         Positioned(
           top: 4,
           right: 8,
