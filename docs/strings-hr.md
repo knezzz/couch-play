@@ -21,7 +21,6 @@ Choices to confirm:
 | scanToJoin | Skeniraj kod mobitelom i pridruži se. | Scan the code with your phone and join. | TV lobby, right side, while nobody has joined |
 | scanCaption | Skeniraj ili otvori u pregledniku: | Scan, or open in your browser: | TV lobby, under the QR code (the address follows) |
 | players({n}) | Igrači · {n} od 8 | Players · {n} of 8 | TV lobby, above the player chips |
-| badgeHost | DOMAĆIN | HOST | TV lobby, pill on the host's chip |
 | badgeBot | ROBOT | BOT | TV lobby, pill on a bot's chip |
 | badgeAway | NEMA VEZE | NO CONNECTION (player's phone is away) | TV lobby, pill on a chip whose phone lost the connection |
 | scoreboard | Bodovi | Scores | TV lobby, scoreboard card heading |
