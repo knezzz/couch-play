@@ -10,7 +10,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
-| 5 | Curve end-to-end + **real-TV perf gate** | in progress: steering fixes pass QA (5295a41), last check is QA on the 64-bit emulator. Step 6 held for person's adb yes | core + app |
+| 5 | Curve end-to-end + **real-TV perf gate** | Steps 1–5 done. Step 6 (real TV) in progress, person said yes to adb this session | lead |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
@@ -23,8 +23,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 ## Open questions for the person
 
-- Coming at Task 5 Step 6: yes to adb-connect to your TV this session (enable developer mode + network debugging
-  on the TV first).
+- Task 5 gate: after the real-TV numbers, your go (or not) to continue with Task 6.
 
 Answered:
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
@@ -97,3 +96,6 @@ No added seats.
   unusable android-34 x86 image; plan Task 1 Step 2 corrected.
 - 2026-11-14: QA re-run on 5295a41 passes (long hold across rounds, reload + re-join + hold, release); review of the
   fix clean. 64-bit TV emulator installed (8.2 GB), old image deleted, 12 GiB free. Last check: QA on the emulator.
+- 2026-11-14: Task 5 Steps 1–5 accepted (review clean; QA pass on macOS + emulator; PM re-ran tests: core 13, tv 21,
+  controller 4). Renderer: per-player Path, one subpath per trail. Debug-build emulator raster max 110–194 ms is a
+  warning, not gate data. Person said yes to adb for this session; Step 6 queued to lead.

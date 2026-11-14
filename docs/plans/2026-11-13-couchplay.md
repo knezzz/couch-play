@@ -249,23 +249,23 @@ couchplay/
     - The first `Join` starts a Curve match against `--dart-define=BOTS=n` bots. The default is 7.
     - The phone's `Steer` messages drive its line.
     - `Ping` is answered with `Pong`.
-- [ ] **Step 1: Manifest for Android TV.**
+- [x] **Step 1: Manifest for Android TV.**
   - `<uses-feature android:name="android.software.leanback" android:required="false"/>`
   - `<uses-feature android:name="android.hardware.touchscreen" android:required="false"/>`
   - `LEANBACK_LAUNCHER` intent category on the main activity.
   - A 320×180 `android:banner` drawable: plain text "Couchplay" on a solid color.
   - `INTERNET` permission.
-- [ ] **Step 2: Wire the TV app.**
+- [x] **Step 2: Wire the TV app.**
   - On start, extract `assets/controller.zip` to the app support dir, start the server, and show the `http://<ip>:<port>/` text.
   - If `pickLanAddress` is null, show "Connect the TV to Wi-Fi to play."
   - The trail renderer appends `takeNewSegments()` to one `Path` per player.
   - Enable `showPerformanceOverlay` behind `--dart-define=PERF=true`.
-- [ ] **Step 3: Wire the controller.**
+- [x] **Step 3: Wire the controller.**
   - The join screen has a name field and a Join button.
   - The Curve screen shows two full-height halves, ◀ and ▶. Pointer down/up on each half sends `Steer`, so multi-touch holding works.
   - It shows the round-trip time from a `Ping` sent every 1 s, as small text in a corner.
-- [ ] **Step 4: Widget smoke test.** `apps/controller/test/curve_screen_test.dart`: pressing the left half sends `Steer(left: true, right: false)` to a fake `Connection`, and releasing it sends `Steer(false, false)`.
-- [ ] **Step 5: Run on the Android TV emulator.**
+- [x] **Step 4: Widget smoke test.** `apps/controller/test/curve_screen_test.dart`: pressing the left half sends `Steer(left: true, right: false)` to a fake `Connection`, and releasing it sends `Steer(false, false)`.
+- [x] **Step 5: Run on the Android TV emulator.**
   - `tool/build_controller.sh && cd apps/tv && flutter run -d emulator-… --dart-define=PERF=true`.
   - From a phone on the same Wi-Fi, open the URL the emulator shows (emulator networking may need `adb forward tcp:8080 tcp:8080` and the Mac's address). Steering must work.
 - [ ] **Step 6: GATE: run on the user's real Android TV.**
