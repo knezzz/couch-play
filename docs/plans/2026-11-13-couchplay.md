@@ -21,7 +21,7 @@
 - Session scoreboard: placement points after each game (1st = N, …, last = 1, where N = players in that game). Scores last only for the session.
 - The D-pad only moves focus and backs out of a game. A phone host runs the session.
 - Dev machine: Intel Mac (x86_64). Xcode and Android Studio are installed. Flutter 3.47.7 (Dart 3.13.5) is installed via fvm. `avdmanager` needs `JAVA_HOME` set to Android Studio's bundled jbr.
-- Copy rules for UI text: plain words, active voice, and errors that say how to fix the problem.
+- Copy rules for UI text: plain words, active voice, and errors that say how to fix the problem. All UI text is in Croatian (changed 2026-11-14, Task 16).
 
 ## Review Focus
 
@@ -663,3 +663,24 @@ Content rules:
 - [ ] **Step 4: Phone** (PhoneJoin, PhoneLobby, PhoneKick, PhoneQuiz, PhoneReveal): background #14141E (as the TV); join helper text; host lobby with your own chip on top and "Others · N" below (you are not listed twice), 56 px bot steppers, Remove buttons that open the bottom sheet "Remove <name>?" (Remove / Keep); the quiz header with your total; after a tap, one neutral "Locked in. Watch the TV." screen that never shows the pick (no dimmed tiles, no shape or color of the answer); the reveal as a full-color result screen.
 - [ ] **Step 5: Check.** All tests pass in every member; update widget tests that pinned old layout. QA compares each screen with its mockup on a release/profile build (macOS + Chrome) and lists differences; check-design signs off. The person sees it on the TV at their next session.
 - [ ] **Step 6: Commit** by path: `style: design pass to the reference screens`.
+
+---
+
+### Task 13b: Croatian content, harder and verified (added 2026-11-14, user request)
+
+- [ ] **Step 1:** Verify every question in `hr-medimurje`, `hr-geografija`, `hr-povijest` and `hr-kultura-sport` online (hr.wikipedia.org, enciklopedija.hr, official sites); a `tool/packs/<id>.sources.md` per pack lists the source for each question. Fix or drop what can't be confirmed.
+- [ ] **Step 2:** Make the four Croatian packs harder for locals: at most about a third easy questions; plausible wrong answers.
+- [ ] **Step 3:** Add Croatian versions of the six English packs: ids `hr-opce-znanje`, `hr-zemljopis-svijeta`, `hr-znanost`, `hr-film-glazba`, `hr-zastave`, `hr-oblici` (the flags and shapes versions reuse the same SVGs). Natural Croatian, not word-for-word; swap culture questions only where the English one makes no sense in Croatian.
+- [ ] **Step 4:** The bundled pack test covers the new ids (≥ 30 questions each). The user reviews `hr-medimurje` (and may look at the others) before this is done.
+- [ ] **Step 5: Commit** by path.
+
+---
+
+### Task 16: Croatian user interface (added 2026-11-14, user request)
+
+Starts after Task 15 (same screens).
+
+- [ ] **Step 1:** Every user-facing string on the TV and the phone in Croatian, following the copy rules (plain words, active voice, errors that say how to fix the problem): lobby, join, quiz, results, Curve, dialogs, kick, pack upload, "Locked in", waiting and error messages, and the pack validation messages from Task 9/12 (update their tests and `docs/quiz-pack-format.md`). No language switch; Croatian only. No i18n framework: one strings file per app is enough.
+- [ ] **Step 2:** The person (a native speaker) reads the full list of strings before it ships: put them in one file they can review.
+- [ ] **Step 3:** Tests updated and green in every member; QA checks every screen in a release/profile build, including the longest Croatian strings fitting at 1080p and on a 390-wide phone.
+- [ ] **Step 4: Commit** by path: `feat: croatian interface`.

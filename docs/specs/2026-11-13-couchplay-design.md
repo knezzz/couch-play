@@ -102,7 +102,7 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
   - Croatian history
   - Croatian culture and sport
 
-  The app interface stays in English. Only the question content is in Croatian. Local Međimurje facts are the hardest to verify, so the user reviews that pack before it's considered done.
+  The app interface is in Croatian (changed 2026-11-14 at the user's request; it was English). Every bundled English pack also gets a Croatian version (same pictures for flags and shapes), and the Croatian packs aim at locals: verified facts, harder questions (user request, 2026-11-14). Local Međimurje facts are the hardest to verify, so the user reviews that pack before it's considered done.
 - **Adding packs without rebuilding:** the host can upload a pack file from the controller. The TV validates it and stores it in app storage, so it's there next time. Invalid packs are rejected with a readable error.
 
 ### Curve
