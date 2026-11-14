@@ -139,6 +139,8 @@ class GameServer {
     final ext = file.path.split('.').last.toLowerCase();
     req.response.headers.contentType =
         ContentType.parse(_types[ext] ?? 'application/octet-stream');
+    // Phones must not keep an old main.dart.js after the TV app is reinstalled.
+    req.response.headers.set(HttpHeaders.cacheControlHeader, 'no-cache');
     if (req.method != 'HEAD') await req.response.addStream(file.openRead());
     await req.response.close();
   }

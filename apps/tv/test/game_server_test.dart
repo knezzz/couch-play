@@ -64,6 +64,12 @@ void main() {
     }
   });
 
+  test('static_files_are_not_cached', () async {
+    final s = await start();
+    final ok = await raw(s.port, '/index.html');
+    expect(ok.toLowerCase(), contains('cache-control: no-cache'));
+  });
+
   test('falls_back_to_next_port', () async {
     final held = await ServerSocket.bind(InternetAddress.anyIPv4, 0);
     addTearDown(held.close);
