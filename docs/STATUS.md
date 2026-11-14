@@ -14,11 +14,11 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | done on macOS (fae7156); Step 5 TV re-check waits for the next TV session | core + app |
 | 6 | Session, lobby, QR join (+ host bot controls) | in progress | lead |
 | 7 | Session scoring and results | scoring functions done (f6b19f2); finishGame + results screen wait for Task 6 | builder-2 |
-| 8 | Shared effects | first half (core widgets) in progress; wiring after Task 7 | builder-2 |
+| 8 | Shared effects | first half done (af1e3f5, 72090c5); wiring after Task 7 | builder-2 |
 | 9 | Quiz pack format | done (4b1cbdb, fix 01db6e3, merge a69cb6f) | builder-2 |
 | 10 | Quiz round logic | done (0a679e8, fixes e6b6d64, eae0ec9) | builder-2 |
 | 11 | Quiz screens | todo | — |
-| 12 | Pack store and upload | todo | — |
+| 12 | Pack store and upload | first half (PackStore) in progress; upload wiring after Task 6 | builder-2 |
 | 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | todo | — |
 | 14 | TV polish and release install | todo | — |
 
@@ -143,3 +143,5 @@ Added seats: 1 of 3.
 - 2026-11-14: Task 5b accepted on macOS (PM ran tests: core 74, tv 36, controller 7; review clean; QA saw all 7
   power-ups, names, arrows, own-trail death; bots move like people but rarely take power-ups). Task 6 queued; Task 8's
   core widgets to builder-2 in parallel.
+- 2026-11-14: Task 8 first half accepted (review clean; PM ran core tests, 85/85). builder-2 on PackStore (Task 12's
+  first half).
