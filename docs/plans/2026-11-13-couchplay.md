@@ -684,3 +684,29 @@ Starts after Task 15 (same screens).
 - [x] **Step 2:** The person (a native speaker) reads the full list of strings before it ships: put them in one file they can review.
 - [x] **Step 3:** Tests updated and green in every member; QA checks every screen in a release/profile build, including the longest Croatian strings fitting at 1080p and on a 390-wide phone.
 - [x] **Step 4: Commit** by path: `feat: croatian interface`.
+
+---
+
+### Task 17: Show active power-ups and their time left (added 2026-11-14, user request)
+
+The person approved the reference screens and wants Curve to match them, with the active power-ups easy to see.
+
+**Files:**
+- Modify: `packages/core/lib/src/curve_sim.dart` (read-only access to the running effects), `apps/tv/lib/ui/curve/curve_game.dart`
+- Test: `packages/core/test/curve_powerups_test.dart`
+
+**Interfaces:**
+- Produces: a read-only way for the renderer to get, for each running effect, the kind, the affected players (or everyone) and the fraction of time left (1 → 0). The builder picks the shape.
+- TV rendering:
+  - **Wrap:** a white border around the arena while wrap runs. It shrinks along the edge as the time runs out (like a timer bar wrapped around the arena). When it is gone, the walls are back. A second wrap pickup restarts it full.
+  - **Effects on players** (speed, thin, ghost, slowed, fat): next to each affected head, the power-up's icon in its color (green = you, red = others, blue = everyone) with a ring that drains as the time runs out. Several effects on one line sit side by side. Readable from the couch at 1080p; doesn't hide the line's path ahead.
+  - **Clear:** instant, no timer.
+  - Colors and type follow the reference-screen tokens (spec, Visual style).
+- Cost: still cheap on the TV (one draw per effect per frame, no per-frame allocation, no text layout per frame).
+
+- [ ] **Step 1: Failing tests:** `effect_time_left_drains_to_zero` (a picked-up effect reports 1.0, then about 0.5 halfway, then is gone after `effectSeconds`); `second_pickup_restarts_time_left`; `wrap_reports_everyone`.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** the sim getter, then the renderer.
+- [ ] **Step 4: Run.** Expected: PASS in every member. QA on a macOS release build: each of the 7 power-ups picked up, the indicator seen and seen running out; the wrap border shrinks and the walls come back when it is gone (a line hits the wall after it).
+- [ ] **Step 5: Commit** by path: `feat(tv): show active power-ups and time left`.
+- [ ] **Step 6:** The person sees it on the TV at their next session (with the frame times).

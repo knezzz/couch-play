@@ -129,6 +129,11 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 
   Effects stack by restarting their timer. Exact timings, spawn rate and icons are left to the builder. The TV
   draws them; phones need nothing new.
+- **Active power-ups are obvious (user request, 2026-11-14):** while an effect runs, the TV shows who has it and how
+  long it has left. Wrap: a white border runs around the arena and shrinks as wrap runs out; when the border is
+  gone, the walls are back. Effects on players: the power-up's icon, in its green/red/blue color, next to each
+  affected line's head, with a ring that drains as the time runs out. Clear is instant and needs no timer. The Curve
+  screen uses the reference-screen tokens below.
 
 ### Shared effects
 
