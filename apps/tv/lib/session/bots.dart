@@ -37,6 +37,7 @@ class Bots {
     _tx = Float64List(n);
     _ty = Float64List(n);
     _ring = Int8List(n * _ringSize);
+    _urgent = Uint8List(n * _ringSize);
     for (final id in ids) {
       final r = _rnd[id] = Random(random.nextInt(0x7fffffff));
       _react[id] = 9 + r.nextInt(7); // 150-250 ms at 60 Hz
@@ -57,6 +58,8 @@ class Bots {
   late final Int8List _dodgeDir; // direction of the last dodge
   late final Float64List _bold, _lapseRate, _tx, _ty;
   late final Int8List _applied, _lastWant, _ring; // -1 left, 0 straight, 1 right
+  late final Uint8List _urgent; // ring slots written by a danger dodge
+  bool _dodging = false; // set by _perceive: this decision is a dodge
   int _t = 0;
 
   static const _ringSize = 32; // power of two, larger than the longest reaction
@@ -85,6 +88,7 @@ class Bots {
       if (!h.alive || !ids.contains(id)) continue;
       final r = _rnd[id]!;
       var want = _lastWant[id];
+      _dodging = false;
       if (_t >= _lapseUntil[id]) {
         if (r.nextDouble() < _lapseRate[id]) {
           _lapseUntil[id] = _t + 10 + r.nextInt(16); // not looking: keep going
@@ -94,6 +98,7 @@ class Bots {
       }
       _lastWant[id] = want;
       _ring[id * _ringSize + (_t & (_ringSize - 1))] = want;
+      _urgent[id * _ringSize + (_t & (_ringSize - 1))] = _dodging ? 1 : 0;
       // Act on what it decided _react ticks ago, and hold any change a while.
       // A change must hold steady for 3 ticks of what it saw before it acts.
       final base = id * _ringSize;
@@ -101,7 +106,12 @@ class Bots {
       final out = _ring[base + (k & (_ringSize - 1))];
       final steady = out == _ring[base + ((k - 1) & (_ringSize - 1))] &&
           out == _ring[base + ((k - 2) & (_ringSize - 1))];
-      if (steady && out != _applied[id] && _t - _lastChange[id] >= _hold[id]) {
+      // A dodge does not wait out the steer hold; the reaction delay and the
+      // confirmation above still apply.
+      final urgent = _urgent[base + (k & (_ringSize - 1))] == 1;
+      if (steady &&
+          out != _applied[id] &&
+          (urgent || _t - _lastChange[id] >= _hold[id])) {
         _applied[id] = out;
         _lastChange[id] = _t;
       }
@@ -124,6 +134,7 @@ class Bots {
           ? (_lastWant[h.id] != 0 ? _lastWant[h.id] : (r.nextBool() ? -1 : 1))
           : (left > right ? -1 : 1);
       _dodgeDir[h.id] = dir;
+      _dodging = true;
       return dir;
     }
     if (_t < _calmUntil[h.id]) {
@@ -133,6 +144,7 @@ class Bots {
       final facing = d > 0 ? left : right;
       if (facing < _open && _t < _dodgeStart[h.id] + 90) {
         _calmUntil[h.id] = _t + 10;
+        _dodging = true;
         return d;
       }
       return 0;

@@ -148,7 +148,9 @@ void main() {
   });
 
   test('bots_do_not_flip_steering_every_tick', () {
-    // Three bots in open space for up to 5 s. Steering is read back from the
+    // Three bots in open space for 2 s, short enough that none reaches a wall
+    // or trail (a dodge may legitimately cut a hold short, see
+    // dodge_does_not_wait_out_the_steer_hold). Steering is read back from the
     // heading change each tick; no held steer (or straight run) may be shorter
     // than 9 ticks, apart from the first, which the window starts in the middle
     // of, and the last, which it cuts.
@@ -162,7 +164,7 @@ void main() {
       final prev = [0, 0, 0], run = [0, 0, 0];
       final runs = <List<int>>[[], [], []];
       final seen = [false, false, false];
-      for (var i = 0; i < 300 && !sim.roundOver; i++) {
+      for (var i = 0; i < 120 && !sim.roundOver; i++) {
         bots.tick();
         sim.tick();
         for (var id = 0; id < 3; id++) {
@@ -184,6 +186,46 @@ void main() {
         expect(runs[id].where((r) => r < 9), isEmpty,
             reason: 'seed=$seed id=$id runs=${runs[id]}');
       }
+    }
+  });
+
+  test('dodge_does_not_wait_out_the_steer_hold', () {
+    // A bot has just started a right turn toward an item. We then drop it at a
+    // wall: dead ahead is blocked and the bottom wall is close on its right, so
+    // the right dodge is wrong and it has to switch to left. That must take
+    // about a reaction time (9-15 ticks + 2 to confirm), not a whole steer hold
+    // (9-20 ticks) plus the reaction.
+    for (var seed = 0; seed < 20; seed++) {
+      final sim = CurveSim([0, 1, 2], config: _cfg, random: Random(1));
+      sim.place(0, 1000, 700, 0);
+      sim.place(1, 100, 100, 0);
+      sim.place(2, 100, 800, 0);
+      sim.placePowerUp(PowerUpKind.speed, 1300, 860);
+      final bots = Bots(sim, [0], Random(seed));
+      var last = _head(sim, 0).heading;
+      var turning = false;
+      for (var i = 0; i < 200 && !turning; i++) {
+        bots.tick();
+        sim.tick();
+        final h = _head(sim, 0).heading;
+        turning = h > last + 1e-9;
+        last = h;
+      }
+      expect(turning, isTrue, reason: 'seed=$seed never started its target turn');
+
+      sim.place(0, 1500, 870, 0); // wall ahead (100), bottom wall 30 below
+      last = _head(sim, 0).heading;
+      int? switched;
+      for (var i = 1; i <= 40 && switched == null; i++) {
+        bots.tick();
+        sim.tick();
+        final h = _head(sim, 0);
+        if (!h.alive) break;
+        if (h.heading < last - 1e-9) switched = i;
+        last = h.heading;
+      }
+      expect(switched, isNotNull, reason: 'seed=$seed never dodged left');
+      expect(switched!, lessThanOrEqualTo(18), reason: 'seed=$seed took $switched ticks');
     }
   });
 
