@@ -8,6 +8,7 @@ Choices to confirm:
 - the lobby is "početni zaslon"; Quit is "Izađi"
 - the badge for a player who dropped off is "NEMA VEZE" (gender-neutral)
 - places are written "1.", "2.", …
+- gendered verbs: some texts address the player with a masculine past tense (e.g. "Završio si na 4. mjestu"). Options: keep it, use both forms ("Završio/la si"), or rephrase neutrally ("Tvoje mjesto: 4."). Your call.
 - kept in English on purpose: the app name "CouchPlay" and the game name "Curve" (say if Curve should get a Croatian name)
 
 ## TV (apps/tv/lib/strings.dart)
