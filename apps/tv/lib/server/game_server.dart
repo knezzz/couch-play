@@ -59,14 +59,14 @@ class GameServer {
   final HttpServer _http;
   final Directory _webRoot;
   final void Function(PeerSocket) _onPeer;
-  final Future<String?> Function(String, Uint8List) _onPackUpload;
+  final Future<({bool ok, String message})> Function(String, Uint8List) _onPackUpload;
 
   int get port => _http.port;
 
   static Future<GameServer> start({
     required Directory webRoot,
     required void Function(PeerSocket) onPeer,
-    required Future<String?> Function(String token, Uint8List body) onPackUpload,
+    required Future<({bool ok, String message})> Function(String token, Uint8List body) onPackUpload,
     int firstPort = 8080,
     int lastPort = 8090,
   }) async {
@@ -121,9 +121,9 @@ class GameServer {
       if (size <= _maxUpload) buf.add(chunk);
     }
     if (size > _maxUpload) return _reply(req, 413, 'That file is over 5 MB.');
-    final err = await _onPackUpload(
+    final r = await _onPackUpload(
         req.uri.queryParameters['token'] ?? '', buf.takeBytes());
-    await (err == null ? _reply(req, 200) : _reply(req, 400, err));
+    await _reply(req, r.ok ? 200 : 400, r.message);
   }
 
   Future<void> _static(HttpRequest req) async {

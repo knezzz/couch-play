@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'packs/pack_store.dart';
 import 'server/controller_files.dart';
 import 'server/game_server.dart';
 import 'server/lan_address.dart';
@@ -74,10 +75,13 @@ class _TvAppState extends State<TvApp> {
       final web = Directory('${support.path}/web');
       if (await web.exists()) await web.delete(recursive: true);
       await extractControllerZip(zip.buffer.asUint8List(), web);
+      // Bundled packs arrive with Task 13.
+      _session.packStore = await PackStore.load(
+          bundled: const [], userDir: Directory('${support.path}/packs'));
       final server = await GameServer.start(
         webRoot: web,
         onPeer: _session.attach,
-        onPackUpload: (_, _) async => 'Packs are not available yet.',
+        onPackUpload: _session.onPackUpload,
       );
       _server = server;
       final ip = pickLanAddress(await NetworkInterface.list(type: InternetAddressType.IPv4));
