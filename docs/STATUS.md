@@ -10,7 +10,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
-| 5 | Curve end-to-end + **real-TV perf gate** | blocked: QA FAIL, phone steering doesn't reach the TV line (core debugging). Review fixes in progress. Step 6 held for person's adb yes | core + app |
+| 5 | Curve end-to-end + **real-TV perf gate** | in progress: steering fixes pass QA (5295a41), last check is QA on the 64-bit emulator. Step 6 held for person's adb yes | core + app |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
@@ -48,7 +48,8 @@ Answered:
 - Task 6 Step 6 (by hand): a phone that drops off Wi-Fi without closing is marked disconnected within ~10 s (5 s
   WS ping from Task 3 has no unit test), host passes on, Curve player dies.
 - Task 10/11: range-check the Answer index.
-- Disk: 20 GiB free on 2026-11-13 (after Task 1). Re-check before emulator and release builds.
+- Disk: 12 GiB free on 2026-11-14 (the android-36 TV x86_64 image is 8.2 GB, not the ~2 GB estimated). QA stops
+  under 8 GiB. Re-check before release builds.
 - avdmanager needs `JAVA_HOME` pointed at Android Studio's bundled jbr (env var only).
 
 ## Seats
@@ -94,3 +95,5 @@ No added seats.
 - 2026-11-14: QA re-run on 64efa9e: steering, full-game refusal, takeover, gaps pass. FAIL: steering ignored after
   page reload + re-join (urgent to core). Person approved the android-36 TV x86_64 emulator image and deleting the
   unusable android-34 x86 image; plan Task 1 Step 2 corrected.
+- 2026-11-14: QA re-run on 5295a41 passes (long hold across rounds, reload + re-join + hold, release); review of the
+  fix clean. 64-bit TV emulator installed (8.2 GB), old image deleted, 12 GiB free. Last check: QA on the emulator.
