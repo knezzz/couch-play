@@ -199,4 +199,11 @@ void main() {
     expect(err(json(pack(questions: ['x']))),
         'Question 1: must be an object with q, choices and answer.');
   });
+
+  test('title is capped at 60 characters', () {
+    expect(parsePack(json(pack(title: 'a' * 60))), isA<PackOk>());
+    expect(err(json(pack(title: 'a' * 61))), 'The pack title must be 60 characters or fewer.');
+    // Characters, not UTF-16 units: 60 emoji are fine.
+    expect(parsePack(json(pack(title: '😀' * 60))), isA<PackOk>());
+  });
 }

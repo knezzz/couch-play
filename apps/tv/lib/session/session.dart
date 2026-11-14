@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:core/core.dart';
 import 'package:flutter/foundation.dart';
 
+import '../packs/pack_store.dart';
 import '../packs/test_pack.dart';
 import '../server/game_server.dart';
 import 'bots.dart';
@@ -75,11 +76,33 @@ class Session {
   /// Called when the host starts a game, after the session is ready for it.
   void Function(GameKind kind, String? packId)? onStart;
 
+  /// Built-in and uploaded quiz packs. Null until main.dart has loaded them.
+  PackStore? packStore;
+
+  /// The host uploads a quiz pack; [token] must be the current host's. The
+  /// message is shown to the host as it is: the success text or PackStore's error.
+  Future<({bool ok, String message})> onPackUpload(String token, Uint8List bytes) async {
+    final host = _byId(hostId ?? -1);
+    if (host == null || token.isEmpty || host.token != token) {
+      return (ok: false, message: 'Only the host can add packs.');
+    }
+    final store = packStore;
+    if (store == null) return (ok: false, message: 'Packs are not available yet.');
+    final err = await store.add(bytes);
+    if (err != null) return (ok: false, message: err);
+    final pack = (parsePack(bytes) as PackOk).pack; // add() just accepted it
+    if (_phase == Phase.lobby) _broadcastLobby();
+    final n = pack.questions.length;
+    return (ok: true, message: 'Added ${pack.title} ($n ${n == 1 ? 'question' : 'questions'}).');
+  }
+
   /// Set false to answer StartGame(quiz) with an ErrorMsg.
   bool quizAvailable = true;
 
-  /// The one place a pack id becomes a pack. Task 12 points it at PackStore.get.
-  QuizPack? Function(String? packId) packLookup = (_) => testPack;
+  /// The one place a pack id becomes a pack. No pack picked plays the built-in
+  /// test pack until Task 13 bundles real packs.
+  late QuizPack? Function(String? packId) packLookup =
+      (id) => id == null ? testPack : packStore?.get(id);
 
   /// What the TV lobby shows as the join address; null means no network
   /// ([noWifiText]).
@@ -253,7 +276,8 @@ class Session {
   }
 
   void _broadcastLobby() {
-    final lobby = LobbyState(players: playerInfos, packs: const [], hostId: hostId ?? -1);
+    final lobby = LobbyState(
+        players: playerInfos, packs: packStore?.infos ?? const [], hostId: hostId ?? -1);
     for (final p in _players) {
       p.socket?.send(lobby);
     }

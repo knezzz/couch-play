@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -28,12 +29,12 @@ void main() {
   Future<GameServer> start({
     int firstPort = 0,
     void Function(PeerSocket)? onPeer,
-    Future<String?> Function(String, Uint8List)? onPackUpload,
+    Future<({bool ok, String message})> Function(String, Uint8List)? onPackUpload,
   }) async {
     final s = await GameServer.start(
       webRoot: root,
       onPeer: onPeer ?? (_) {},
-      onPackUpload: onPackUpload ?? (_, _) async => null,
+      onPackUpload: onPackUpload ?? (_, _) async => (ok: true, message: ''),
       firstPort: firstPort,
       lastPort: firstPort == 0 ? 0 : firstPort + 10,
     );
@@ -99,7 +100,7 @@ void main() {
     var called = false;
     final s = await start(onPackUpload: (_, _) async {
       called = true;
-      return null;
+      return (ok: true, message: '');
     });
     final c = HttpClient();
     final req = await c.post('127.0.0.1', s.port, '/packs?token=t');
@@ -114,15 +115,20 @@ void main() {
     String? tokenSeen;
     final s = await start(onPackUpload: (token, body) async {
       tokenSeen = token;
-      return body.isEmpty ? 'Empty file.' : null;
+      return body.isEmpty
+          ? (ok: false, message: 'Empty file.')
+          : (ok: true, message: 'Added it.');
     });
     final c = HttpClient();
     final bad = await (await c.post('127.0.0.1', s.port, '/packs?token=abc')).close();
     expect(bad.statusCode, 400);
+    expect(await utf8.decodeStream(bad), 'Empty file.');
     expect(tokenSeen, 'abc');
     final req = await c.post('127.0.0.1', s.port, '/packs?token=abc');
     req.add([1, 2, 3]);
-    expect((await req.close()).statusCode, 200);
+    final ok = await req.close();
+    expect(ok.statusCode, 200);
+    expect(await utf8.decodeStream(ok), 'Added it.');
     c.close();
   });
 

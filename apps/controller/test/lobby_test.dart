@@ -23,9 +23,14 @@ Future<void> _send(WidgetTester t, FakeConnection c, Message m) async {
   await t.pump();
 }
 
-Future<FakeConnection> _pump(WidgetTester t, LobbyState l, int me) async {
+Future<FakeConnection> _pump(
+  WidgetTester t,
+  LobbyState l,
+  int me, {
+  Future<String?> Function(String token)? addPack,
+}) async {
   final c = FakeConnection();
-  await t.pumpWidget(MaterialApp(home: LobbyScreen(c, l, me)));
+  await t.pumpWidget(MaterialApp(home: LobbyScreen(c, l, me, addPack: addPack)));
   return c;
 }
 
@@ -200,5 +205,41 @@ void main() {
     );
     expect(panel, findsOneWidget);
     await t.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('only the host gets Add quiz pack', (t) async {
+    Future<String?> pick(String _) async => null;
+    await _pump(t, _lobby(), 0, addPack: pick);
+    expect(find.text('Add quiz pack'), findsOneWidget);
+    await _pump(t, _lobby(), 1, addPack: pick);
+    expect(find.text('Add quiz pack'), findsNothing);
+  });
+
+  testWidgets('Add quiz pack passes the token and shows the TV message', (t) async {
+    String? token;
+    await _pump(t, _lobby(), 0, addPack: (tok) async {
+      token = tok;
+      return 'Added World Flags (40 questions).';
+    });
+    await t.tap(find.text('Add quiz pack'));
+    await t.pump();
+    await t.pump();
+    expect(token, 'test'); // FakeConnection's token
+    expect(find.text('Added World Flags (40 questions).'), findsOneWidget);
+  });
+
+  testWidgets('an error from the TV is shown as is; a cancelled pick shows nothing', (t) async {
+    var reply = "The pack isn't valid JSON.";
+    String? next() => reply.isEmpty ? null : reply;
+    await _pump(t, _lobby(), 0, addPack: (_) async => next());
+    await t.tap(find.text('Add quiz pack'));
+    await t.pump();
+    await t.pump();
+    expect(find.text("The pack isn't valid JSON."), findsOneWidget);
+    reply = '';
+    await t.tap(find.text('Add quiz pack'));
+    await t.pump();
+    await t.pump();
+    expect(find.text("The pack isn't valid JSON."), findsNothing); // old message cleared
   });
 }

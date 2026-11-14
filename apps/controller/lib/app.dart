@@ -15,8 +15,11 @@ enum _Screen { join, lobby, wait, curve, quiz, results, kicked }
 
 /// Routes the TV's messages to a screen. No web imports, so it runs in tests.
 class App extends StatefulWidget {
-  const App(this.conn, {super.key});
+  const App(this.conn, {this.addPack, super.key});
   final Connection conn;
+
+  /// Browser-only pack upload (see pack_upload.dart); null in tests.
+  final Future<String?> Function(String token)? addPack;
 
   @override
   State<App> createState() => _AppState();
@@ -88,7 +91,7 @@ class _AppState extends State<App> {
     _Screen.lobby =>
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
-          : LobbyScreen(widget.conn, _lobby!, _myId),
+          : LobbyScreen(widget.conn, _lobby!, _myId, addPack: widget.addPack),
     _Screen.wait => WaitScreen(_waitReason),
     _Screen.curve => CurveScreen(widget.conn, alive: _alive),
     _Screen.quiz => QuizScreen(widget.conn, _question!, _reveal, key: ValueKey(_question!.number)),

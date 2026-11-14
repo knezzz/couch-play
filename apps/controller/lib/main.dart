@@ -5,6 +5,7 @@ import 'package:web/web.dart' as web;
 
 import 'app.dart';
 import 'connection.dart';
+import 'pack_upload.dart';
 
 String _token() {
   const key = 'couchplay.token';
@@ -25,5 +26,5 @@ void main() {
     port: loc.port,
     path: '/ws',
   );
-  runApp(App(Connection(ws, _token())));
+  runApp(App(Connection(ws, _token()), addPack: pickAndUploadPack));
 }

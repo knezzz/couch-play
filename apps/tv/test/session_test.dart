@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/packs/pack_store.dart';
 import 'package:tv/server/game_server.dart';
 import 'package:tv/session/session.dart';
 
@@ -610,5 +614,90 @@ void main() {
     expect(b.last<LobbyState>()!.players.length, 3);
     a.say(const SetBots(2));
     expect(b.last<LobbyState>()!.players.length, 5);
+  });
+
+  // --- pack upload ---
+
+  group('pack upload', () {
+    late Directory dir;
+    setUp(() async {
+      dir = Directory.systemTemp.createTempSync('upload');
+      s.packStore = await PackStore.load(bundled: [], userDir: dir);
+    });
+    tearDown(() => dir.deleteSync(recursive: true));
+
+    Uint8List bytes({String id = 'world-flags', String title = 'World Flags', int n = 40}) =>
+        Uint8List.fromList(utf8.encode(jsonEncode({
+          'format': 1,
+          'id': id,
+          'title': title,
+          'questions': [
+            for (var i = 0; i < n; i++) {'q': 'q$i', 'choices': ['a', 'b', 'c', 'd'], 'answer': 0},
+          ],
+        })));
+
+    test('non_host_upload_rejected', () async {
+      join(s, 'Ana', token: 'ta');
+      join(s, 'Bea', token: 'tb');
+      for (final token in ['tb', 'nobody', '']) {
+        final r = await s.onPackUpload(token, bytes());
+        expect(r.ok, isFalse, reason: token);
+        expect(r.message, 'Only the host can add packs.');
+      }
+      expect(s.packStore!.infos, isEmpty);
+      expect(dir.listSync(), isEmpty);
+    });
+
+    test('host_upload_rebroadcasts_the_lobby_with_the_pack', () async {
+      final a = join(s, 'Ana', token: 'ta');
+      final b = join(s, 'Bea', token: 'tb');
+      final r = await s.onPackUpload('ta', bytes());
+      expect(r.ok, isTrue);
+      expect(r.message, 'Added World Flags (40 questions).');
+      const want = [PackInfo('world-flags', 'World Flags', 40)];
+      expect(a.last<LobbyState>()!.packs, want);
+      expect(b.last<LobbyState>()!.packs, want);
+    });
+
+    test('quiz_plays_the_uploaded_pack_by_id', () async {
+      final a = join(s, 'Ana', token: 'ta');
+      await s.onPackUpload('ta', bytes(n: 1));
+      a.say(const StartGame(GameKind.quiz, 'world-flags'));
+      expect(a.last<QuizQuestion>()!.total, 1);
+      expect(s.quiz!.current.q, 'q0');
+      s.dispose();
+    });
+
+    test('a one-question pack reads right', () async {
+      join(s, 'Ana', token: 'ta');
+      final r = await s.onPackUpload('ta', bytes(n: 1));
+      expect(r.message, 'Added World Flags (1 question).');
+    });
+
+    test('the_error_text_is_passed_through', () async {
+      final a = join(s, 'Ana', token: 'ta');
+      final before = a.all<LobbyState>().length;
+      final r = await s.onPackUpload('ta', Uint8List.fromList(utf8.encode('nope')));
+      expect(r.ok, isFalse);
+      expect(r.message, "The pack isn't valid JSON.");
+      expect(a.all<LobbyState>().length, before); // nothing changed, nothing sent
+    });
+
+    test('later lobby broadcasts carry the stored packs', () async {
+      join(s, 'Ana', token: 'ta');
+      await s.onPackUpload('ta', bytes());
+      final b = join(s, 'Bea', token: 'tb');
+      expect(b.last<LobbyState>()!.packs.map((p) => p.id), ['world-flags']);
+    });
+
+    test('without a store, uploads say so', () async {
+      final bare = Session();
+      final a = FakePeer();
+      bare.attach(a);
+      a.say(const Join('Ana', 'ta'));
+      final r = await bare.onPackUpload('ta', bytes());
+      expect(r.ok, isFalse);
+      expect(r.message, 'Packs are not available yet.');
+    });
   });
 }

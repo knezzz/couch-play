@@ -89,6 +89,7 @@ PackResult _parse(Uint8List bytes) {
   }
   final title = root['title'];
   if (title is! String || title.trim().isEmpty) return const PackError('The pack needs a title.');
+  if (title.runes.length > 60) return const PackError('The pack title must be 60 characters or fewer.');
   final raw = root['questions'];
   if (raw is! List || raw.isEmpty) return const PackError('The pack needs at least one question.');
 
