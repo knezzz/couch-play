@@ -11,10 +11,10 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
 | 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT 100+ ms follow-up in progress | lead; RTT: builder-2 |
-| 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | in progress; preview of 9439899 on the TV now | core + app |
-| 6 | Session, lobby, QR join (+ host bot controls) | todo (after 5b) | — |
+| 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | done on macOS (fae7156); Step 5 TV re-check waits for the next TV session | core + app |
+| 6 | Session, lobby, QR join (+ host bot controls) | in progress | lead |
 | 7 | Session scoring and results | scoring functions done (f6b19f2); finishGame + results screen wait for Task 6 | builder-2 |
-| 8 | Shared effects | todo | — |
+| 8 | Shared effects | first half (core widgets) in progress; wiring after Task 7 | builder-2 |
 | 9 | Quiz pack format | done (4b1cbdb, fix 01db6e3, merge a69cb6f) | builder-2 |
 | 10 | Quiz round logic | done (0a679e8, fixes e6b6d64, eae0ec9) | builder-2 |
 | 11 | Quiz screens | todo | — |
@@ -24,8 +24,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 
 ## Open questions for the person
 
-- Next TV session (fresh adb yes + pairing code): check the human-like bots and the 20 Hz keep-alive (RTT p95
-  target ≤ 40 ms).
+- Next TV session (fresh adb yes + pairing code): check the human-like bots (they pick up power-ups in only ~3 of
+  10 rounds; judge whether that's enough) and the 20 Hz keep-alive (RTT p95 target ≤ 40 ms).
 
 Answered:
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
@@ -140,3 +140,6 @@ Added seats: 1 of 3.
 - 2026-11-14: Plan Task 10 changed (PM, from review): QuizRound.addPlayer for mid-round rejoin (matches the spec)
   and a monotonic `now`. Task 10 + Task 7 scoring accepted (re-review clean; PM ran core tests, 74/74).
 - 2026-11-14: Person done playing; adb to the TV disconnected. Tonight's TV session is over. The team continues.
+- 2026-11-14: Task 5b accepted on macOS (PM ran tests: core 74, tv 36, controller 7; review clean; QA saw all 7
+  power-ups, names, arrows, own-trail death; bots move like people but rarely take power-ups). Task 6 queued; Task 8's
+  core widgets to builder-2 in parallel.

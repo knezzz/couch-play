@@ -324,7 +324,7 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
       - They steer in held bursts, with a little randomness and an occasional mistake.
       - Test: `bot_does_not_flip_steering_every_tick`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `crossing_own_old_trail_kills`: drive a full circle back across your own trail from more than `selfGraceTicks` ago. You die.
   - `own_fresh_trail_does_not_kill` stays green.
   - One test per power-up kind, with a seeded `Random` and a power-up placed through a test hook in front of a head: the effect applies, then expires after `effectSeconds`.
@@ -334,11 +334,11 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - `bot_turns_away_from_wall_ahead`
     - `bot_avoids_trail_ahead`
     - `bot_survives_longer_than_random`: over 20 seeded rounds, the mean survival time beats the old random bot.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** the sim changes, the bots, then the renderer (countdown names and arrows, icons, clear).
-- [ ] **Step 4: Run.** Expected: PASS. Then QA on macOS: names visible in the countdown, each power-up seen working.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** the sim changes, the bots, then the renderer (countdown names and arrows, icons, clear).
+- [x] **Step 4: Run.** Expected: PASS. Then QA on macOS: names visible in the countdown, each power-up seen working.
 - [ ] **Step 5: Re-measure on the real TV** (needs the user's adb yes for that session). Same setup as Task 5 Step 6, with power-ups on. Report the numbers to the user.
-- [ ] **Step 6: Commit.** Messages: `fix(core): die on your own old trail`, `feat: curve power-ups and countdown names`.
+- [x] **Step 6: Commit.** Messages: `fix(core): die on your own old trail`, `feat: curve power-ups and countdown names`.
 
 ---
 
