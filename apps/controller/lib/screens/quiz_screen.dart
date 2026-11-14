@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../connection.dart';
 import '../theme.dart';
+import '../strings.dart';
 
 // Shapes are drawn (ShapeMark), not typed glyphs: no font fallback needed offline.
 const _tiles = [
@@ -50,7 +51,7 @@ class _QuizScreenState extends State<QuizScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  hit ? 'Correct' : 'Not this time',
+                  hit ? Strings.correct : Strings.notThisTime,
                   style: TextStyle(
                     fontSize: hit ? 20 : 40,
                     fontWeight: hit ? FontWeight.w500 : FontWeight.w900,
@@ -98,7 +99,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                 ],
                 const SizedBox(height: 40),
-                const Text('Your total', style: TextStyle(fontSize: 22)),
+                const Text(Strings.yourTotal, style: TextStyle(fontSize: 22)),
                 Text(
                   '${r.yourTotal}',
                   style: const TextStyle(
@@ -128,7 +129,7 @@ class _QuizScreenState extends State<QuizScreen> {
             child: Padding(
               padding: EdgeInsets.all(24),
               child: Text(
-                'Locked in. Watch the TV.',
+                Strings.locked,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
               ),
@@ -152,7 +153,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       child: Text(
                         q == null
                             ? ''
-                            : 'Question ${q.number} of ${q.total} · look at the TV',
+                            : Strings.questionHeader(q.number, q.total),
                         style: const TextStyle(fontSize: 16, color: muted),
                       ),
                     ),

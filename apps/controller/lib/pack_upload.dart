@@ -3,6 +3,8 @@ import 'dart:js_interop';
 
 import 'package:web/web.dart' as web;
 
+import 'strings.dart';
+
 /// Opens the file picker and POSTs the chosen pack to the TV. Returns the TV's
 /// message (success or error), or null if nothing was picked.
 Future<String?> pickAndUploadPack(String token) async {
@@ -30,8 +32,8 @@ Future<String?> pickAndUploadPack(String token) async {
         )
         .toDart;
     final text = (await res.text().toDart).toDart;
-    return text.isEmpty ? 'The TV had a problem. Try again.' : text;
+    return text.isEmpty ? Strings.tvProblem : text;
   } catch (_) {
-    return "Couldn't reach the TV. Check the Wi-Fi and try again.";
+    return Strings.tvUnreachable;
   }
 }

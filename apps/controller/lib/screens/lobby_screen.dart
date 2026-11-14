@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../connection.dart';
 import '../theme.dart';
+import '../strings.dart';
 
 const _seats = 8;
 
@@ -38,6 +39,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
   Future<void> _confirmKick(PlayerInfo p) async {
     final color = playerColors[p.colorIndex % playerColors.length];
     final ok = await showModalBottomSheet<bool>(
+      isScrollControlled:
+          true, // the Croatian text can need more than the default 9/16 height
       context: context,
       backgroundColor: surface,
       barrierColor: const Color(0xCC0A0A10),
@@ -64,7 +67,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                   const SizedBox(width: 12),
                   Flexible(
                     child: Text(
-                      'Remove ${p.name}?',
+                      Strings.removeTitle(p.name),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -77,7 +80,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                '${p.name} leaves the game. They can join again from their phone.',
+                Strings.removeBody(p.name),
                 style: const TextStyle(fontSize: 18, color: muted, height: 1.4),
               ),
               const SizedBox(height: 24),
@@ -87,7 +90,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
                   foregroundColor: ink,
                 ),
                 onPressed: () => Navigator.pop(c, true),
-                child: const Text('Remove', style: TextStyle(fontSize: 22)),
+                child: const Text(
+                  Strings.remove,
+                  style: TextStyle(fontSize: 22),
+                ),
               ),
               const SizedBox(height: 16),
               FilledButton(
@@ -96,7 +102,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                   foregroundColor: textColor,
                 ),
                 onPressed: () => Navigator.pop(c, false),
-                child: const Text('Keep', style: TextStyle(fontSize: 22)),
+                child: const Text(Strings.keep, style: TextStyle(fontSize: 22)),
               ),
             ],
           ),
@@ -132,14 +138,14 @@ class _LobbyScreenState extends State<LobbyScreen> {
             if (!isHost) ...[
               const SizedBox(height: 16),
               Text(
-                'Waiting for ${host?.name ?? 'the host'} to start.',
+                Strings.waitingForHost(host?.name),
                 style: const TextStyle(fontSize: 20, color: muted),
               ),
             ],
             if (isHost) ...[
               const SizedBox(height: 24),
               const Text(
-                'Pick a game',
+                Strings.pickGame,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -153,7 +159,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     child: FilledButton(
                       onPressed: () =>
                           widget.conn.send(StartGame(GameKind.quiz, packId)),
-                      child: const Text('Quiz'),
+                      child: const Text(Strings.quiz),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -163,7 +169,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       onPressed: () => widget.conn.send(
                         const StartGame(GameKind.curve, null),
                       ),
-                      child: const Text('Curve'),
+                      child: const Text(Strings.curve),
                     ),
                   ),
                 ],
@@ -171,7 +177,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
               if (l.packs.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 const Text(
-                  'Quiz pack',
+                  Strings.quizPack,
                   style: TextStyle(fontSize: 16, color: muted),
                 ),
                 const SizedBox(height: 8),
@@ -219,7 +225,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     ),
                   ),
                   onPressed: _addPack,
-                  child: const Text('Add quiz pack…'),
+                  child: const Text(Strings.addPack),
                 ),
                 if (_packMessage != null)
                   Padding(
@@ -241,7 +247,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                   children: [
                     const Expanded(
                       child: Text(
-                        'Bots',
+                        Strings.bots,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -249,7 +255,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       ),
                     ),
                     _Stepper(
-                      tooltip: 'Fewer bots',
+                      tooltip: Strings.fewerBots,
                       icon: Icons.remove,
                       onPressed: bots > 0
                           ? () => widget.conn.send(SetBots(bots - 1))
@@ -267,7 +273,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       ),
                     ),
                     _Stepper(
-                      tooltip: 'More bots',
+                      tooltip: Strings.moreBots,
                       icon: Icons.add,
                       onPressed: players.length < _seats
                           ? () => widget.conn.send(SetBots(bots + 1))
@@ -279,7 +285,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
             ],
             const SizedBox(height: 20),
             Text(
-              'Others · ${others.length}',
+              Strings.others(others.length),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -307,7 +313,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        '${p.name}${p.connected ? '' : ' (away)'}',
+                        '${p.name}${p.connected ? '' : Strings.away}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -318,7 +324,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     ),
                     if (p.bot)
                       const Text(
-                        'BOT',
+                        Strings.botTag,
                         style: TextStyle(fontSize: 18, color: muted),
                       )
                     else if (isHost)
@@ -334,7 +340,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                           textStyle: const TextStyle(fontSize: 18),
                         ),
                         onPressed: () => _confirmKick(p),
-                        child: const Text('Remove'),
+                        child: const Text(Strings.remove),
                       ),
                   ],
                 ),
@@ -408,7 +414,7 @@ class _MyChip extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
             ),
             child: const Text(
-              '★ HOST',
+              Strings.hostBadge,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,

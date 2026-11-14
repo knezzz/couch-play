@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:controller/connection.dart';
 import 'package:controller/screens/join_screen.dart';
+import 'package:controller/strings.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,7 +25,7 @@ void main() {
       MaterialApp(home: JoinScreen(c, onJoined: () => joined.add(1))),
     );
     await t.enterText(find.byType(TextField), 'Ana');
-    await t.tap(find.text('Join'));
+    await t.tap(find.text(Strings.join));
     await t.pump();
     return (c, joined);
   }
@@ -52,9 +53,9 @@ void main() {
     final c = _Fake();
     await t.pumpWidget(MaterialApp(home: JoinScreen(c, onJoined: () {})));
     await t.enterText(find.byType(TextField), '   ');
-    await t.tap(find.text('Join'));
+    await t.tap(find.text(Strings.join));
     await t.pump();
-    expect(find.text('Type a name to join.'), findsOneWidget);
+    expect(find.text(Strings.emptyName), findsOneWidget);
     expect(c.sent, isEmpty);
   });
 }

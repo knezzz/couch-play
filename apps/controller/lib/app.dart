@@ -11,6 +11,7 @@ import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
+import 'strings.dart';
 
 enum _Screen { join, lobby, wait, curve, quiz, results, kicked }
 
@@ -29,7 +30,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   _Screen _screen = _Screen.join;
   int _myId = -1;
-  int _myColor = 0; // from Welcome, so it survives a reload before any LobbyState
+  int _myColor =
+      0; // from Welcome, so it survives a reload before any LobbyState
   LobbyState? _lobby;
   String _waitReason = '';
   String? _error;
@@ -93,7 +95,8 @@ class _AppState extends State<App> {
           _screen = _Screen.quiz;
         case QuizReveal():
           _quizTotal = m.yourTotal;
-          _reveal = m; // also after a reconnect mid-reveal, when there is no question
+          _reveal =
+              m; // also after a reconnect mid-reveal, when there is no question
           _screen = _Screen.quiz;
         case Results():
           _placements = m.placements;
@@ -116,7 +119,13 @@ class _AppState extends State<App> {
           : LobbyScreen(widget.conn, _lobby!, _myId, addPack: widget.addPack),
     _Screen.wait => WaitScreen(_waitReason),
     _Screen.curve => CurveScreen(widget.conn, alive: _alive),
-    _Screen.quiz => QuizScreen(widget.conn, _question, _reveal, total: _quizTotal, key: ValueKey(_question?.number)),
+    _Screen.quiz => QuizScreen(
+      widget.conn,
+      _question,
+      _reveal,
+      total: _quizTotal,
+      key: ValueKey(_question?.number),
+    ),
     _Screen.results => ResultsScreen(_placements, _myId),
     _Screen.kicked => _Kicked(
       onJoinAgain: () => setState(() => _screen = _Screen.join),
@@ -125,7 +134,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: 'Couchplay',
+    title: Strings.appTitle,
     navigatorKey: _nav,
     builder: (_, child) => EffectLayer(child: child!),
     theme: theme,
@@ -149,7 +158,7 @@ class _AppState extends State<App> {
                     ),
                     TextButton(
                       onPressed: () => setState(() => _error = null),
-                      child: const Text('OK'),
+                      child: const Text(Strings.ok),
                     ),
                   ],
                 ),
@@ -174,15 +183,20 @@ class _Kicked extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'You were removed from the game.',
+            Strings.removed,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 28),
           ),
           const SizedBox(height: 24),
           FilledButton(
-            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(64)),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(64),
+            ),
             onPressed: onJoinAgain,
-            child: const Text('Join again', style: TextStyle(fontSize: 24)),
+            child: const Text(
+              Strings.joinAgain,
+              style: TextStyle(fontSize: 24),
+            ),
           ),
         ],
       ),

@@ -4,6 +4,7 @@ import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 import '../connection.dart';
+import '../strings.dart';
 
 /// Two full-height halves; holding one steers. Each half tracks its own
 /// pointers so two thumbs work.
@@ -124,7 +125,7 @@ class _CurveScreenState extends State<CurveScreen> {
               child: const Padding(
                 padding: EdgeInsets.all(24),
                 child: Text(
-                  'You crashed. Wait for the next round.',
+                  Strings.crashed,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 32,
@@ -141,7 +142,11 @@ class _CurveScreenState extends State<CurveScreen> {
           child: Text(
             _rtt == null
                 ? ''
-                : 'rtt ${_rtt}ms · p95 ${percentile([..._samples]..sort(), .95)}ms · n=${_samples.length}',
+                : Strings.rtt(
+                    _rtt!,
+                    percentile([..._samples]..sort(), .95),
+                    _samples.length,
+                  ),
             style: const TextStyle(fontSize: 12, color: Colors.white54),
           ),
         ),
