@@ -103,10 +103,36 @@ class CurveGame extends FlameGame {
       if (!hd.alive) continue;
       canvas.drawCircle(Offset(hd.x, hd.y), base * (counting ? 1.6 : 0.8),
           _head..color = counting ? _color(hd.id) : const Color(0xFFFFFFFF));
+      if (counting) _drawArrow(canvas, hd.x, hd.y, hd.heading, base * 8, _color(hd.id));
       if (counting) _drawName(canvas, hd.id, hd.x, hd.y - base * 2, w);
     }
     canvas.restore();
     super.render(canvas);
+  }
+
+  // Unit arrow along +x, starting at 0.25 (just outside the dot) to the tip at 1.
+  static final _arrow = Path()
+    ..moveTo(0.25, 0)
+    ..lineTo(1, 0)
+    ..moveTo(0.72, -0.2)
+    ..lineTo(1, 0)
+    ..lineTo(0.72, 0.2);
+
+  void _drawArrow(Canvas canvas, double x, double y, double heading, double len, Color c) {
+    canvas
+      ..save()
+      ..translate(x, y)
+      ..rotate(heading)
+      ..scale(len);
+    _icon
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6 / len
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = c;
+    canvas
+      ..drawPath(_arrow, _icon)
+      ..restore();
   }
 
   // Names are in arena units: 44 units is about 53 px on a 1080p TV.
