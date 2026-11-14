@@ -319,7 +319,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     if (p.bot)
                       const Text(
                         'BOT',
-                        style: TextStyle(fontSize: 14, color: muted),
+                        style: TextStyle(fontSize: 18, color: muted),
                       )
                     else if (isHost)
                       TextButton(
@@ -331,7 +331,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          textStyle: const TextStyle(fontSize: 16),
+                          textStyle: const TextStyle(fontSize: 18),
                         ),
                         onPressed: () => _confirmKick(p),
                         child: const Text('Remove'),

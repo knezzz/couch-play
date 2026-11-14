@@ -82,6 +82,32 @@ void main() {
     expect(c.sent.last, const StartGame(GameKind.curve, null));
   });
 
+  testWidgets('Remove and BOT are 18 px and a row fits at 360 px with a 16-letter name', (t) async {
+    t.view.physicalSize = const Size(360, 640);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    const wide = 'WWWWWWWWWWWWWWWW';
+    final l = LobbyState(
+      hostId: 0,
+      packs: const [],
+      players: const [
+        PlayerInfo(0, 'Host', 0, true, 0),
+        PlayerInfo(1, wide, 1, true, 0),
+        PlayerInfo(2, wide, 2, false, 0),
+        PlayerInfo(10, wide, 3, true, 0, bot: true),
+      ],
+    );
+    await _pump(t, l, 0);
+    expect(t.takeException(), isNull);
+    for (final label in ['Remove', 'BOT']) {
+      for (final e in find.text(label).evaluate()) {
+        final fs = (e.renderObject as RenderParagraph).text.style?.fontSize;
+        expect(fs, 18, reason: label);
+      }
+    }
+    expect(find.text('BOT'), findsOneWidget);
+  });
+
   testWidgets('kick asks first: Keep sends nothing, Remove sends Kick once', (t) async {
     final c = await _pump(t, _lobby(), 0);
     await t.tap(find.widgetWithText(TextButton, 'Remove'));
