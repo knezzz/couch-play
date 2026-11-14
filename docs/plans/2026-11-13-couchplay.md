@@ -277,7 +277,7 @@ couchplay/
     - The user plays one match and confirms steering feels immediate.
   - **If frames drop:** replace the per-player `Path` with an offscreen `ui.Image`. Each tick, draw only the new segments onto it with `PictureRecorder` → `toImageSync`. Re-measure.
   - **Stop here and report the numbers to the user** before starting Task 6.
-- [ ] **Step 7: Commit.** Message: `feat: playable curve with bots and perf overlay`.
+- [x] **Step 7: Commit.** (Landed as per-change commits; no single commit.) Message: `feat: playable curve with bots and perf overlay`.
 
 ---
 

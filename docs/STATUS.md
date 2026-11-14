@@ -10,7 +10,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
-| 5 | Curve end-to-end + **real-TV perf gate** | gate GO (frames pass, RTT 100+ ms misses 40 ms); Step 7 commit pending; RTT follow-up with builder-2 | lead, builder-2 |
+| 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT 100+ ms follow-up in progress | lead; RTT: builder-2 |
 | 5b | Curve: die on own old trail, countdown names, 7 power-ups (person, 2026-11-14) | in progress (queued to lead) | core + app |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
