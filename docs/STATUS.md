@@ -19,7 +19,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 10 | Quiz round logic | done (0a679e8, fixes e6b6d64, eae0ec9) | builder-2 |
 | 11 | Quiz screens | done on macOS (e0f899d, 4c9f22a, 8ba1b0c, a22faec); design review 2 in progress | core + app |
 | 12 | Pack store and upload | done (3e49ecb, e5fcb49, 0606039, 729b9a9, e06c9fe) | builder-2 |
-| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | in progress | content |
+| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | built: 10 packs, 449 questions (4c17e2d, a99feee, cd0b775); waits on the person's hr-medimurje review | content |
 | 14 | TV polish and release install | Steps 1–4 + design fixes in progress; Step 5 (real TV, 3+ phones) needs the person | lead |
 
 ## Open questions for the person
