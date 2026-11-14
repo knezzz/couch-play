@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:core/core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/packs/pack_store.dart';
+import 'package:tv/session/session.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   test('all_bundled_packs_valid', () {
     final files = Directory('assets/packs').listSync().whereType<File>().toList();
     final ids = <String>{};
@@ -20,4 +25,23 @@ void main() {
         'hr-medimurje', 'hr-geografija', 'hr-povijest', 'hr-kultura-sport']));
     expect(total, greaterThanOrEqualTo(400));
   });
+
+  test('bundled packs load, are the default, and an upload cannot replace one', () async {
+    final dir = Directory.systemTemp.createTempSync('packs');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final store = await PackStore.load(bundled: await loadBundledPacks(rootBundle), userDir: dir);
+    expect(store.infos.length, 10);
+
+    final s = Session()..packStore = store;
+    expect(s.packLookup(null)!.id, 'general');
+    expect(s.packLookup('flags')!.images, isNotEmpty);
+
+    final upload = Uint8List.fromList(utf8.encode(jsonEncode({
+      'format': 1, 'id': 'general', 'title': 'Mine',
+      'questions': [{'q': 'q', 'choices': ['a', 'b', 'c', 'd'], 'answer': 0}],
+    })));
+    expect(await store.add(upload), "A built-in pack already uses the id 'general'. Pick another id.");
+    expect(store.get('general')!.title, 'General Knowledge');
+  });
 }
+

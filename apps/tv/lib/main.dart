@@ -80,9 +80,8 @@ class _TvAppState extends State<TvApp> {
       final web = Directory('${support.path}/web');
       if (await web.exists()) await web.delete(recursive: true);
       await extractControllerZip(zip.buffer.asUint8List(), web);
-      // Bundled packs arrive with Task 13.
       _session.packStore = await PackStore.load(
-          bundled: const [], userDir: Directory('${support.path}/packs'));
+          bundled: await loadBundledPacks(rootBundle), userDir: Directory('${support.path}/packs'));
       final server = await GameServer.start(
         webRoot: web,
         onPeer: _session.attach,

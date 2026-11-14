@@ -99,10 +99,10 @@ class Session {
   /// Set false to answer StartGame(quiz) with an ErrorMsg.
   bool quizAvailable = true;
 
-  /// The one place a pack id becomes a pack. No pack picked plays the built-in
-  /// test pack until Task 13 bundles real packs.
+  /// The one place a pack id becomes a pack. No pack picked plays the first
+  /// bundled pack, or the test pack when there is no store.
   late QuizPack? Function(String? packId) packLookup =
-      (id) => id == null ? testPack : packStore?.get(id);
+      (id) => id == null ? (packStore?.firstBundled ?? testPack) : packStore?.get(id);
 
   /// What the TV lobby shows as the join address; null means no network
   /// ([noWifiText]).
