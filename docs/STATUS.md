@@ -91,3 +91,6 @@ No added seats.
 - 2026-11-14: TV in developer mode (Wireless debugging; address kept on the Task 5 queue row, not in git).
 - 2026-11-14: Task 5 QA FAIL (macOS): phone sends correct Steer, but the TV line never turns; bots fine. Urgent
   root-cause task with core. Passed: URL shown, join, RTT, trails/gaps, debug frames 3–14 ms.
+- 2026-11-14: QA re-run on 64efa9e: steering, full-game refusal, takeover, gaps pass. FAIL: steering ignored after
+  page reload + re-join (urgent to core). Person approved the android-36 TV x86_64 emulator image and deleting the
+  unusable android-34 x86 image; plan Task 1 Step 2 corrected.

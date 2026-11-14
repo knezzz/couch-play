@@ -88,7 +88,7 @@ couchplay/
 - Produces: a workspace where `flutter test` passes in every member, plus `tool/build_controller.sh`, which writes `apps/tv/assets/controller.zip`.
 
 - [x] **Step 1: Install Flutter.** Run `brew install --cask flutter`, then `flutter doctor`. Expected: the Flutter, Xcode and Android toolchain checks pass. If Android licenses are missing, run `flutter doctor --android-licenses`. Add `~/Library/Android/sdk/platform-tools` to PATH so `adb` works.
-- [x] **Step 2: Create an Android TV emulator.** Run `sdkmanager "system-images;android-34;android-tv;x86"`, then `avdmanager create avd -n tv -k "system-images;android-34;android-tv;x86" -d tv_1080p`. Expected: `flutter emulators` lists `tv`.
+- [x] **Step 2: Create an Android TV emulator.** Run `sdkmanager "system-images;android-36;android-tv;x86_64"`, then `avdmanager create avd -n tv -k "system-images;android-36;android-tv;x86_64" -d tv_1080p`. Expected: `flutter emulators` lists `tv`. (Corrected 2026-11-14: Flutter 3.47 does not run on the 32-bit x86 image.)
 - [x] **Step 3: Scaffold the workspace.**
   - `git init`.
   - `flutter create --platforms=android,macos --org dev.couchplay apps/tv`.
