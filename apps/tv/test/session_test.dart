@@ -248,6 +248,16 @@ void main() {
     expect(a.sent.whereType<ErrorMsg>(), isEmpty);
   });
 
+  test('a_kicked_player_gets_no_placement', () {
+    final a = join(s, 'A');
+    final b = join(s, 'B');
+    final c = join(s, 'C');
+    a.say(Kick(idOf(b)));
+    s.finishGame({idOf(a): 5, idOf(b): 9, idOf(c): 1});
+    final ids = a.last<Results>()!.placements.map((p) => p.playerId);
+    expect(ids, [idOf(a), idOf(c)]);
+  });
+
   // --- reconnecting ---
 
   test('rejoin_with_token_restores_player', () async {

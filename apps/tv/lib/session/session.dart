@@ -485,7 +485,8 @@ class Session {
   QuizRound? get quiz => _quiz;
 
   /// Players who have answered this question.
-  int get quizAnswered => _picks.length;
+  int get quizAnswered =>
+      _picks.keys.where((id) => _byId(id)?.connected ?? false).length;
 
   /// Players the round is still waiting for or has: in the round and connected.
   int get quizExpected => _quizIds.where((id) => _byId(id)?.connected ?? false).length;
@@ -599,7 +600,8 @@ class Session {
     }
     q.addPlayer(p.id);
     if (q.step == QuizStep.asking) {
-      p.socket?.send(_questionFor(q));
+      p.socket?.send(
+          _picks.containsKey(p.id) ? const Waiting('Locked in. Watch the TV.') : _questionFor(q));
     } else {
       _sendReveal(p);
     }
@@ -689,7 +691,11 @@ class Session {
   /// Results, and moves to the results phase. [gameScores] is keyed by player
   /// id. Quiz calls this too (Task 11).
   void finishGame(Map<int, int> gameScores) {
-    final placements = placementPoints(gameScores);
+    // Someone kicked mid-game is no longer a player and gets no place.
+    final placements = placementPoints({
+      for (final e in gameScores.entries)
+        if (_byId(e.key) != null) e.key: e.value,
+    });
     for (final pl in placements) {
       if (_scores.containsKey(pl.playerId)) {
         _scores[pl.playerId] = _scores[pl.playerId]! + pl.sessionPoints;

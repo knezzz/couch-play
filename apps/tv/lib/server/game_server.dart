@@ -120,7 +120,7 @@ class GameServer {
       size += chunk.length;
       if (size <= _maxUpload) buf.add(chunk);
     }
-    if (size > _maxUpload) return _reply(req, 413, 'That file is over 5 MB.');
+    if (size > _maxUpload) return _reply(req, 413, 'The pack is larger than 5 MB.');
     final r = await _onPackUpload(
         req.uri.queryParameters['token'] ?? '', buf.takeBytes());
     await _reply(req, r.ok ? 200 : 400, r.message);

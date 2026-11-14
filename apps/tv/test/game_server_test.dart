@@ -107,6 +107,7 @@ void main() {
     req.add(Uint8List(5 * 1024 * 1024 + 1));
     final res = await req.close();
     expect(res.statusCode, 413);
+    expect(await utf8.decodeStream(res), 'The pack is larger than 5 MB.');
     expect(called, isFalse);
     c.close();
   });

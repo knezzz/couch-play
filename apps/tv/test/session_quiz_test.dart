@@ -146,6 +146,37 @@ void main() {
     s.dispose();
   });
 
+  testWidgets('rejoin_after_answering_is_told_it_is_locked_in', (t) async {
+    s = fresh();
+    final a = join(s, 'Ana', token: 'ta'), b = join(s, 'Ben', token: 'tb');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    b.say(const Answer(0));
+    await t.pump();
+    final b2 = FakePeer();
+    s.attach(b2);
+    b2.say(const Join('Ben', 'tb')); // a Wi-Fi blip: same token, new socket
+    await t.pump();
+    expect(b2.last<QuizQuestion>(), isNull);
+    expect(b2.last<Waiting>(), const Waiting('Locked in. Watch the TV.'));
+    s.dispose();
+  });
+
+  testWidgets('answered_count_ignores_players_who_left', (t) async {
+    s = fresh();
+    final a = join(s, 'Ana'), b = join(s, 'Ben');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    a.say(const Answer(0));
+    b.say(const Answer(0));
+    await t.pump();
+    b.close();
+    await t.pump();
+    expect(s.quizAnswered, lessThanOrEqualTo(s.quizExpected));
+    expect(s.quizAnswered, 1);
+    s.dispose();
+  });
+
   testWidgets('late_joiner_waits', (t) async {
     s = fresh();
     final a = join(s, 'Ana');
