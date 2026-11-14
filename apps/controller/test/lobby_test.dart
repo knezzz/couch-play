@@ -183,4 +183,20 @@ void main() {
     expect(panel, findsOneWidget);
     await t.pumpWidget(const SizedBox());
   });
+
+  testWidgets('an Effect from the TV plays; an unknown one is ignored', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(0, 0, 'tok'));
+    await _send(t, c, _lobby());
+    expect(t.binding.transientCallbackCount, 0);
+    await _send(t, c, const Effect('nope'));
+    expect(t.binding.transientCallbackCount, 0);
+    await _send(t, c, const Effect('confetti'));
+    expect(t.binding.transientCallbackCount, greaterThan(0));
+    await t.pump(const Duration(seconds: 3));
+    await _send(t, c, const Effect('colorPulse'));
+    expect(t.binding.transientCallbackCount, greaterThan(0));
+    await t.pump(const Duration(seconds: 3));
+  });
 }
