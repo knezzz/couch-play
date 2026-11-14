@@ -11,7 +11,7 @@
     {"q": "Koja je hrvatska županija najsjevernija?", "choices": ["Varaždinska", "Koprivničko-križevačka", "Međimurska", "Krapinsko-zagorska"], "answer": 2},
     {"q": "Koji od ovih gradova NIJE u Međimurju?", "choices": ["Prelog", "Mursko Središće", "Čakovec", "Ludbreg"], "answer": 3},
     {"q": "Kako se Međimurje zove na mađarskom?", "choices": ["Muraköz", "Drávaszög", "Muravidék", "Zala"], "answer": 0},
-    {"q": "Koja je plemićka obitelj stoljećima vladala Međimurjem iz Čakovca?", "choices": ["Frankopani", "Zrinski", "Draškovići", "Keglevići"], "answer": 1},
+    {"q": "Koja je plemićka obitelj u 16. i 17. stoljeću vladala Međimurjem iz Čakovca?", "choices": ["Frankopani", "Zrinski", "Draškovići", "Keglevići"], "answer": 1},
     {"q": "Što se danas nalazi u Starom gradu u Čakovcu?", "choices": ["Muzej Međimurja Čakovec", "Gradska vijećnica", "Bolnica", "Samostan"], "answer": 0},
     {"q": "Koji je Zrinski, pjesnik i vojskovođa, na mađarskom napisao ep o opsadi Sigeta ('Szigeti veszedelem')?", "choices": ["Petar Zrinski", "Nikola Zrinski (1620.–1664.)", "Juraj Zrinski", "Ivan Zrinski"], "answer": 1},
     {"q": "Gdje su 1671. pogubljeni Petar Zrinski i Fran Krsto Frankopan?", "choices": ["U Beču", "U Bečkom Novom Mjestu", "U Grazu", "U Budimu"], "answer": 1},
