@@ -48,7 +48,7 @@ void main() {
   });
 
   test('over 5 MB', () {
-    expect(err(Uint8List(5 * 1024 * 1024 + 1)), 'The pack is larger than 5 MB.');
+    expect(err(Uint8List(5 * 1024 * 1024 + 1)), PackStrings.tooBig);
   });
 
   test('garbage never throws', () {
@@ -64,39 +64,39 @@ void main() {
   });
 
   test('not json', () {
-    expect(err(Uint8List.fromList(utf8.encode('nope'))), "The pack isn't valid JSON.");
-    expect(err(Uint8List.fromList([0xff, 0xfe])), "The pack isn't valid JSON.");
+    expect(err(Uint8List.fromList(utf8.encode('nope'))), PackStrings.notJson);
+    expect(err(Uint8List.fromList([0xff, 0xfe])), PackStrings.notJson);
   });
 
   test('format', () {
-    expect(err(json(pack(format: 2))), 'Unsupported pack format. Use "format": 1.');
+    expect(err(json(pack(format: 2))), PackStrings.badFormat);
   });
 
   test('id', () {
     for (final id in ['Upper', 'has space', '', 'a' * 41, 7]) {
-      expect(err(json(pack(id: id))), 'The pack id must be lowercase letters, digits or dashes.');
+      expect(err(json(pack(id: id))), PackStrings.badId);
     }
   });
 
   test('title and questions', () {
-    expect(err(json(pack(title: ''))), 'The pack needs a title.');
-    expect(err(json(pack(questions: []))), 'The pack needs at least one question.');
+    expect(err(json(pack(title: ''))), PackStrings.needTitle);
+    expect(err(json(pack(questions: []))), PackStrings.needQuestion);
   });
 
   test('question errors are numbered', () {
-    expect(err(json(pack(questions: [q(), q(text: '')]))), 'Question 2: the question text is empty.');
+    expect(err(json(pack(questions: [q(), q(text: '')]))), PackStrings.emptyQuestion(2));
     expect(err(json(pack(questions: [q(choices: ['a', 'b', 'c'])]))),
-        'Question 1: needs exactly 4 non-empty choices.');
+        PackStrings.badChoices(1));
     expect(err(json(pack(questions: [q(choices: ['a', 'b', 'c', ''])]))),
-        'Question 1: needs exactly 4 non-empty choices.');
-    expect(err(json(pack(questions: [q(answer: 4)]))), 'Question 1: answer must be 0, 1, 2 or 3.');
-    expect(err(json(pack(questions: [q(answer: 'x')]))), 'Question 1: answer must be 0, 1, 2 or 3.');
+        PackStrings.badChoices(1));
+    expect(err(json(pack(questions: [q(answer: 4)]))), PackStrings.badAnswer(1));
+    expect(err(json(pack(questions: [q(answer: 'x')]))), PackStrings.badAnswer(1));
   });
 
   test('image path must be relative .svg without ..', () {
     for (final p in ['../x.svg', 'a/../x.svg', '/x.svg', 'x.png']) {
       expect(err(zip({'p.json': json(pack(questions: [q(image: p)])), 'x.svg': [1]})),
-          'Question 1: image $p must be a relative .svg path.');
+          PackStrings.badImage(1, p));
     }
   });
 
@@ -111,16 +111,16 @@ void main() {
 
   test('missing image', () {
     expect(err(zip({'p.json': json(pack(questions: [q(image: 'flags/x.svg')]))})),
-        'Question 1: image flags/x.svg is missing from the zip.');
+        PackStrings.missingImage(1, 'flags/x.svg'));
   });
 
   test('image in a bare json is missing', () {
     expect(err(json(pack(questions: [q(image: 'flags/x.svg')]))),
-        'Question 1: image flags/x.svg is missing from the zip.');
+        PackStrings.missingImage(1, 'flags/x.svg'));
   });
 
   test('zip needs exactly one root json', () {
-    const m = 'The zip must contain one .json pack file.';
+    const m = PackStrings.zipNeedsJson;
     expect(err(zip({'a.json': json(pack()), 'b.json': json(pack())})), m);
     expect(err(zip({'x.svg': [1]})), m);
     expect(err(zip({'sub/a.json': json(pack())})), m);
@@ -130,7 +130,7 @@ void main() {
     final big = List<int>.filled(21 * 1024 * 1024, 0);
     final z = zip({'p.json': json(pack(questions: [q(image: 'a.svg')])), 'a.svg': big});
     expect(z.length, lessThan(5 * 1024 * 1024)); // it passes the raw limit
-    expect(err(z), 'The pack is too large when unzipped.');
+    expect(err(z), PackStrings.unzippedTooBig);
   });
 
   test('many small entries add up', () {
@@ -138,7 +138,7 @@ void main() {
     for (var i = 0; i < 11; i++) {
       f['f$i.bin'] = List<int>.filled(2 * 1024 * 1024, 0);
     }
-    expect(err(zip(f)), 'The pack is too large when unzipped.');
+    expect(err(zip(f)), PackStrings.unzippedTooBig);
   });
 
   test('an entry that lies about its size is rejected', () {
@@ -187,7 +187,7 @@ void main() {
       ..setUint32(12, central.length, Endian.little)
       ..setUint32(16, local.length, Endian.little);
     final z = Uint8List.fromList([...local, ...central, ...eocd.buffer.asUint8List()]);
-    expect(err(z), 'The pack is too large when unzipped.');
+    expect(err(z), PackStrings.unzippedTooBig);
   }, timeout: const Timeout(Duration(seconds: 20)));
 
   test('a leading BOM is ignored', () {
@@ -197,13 +197,19 @@ void main() {
 
   test('a question that is not an object', () {
     expect(err(json(pack(questions: ['x']))),
-        'Question 1: must be an object with q, choices and answer.');
+        PackStrings.notObject(1));
   });
 
   test('title is capped at 60 characters', () {
     expect(parsePack(json(pack(title: 'a' * 60))), isA<PackOk>());
-    expect(err(json(pack(title: 'a' * 61))), 'The pack title must be 60 characters or fewer.');
+    expect(err(json(pack(title: 'a' * 61))), PackStrings.titleTooLong);
     // Characters, not UTF-16 units: 60 emoji are fine.
     expect(parsePack(json(pack(title: '😀' * 60))), isA<PackOk>());
+  });
+
+  test('a damaged zip is unreadable', () {
+    final good = zip({'p.json': json(pack())});
+    final cut = Uint8List.fromList(good.sublist(0, good.length ~/ 2));
+    expect(err(cut), anyOf(PackStrings.unreadable, PackStrings.zipNeedsJson));
   });
 }

@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 
+import '../strings.dart';
+
 const _maxPack = 5 * 1024 * 1024;
 const _maxUnzipped = 20 * 1024 * 1024;
 
@@ -43,14 +45,14 @@ PackResult parsePack(Uint8List bytes) {
   try {
     return _parse(bytes);
   } catch (_) {
-    return const PackError("The pack couldn't be read.");
+    return const PackError(PackStrings.unreadable);
   }
 }
 
-const _tooBig = PackError('The pack is too large when unzipped.');
+const _tooBig = PackError(PackStrings.unzippedTooBig);
 
 PackResult _parse(Uint8List bytes) {
-  if (bytes.length > _maxPack) return const PackError('The pack is larger than 5 MB.');
+  if (bytes.length > _maxPack) return const PackError(PackStrings.tooBig);
 
   final isZip = bytes.length >= 4 &&
       bytes[0] == 0x50 && bytes[1] == 0x4b && bytes[2] == 3 && bytes[3] == 4;
@@ -69,7 +71,7 @@ PackResult _parse(Uint8List bytes) {
     if (entries.fold<int>(0, (s, f) => s + f.size) > _maxUnzipped) return _tooBig;
     files = {for (final f in entries) f.name: f};
     final jsons = entries.where((f) => !f.name.contains('/') && f.name.endsWith('.json')).toList();
-    if (jsons.length != 1) return const PackError('The zip must contain one .json pack file.');
+    if (jsons.length != 1) return const PackError(PackStrings.zipNeedsJson);
     jsonBytes = _read(jsons.single) ?? Uint8List(0);
     unzipped = jsonBytes.length;
   }
@@ -78,40 +80,40 @@ PackResult _parse(Uint8List bytes) {
   try {
     root = jsonDecode(utf8.decode(jsonBytes));
   } catch (_) {
-    return const PackError("The pack isn't valid JSON.");
+    return const PackError(PackStrings.notJson);
   }
-  if (root is! Map) return const PackError("The pack isn't valid JSON.");
+  if (root is! Map) return const PackError(PackStrings.notJson);
 
-  if (root['format'] != 1) return const PackError('Unsupported pack format. Use "format": 1.');
+  if (root['format'] != 1) return const PackError(PackStrings.badFormat);
   final id = root['id'];
   if (id is! String || !RegExp(r'^[a-z0-9-]{1,40}$').hasMatch(id)) {
-    return const PackError('The pack id must be lowercase letters, digits or dashes.');
+    return const PackError(PackStrings.badId);
   }
   final title = root['title'];
-  if (title is! String || title.trim().isEmpty) return const PackError('The pack needs a title.');
-  if (title.runes.length > 60) return const PackError('The pack title must be 60 characters or fewer.');
+  if (title is! String || title.trim().isEmpty) return const PackError(PackStrings.needTitle);
+  if (title.runes.length > 60) return const PackError(PackStrings.titleTooLong);
   final raw = root['questions'];
-  if (raw is! List || raw.isEmpty) return const PackError('The pack needs at least one question.');
+  if (raw is! List || raw.isEmpty) return const PackError(PackStrings.needQuestion);
 
   final questions = <PackQuestion>[];
   final images = <String, Uint8List>{};
   for (var i = 0; i < raw.length; i++) {
     final n = i + 1;
     final m = raw[i];
-    if (m is! Map) return PackError('Question $n: must be an object with q, choices and answer.');
+    if (m is! Map) return PackError(PackStrings.notObject(n));
     final text = m['q'];
     if (text is! String || text.trim().isEmpty) {
-      return PackError('Question $n: the question text is empty.');
+      return PackError(PackStrings.emptyQuestion(n));
     }
     final choices = m['choices'];
     if (choices is! List ||
         choices.length != 4 ||
         choices.any((c) => c is! String || c.trim().isEmpty)) {
-      return PackError('Question $n: needs exactly 4 non-empty choices.');
+      return PackError(PackStrings.badChoices(n));
     }
     final answer = m['answer'];
     if (answer is! int || answer < 0 || answer > 3) {
-      return PackError('Question $n: answer must be 0, 1, 2 or 3.');
+      return PackError(PackStrings.badAnswer(n));
     }
     final image = m['image'];
     if (image != null) {
@@ -120,13 +122,13 @@ PackResult _parse(Uint8List bytes) {
           image.startsWith('/') ||
           image.contains('\\') ||
           image.split('/').contains('..')) {
-        return PackError('Question $n: image $image must be a relative .svg path.');
+        return PackError(PackStrings.badImage(n, image));
       }
       final f = files[image];
-      if (f == null) return PackError('Question $n: image $image is missing from the zip.');
+      if (f == null) return PackError(PackStrings.missingImage(n, image));
       if (!images.containsKey(image)) {
         final b = _read(f);
-        if (b == null) return PackError('Question $n: image $image is missing from the zip.');
+        if (b == null) return PackError(PackStrings.missingImage(n, image));
         unzipped += b.length;
         if (unzipped > _maxUnzipped) return _tooBig;
         images[image] = b;
