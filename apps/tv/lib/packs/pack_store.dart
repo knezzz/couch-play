@@ -71,7 +71,7 @@ class PackStore {
   QuizPack? get(String id) => _bundled[id] ?? _user[id];
 
   /// What plays when the host picks no pack.
-  QuizPack? get defaultPack => _bundled['general'] ?? _bundled.values.firstOrNull;
+  QuizPack? get defaultPack => _bundled['hr-opce-znanje'] ?? _bundled.values.firstOrNull;
 
   /// Null on success, else the message to show the host. Validates before
   /// touching the disk; the file is written aside and renamed so a crash never

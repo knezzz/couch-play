@@ -38,7 +38,8 @@ void main() {
     expect(store.infos.length, 16);
 
     final s = Session()..packStore = store;
-    expect(s.packLookup(null)!.id, 'general');
+    expect(s.packLookup(null)!.id, 'hr-opce-znanje');
+    expect(store.infos.first.id, 'hr-opce-znanje');
     expect(s.packLookup('flags')!.images, isNotEmpty);
 
     final upload = Uint8List.fromList(utf8.encode(jsonEncode({

@@ -67,12 +67,12 @@ void main() {
     expect(s.infos.map((i) => i.id), ['good']);
   });
 
-  test('infos lists general first, then the other bundled packs, then user packs', () async {
+  test('infos lists hr-opce-znanje first, then the other bundled packs, then user packs', () async {
     File('${dir.path}/mine.pack').writeAsBytesSync(pack('mine'));
     final s = await PackStore.load(
-        bundled: [pack('film-music'), pack('flags'), pack('general')], userDir: dir);
-    expect(s.infos.map((i) => i.id), ['general', 'film-music', 'flags', 'mine']);
-    expect(s.defaultPack!.id, 'general');
+        bundled: [pack('general'), pack('flags'), pack('hr-opce-znanje')], userDir: dir);
+    expect(s.infos.map((i) => i.id), ['hr-opce-znanje', 'general', 'flags', 'mine']);
+    expect(s.defaultPack!.id, 'hr-opce-znanje');
   });
 
   test('an old user pack with a bundled id is skipped at load', () async {
