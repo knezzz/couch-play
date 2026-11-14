@@ -17,7 +17,7 @@
 - Maximum 8 players. Player colors are fixed, in this order: `#FF4D6D #FFB020 #2ECC71 #22B8F0 #9B5CFF #FF7AD9 #F5E94B #FF7A2F`.
 - Server port is 8080. If it is taken, try ports up to 8090.
 - Quiz: 4 choices, 20 s per question, 10 questions per round. A correct answer scores 500–1000 points, depending on speed. A wrong answer or no answer scores 0.
-- Curve: 60 Hz fixed tick, left/right steering, trails with random gaps, +1 point for each player you outlive. The match target is `10 × (players − 1)`, fixed when the match starts. No power-ups.
+- Curve: 60 Hz fixed tick, left/right steering, trails with random gaps, +1 point for each player you outlive. The match target is `10 × (players − 1)`, fixed when the match starts. You die on any trail, including your own older trail. Power-ups: see Task 5b.
 - Session scoreboard: placement points after each game (1st = N, …, last = 1, where N = players in that game). Scores last only for the session.
 - The D-pad only moves focus and backs out of a game. A phone host runs the session.
 - Dev machine: Intel Mac (x86_64). Xcode and Android Studio are installed. Flutter 3.47.7 (Dart 3.13.5) is installed via fvm. `avdmanager` needs `JAVA_HOME` set to Android Studio's bundled jbr.
@@ -278,6 +278,52 @@ couchplay/
   - **If frames drop:** replace the per-player `Path` with an offscreen `ui.Image`. Each tick, draw only the new segments onto it with `PictureRecorder` → `toImageSync`. Re-measure.
   - **Stop here and report the numbers to the user** before starting Task 6.
 - [ ] **Step 7: Commit.** Message: `feat: playable curve with bots and perf overlay`.
+
+---
+
+### Task 5b: Curve changes from the user (added 2026-11-14)
+
+Starts after the user's go on the Task 5 gate. Runs before Task 6.
+
+**Files:**
+- Modify: `packages/core/lib/src/curve_sim.dart`, `apps/tv/lib/ui/curve/curve_game.dart`, `apps/tv/lib/session/bots.dart` (bots ignore power-ups; no extra logic)
+- Test: `packages/core/test/curve_sim_test.dart`, `packages/core/test/curve_powerups_test.dart`
+
+**Interfaces:**
+- Produces:
+  - Self-collision fix: painting must not refresh the paint tick of a player's own cells that are older than `selfGraceTicks`. Today `curve_sim.dart:213-215` re-stamps them, so a line never dies on its own old trail.
+  - `CurveSim.names: Map<int, String>`, passed to the constructor (`names:` named parameter). It's used only for rendering.
+  - `enum PowerUpKind { speed, thin, ghost, slowOthers, fatOthers, clear, wrap }`.
+  - `CurvePowerUp(id, kind, x, y)`, `Iterable<CurvePowerUp> get powerUps`, and a new event `PickedUp(playerId, kind)`.
+  - `CurveConfig` additions, defaults left to the builder within these bounds:
+    - `powerUpEveryMin`/`Max`: about 4–8 s
+    - `powerUpMax`: about 3 on the board at once
+    - `powerUpRadius`
+    - `effectSeconds`: about 5
+    - `powerUps: bool`: tests can turn them off; on by default
+  - Rules:
+    - The first head to come within `powerUpRadius` picks it up.
+    - Speed and slow scale `speed`. Thin and fat scale `lineWidth` for both painting and collision.
+    - Ghost skips trail collision but not wall collision, and still paints.
+    - Clear wipes both occupancy grids and tells the renderer: `takeNewSegments` returns a `cleared` flag, or an equivalent the builder picks.
+    - Wrap makes the walls wrap for everyone.
+    - A second pickup of the same effect restarts its timer.
+    - Nothing spawns during the countdown. All effects end with the round.
+  - TV rendering:
+    - During the countdown, each head is drawn as a dot in the player's color with the name above it, in large type readable from the couch. The names are hidden once the round runs.
+    - Power-ups are simple shape icons. Colors show who they affect: green is you, red is others, blue is everyone.
+
+- [ ] **Step 1: Write the failing tests.**
+  - `crossing_own_old_trail_kills`: drive a full circle back across your own trail from more than `selfGraceTicks` ago. You die.
+  - `own_fresh_trail_does_not_kill` stays green.
+  - One test per power-up kind, with a seeded `Random` and a power-up placed through a test hook in front of a head: the effect applies, then expires after `effectSeconds`.
+  - `ghost_passes_trail_not_wall`, `wrap_comes_out_opposite_side`, `clear_empties_grid`.
+  - `no_spawn_during_countdown`.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** the sim changes, then the renderer (countdown names, icons, clear).
+- [ ] **Step 4: Run.** Expected: PASS. Then QA on macOS: names visible in the countdown, each power-up seen working.
+- [ ] **Step 5: Re-measure on the real TV** (needs the user's adb yes for that session). Same setup as Task 5 Step 6, with power-ups on. Report the numbers to the user.
+- [ ] **Step 6: Commit.** Messages: `fix(core): die on your own old trail`, `feat: curve power-ups and countdown names`.
 
 ---
 

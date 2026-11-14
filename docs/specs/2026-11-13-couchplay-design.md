@@ -108,10 +108,21 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 ### Curve
 
 - Each player is a continuously moving line with their color; steering is left/right only (two big buttons on the phone, hold to turn).
-- Lines leave trails with short random gaps (you can slip through gaps). Hitting any trail or the wall kills you.
+- Lines leave trails with short random gaps (you can slip through gaps). Hitting any trail or the wall kills you,
+  including your own older trail (only the bit you just drew is safe).
+- During the countdown before each round, every player shows as a dot in their color with their name above it, so
+  people can find themselves. The names go away when the round starts; the dot stays as the line's head.
+  (User request, 2026-11-14.)
 - Last one alive scores; every other surviving-longer player also gets points (points = number of players you outlived). First to `10 × (players − 1)` wins, as in Curve Fever.
 - Simulation runs on the TV at a fixed 60 Hz tick; collision against a trail occupancy grid.
-- No power-ups in v1.
+- **Power-ups (user request, 2026-11-14, replaces "no power-ups in v1"):** icons appear on the board from time to
+  time; the first line to drive over one triggers it for a few seconds. Seven kinds:
+  - on you: speed up, thin line, ghost (pass through trails, not walls)
+  - on everyone else: slow down, fat line
+  - on everyone: clear all trails, wrap (go through walls and come out the opposite side)
+
+  Effects stack by restarting their timer. Exact timings, spawn rate and icons are left to the builder. The TV
+  draws them; phones need nothing new.
 
 ### Shared effects
 

@@ -11,6 +11,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
 | 5 | Curve end-to-end + **real-TV perf gate** | Steps 1–5 done. Step 6 (real TV) in progress, person said yes to adb this session | lead |
+| 5b | Curve: die on own old trail, countdown names, 7 power-ups (person, 2026-11-14) | todo (waits on Task 5 gate go) | — |
 | 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
@@ -101,3 +102,7 @@ No added seats.
   warning, not gate data. Person said yes to adb for this session; Step 6 queued to lead.
 - 2026-11-14: TV paired: Sony BRAVIA, Android 14, MediaTek MT9690, armeabi-v7a only (32-bit ARM), 3.7 GB RAM, UI
   1080p. Gate phone: the person's iPhone ("Snoopy") in Safari, first iPhone Safari check. Nothing installed on it.
+- 2026-11-14: Scope change from the person during the gate. Spec and plan updated; new Task 5b before Task 6:
+  (1) bug: you never die on your own old trail (curve_sim.dart:213-215 re-stamps own cells), (2) countdown dots with
+  names above (countdown only), (3) power-ups: speed, thin, ghost, slow others, fat others, clear, wrap. Replaces
+  "no power-ups in v1". Gets its own real-TV re-measure.
