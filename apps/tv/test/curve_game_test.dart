@@ -66,6 +66,13 @@ void main() {
     game.render(canvas); // running
   });
 
+  test('name sits above the dot, or below when the arrow points up', () {
+    expect(CurveGame.nameTop(450, 12, 50, 0, 900), 450 - 12 - 50); // right: above
+    expect(CurveGame.nameTop(450, 12, 50, -pi / 2, 900), 450 + 12); // up: below
+    expect(CurveGame.nameTop(450, 12, 50, pi / 2, 900), 450 - 12 - 50); // down: above
+    expect(CurveGame.nameTop(880, 12, 50, -pi / 2, 900), 850); // clamped in arena
+  });
+
   test('a very wide name does not throw in render', () {
     final sim = CurveSim([0], names: {0: 'W' * 300}, random: Random(1));
     final game = CurveGame(sim, const [Color(0xFFFF0000)])

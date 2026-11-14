@@ -104,7 +104,7 @@ class CurveGame extends FlameGame {
       canvas.drawCircle(Offset(hd.x, hd.y), base * (counting ? 1.6 : 0.8),
           _head..color = counting ? _color(hd.id) : const Color(0xFFFFFFFF));
       if (counting) _drawArrow(canvas, hd.x, hd.y, hd.heading, base * 8, _color(hd.id));
-      if (counting) _drawName(canvas, hd.id, hd.x, hd.y - base * 2, w);
+      if (counting) _drawName(canvas, hd.id, hd.x, hd.y, hd.heading, base * 2, w, h);
     }
     canvas.restore();
     super.render(canvas);
@@ -136,7 +136,15 @@ class CurveGame extends FlameGame {
   }
 
   // Names are in arena units: 44 units is about 53 px on a 1080p TV.
-  void _drawName(Canvas canvas, int id, double x, double y, double arenaW) {
+  /// Top of the name box: above the dot, or below it when the start arrow
+  /// points mostly up (so they don't overlap). Kept inside the arena.
+  static double nameTop(double y, double gap, double textH, double heading, double arenaH) {
+    final top = sin(heading) < -0.5 ? y + gap : y - gap - textH;
+    return top.clamp(0.0, max(0.0, arenaH - textH));
+  }
+
+  void _drawName(Canvas canvas, int id, double x, double y, double heading, double gap,
+      double arenaW, double arenaH) {
     final tp = _names[id] ??= TextPainter(
       text: TextSpan(
           text: sim.names[id] ?? 'P${id + 1}',
@@ -146,7 +154,8 @@ class CurveGame extends FlameGame {
       ellipsis: '…',
     )..layout(maxWidth: arenaW / 4); // keeps clamp() below valid for any name
     tp.paint(canvas,
-        Offset((x - tp.width / 2).clamp(0.0, arenaW - tp.width), max(0.0, y - tp.height)));
+        Offset((x - tp.width / 2).clamp(0.0, arenaW - tp.width),
+            nameTop(y, gap, tp.height, heading, arenaH)));
   }
 
   static const _green = Color(0xFF3DDC84), _red = Color(0xFFFF4D4D), _blue = Color(0xFF4DA6FF);
