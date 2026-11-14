@@ -52,6 +52,7 @@ A quiz pack is either a single `.json` file (text only) or a `.zip` (JSON plus p
 | The pack id must be lowercase letters, digits or dashes. | Bad `id`. |
 | The pack needs a title. | Empty `title`. |
 | The pack needs at least one question. | Empty `questions`. |
+| Question N: must be an object with q, choices and answer. | The question isn't a JSON object. |
 | Question N: the question text is empty. | Empty `q`. |
 | Question N: needs exactly 4 non-empty choices. | Wrong `choices`. |
 | Question N: answer must be 0, 1, 2 or 3. | Bad `answer`. |

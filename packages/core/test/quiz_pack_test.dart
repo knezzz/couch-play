@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' show ZLibCodec;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
@@ -153,5 +154,49 @@ void main() {
       if (sig == 0x02014b50) d.setUint32(i + 24, 100, Endian.little);
     }
     expect(parsePack(z), isA<PackError>());
+  });
+
+  test('zip64 size of -1 does not bypass the unzip cap', () {
+    // One entry whose zip64 extra field declares 0xFFFFFFFFFFFFFFFF (read as -1)
+    // over 30 MB of deflated spaces.
+    final name = utf8.encode('pack.json');
+    final data = ZLibCodec(raw: true, level: 9).encode(List<int>.filled(30 * 1024 * 1024, 0x20));
+    final extra = ByteData(12)
+      ..setUint16(0, 1, Endian.little)
+      ..setUint16(2, 8, Endian.little)
+      ..setUint64(4, -1, Endian.little);
+    Uint8List header(bool central) {
+      final h = ByteData(central ? 46 : 30);
+      var o = 0;
+      void u32(int v) { h.setUint32(o, v, Endian.little); o += 4; }
+      void u16(int v) { h.setUint16(o, v, Endian.little); o += 2; }
+      u32(central ? 0x02014b50 : 0x04034b50);
+      if (central) u16(45);
+      u16(45); u16(0); u16(8); u16(0); u16(0);
+      u32(0); u32(data.length); u32(0xFFFFFFFF);
+      u16(name.length); u16(extra.lengthInBytes);
+      if (central) { u16(0); u16(0); u16(0); u32(0); u32(0); }
+      return h.buffer.asUint8List();
+    }
+    final local = [...header(false), ...name, ...extra.buffer.asUint8List(), ...data];
+    final central = [...header(true), ...name, ...extra.buffer.asUint8List()];
+    final eocd = ByteData(22)
+      ..setUint32(0, 0x06054b50, Endian.little)
+      ..setUint16(8, 1, Endian.little)
+      ..setUint16(10, 1, Endian.little)
+      ..setUint32(12, central.length, Endian.little)
+      ..setUint32(16, local.length, Endian.little);
+    final z = Uint8List.fromList([...local, ...central, ...eocd.buffer.asUint8List()]);
+    expect(err(z), 'The pack is too large when unzipped.');
+  }, timeout: const Timeout(Duration(seconds: 20)));
+
+  test('a leading BOM is ignored', () {
+    final b = Uint8List.fromList([0xEF, 0xBB, 0xBF, ...json(pack())]);
+    expect(parsePack(b), isA<PackOk>());
+  });
+
+  test('a question that is not an object', () {
+    expect(err(json(pack(questions: ['x']))),
+        'Question 1: must be an object with q, choices and answer.');
   });
 }

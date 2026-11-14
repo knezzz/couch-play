@@ -60,6 +60,9 @@ PackResult _parse(Uint8List bytes) {
 
   if (isZip) {
     final entries = ZipDecoder().decodeBytes(bytes).files.where((f) => f.isFile).toList();
+    // A zip64 size of 0xFFFF...F reads as -1, which turns the decoder's cap off,
+    // so a negative or oversized entry is refused before anything is summed.
+    if (entries.any((f) => f.size < 0 || f.size > _maxUnzipped)) return _tooBig;
     // Declared sizes first: nothing is inflated until their sum is in bounds.
     // The decoder stops each entry at its declared size, so a lying header
     // can't expand past it; a size mismatch is checked in _read.
@@ -94,7 +97,7 @@ PackResult _parse(Uint8List bytes) {
   for (var i = 0; i < raw.length; i++) {
     final n = i + 1;
     final m = raw[i];
-    if (m is! Map) return PackError('Question $n: the question text is empty.');
+    if (m is! Map) return PackError('Question $n: must be an object with q, choices and answer.');
     final text = m['q'];
     if (text is! String || text.trim().isEmpty) {
       return PackError('Question $n: the question text is empty.');
