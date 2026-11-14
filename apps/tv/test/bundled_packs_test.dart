@@ -2,15 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:core/core.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/packs/pack_store.dart';
 import 'package:tv/session/session.dart';
 
+// Works from apps/tv or from the repo root.
+final _dir = Directory('assets/packs').existsSync() ? Directory('assets/packs') : Directory('apps/tv/assets/packs');
+List<File> _files() => _dir.listSync().whereType<File>().toList()..sort((a, b) => a.path.compareTo(b.path));
+
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
   test('all_bundled_packs_valid', () {
-    final files = Directory('assets/packs').listSync().whereType<File>().toList();
+    final files = _files();
     final ids = <String>{};
     var total = 0;
     for (final f in files) {
@@ -29,7 +32,7 @@ void main() {
   test('bundled packs load, are the default, and an upload cannot replace one', () async {
     final dir = Directory.systemTemp.createTempSync('packs');
     addTearDown(() => dir.deleteSync(recursive: true));
-    final store = await PackStore.load(bundled: await loadBundledPacks(rootBundle), userDir: dir);
+    final store = await PackStore.load(bundled: [for (final f in _files()) f.readAsBytesSync()], userDir: dir);
     expect(store.infos.length, 10);
 
     final s = Session()..packStore = store;

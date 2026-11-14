@@ -4,14 +4,11 @@ import 'package:core/core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// The pack files under assets/packs/, General Knowledge first so it is the
-/// default when the host picks no pack.
+/// The pack files under assets/packs/.
 Future<List<Uint8List>> loadBundledPacks(AssetBundle bundle) async {
   final keys = (await AssetManifest.loadFromAssetBundle(bundle))
       .listAssets()
-      .where((k) => k.startsWith('assets/packs/'))
-      .toList()
-    ..sort((a, b) => a.endsWith('/general.json') ? -1 : b.endsWith('/general.json') ? 1 : a.compareTo(b));
+      .where((k) => k.startsWith('assets/packs/'));
   return [for (final k in keys) (await bundle.load(k)).buffer.asUint8List()];
 }
 
@@ -71,7 +68,8 @@ class PackStore {
 
   QuizPack? get(String id) => _bundled[id] ?? _user[id];
 
-  QuizPack? get firstBundled => _bundled.values.firstOrNull;
+  /// What plays when the host picks no pack.
+  QuizPack? get defaultPack => _bundled['general'] ?? _bundled.values.firstOrNull;
 
   /// Null on success, else the message to show the host. Validates before
   /// touching the disk; the file is written aside and renamed so a crash never
