@@ -28,6 +28,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   _Screen _screen = _Screen.join;
   int _myId = -1;
+  int _myColor = 0; // from Welcome, so it survives a reload before any LobbyState
   LobbyState? _lobby;
   String _waitReason = '';
   String? _error;
@@ -56,13 +57,10 @@ class _AppState extends State<App> {
     final ctx = _nav.currentContext;
     final name = EffectName.values.where((n) => n.name == m.name).firstOrNull;
     if (ctx == null || name == null) return;
-    final me = _lobby?.players.where((p) => p.id == _myId).firstOrNull;
     EffectLayer.play(
       ctx,
       name,
-      color: me == null
-          ? null
-          : playerColors[me.colorIndex % playerColors.length],
+      color: playerColors[_myColor % playerColors.length],
       text: _reveal == null ? null : '+${_reveal!.yourPoints}',
     );
   }
@@ -73,6 +71,7 @@ class _AppState extends State<App> {
       switch (m) {
         case Welcome():
           _myId = m.playerId;
+          _myColor = m.colorIndex;
           _error = null;
           _screen = _Screen.lobby;
         case LobbyState():

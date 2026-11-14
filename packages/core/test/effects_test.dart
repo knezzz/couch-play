@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:core/core.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,7 +55,7 @@ void main() {
       EffectLayer.play(ctx, n, text: '+1');
     }
     await t.pump();
-    expect(effects, findsNWidgets(3));
+    expect(effects, findsNWidgets(EffectName.values.length));
     expect(t.binding.transientCallbackCount, 0);
     await t.pump(const Duration(seconds: 3));
     expect(effects, findsNothing);
@@ -77,4 +80,71 @@ void main() {
     expect(find.ancestor(of: effects.first, matching: boundaries), findsOneWidget);
     await t.pump(const Duration(seconds: 3));
   });
+
+  // --- the TV death glow: edge only, stacked glows capped ---
+
+  /// The layer drawn over black, as RGBA bytes.
+  Future<(ByteData, int, int)> shot(WidgetTester t, GlobalKey key) async {
+    final boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    return (await t.runAsync(() async {
+      final img = await boundary.toImage();
+      return ((await img.toByteData())!, img.width, img.height);
+    }))!;
+  }
+
+  int red(ByteData d, int w, int x, int y) => d.getUint8((y * w + x) * 4);
+
+  Future<(ByteData, int, int)> glows(WidgetTester t, int n) async {
+    final key = GlobalKey();
+    late BuildContext ctx;
+    t.view
+      ..physicalSize = const Size(400, 300)
+      ..devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    await t.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: MediaQuery(
+        data: const MediaQueryData(),
+        child: RepaintBoundary(
+          key: key,
+          child: EffectLayer(
+            child: Builder(builder: (c) {
+              ctx = c;
+              return const ColoredBox(color: Color(0xFF000000), child: SizedBox.expand());
+            }),
+          ),
+        ),
+      ),
+    ));
+    for (var i = 0; i < n; i++) {
+      EffectLayer.play(ctx, EffectName.edgeGlow, color: const Color(0xFFFF0000));
+    }
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 300)); // half way: the peak
+    return shot(t, key);
+  }
+
+  testWidgets('a death glow lights the border and leaves the playfield alone', (t) async {
+    final (d, w, h) = await glows(t, 1);
+    expect(red(d, w, 1, h ~/ 2), greaterThan(40), reason: 'left edge glows');
+    expect(red(d, w, w ~/ 2, 1), greaterThan(40), reason: 'top edge glows');
+    expect(red(d, w, w ~/ 2, h ~/ 2), 0, reason: 'the middle is untouched');
+    expect(red(d, w, w ~/ 4, h ~/ 2), 0, reason: 'so is everything away from the border');
+    await t.pump(const Duration(seconds: 3));
+  });
+
+  for (final n in [3, 8]) {
+    testWidgets('$n glows at once never exceed the ~25% cap', (t) async {
+      final (d, w, h) = await glows(t, n);
+      var most = 0;
+      for (var y = 0; y < h; y += 7) {
+        for (var x = 0; x < w; x += 7) {
+          most = most > red(d, w, x, y) ? most : red(d, w, x, y);
+        }
+      }
+      expect(most, lessThanOrEqualTo((0.25 * 255).ceil() + 2));
+      expect(most, greaterThan(30), reason: 'still visible');
+      await t.pump(const Duration(seconds: 3));
+    });
+  }
 }

@@ -150,7 +150,7 @@ class _TvAppState extends State<TvApp> {
     if (fx != null) {
       for (final e in events) {
         if (e is Died) {
-          EffectLayer.play(fx, EffectName.colorPulse, color: playerColors[e.id % playerColors.length]);
+          EffectLayer.play(fx, EffectName.edgeGlow, color: playerColors[e.id % playerColors.length]);
         }
       }
     }

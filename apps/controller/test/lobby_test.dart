@@ -2,6 +2,7 @@ import 'package:controller/app.dart';
 import 'package:controller/screens/lobby_screen.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
@@ -278,6 +279,23 @@ void main() {
     await _send(t, c, const QuizReveal(1, 750, 750));
     await _send(t, c, const Effect('scorePop'));
     expect(t.binding.transientCallbackCount, greaterThan(0));
+    await t.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets('the death pulse uses the color from Welcome, even with no lobby yet', (t) async {
+    final key = GlobalKey();
+    final c = FakeConnection();
+    await t.pumpWidget(RepaintBoundary(key: key, child: App(c)));
+    await _send(t, c, const Welcome(0, 3, 'tok')); // color 3 is blue; no LobbyState follows
+    await _send(t, c, const Effect('colorPulse'));
+    await t.pump(const Duration(milliseconds: 300)); // the pulse at its peak
+    final boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    final (r, b) = (await t.runAsync(() async {
+      final img = await boundary.toImage();
+      final d = (await img.toByteData())!;
+      return (d.getUint8(0), d.getUint8(2)); // top-left pixel: red, blue
+    }))!;
+    expect(b, greaterThan(r), reason: 'blue-ish, not the red fallback (r=$r b=$b)');
     await t.pump(const Duration(seconds: 3));
   });
 }

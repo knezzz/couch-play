@@ -1,14 +1,27 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-enum EffectName { confetti, colorPulse, scorePop }
+enum EffectName {
+  confetti,
+  colorPulse,
+  scorePop,
+
+  /// A glow along the screen border only, so a death on the TV doesn't hide
+  /// the playfield. Glows playing together share a ~25% opacity cap.
+  edgeGlow,
+}
+
+/// The most opaque the border can get, however many glows stack.
+const _glowCap = 0.25;
 
 const _duration = {
   EffectName.confetti: Duration(milliseconds: 2500),
   EffectName.colorPulse: Duration(milliseconds: 600),
   EffectName.scorePop: Duration(milliseconds: 1000),
+  EffectName.edgeGlow: Duration(milliseconds: 600),
 };
 
 // With disableAnimations the effect is one still frame held this long.
@@ -38,13 +51,30 @@ class _Live {
 
 class _EffectLayerState extends State<EffectLayer> {
   final _live = <_Live>[];
+  // How many edge glows are live; each one's opacity depends on it.
+  final _glows = ValueNotifier<int>(1);
   var _next = 0;
 
-  void _add(EffectName name, Color? color, String? text) =>
-      setState(() => _live.add(_Live(_next++, name, color, text)));
+  void _count() =>
+      _glows.value = max(1, _live.where((e) => e.name == EffectName.edgeGlow).length);
+
+  void _add(EffectName name, Color? color, String? text) => setState(() {
+        _live.add(_Live(_next++, name, color, text));
+        _count();
+      });
 
   void _remove(int id) {
-    if (mounted) setState(() => _live.removeWhere((e) => e.id == id));
+    if (!mounted) return;
+    setState(() {
+      _live.removeWhere((e) => e.id == id);
+      _count();
+    });
+  }
+
+  @override
+  void dispose() {
+    _glows.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,7 +91,7 @@ class _EffectLayerState extends State<EffectLayer> {
             child: IgnorePointer(
               // Own layer: the effect repaints every frame, the child must not.
               child: RepaintBoundary(
-                child: _Effect(e, reduced: reduced, onDone: () => _remove(e.id)),
+                child: _Effect(e, _glows, reduced: reduced, onDone: () => _remove(e.id)),
               ),
             ),
           ),
@@ -71,8 +101,9 @@ class _EffectLayerState extends State<EffectLayer> {
 }
 
 class _Effect extends StatefulWidget {
-  const _Effect(this.live, {required this.reduced, required this.onDone});
+  const _Effect(this.live, this.glows, {required this.reduced, required this.onDone});
   final _Live live;
+  final ValueListenable<int> glows;
   final bool reduced;
   final VoidCallback onDone;
 
@@ -102,6 +133,7 @@ class _EffectState extends State<_Effect> with SingleTickerProviderStateMixin {
       EffectName.confetti => _ConfettiPainter(_t),
       EffectName.colorPulse => _PulsePainter(_t, l.color ?? const Color(0xFFFF4D4D)),
       EffectName.scorePop => _PopPainter(_t, l.text ?? '', l.color ?? const Color(0xFFFFD23F)),
+      EffectName.edgeGlow => _GlowPainter(_t, widget.glows, l.color ?? const Color(0xFFFF4D4D)),
     };
   }
 
@@ -219,4 +251,32 @@ class _PopPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_PopPainter old) => old.t != t;
+}
+
+class _GlowPainter extends CustomPainter {
+  _GlowPainter(this.t, this.glows, this.color) : super(repaint: Listenable.merge([t, glows]));
+  final Animation<double> t;
+  final ValueListenable<int> glows;
+  final Color color;
+  final _paint = Paint()..style = PaintingStyle.stroke;
+
+  static const _bands = 6;
+  static const _band = 14.0;
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    // n glows stacked on the same pixels composite to 1 - (1 - a)^n, so each
+    // takes the share that keeps the total at the cap.
+    final peak = 1 - pow(1 - _glowCap, 1 / glows.value);
+    final a = peak * sin(t.value * pi);
+    _paint.strokeWidth = _band;
+    for (var i = 0; i < _bands; i++) {
+      // Brightest at the very edge, fading inwards in flat steps.
+      _paint.color = color.withAlpha((255 * a * (1 - i / _bands)).round());
+      canvas.drawRect((Offset.zero & s).deflate(i * _band + _band / 2), _paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GlowPainter old) => old.t != t || old.glows != glows || old.color != color;
 }
