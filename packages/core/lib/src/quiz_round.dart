@@ -14,8 +14,13 @@ class ShownQuestion {
   final int correctIndex;
 }
 
-/// Pure quiz state. The caller owns the clock: every `elapsed` is the time
-/// since the current phase began (question shown, or reveal started).
+/// Pure quiz state. The caller owns the clock and passes `now`, the time since
+/// the round started; it must never go backwards. The round records each
+/// phase's start itself (the first question starts at 0), so a caller can't
+/// feed it a stale per-phase time.
+///
+/// [lastPoints] is partial while asking (only players who have answered):
+/// broadcast it at the reveal, not before.
 class QuizRound {
   QuizRound(
     QuizPack pack,
@@ -43,6 +48,7 @@ class QuizRound {
   final _answered = <int>{};
   final _totals = <int, int>{};
   final _last = <int, int>{};
+  var _phaseStart = Duration.zero;
   var _index = 0;
   var _step = QuizStep.asking;
 
@@ -55,7 +61,7 @@ class QuizRound {
 
   /// The first answer counts. Unknown players, a gone player, an index outside
   /// 0-3 and answers outside the asking step are ignored.
-  void answer(int playerId, int index, Duration elapsed) {
+  void answer(int playerId, int index, Duration now) {
     if (_step != QuizStep.asking ||
         index < 0 ||
         index > 3 ||
@@ -63,8 +69,11 @@ class QuizRound {
         !_answered.add(playerId)) {
       return;
     }
+    final elapsed = now - _phaseStart;
     final pts = quizPoints(
-        correct: index == current.correctIndex, elapsed: elapsed, limit: limit);
+        correct: index == current.correctIndex,
+        elapsed: elapsed.isNegative ? Duration.zero : elapsed,
+        limit: limit);
     _last[playerId] = pts;
     _totals[playerId] = _totals[playerId]! + pts;
   }
@@ -72,7 +81,15 @@ class QuizRound {
   /// A player who left keeps their points and scores nothing from now on.
   void removePlayer(int id) => _active.remove(id);
 
-  void advance(Duration elapsed) {
+  /// A player who came back answers again from the current question on, with
+  /// their total intact; questions they missed scored 0.
+  void addPlayer(int id) {
+    _active.add(id);
+    _totals.putIfAbsent(id, () => 0);
+  }
+
+  void advance(Duration now) {
+    final elapsed = now - _phaseStart;
     switch (_step) {
       case QuizStep.asking:
         if (elapsed >= limit || _active.every(_answered.contains)) {
@@ -80,6 +97,7 @@ class QuizRound {
             _last.putIfAbsent(id, () => 0);
           }
           _step = QuizStep.revealing;
+          _phaseStart = now;
         }
       case QuizStep.revealing:
         if (elapsed < reveal) return;
@@ -90,6 +108,7 @@ class QuizRound {
           _answered.clear();
           _last.clear();
           _step = QuizStep.asking;
+          _phaseStart = now;
         }
       case QuizStep.done:
         break;
