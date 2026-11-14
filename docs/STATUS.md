@@ -11,8 +11,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
 | 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT 100+ ms follow-up in progress | lead; RTT: builder-2 |
-| 5b | Curve: die on own old trail, countdown names, 7 power-ups (person, 2026-11-14) | in progress (queued to lead) | core + app |
-| 6 | Session, lobby, QR join | todo (waits on Task 5 gate) | — |
+| 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | in progress; preview of 9439899 on the TV now | core + app |
+| 6 | Session, lobby, QR join (+ host bot controls) | todo (after 5b) | — |
 | 7 | Session scoring and results | todo | — |
 | 8 | Shared effects | todo | — |
 | 9 | Quiz pack format | todo | — |
@@ -114,3 +114,10 @@ Added seats: 1 of 3.
   16 ms (worst 16.9) around match start; Path renderer, no ui.Image fallback. Phone RTT 100+ ms (target ≤ 40 ms:
   miss). Steering "not immediate but okay"; no visible stutter at round restart; Safari fine. Person: GO, with
   the RTT investigated alongside. Added builder-2 for the RTT work (core + app on 5b). Task 5b queued.
+- 2026-11-14: RTT root cause (builder-2): the TV's Wi-Fi power save. Mac→TV ping/pong p95 is 114 ms at 1 Hz and
+  19 ms at 10 Hz. Not our code. PM approved a controller-only fix: ping at ~10–20 Hz during Curve to keep the radio
+  awake (builder-2), re-measured on the iPhone in 5b Step 5.
+- 2026-11-14: Person asked for a preview on the TV: release build of 9439899 (5b work before review/QA) installed.
+- 2026-11-14: Scope change from the person: bots become a real feature (host adds/removes them in the lobby; Curve
+  only; count toward the 8 and toward scoring) with "survive + power-ups" skill; countdown also shows each player's
+  start direction. Spec and plan updated: smarter bots + arrow go into Task 5b, lobby bot controls into Task 6.

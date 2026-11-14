@@ -286,8 +286,8 @@ couchplay/
 Starts after the user's go on the Task 5 gate. Runs before Task 6.
 
 **Files:**
-- Modify: `packages/core/lib/src/curve_sim.dart`, `apps/tv/lib/ui/curve/curve_game.dart`, `apps/tv/lib/session/bots.dart` (bots ignore power-ups; no extra logic)
-- Test: `packages/core/test/curve_sim_test.dart`, `packages/core/test/curve_powerups_test.dart`
+- Modify: `packages/core/lib/src/curve_sim.dart`, `apps/tv/lib/ui/curve/curve_game.dart`, `apps/tv/lib/session/bots.dart` (smarter bots, see below)
+- Test: `packages/core/test/curve_sim_test.dart`, `packages/core/test/curve_powerups_test.dart`, `apps/tv/test/bots_test.dart`
 
 **Interfaces:**
 - Produces:
@@ -311,7 +311,13 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - Nothing spawns during the countdown. All effects end with the round.
   - TV rendering:
     - During the countdown, each head is drawn as a dot in the player's color with the name above it, in large type readable from the couch. The names are hidden once the round runs.
+    - During the countdown, a short arrow from each dot shows its starting heading (added 2026-11-14).
     - Power-ups are simple shape icons. Colors show who they affect: green is you, red is others, blue is everyone.
+  - Smarter bots (added 2026-11-14). `Bots` becomes a real opponent, not just a test tool:
+    - Each tick, it probes a few headings ahead (straight, left, right) at about 0.5–1 s of travel against the occupancy grid and the walls, and steers toward the clearest one.
+    - If all three headings are clear and a power-up is within a short range, it steers toward the power-up.
+    - It needs read access to the grid: a read-only `CurveSim.isBlocked(x, y)` or equivalent.
+    - Cost budget: 7 bots at 60 Hz must keep the TV well under 16 ms (re-measured in Step 5).
 
 - [ ] **Step 1: Write the failing tests.**
   - `crossing_own_old_trail_kills`: drive a full circle back across your own trail from more than `selfGraceTicks` ago. You die.
@@ -319,8 +325,12 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
   - One test per power-up kind, with a seeded `Random` and a power-up placed through a test hook in front of a head: the effect applies, then expires after `effectSeconds`.
   - `ghost_passes_trail_not_wall`, `wrap_comes_out_opposite_side`, `clear_empties_grid`.
   - `no_spawn_during_countdown`.
+  - `bots_test.dart`:
+    - `bot_turns_away_from_wall_ahead`
+    - `bot_avoids_trail_ahead`
+    - `bot_survives_longer_than_random`: over 20 seeded rounds, the mean survival time beats the old random bot.
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** the sim changes, then the renderer (countdown names, icons, clear).
+- [ ] **Step 3: Implement** the sim changes, the bots, then the renderer (countdown names and arrows, icons, clear).
 - [ ] **Step 4: Run.** Expected: PASS. Then QA on macOS: names visible in the countdown, each power-up seen working.
 - [ ] **Step 5: Re-measure on the real TV** (needs the user's adb yes for that session). Same setup as Task 5 Step 6, with power-ups on. Report the numbers to the user.
 - [ ] **Step 6: Commit.** Messages: `fix(core): die on your own old trail`, `feat: curve power-ups and countdown names`.
@@ -358,6 +368,13 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - Only the host's `StartGame` and `Kick` are accepted. Others get `ErrorMsg("Only the host can do that.")`.
     - `Kick` sends `Kicked` and removes the player.
     - A player who stays disconnected for more than 10 minutes while in the lobby is removed.
+  - Bots in the lobby (added 2026-11-14):
+    - New protocol message `SetBots(count: int)` `"bots"` (phone → TV). `PlayerInfo` gains `bot: bool`.
+    - Only the host can send it. The count is clamped so players + bots ≤ 8.
+    - Bots are `Player`s with no socket and no token, named "Bot 1", "Bot 2"… and given the lowest free colors.
+    - A human who joins when the game is full takes a bot's seat; the newest bot is removed.
+    - Bots play Curve only. In Curve they count toward the target and the placement points, and they appear on the session scoreboard. In Quiz they sit out.
+    - The controller's host lobby gets "− Bots N +" buttons.
 - [ ] **Step 1: Write the failing tests.** `session_test.dart` uses fake `PeerSocket`s.
   - `cleanName`: `"  Ana  "` → `"Ana"`. `"   "` → null. A 20-emoji string → 16 graphemes.
   - `dedupe`: "Ana" when "Ana" is taken → "Ana 2".
@@ -368,6 +385,7 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
   - `non_host_start_rejected`
   - `colors_reuse_lowest_free_after_kick`
   - `curve_disconnect_kills_player`: calls `CurveSim.kill`.
+  - `host_sets_bots_clamped_to_eight`, `non_host_set_bots_rejected`, `human_join_replaces_newest_bot_when_full`, `bots_sit_out_quiz`.
 - [ ] **Step 2: Run** the tests. Expected: FAIL.
 - [ ] **Step 3: Implement** `names.dart`, `palette.dart` and `session.dart`. Move the Task 5 temporary wiring into `Session`: `onStart(curve)` creates the `CurveSim` from the connected players.
 - [ ] **Step 4: Build the TV lobby screen.**

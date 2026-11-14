@@ -112,7 +112,13 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
   including your own older trail (only the bit you just drew is safe).
 - During the countdown before each round, every player shows as a dot in their color with their name above it, so
   people can find themselves. The names go away when the round starts; the dot stays as the line's head.
+  (User request, 2026-11-14.) A short arrow from each dot shows the direction that line will start in.
   (User request, 2026-11-14.)
+- **Bots (user request, 2026-11-14):** the phone host can add and remove bots in the lobby, so a small group gets a
+  fuller board. Bots play Curve only, count toward the 8-player limit, get the next free color and a name like
+  "Bot 1", and score like players: they take part in placement points and appear on the session scoreboard. Bot
+  skill: look ahead and steer away from trails and walls, and sometimes go for a nearby power-up. They must stay
+  cheap enough to run 7 of them at 60 Hz on the TV.
 - Last one alive scores; every other surviving-longer player also gets points (points = number of players you outlived). First to `10 × (players − 1)` wins, as in Curve Fever.
 - Simulation runs on the TV at a fixed 60 Hz tick; collision against a trail occupancy grid.
 - **Power-ups (user request, 2026-11-14, replaces "no power-ups in v1"):** icons appear on the board from time to
