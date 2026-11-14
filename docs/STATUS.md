@@ -13,10 +13,10 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT 100+ ms follow-up in progress | lead; RTT: builder-2 |
 | 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | in progress; preview of 9439899 on the TV now | core + app |
 | 6 | Session, lobby, QR join (+ host bot controls) | todo (after 5b) | — |
-| 7 | Session scoring and results | todo | — |
+| 7 | Session scoring and results | scoring functions in progress (builder-2); finishGame + results screen wait for Task 6 | builder-2 |
 | 8 | Shared effects | todo | — |
 | 9 | Quiz pack format | done (4b1cbdb, fix 01db6e3, merge a69cb6f) | builder-2 |
-| 10 | Quiz round logic | todo | — |
+| 10 | Quiz round logic | in progress (early, parallel with 5b) | builder-2 |
 | 11 | Quiz screens | todo | — |
 | 12 | Pack store and upload | todo | — |
 | 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | todo | — |
@@ -129,3 +129,5 @@ Added seats: 1 of 3.
   validation messages beyond the plan, documented in docs/quiz-pack-format.md.
 - 2026-11-14: Task 9 accepted. Review HIGH fixed: a zip64 size of -1 bypassed the inflate cap (a 5 MB upload could
   inflate to ~5 GB and crash the TV). PM ran core tests, 54/54. Plan boxes ticked.
+- 2026-11-14: Person asked to play the quiz on the TV. It needs Tasks 6, 10 and 11 (plus 13 for real packs).
+  builder-2 starts Task 10 plus Task 7's pure scoring functions now.
