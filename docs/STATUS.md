@@ -10,22 +10,27 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
-| 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT 100+ ms follow-up in progress | lead; RTT: builder-2 |
+| 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT keep-alive at 20 Hz, TV-measure pending | lead; RTT: builder-2 |
 | 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | done on macOS (fae7156); Step 5 TV re-check waits for the next TV session | core + app |
-| 6 | Session, lobby, QR join (+ host bot controls) | in progress | lead |
-| 7 | Session scoring and results | scoring functions done (f6b19f2); finishGame + results screen wait for Task 6 | builder-2 |
-| 8 | Shared effects | first half done (af1e3f5, 72090c5); wiring after Task 7 | builder-2 |
+| 6 | Session, lobby, QR join (+ host bot controls) | done on macOS (acad899 … 43697ff); design should-fixes go into Task 14 | core + app |
+| 7 | Session scoring and results | done (f6b19f2, db5e1a5) | builder-2 |
+| 8 | Shared effects | done (af1e3f5, 72090c5, 0d0a3b5, 5038006, 4efe2ea) | builder-2 |
 | 9 | Quiz pack format | done (4b1cbdb, fix 01db6e3, merge a69cb6f) | builder-2 |
 | 10 | Quiz round logic | done (0a679e8, fixes e6b6d64, eae0ec9) | builder-2 |
-| 11 | Quiz screens | todo | — |
-| 12 | Pack store and upload | first half (PackStore) in progress; upload wiring after Task 6 | builder-2 |
-| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | todo | — |
-| 14 | TV polish and release install | todo | — |
+| 11 | Quiz screens | done on macOS (e0f899d, 4c9f22a, 8ba1b0c, a22faec); design review 2 in progress | core + app |
+| 12 | Pack store and upload | done (3e49ecb, e5fcb49, 0606039, 729b9a9, e06c9fe) | builder-2 |
+| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | in progress | content |
+| 14 | TV polish and release install | Steps 1–4 + design fixes in progress; Step 5 (real TV, 3+ phones) needs the person | lead |
 
 ## Open questions for the person
 
 - Next TV session (fresh adb yes + pairing code): check the human-like bots (they pick up power-ups in only ~3 of
-  10 rounds; judge whether that's enough) and the 20 Hz keep-alive (RTT p95 target ≤ 40 ms).
+  10 rounds; judge whether that's enough) and the 20 Hz keep-alive (RTT p95 target ≤ 40 ms). Combine with Task 14
+  Step 5: release install, at least 3 phones (iPhone Safari + an Android phone's Chrome), one Quiz + one Curve game,
+  lock a phone mid-game.
+- Quiz: when everyone scores 0, everyone ties for first and gets confetti + session points (the plan's tie rule).
+  Should a 0-point game award nothing instead?
+- Task 13: review the `hr-medimurje` pack when it's ready.
 
 Answered:
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
@@ -67,8 +72,10 @@ Answered:
 | review | check-review@couchplay | 2026-11-13 | starting seat |
 
 | builder-2 | build-builder-2@couchplay | 2026-11-14 | **added**: RTT investigation, while core + app are on Task 5b |
+| design | check-design@couchplay | 2026-11-14 | **added**: design review of Tasks 6, 11, 14 screens |
+| content | build-content@couchplay | 2026-11-14 | **added**: Task 13 question packs |
 
-Added seats: 1 of 3.
+Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 no longer needs it.
 
 ## Changelog
 
@@ -145,3 +152,9 @@ Added seats: 1 of 3.
   core widgets to builder-2 in parallel.
 - 2026-11-14: Task 8 first half accepted (review clean; PM ran core tests, 85/85). builder-2 on PackStore (Task 12's
   first half).
+- 2026-11-14: Task 6 accepted on macOS (PM ran tests: core 89, tv 83, controller 21; review fixes in; QA 12/12 incl.
+  Review Focus #1-3). Its hand-back reached the PM ~3 h late (05:45 → 08:37); the team idled. Added check-design
+  (Task 6 review: 0 must-fix, 6 should-fix → Task 14; palette kept, dots widened instead) and build-content (Task 13).
+- 2026-11-14: Tasks 11, 12 (second half), 7 (rest) and 8 (wiring) accepted on macOS (PM ran tests: core 93, tv 116,
+  controller 31; review and QA clean). The quiz is playable on macOS with a built-in test pack and uploaded packs.
+  Task 14 Steps 1-4 + design fixes queued; design review 2 (quiz/results) queued.

@@ -418,14 +418,14 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
   - `List<Placement> placementPoints(Map<int,int> gameScores)`. Players are sorted by score, descending. 1st gets N points, down to 1. Tied players share the better place and its points; the next place skips accordingly (scores 9, 9, 5 → places 1, 1, 3, points 3, 3, 1).
   - `int quizPoints({required bool correct, required Duration elapsed, Duration limit = const Duration(seconds: 20)})`. Correct: `(1000 - 500 × elapsed/limit).round()`, clamped to 500–1000. Otherwise 0.
   - `Session.finishGame(Map<int,int> gameScores)`: adds the placement points to `sessionScores`, broadcasts `Results`, shows the results screen for 8 s, then returns to the lobby.
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - The ties case above.
   - A single player gets 1 point.
   - `quizPoints`: correct at 0 s = 1000, at 10 s = 750, at 20 s = 500, at 25 s = 500. Wrong = 0.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement.** When Curve reaches `matchOver`, call `finishGame(sim.scores)`.
-- [ ] **Step 4: Run.** Expected: PASS.
-- [ ] **Step 5: Commit.** Message: `feat: placement scoring and results`.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement.** When Curve reaches `matchOver`, call `finishGame(sim.scores)`.
+- [x] **Step 4: Run.** Expected: PASS.
+- [x] **Step 5: Commit.** Message: `feat: placement scoring and results`.
 
 ---
 
@@ -444,11 +444,11 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - the winner gets confetti on results
     - a Curve death gets a color pulse
     - a correct quiz answer gets a score pop
-- [ ] **Step 1: Write the failing test.** `play_confetti_then_clears`: pump an `EffectLayer` and call `play(confetti)`. Particles appear, and after 3 s nothing is left in the tree. With `disableAnimations: true`, there are no animation tickers.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** the effects with `CustomPainter` and one `AnimationController` each. No new dependencies.
-- [ ] **Step 4: Run.** Expected: PASS.
-- [ ] **Step 5: Commit.** Message: `feat(core): shared effects on tv and phone`.
+- [x] **Step 1: Write the failing test.** `play_confetti_then_clears`: pump an `EffectLayer` and call `play(confetti)`. Particles appear, and after 3 s nothing is left in the tree. With `disableAnimations: true`, there are no animation tickers.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** the effects with `CustomPainter` and one `AnimationController` each. No new dependencies.
+- [x] **Step 4: Run.** Expected: PASS.
+- [x] **Step 5: Commit.** Message: `feat(core): shared effects on tv and phone`.
 
 ---
 
@@ -545,11 +545,11 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - "N of M answered"
     - on reveal: the correct tile highlighted and the other tiles dimmed, colored dots showing who picked what, and a mini scoreboard
   - Phone layout: the same 4 tiles with their shape and the choice text, filling the screen. After tapping, the phone shows "Locked in". On reveal it shows "+750" or "Not this time", plus its running total.
-- [ ] **Step 1: Write the failing widget test.** `apps/controller/test/quiz_screen_test.dart`: given a `QuizQuestion`, it shows 4 tiles with the texts. Tapping tile 2 sends `Answer(2)` once, and a second tap sends nothing.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** both screens and the session wiring.
-- [ ] **Step 4: Run.** Expected: PASS. Then play a full quiz on the emulator with 2 phones.
-- [ ] **Step 5: Commit.** Message: `feat: quiz game screens`.
+- [x] **Step 1: Write the failing widget test.** `apps/controller/test/quiz_screen_test.dart`: given a `QuizQuestion`, it shows 4 tiles with the texts. Tapping tile 2 sends `Answer(2)` once, and a second tap sends nothing.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** both screens and the session wiring.
+- [x] **Step 4: Run.** Expected: PASS. Then play a full quiz on the emulator with 2 phones.
+- [x] **Step 5: Commit.** Message: `feat: quiz game screens`.
 
 ---
 
@@ -570,16 +570,16 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
     - `Future<String?> add(Uint8List bytes)` returns null on success or the error message. It stores the file as `<userDir>/<id>.pack` and replaces an existing user pack with the same id. Bundled ids can't be overwritten: "A built-in pack already uses the id 'x'. Pick another id."
   - Upload: `onPackUpload(token, body)` accepts only the current host's token. Otherwise it returns "Only the host can add packs." On success, the lobby is re-broadcast so the new pack shows up.
   - Controller: the host lobby has an "Add quiz pack" file picker (`<input type=file accept=".json,.zip">` via `package:web`). It POSTs the bytes and shows the server's message: "Added World Flags (40 questions)." on success, or the error text.
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `add_valid_pack_persists_and_reloads`
   - `invalid_pack_rejected_nothing_written`: the dir stays empty
   - `cannot_shadow_bundled_id`
   - `corrupt_file_on_disk_skipped_on_load`
   - `non_host_upload_rejected`: through `Session`
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement.** The user dir is `getApplicationSupportDirectory()/packs`.
-- [ ] **Step 4: Run.** Expected: PASS. Then upload a pack from the host phone by hand.
-- [ ] **Step 5: Commit.** Message: `feat: pack store and host upload`.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement.** The user dir is `getApplicationSupportDirectory()/packs`.
+- [x] **Step 4: Run.** Expected: PASS. Then upload a pack from the host phone by hand.
+- [x] **Step 5: Commit.** Message: `feat: pack store and host upload`.
 
 ---
 
