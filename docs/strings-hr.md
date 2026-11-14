@@ -86,7 +86,6 @@ Informal "ti". `{x}` is filled in by the app.
 | removed | Uklonjen si iz igre. | You were removed from the game. | screen after the host removes you |
 | ok | U redu | OK | closes a red error bar |
 | waitingForHost | Čekaš da {host} pokrene igru. (fallback: domaćin) | You are waiting for {host} to start the game. | lobby, for non-hosts |
-| hostBadge | ★ DOMAĆIN | HOST | badge on your chip |
 | pickGame | Odaberi igru | Pick a game | lobby, host only |
 | quiz | Kviz | Quiz | lobby button |
 | curve | Curve | Curve (game name, not translated) | lobby button |
