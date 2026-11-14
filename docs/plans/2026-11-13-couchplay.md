@@ -337,7 +337,7 @@ Starts after the user's go on the Task 5 gate. Runs before Task 6.
 - [x] **Step 2: Run.** Expected: FAIL.
 - [x] **Step 3: Implement** the sim changes, the bots, then the renderer (countdown names and arrows, icons, clear).
 - [x] **Step 4: Run.** Expected: PASS. Then QA on macOS: names visible in the countdown, each power-up seen working.
-- [ ] **Step 5: Re-measure on the real TV** (needs the user's adb yes for that session). Same setup as Task 5 Step 6, with power-ups on. Report the numbers to the user.
+- [x] **Step 5: Re-measure on the real TV** (needs the user's adb yes for that session). Same setup as Task 5 Step 6, with power-ups on. Report the numbers to the user.
 - [x] **Step 6: Commit.** Messages: `fix(core): die on your own old trail`, `feat: curve power-ups and countdown names`.
 
 ---

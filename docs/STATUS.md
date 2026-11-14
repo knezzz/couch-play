@@ -10,8 +10,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 2 | Protocol | done (d4e99fd) | core |
 | 3 | TV server and LAN address | done (583a11f, fix 9c29d02) | core |
 | 4 | Curve simulation | done (f9f01df, 48c5b94, fix c2bf7f2) | app, lead |
-| 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass). RTT keep-alive at 20 Hz, TV-measure pending | lead; RTT: builder-2 |
-| 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | done on macOS (fae7156); Step 5 TV re-check waits for the next TV session | core + app |
+| 5 | Curve end-to-end + **real-TV perf gate** | done (gate GO; frames pass; RTT accepted, see changelog) | lead; RTT: builder-2 |
+| 5b | Curve: die on own old trail, countdown names + start arrow, 7 power-ups, smarter bots (person, 2026-11-14) | done (TV re-check 2026-11-14: person "looks great") | core + app |
 | 6 | Session, lobby, QR join (+ host bot controls) | done on macOS (acad899 … 43697ff); design should-fixes go into Task 14 | core + app |
 | 7 | Session scoring and results | done (f6b19f2, db5e1a5) | builder-2 |
 | 8 | Shared effects | done (af1e3f5, 72090c5, 0d0a3b5, 5038006, 4efe2ea) | builder-2 |
@@ -158,3 +158,7 @@ Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 
 - 2026-11-14: Tasks 11, 12 (second half), 7 (rest) and 8 (wiring) accepted on macOS (PM ran tests: core 93, tv 116,
   controller 31; review and QA clean). The quiz is playable on macOS with a built-in test pack and uploaded packs.
   Task 14 Steps 1-4 + design fixes queued; design review 2 (quiz/results) queued.
+- 2026-11-14: TV session 2 (build db68fb7, release, person's yes): frames: Curve 0 over 16 ms, worst 6.4–8.1 ms;
+  quiz minute 0 over, worst 14.3 ms; startup minute 6 over (load). iPhone RTT at 20 Hz: typical ~10 ms, p95 ~50 ms
+  (n=300), no better than 10 Hz, so the spikes are the TV's Wi-Fi, not our code. Person: "Looks great." PM: RTT
+  accepted as-is (no TV network changes). Task 5b Step 5 closed. Task 14 Back fix + bundled packs build next.
