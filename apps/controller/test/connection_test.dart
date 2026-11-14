@@ -39,11 +39,15 @@ class _Ch extends StreamChannelMixin implements WebSocketChannel {
 void main() {
   testWidgets('reconnect re-sends Join, then the last Steer', (t) async {
     final chans = <_Ch>[];
-    final c = Connection(Uri.parse('ws://x/ws'), 'tok', connect: (_) {
-      final ch = _Ch();
-      chans.add(ch);
-      return ch;
-    });
+    final c = Connection(
+      Uri.parse('ws://x/ws'),
+      'tok',
+      connect: (_) {
+        final ch = _Ch();
+        chans.add(ch);
+        return ch;
+      },
+    );
     await t.pump();
     c.send(const Join('Ana', 'tok'));
     c.send(const Steer(left: true, right: false));

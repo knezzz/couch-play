@@ -36,30 +36,36 @@ class _JoinScreenState extends State<JoinScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            TextField(
-              controller: _name,
-              maxLength: 16,
-              decoration: const InputDecoration(labelText: 'Your name'),
-            ),
-            const SizedBox(height: 16),
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Text(_error!, style: const TextStyle(fontSize: 18, color: Colors.redAccent)),
+    body: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextField(
+            controller: _name,
+            maxLength: 16,
+            decoration: const InputDecoration(labelText: 'Your name'),
+          ),
+          const SizedBox(height: 16),
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Text(
+                _error!,
+                style: const TextStyle(fontSize: 18, color: Colors.redAccent),
               ),
-            FilledButton(
-              onPressed: () {
-                final name = _name.text.trim();
-                if (name.isEmpty) return;
-                setState(() => _error = null);
-                widget.conn.send(Join(name, widget.conn.token));
-              },
-              child: const Text('Join'),
             ),
-          ]),
-        ),
-      );
+          FilledButton(
+            onPressed: () {
+              final name = _name.text.trim();
+              if (name.isEmpty) return;
+              setState(() => _error = null);
+              widget.conn.send(Join(name, widget.conn.token));
+            },
+            child: const Text('Join'),
+          ),
+        ],
+      ),
+    ),
+  );
 }

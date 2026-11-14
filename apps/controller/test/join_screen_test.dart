@@ -20,8 +20,9 @@ void main() {
   Future<(_Fake, List<int>)> pumpJoin(WidgetTester t) async {
     final c = _Fake();
     final joined = <int>[];
-    await t.pumpWidget(MaterialApp(
-        home: JoinScreen(c, onJoined: () => joined.add(1))));
+    await t.pumpWidget(
+      MaterialApp(home: JoinScreen(c, onJoined: () => joined.add(1))),
+    );
     await t.enterText(find.byType(TextField), 'Ana');
     await t.tap(find.text('Join'));
     await t.pump();

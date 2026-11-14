@@ -8,18 +8,19 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// re-sends the last Join (so the TV recognises the same token) and Steer.
 class Connection {
   Connection(this.ws, this.token, {WebSocketChannel Function(Uri)? connect})
-      : _connect = connect ?? WebSocketChannel.connect {
+    : _connect = connect ?? WebSocketChannel.connect {
     _open();
   }
 
   /// For tests: no socket; override [send].
   Connection.offline()
-      : ws = null,
-        token = 'test',
-        _connect = WebSocketChannel.connect;
+    : ws = null,
+      token = 'test',
+      _connect = WebSocketChannel.connect;
 
   final Uri? ws;
   final WebSocketChannel Function(Uri) _connect;
+
   /// Stable per-browser id, kept in localStorage by main.dart.
   final String token;
   final _messages = StreamController<Message>.broadcast();

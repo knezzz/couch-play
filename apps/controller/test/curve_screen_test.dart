@@ -27,7 +27,9 @@ void main() {
     await t.pumpWidget(const SizedBox()); // cancels the ping timer
   });
 
-  testWidgets('release after a rebuild still sends Steer(false, false)', (t) async {
+  testWidgets('release after a rebuild still sends Steer(false, false)', (
+    t,
+  ) async {
     final c = _Fake();
     await t.pumpWidget(MaterialApp(home: CurveScreen(c)));
     final g = await t.startGesture(const Offset(50, 300));
