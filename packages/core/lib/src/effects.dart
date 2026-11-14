@@ -182,7 +182,9 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size s) {
-    assert(_ready);
+    // Must be a real read, not an assert: release builds strip asserts, and
+    // reading this is what fills the particle tables (all zeros otherwise).
+    if (!_ready) return;
     final v = t.value;
     // Sized for the screen. The TV is ~540 logical px tall (2x density), so
     // this gives it 10-20 logical (20-40 physical) px specks.
