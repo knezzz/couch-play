@@ -185,7 +185,7 @@ void main() {
       findsOneWidget,
     );
     await _send(t, c, const CurveStatus(alive: true, score: 0, target: 20));
-    expect(find.text('◀'), findsOneWidget);
+    expect(find.byKey(const ValueKey('steer-left')), findsOneWidget);
     await t.pumpWidget(const SizedBox()); // stop the ping timer
   });
 
@@ -197,13 +197,13 @@ void main() {
       await _send(t, c, const Welcome(1, 1, 'tok'));
       await _send(t, c, _lobby());
       await _send(t, c, const CurveStatus(alive: true, score: 0, target: 20));
-      expect(find.text('◀'), findsOneWidget);
+      expect(find.byKey(const ValueKey('steer-left')), findsOneWidget);
       await _send(
         t,
         c,
         const Results([Placement(0, 1, 20, 3), Placement(1, 2, 14, 2)]),
       );
-      expect(find.text('◀'), findsNothing);
+      expect(find.byKey(const ValueKey('steer-left')), findsNothing);
       expect(find.text(Strings.placed(2)), findsOneWidget);
       expect(find.text(Strings.sessionPoints(2)), findsOneWidget);
       await _send(t, c, _lobby());

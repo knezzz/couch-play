@@ -1,10 +1,12 @@
 import 'package:controller/app.dart';
+import 'package:controller/screens/curve_screen.dart';
 import 'package:controller/screens/lobby_screen.dart';
 import 'package:controller/screens/quiz_screen.dart';
 import 'package:controller/screens/results_screen.dart';
 import 'package:controller/strings.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
@@ -108,6 +110,74 @@ void main() {
     expect(find.text(Strings.removed), findsOneWidget);
     expect(t.takeException(), isNull);
     await t.pumpWidget(const SizedBox());
+  });
+
+  for (final w in [360.0, 390.0]) {
+    testWidgets(
+      'host chip name ellipsizes before the badge at ${w.toInt()} px',
+      (t) async {
+        t.view.physicalSize = Size(w, 844);
+        t.view.devicePixelRatio = 1;
+        addTearDown(t.view.reset);
+        await t.pumpWidget(
+          MaterialApp(home: LobbyScreen(FakeConnection(), _lobby(), 0)),
+        );
+        // The name's room (the Expanded around it), not its ellipsized text.
+        final name = t.getRect(
+          find
+              .ancestor(
+                of: find.text(_wide).first,
+                matching: find.byType(Expanded),
+              )
+              .first,
+        );
+        final badge = t.getRect(
+          find
+              .ancestor(
+                of: find.text(Strings.hostBadge),
+                matching: find.byType(Container),
+              )
+              .first,
+        );
+        expect(badge.left - name.right, greaterThanOrEqualTo(8));
+      },
+    );
+
+    testWidgets(
+      '"${Strings.placed(4)}" keeps the number with "mjestu" (wide test font) at ${w.toInt() + 120} px',
+      (t) async {
+        // The Ahem test font is far wider than Roboto, so give it room.
+        t.view.physicalSize = Size(w + 120, 844);
+        t.view.devicePixelRatio = 1;
+        addTearDown(t.view.reset);
+        await t.pumpWidget(
+          MaterialApp(home: ResultsScreen(const [Placement(0, 4, 0, 1)], 0)),
+        );
+        final para = t.renderObject<RenderParagraph>(
+          find.text(Strings.placed(4)),
+        );
+        final text = Strings.placed(4);
+        final from = text.indexOf('4');
+        final tops = para
+            .getBoxesForSelection(
+              TextSelection(baseOffset: from, extentOffset: text.length),
+            )
+            .map((b) => b.top.round())
+            .toSet();
+        expect(tops.length, 1, reason: 'number and mjestu on one line');
+      },
+    );
+  }
+
+  testWidgets('Curve steering arrows are drawn, not font glyphs', (t) async {
+    _phone(t);
+    await t.pumpWidget(MaterialApp(home: CurveScreen(FakeConnection())));
+    expect(find.byKey(const ValueKey('steer-left')), findsOneWidget);
+    expect(find.byKey(const ValueKey('steer-right')), findsOneWidget);
+    for (final g in ['◀', '▶']) {
+      expect(find.text(g), findsNothing);
+    }
+    await t.pumpWidget(const SizedBox()); // stop the ping timer
   });
 
   test('Croatian plural of "bod"', () {

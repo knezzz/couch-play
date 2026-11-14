@@ -55,7 +55,8 @@ abstract final class Strings {
 
   // Results
   static const gameOver = 'Igra je gotova.';
-  static String placed(int place) => 'Završio si na $place. mjestu';
+  // Non-breaking space: the number stays with "mjestu" when the line wraps.
+  static String placed(int place) => 'Završio si na $place.\u00A0mjestu';
   static String sessionPoints(int n) => '+$n ${points(n)} za ovu večer';
 
   /// bod, boda, bodova

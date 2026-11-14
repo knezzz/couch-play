@@ -77,7 +77,7 @@ class _CurveScreenState extends State<CurveScreen> {
     widget.conn.send(Steer(left: _left, right: _right));
   }
 
-  Widget _half(int side, String label, void Function(bool) set, Color color) {
+  Widget _half(int side, bool left, void Function(bool) set, Color color) {
     return Expanded(
       child: Listener(
         behavior: HitTestBehavior.opaque,
@@ -93,9 +93,11 @@ class _CurveScreenState extends State<CurveScreen> {
         child: Container(
           color: color,
           alignment: Alignment.center,
-          child: Text(
-            label,
-            style: const TextStyle(fontSize: 96, color: Colors.white),
+          // Drawn: the ◀ ▶ glyphs fall back to an orange emoji font on some phones.
+          child: CustomPaint(
+            key: ValueKey(left ? 'steer-left' : 'steer-right'),
+            size: const Size(72, 96),
+            painter: _ArrowPainter(left),
           ),
         ),
       ),
@@ -110,8 +112,8 @@ class _CurveScreenState extends State<CurveScreen> {
           ignoring: !widget.alive,
           child: Row(
             children: [
-              _half(0, '◀', (v) => _set(left: v), const Color(0xFF1E3A5F)),
-              _half(1, '▶', (v) => _set(right: v), const Color(0xFF5F1E3A)),
+              _half(0, true, (v) => _set(left: v), const Color(0xFF1E3A5F)),
+              _half(1, false, (v) => _set(right: v), const Color(0xFF5F1E3A)),
             ],
           ),
         ),
@@ -153,4 +155,25 @@ class _CurveScreenState extends State<CurveScreen> {
       ],
     ),
   );
+}
+
+class _ArrowPainter extends CustomPainter {
+  _ArrowPainter(this.left);
+  final bool left;
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    final x0 = left ? s.width : 0.0, x1 = left ? 0.0 : s.width;
+    canvas.drawPath(
+      Path()
+        ..moveTo(x1, s.height / 2)
+        ..lineTo(x0, 0)
+        ..lineTo(x0, s.height)
+        ..close(),
+      Paint()..color = Colors.white,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ArrowPainter old) => old.left != left;
 }

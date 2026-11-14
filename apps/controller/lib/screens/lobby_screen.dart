@@ -406,7 +406,8 @@ class _MyChip extends StatelessWidget {
             ),
           ),
         ),
-        if (host)
+        if (host) ...[
+          const SizedBox(width: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
@@ -422,6 +423,7 @@ class _MyChip extends StatelessWidget {
               ),
             ),
           ),
+        ],
       ],
     ),
   );
