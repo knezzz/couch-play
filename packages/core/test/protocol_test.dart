@@ -10,10 +10,14 @@ void main() {
       const StartGame(GameKind.quiz, 'pack1'),
       const StartGame(GameKind.curve, null),
       const Kick(3),
+      const SetBots(4),
       const Ping(123),
       const Welcome(1, 2, 'tok'),
       const LobbyState(
-        players: [PlayerInfo(1, 'Ana', 0, true, 5)],
+        players: [
+          PlayerInfo(1, 'Ana', 0, true, 5),
+          PlayerInfo(2, 'Bot 1', 1, true, 0, bot: true),
+        ],
         packs: [PackInfo('p', 'Pack', 10)],
         hostId: 1,
       ),
@@ -37,8 +41,17 @@ void main() {
     expect(Message.decode('{"type":"nope"}'), isNull);
     expect(Message.decode('{"type":"answer","index":"2"}'), isNull);
     expect(Message.decode('[1]'), isNull);
+    expect(Message.decode('{"type":"bots","count":"3"}'), isNull);
+    expect(Message.decode('{"type":"bots"}'), isNull);
     expect(Message.decode('{"type":"start","game":"chess"}'), isNull);
     expect(Message.decode('{"type":"lobby","players":[1],"packs":[],"hostId":1}'),
         isNull);
+  });
+
+  test('player_info_without_bot_field_is_a_human', () {
+    final m = Message.decode(
+        '{"type":"lobby","players":[{"id":1,"name":"Ana","colorIndex":0,'
+        '"connected":true,"sessionScore":0}],"packs":[],"hostId":1}');
+    expect((m as LobbyState).players.single.bot, isFalse);
   });
 }

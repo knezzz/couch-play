@@ -16,15 +16,17 @@ mixin _JsonEq {
 class PlayerInfo with _JsonEq {
   final int id, colorIndex, sessionScore;
   final String name;
-  final bool connected;
+  final bool connected, bot;
   const PlayerInfo(
-      this.id, this.name, this.colorIndex, this.connected, this.sessionScore);
+      this.id, this.name, this.colorIndex, this.connected, this.sessionScore,
+      {this.bot = false});
   factory PlayerInfo.fromJson(Map<String, dynamic> j) => PlayerInfo(
       j['id'] as int,
       j['name'] as String,
       j['colorIndex'] as int,
       j['connected'] as bool,
-      j['sessionScore'] as int);
+      j['sessionScore'] as int,
+      bot: (j['bot'] as bool?) ?? false);
   @override
   Map<String, Object?> toJson() => {
         'id': id,
@@ -32,6 +34,7 @@ class PlayerInfo with _JsonEq {
         'colorIndex': colorIndex,
         'connected': connected,
         'sessionScore': sessionScore,
+        'bot': bot,
       };
 }
 
@@ -87,6 +90,7 @@ sealed class Message with _JsonEq {
         'start' => StartGame(
             GameKind.values.byName(m['game'] as String), m['packId'] as String?),
         'kick' => Kick(m['playerId'] as int),
+        'bots' => SetBots(m['count'] as int),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
           Welcome(m['playerId'] as int, m['colorIndex'] as int, m['token'] as String),
@@ -162,6 +166,17 @@ class Kick extends Message {
   String get type => 'kick';
   @override
   Map<String, Object?> get fields => {'playerId': playerId};
+}
+
+/// Host only: how many bots to have in the lobby. The TV clamps it so that
+/// players + bots never exceed 8.
+class SetBots extends Message {
+  final int count;
+  const SetBots(this.count);
+  @override
+  String get type => 'bots';
+  @override
+  Map<String, Object?> get fields => {'count': count};
 }
 
 class Ping extends Message {
