@@ -74,10 +74,10 @@ Answered:
 | review | check-review@couchplay | 2026-11-13 | starting seat |
 
 | builder-2 | build-builder-2@couchplay | 2026-11-14 | **added**: RTT investigation, while core + app are on Task 5b |
-| design | check-design@couchplay | 2026-11-14 | **added**: design review of Tasks 6, 11, 14 screens |
+| design | (removed 2026-11-14) | 2026-11-14 | added for design reviews of Tasks 6, 11, 14, 15; removed when done |
 | content | build-content@couchplay | 2026-11-14 | **added**: Task 13 question packs |
 
-Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 no longer needs it.
+Added seats running: 2 of 3 (builder-2, content). Each goes when its work is done.
 
 ## Changelog
 
@@ -184,3 +184,5 @@ Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 
 - 2026-11-14: Task 15 accepted on macOS (PM ran core 95, tv 159; controller green on the committed tree): every screen
   matches its mockup (QA, release builds), design signed off, the phone never shows the quiz pick, confetti cut to 20
   large pieces. Task 16 (Croatian UI) queued.
+- 2026-11-14: check-design removed (reviews done, nothing queued). Task 16 strings (docs/strings-hr.md, ~104): person chose
+  neutral wording instead of masculine forms, keep "Curve", Robot/NEMA VEZE OK, ship without a full read (checks on TV).
