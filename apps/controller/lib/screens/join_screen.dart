@@ -56,6 +56,9 @@ class _JoinScreenState extends State<JoinScreen> {
               ),
             ),
           FilledButton(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(64),
+            ),
             onPressed: () {
               final name = _name.text.trim();
               if (name.isEmpty) {
@@ -65,7 +68,7 @@ class _JoinScreenState extends State<JoinScreen> {
               setState(() => _error = null);
               widget.conn.send(Join(name, widget.conn.token));
             },
-            child: const Text('Join'),
+            child: const Text('Join', style: TextStyle(fontSize: 24)),
           ),
         ],
       ),

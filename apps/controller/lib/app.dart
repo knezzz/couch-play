@@ -175,7 +175,11 @@ class _Kicked extends StatelessWidget {
             style: TextStyle(fontSize: 28),
           ),
           const SizedBox(height: 24),
-          FilledButton(onPressed: onJoinAgain, child: const Text('Join again')),
+          FilledButton(
+            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(64)),
+            onPressed: onJoinAgain,
+            child: const Text('Join again', style: TextStyle(fontSize: 24)),
+          ),
         ],
       ),
     ),

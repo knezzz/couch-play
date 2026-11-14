@@ -29,6 +29,20 @@ class _LobbyScreenState extends State<LobbyScreen> {
     if (mounted) setState(() => _packMessage = msg);
   }
 
+  Future<void> _confirmKick(PlayerInfo p) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('Remove ${p.name}?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Keep')),
+          TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Remove')),
+        ],
+      ),
+    );
+    if (ok == true) widget.conn.send(Kick(p.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = widget.lobby;
@@ -142,7 +156,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       IconButton(
                         tooltip: 'Remove ${p.name}',
                         icon: const Icon(Icons.person_remove),
-                        onPressed: () => widget.conn.send(Kick(p.id)),
+                        onPressed: () => _confirmKick(p),
                       ),
                   ],
                 ),

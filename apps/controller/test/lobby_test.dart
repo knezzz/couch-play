@@ -78,6 +78,35 @@ void main() {
     expect(c.sent.last, const StartGame(GameKind.curve, null));
   });
 
+  testWidgets('kick asks first: Keep sends nothing, Remove sends Kick once', (t) async {
+    final c = await _pump(t, _lobby(), 0);
+    await t.tap(find.byIcon(Icons.person_remove));
+    await t.pumpAndSettle();
+    expect(find.text('Remove P1?'), findsOneWidget);
+    expect(c.sent.whereType<Kick>(), isEmpty);
+    await t.tap(find.text('Keep'));
+    await t.pumpAndSettle();
+    expect(c.sent.whereType<Kick>(), isEmpty);
+    await t.tap(find.byIcon(Icons.person_remove));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Remove'));
+    await t.pumpAndSettle();
+    expect(c.sent.whereType<Kick>().map((k) => k.playerId), [1]);
+  });
+
+  testWidgets('Join and Join again buttons are 64 px high with 24 px text', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    for (final label in ['Join', 'Join again']) {
+      if (label == 'Join again') {
+        await _send(t, c, const Welcome(0, 0, 'tok'));
+        await _send(t, c, const Kicked());
+      }
+      expect(t.getSize(find.widgetWithText(FilledButton, label)).height, greaterThanOrEqualTo(64));
+      expect(t.widget<Text>(find.text(label)).style?.fontSize, 24);
+    }
+  });
+
   testWidgets('Welcome then Waiting then Kicked route the screens', (t) async {
     final c = FakeConnection();
     await t.pumpWidget(App(c));
