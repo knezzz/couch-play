@@ -8,9 +8,16 @@ import 'package:tv/ui/curve/curve_game.dart';
 
 void main() {
   test('trail is one subpath unless a gap breaks it', () {
-    final sim = CurveSim([0],
-        config: const CurveConfig(countdown: 0, gapEveryMin: 1, gapEveryMax: 1, gapLength: 0.5),
-        random: Random(1));
+    final sim = CurveSim(
+      [0],
+      config: const CurveConfig(
+        countdown: 0,
+        gapEveryMin: 1,
+        gapEveryMax: 1,
+        gapLength: 0.5,
+      ),
+      random: Random(1),
+    );
     sim.place(0, 400, 450, 0);
     final game = CurveGame(sim, const [Color(0xFFFF0000)]);
     for (var i = 0; i < 60 * 2; i++) {
@@ -22,7 +29,11 @@ void main() {
   });
 
   test('clear signal resets trail paths and ends', () {
-    final sim = _ClearOnce([0], config: const CurveConfig(countdown: 0), random: Random(1));
+    final sim = _ClearOnce(
+      [0],
+      config: const CurveConfig(countdown: 0),
+      random: Random(1),
+    );
     sim.place(0, 400, 450, 0);
     final game = CurveGame(sim, const [Color(0xFFFF0000)]);
     for (var i = 0; i < 10; i++) {
@@ -39,7 +50,11 @@ void main() {
   });
 
   test('renders countdown names, power-ups and trails without throwing', () {
-    final sim = CurveSim([0, 1], names: {0: 'Ana', 1: 'Luka'}, random: Random(1));
+    final sim = CurveSim(
+      [0, 1],
+      names: {0: 'Ana', 1: 'Luka'},
+      random: Random(1),
+    );
     sim.placePowerUp(PowerUpKind.clear, 800, 450);
     final game = CurveGame(sim, const [Color(0xFFFF0000), Color(0xFF00FF00)])
       ..onGameResize(Vector2(1920, 1080));
@@ -49,6 +64,13 @@ void main() {
       game.update(1 / 60);
     }
     game.render(canvas); // running
+  });
+
+  test('a very wide name does not throw in render', () {
+    final sim = CurveSim([0], names: {0: 'W' * 300}, random: Random(1));
+    final game = CurveGame(sim, const [Color(0xFFFF0000)])
+      ..onGameResize(Vector2(1920, 1080));
+    game.render(Canvas(PictureRecorder())); // countdown
   });
 }
 

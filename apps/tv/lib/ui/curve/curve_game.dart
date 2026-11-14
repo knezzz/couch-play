@@ -116,7 +116,9 @@ class CurveGame extends FlameGame {
           text: sim.names[id] ?? 'P${id + 1}',
           style: TextStyle(fontSize: 44, fontWeight: FontWeight.bold, color: _color(id))),
       textDirection: TextDirection.ltr,
-    )..layout();
+      maxLines: 1,
+      ellipsis: '…',
+    )..layout(maxWidth: arenaW / 4); // keeps clamp() below valid for any name
     tp.paint(canvas,
         Offset((x - tp.width / 2).clamp(0.0, arenaW - tp.width), max(0.0, y - tp.height)));
   }
