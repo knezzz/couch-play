@@ -15,6 +15,7 @@ import 'session/session.dart';
 import 'ui/curve/curve_game.dart';
 import 'ui/lobby_screen.dart';
 import 'ui/perf_log.dart';
+import 'ui/quiz_screen.dart';
 
 const _perf = bool.fromEnvironment('PERF');
 // QA/perf: pre-seeds this many bots when the first phone joins, e.g. BOTS=7.
@@ -149,12 +150,31 @@ class _TvAppState extends State<TvApp> {
   @override
   Widget build(BuildContext context) {
     final game = _game;
+    final quiz = _session.phase == Phase.quiz ? _session.quiz : null;
     return MaterialApp(
       title: 'Couchplay',
       showPerformanceOverlay: _perf,
       theme: ThemeData.dark(),
       home: _error != null
           ? Scaffold(body: Center(child: Text(_error!, style: const TextStyle(fontSize: 40))))
+          : quiz != null
+              ? Scaffold(
+                  body: QuizScreen(
+                    question: quiz.current.q,
+                    svg: _session.quizSvg,
+                    choices: quiz.current.choices,
+                    number: quiz.number,
+                    total: quiz.total,
+                    remaining: _session.quizRemaining,
+                    answered: _session.quizAnswered,
+                    expected: _session.quizExpected,
+                    correctIndex:
+                        quiz.step == QuizStep.asking ? null : quiz.current.correctIndex,
+                    picks: _session.quizPicks,
+                    players: _session.playerInfos,
+                    totals: quiz.totals,
+                  ),
+                )
           : game != null
               ? Scaffold(body: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game))
               // The results phase shows the lobby too: its scoreboard is the result.

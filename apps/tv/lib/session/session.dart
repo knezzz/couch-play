@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:flutter/foundation.dart';
 
+import '../packs/test_pack.dart';
 import '../server/game_server.dart';
 import 'bots.dart';
 
@@ -14,7 +16,12 @@ const noWifiText = 'Connect the TV to Wi-Fi to play.';
 const maxPlayers = 8;
 const _staleAfter = Duration(minutes: 10);
 
-const _onlyHost = ErrorMsg('Only the host can do that.');
+Duration Function() _monotonic() {
+  final w = Stopwatch()..start();
+  return () => w.elapsed;
+}
+
+const _onlyHost =ErrorMsg('Only the host can do that.');
 const _full = ErrorMsg('The game is full (8 players).');
 const _waiting = Waiting('Next game starts soon.');
 
@@ -46,12 +53,15 @@ class Player {
 /// The sim's player ids are the players' color indexes (unique, 0..7), so the
 /// renderer's color list lines up with [playerColors].
 class Session {
-  Session({DateTime Function()? now, Random? random})
+  /// [clock] is a monotonic time since any fixed origin; the quiz runs on it.
+  Session({DateTime Function()? now, Random? random, Duration Function()? clock})
       : _now = now ?? DateTime.now,
-        _random = random ?? Random();
+        _random = random ?? Random(),
+        _clock = clock ?? _monotonic();
 
   final DateTime Function() _now;
   final Random _random;
+  final Duration Function() _clock;
 
   final _players = <Player>[];
   final _scores = <int, int>{};
@@ -65,8 +75,11 @@ class Session {
   /// Called when the host starts a game, after the session is ready for it.
   void Function(GameKind kind, String? packId)? onStart;
 
-  /// Task 11 turns this on. Until then StartGame(quiz) gets an ErrorMsg.
-  bool quizAvailable = false;
+  /// Set false to answer StartGame(quiz) with an ErrorMsg.
+  bool quizAvailable = true;
+
+  /// The one place a pack id becomes a pack. Task 12 points it at PackStore.get.
+  QuizPack? Function(String? packId) packLookup = (_) => testPack;
 
   /// What the TV lobby shows as the join address; null means no network
   /// ([noWifiText]).
@@ -79,7 +92,10 @@ class Session {
   String? _joinUrl;
   String get joinHint => _joinUrl ?? noWifiText;
 
-  void dispose() => _changes.dispose();
+  void dispose() {
+    _quizTimer?.cancel();
+    _changes.dispose();
+  }
 
   void _notify() => _changes.value++;
 
@@ -151,9 +167,12 @@ class Session {
         _kick(peer, playerId);
       case SetBots(:final count):
         _setBots(peer, count);
+      case Answer(:final index):
+        final p = _playerOf(peer);
+        if (p != null) _answer(p, index);
       default:
-        // Answer waits for Task 11. Everything else is a TV-to-phone type;
-        // a phone has no business sending it.
+        // Everything else is a TV-to-phone type; a phone has no business
+        // sending it.
         break;
     }
   }
@@ -213,6 +232,7 @@ class Session {
         final status = _statusFor(p);
         peer.send(status ?? _waiting);
       case Phase.quiz:
+        _quizRejoin(p);
       case Phase.results:
         peer.send(_waiting);
     }
@@ -229,6 +249,7 @@ class Session {
     if (_phase == Phase.lobby) _broadcastLobby();
     _notify();
     _checkCurveEnd();
+    _checkQuizEnd();
   }
 
   void _broadcastLobby() {
@@ -282,8 +303,12 @@ class Session {
           peer.send(const ErrorMsg("Quiz isn't ready yet. Pick Curve for now."));
           return;
         }
-        _phase = Phase.quiz;
-        _notify();
+        final pack = packLookup(packId);
+        if (pack == null || pack.questions.isEmpty) {
+          peer.send(const ErrorMsg("That pack isn't available."));
+          return;
+        }
+        _startQuiz(pack, participants(GameKind.quiz));
         onStart?.call(game, packId);
       case GameKind.curve:
         final parts = participants(GameKind.curve);
@@ -320,6 +345,7 @@ class Session {
     if (_phase == Phase.lobby) _broadcastLobby();
     _notify();
     _checkCurveEnd();
+    _checkQuizEnd();
   }
 
   void _setBots(PeerSocket peer, int count) {
@@ -415,8 +441,157 @@ class Session {
     }
   }
 
+  // --- Quiz ---
+
+  QuizRound? _quiz;
+  QuizPack? _quizPack;
+  Timer? _quizTimer;
+  Duration _quizOrigin = Duration.zero; // _clock() when the round began
+  Duration _stepStart = Duration.zero; // round time when the current step began
+  final _quizIds = <int>{}; // everyone who was in the round at the start
+  final _picks = <int, int>{}; // player id -> shown choice, this question
+
+  /// The running quiz, or null. The TV screen reads the rest from the getters
+  /// below and rebuilds on [changes] (bumped every 100 ms while the quiz runs).
+  QuizRound? get quiz => _quiz;
+
+  /// Players who have answered this question.
+  int get quizAnswered => _picks.length;
+
+  /// Players the round is still waiting for or has: in the round and connected.
+  int get quizExpected => _quizIds.where((id) => _byId(id)?.connected ?? false).length;
+
+  /// Who picked what (player id -> shown choice index). Empty until the reveal.
+  Map<int, int> get quizPicks =>
+      _quiz?.step == QuizStep.revealing ? Map.unmodifiable(_picks) : const {};
+
+  /// The countdown, 1 down to 0 while asking; 0 otherwise.
+  double get quizRemaining {
+    final q = _quiz;
+    if (q == null || q.step != QuizStep.asking) return 0;
+    final spent = _quizNow() - _stepStart;
+    return (1 - spent.inMilliseconds / q.limit.inMilliseconds).clamp(0.0, 1.0);
+  }
+
+  /// The SVG of the current question, if it has one.
+  Uint8List? get quizSvg {
+    final img = _quiz?.current.image;
+    return img == null ? null : _quizPack?.images[img];
+  }
+
+  Duration _quizNow() => _clock() - _quizOrigin;
+
+  void _startQuiz(QuizPack pack, List<Player> parts) {
+    _quizPack = pack;
+    _quizIds
+      ..clear()
+      ..addAll(parts.map((p) => p.id));
+    _picks.clear();
+    _quiz = QuizRound(pack, _quizIds.toList(), random: _random);
+    _quizOrigin = _clock();
+    _stepStart = Duration.zero;
+    _phase = Phase.quiz;
+    _sendQuestion();
+    _quizTimer?.cancel();
+    _quizTimer = Timer.periodic(const Duration(milliseconds: 100), (_) => _quizTick());
+    _notify();
+  }
+
+  QuizQuestion _questionFor(QuizRound q) {
+    final left = q.limit - (_quizNow() - _stepStart);
+    return QuizQuestion(q.number, q.total, q.current.choices, max(1, (left.inMilliseconds / 1000).ceil()));
+  }
+
+  void _sendQuestion() {
+    final q = _quiz!;
+    final msg = _questionFor(q);
+    for (final id in _quizIds) {
+      _byId(id)?.socket?.send(msg);
+    }
+  }
+
+  void _sendReveal(Player p) {
+    final q = _quiz!;
+    p.socket?.send(QuizReveal(
+        q.current.correctIndex, q.lastPoints[p.id] ?? 0, q.totals[p.id] ?? 0));
+  }
+
+  void _quizTick() {
+    final q = _quiz;
+    if (_phase != Phase.quiz || q == null) return;
+    final step = q.step, number = q.number;
+    final now = _quizNow();
+    q.advance(now);
+    if (q.step != step || q.number != number) {
+      _stepStart = now;
+      switch (q.step) {
+        case QuizStep.revealing:
+          for (final id in _quizIds) {
+            final p = _byId(id);
+            if (p != null) _sendReveal(p);
+          }
+        case QuizStep.asking:
+          _picks.clear();
+          _sendQuestion();
+        case QuizStep.done:
+          finishGame(Map.of(q.totals));
+          return;
+      }
+    }
+    _notify();
+  }
+
+  void _answer(Player p, int index) {
+    final q = _quiz;
+    if (_phase != Phase.quiz ||
+        q == null ||
+        q.step != QuizStep.asking ||
+        !_quizIds.contains(p.id) ||
+        !p.connected ||
+        index < 0 ||
+        index > 3 ||
+        _picks.containsKey(p.id)) {
+      return;
+    }
+    _picks[p.id] = index;
+    q.answer(p.id, index, _quizNow());
+    _notify();
+  }
+
+  /// A returning player answers again from the current question on.
+  void _quizRejoin(Player p) {
+    final q = _quiz;
+    if (q == null || !_quizIds.contains(p.id)) {
+      p.socket?.send(_waiting);
+      return;
+    }
+    q.addPlayer(p.id);
+    if (q.step == QuizStep.asking) {
+      p.socket?.send(_questionFor(q));
+    } else {
+      _sendReveal(p);
+    }
+  }
+
+  /// With no connected player left the quiz has no audience: end it.
+  void _checkQuizEnd() {
+    final q = _quiz;
+    if (_phase != Phase.quiz || q == null || quizExpected > 0) return;
+    finishGame(Map.of(q.totals));
+  }
+
+  void _stopQuiz() {
+    _quizTimer?.cancel();
+    _quizTimer = null;
+    _quiz = null;
+    _quizPack = null;
+    _quizIds.clear();
+    _picks.clear();
+  }
+
   /// A player who disconnects or is kicked mid-match crashes for good.
   void _dropFromGame(Player p) {
+    if (_phase == Phase.quiz) _quiz?.removePlayer(p.id);
     if (_phase != Phase.curve) return;
     final sid = _simIdOf[p.id];
     if (sid == null || !_gone.add(p.id)) return;
@@ -488,6 +663,7 @@ class Session {
       }
     }
     _phase = Phase.results;
+    _stopQuiz();
     final results = Results(placements);
     for (final p in _players) {
       p.socket?.send(results);
@@ -498,6 +674,7 @@ class Session {
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
   void returnToLobby() {
     _phase = Phase.lobby;
+    _stopQuiz();
     _sim = null;
     _bots = null;
     _simIdOf.clear();

@@ -355,7 +355,8 @@ void main() {
 
   // --- starting games ---
 
-  test('quiz_gets_an_error_until_it_is_ready', () {
+  test('quiz_gets_an_error_when_switched_off', () {
+    s.quizAvailable = false;
     final a = join(s, 'A');
     join(s, 'B');
     a.say(const StartGame(GameKind.quiz, null));
