@@ -23,9 +23,14 @@ Future<void> _send(WidgetTester t, FakeConnection c, Message m) async {
   await t.pump();
 }
 
-Future<FakeConnection> _pump(WidgetTester t, LobbyState l, int me) async {
+Future<FakeConnection> _pump(
+  WidgetTester t,
+  LobbyState l,
+  int me, {
+  Future<String?> Function(String token)? addPack,
+}) async {
   final c = FakeConnection();
-  await t.pumpWidget(MaterialApp(home: LobbyScreen(c, l, me)));
+  await t.pumpWidget(MaterialApp(home: LobbyScreen(c, l, me, addPack: addPack)));
   return c;
 }
 
@@ -131,6 +136,24 @@ void main() {
     },
   );
 
+  testWidgets('quiz question, reveal, next question reset the lock, Results leaves', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(1, 1, 'tok'));
+    await _send(t, c, _lobby());
+    await _send(t, c, const QuizQuestion(1, 2, ['a', 'b', 'c', 'd'], 20));
+    await t.tap(find.text('b'));
+    await t.pump();
+    expect(find.text('Locked in'), findsOneWidget);
+    await _send(t, c, const QuizReveal(1, 750, 750));
+    expect(find.text('+750'), findsOneWidget);
+    await _send(t, c, const QuizQuestion(2, 2, ['e', 'f', 'g', 'h'], 20));
+    expect(find.text('Locked in'), findsNothing);
+    expect(find.text('e'), findsOneWidget);
+    await _send(t, c, const Results([Placement(1, 1, 750, 3)]));
+    expect(find.text('e'), findsNothing);
+  });
+
   testWidgets('LobbyState also leaves the curve screen directly', (t) async {
     final c = FakeConnection();
     await t.pumpWidget(App(c));
@@ -196,6 +219,54 @@ void main() {
     expect(t.binding.transientCallbackCount, greaterThan(0));
     await t.pump(const Duration(seconds: 3));
     await _send(t, c, const Effect('colorPulse'));
+    expect(t.binding.transientCallbackCount, greaterThan(0));
+    await t.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets('only the host gets Add quiz pack', (t) async {
+    Future<String?> pick(String _) async => null;
+    await _pump(t, _lobby(), 0, addPack: pick);
+    expect(find.text('Add quiz pack'), findsOneWidget);
+    await _pump(t, _lobby(), 1, addPack: pick);
+    expect(find.text('Add quiz pack'), findsNothing);
+  });
+
+  testWidgets('Add quiz pack passes the token and shows the TV message', (t) async {
+    String? token;
+    await _pump(t, _lobby(), 0, addPack: (tok) async {
+      token = tok;
+      return 'Added World Flags (40 questions).';
+    });
+    await t.tap(find.text('Add quiz pack'));
+    await t.pump();
+    await t.pump();
+    expect(token, 'test'); // FakeConnection's token
+    expect(find.text('Added World Flags (40 questions).'), findsOneWidget);
+  });
+
+  testWidgets('an error from the TV is shown as is; a cancelled pick shows nothing', (t) async {
+    var reply = "The pack isn't valid JSON.";
+    String? next() => reply.isEmpty ? null : reply;
+    await _pump(t, _lobby(), 0, addPack: (_) async => next());
+    await t.tap(find.text('Add quiz pack'));
+    await t.pump();
+    await t.pump();
+    expect(find.text("The pack isn't valid JSON."), findsOneWidget);
+    reply = '';
+    await t.tap(find.text('Add quiz pack'));
+    await t.pump();
+    await t.pump();
+    expect(find.text("The pack isn't valid JSON."), findsNothing); // old message cleared
+  });
+
+  testWidgets('a score pop plays after a reveal', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(0, 0, 'tok'));
+    await _send(t, c, _lobby());
+    await _send(t, c, const QuizQuestion(1, 10, ['a', 'b', 'c', 'd'], 20));
+    await _send(t, c, const QuizReveal(1, 750, 750));
+    await _send(t, c, const Effect('scorePop'));
     expect(t.binding.transientCallbackCount, greaterThan(0));
     await t.pump(const Duration(seconds: 3));
   });

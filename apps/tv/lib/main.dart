@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'packs/pack_store.dart';
 import 'server/controller_files.dart';
 import 'server/game_server.dart';
 import 'server/lan_address.dart';
@@ -16,6 +17,7 @@ import 'ui/curve/curve_game.dart';
 import 'ui/lobby_screen.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
+import 'ui/quiz_screen.dart';
 
 const _perf = bool.fromEnvironment('PERF');
 // QA/perf: pre-seeds this many bots when the first phone joins, e.g. BOTS=7.
@@ -76,10 +78,13 @@ class _TvAppState extends State<TvApp> {
       final web = Directory('${support.path}/web');
       if (await web.exists()) await web.delete(recursive: true);
       await extractControllerZip(zip.buffer.asUint8List(), web);
+      // Bundled packs arrive with Task 13.
+      _session.packStore = await PackStore.load(
+          bundled: const [], userDir: Directory('${support.path}/packs'));
       final server = await GameServer.start(
         webRoot: web,
         onPeer: _session.attach,
-        onPackUpload: (_, _) async => 'Packs are not available yet.',
+        onPackUpload: _session.onPackUpload,
       );
       _server = server;
       final ip = pickLanAddress(await NetworkInterface.list(type: InternetAddressType.IPv4));
@@ -159,6 +164,7 @@ class _TvAppState extends State<TvApp> {
   @override
   Widget build(BuildContext context) {
     final game = _game;
+    final quiz = _session.phase == Phase.quiz ? _session.quiz : null;
     return MaterialApp(
       title: 'Couchplay',
       showPerformanceOverlay: _perf,
@@ -167,6 +173,24 @@ class _TvAppState extends State<TvApp> {
       theme: ThemeData.dark(),
       home: _error != null
           ? Scaffold(body: Center(child: Text(_error!, style: const TextStyle(fontSize: 40))))
+          : quiz != null
+              ? Scaffold(
+                  body: QuizScreen(
+                    question: quiz.current.q,
+                    svg: _session.quizSvg,
+                    choices: quiz.current.choices,
+                    number: quiz.number,
+                    total: quiz.total,
+                    remaining: _session.quizRemaining,
+                    answered: _session.quizAnswered,
+                    expected: _session.quizExpected,
+                    correctIndex:
+                        quiz.step == QuizStep.asking ? null : quiz.current.correctIndex,
+                    picks: _session.quizPicks,
+                    players: _session.playerInfos,
+                    totals: quiz.totals,
+                  ),
+                )
           : game != null
               ? Scaffold(body: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game))
               : _session.phase == Phase.results

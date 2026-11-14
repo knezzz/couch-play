@@ -7,10 +7,14 @@ const _ink = Color(0xFF14141E);
 const _seats = 8;
 
 class LobbyScreen extends StatefulWidget {
-  const LobbyScreen(this.conn, this.lobby, this.myId, {super.key});
+  const LobbyScreen(this.conn, this.lobby, this.myId, {this.addPack, super.key});
   final Connection conn;
   final LobbyState lobby;
   final int myId;
+
+  /// Picks a pack file and uploads it with the host's token. Returns what the
+  /// TV said, or null if nothing was picked. Null here hides the button (tests).
+  final Future<String?> Function(String token)? addPack;
 
   @override
   State<LobbyScreen> createState() => _LobbyScreenState();
@@ -18,6 +22,12 @@ class LobbyScreen extends StatefulWidget {
 
 class _LobbyScreenState extends State<LobbyScreen> {
   String? _packId;
+  String? _packMessage;
+
+  Future<void> _addPack() async {
+    final msg = await widget.addPack!(widget.conn.token);
+    if (mounted) setState(() => _packMessage = msg);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +114,22 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     widget.conn.send(StartGame(GameKind.quiz, packId)),
                 child: const Text('Quiz', style: TextStyle(fontSize: 24)),
               ),
+              if (widget.addPack != null) ...[
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48),
+                  ),
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Add quiz pack'),
+                  onPressed: _addPack,
+                ),
+                if (_packMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(_packMessage!, style: const TextStyle(fontSize: 18)),
+                  ),
+              ],
             ],
             const SizedBox(height: 16),
             for (final p in players)
