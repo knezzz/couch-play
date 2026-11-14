@@ -8,6 +8,7 @@ Choices to confirm:
 - the lobby is "početni zaslon"; Quit is "Izađi"
 - the badge for a player who dropped off is "NEMA VEZE" (gender-neutral)
 - places are written "1.", "2.", …
+- kept in English on purpose: the app name "CouchPlay" and the game name "Curve" (say if Curve should get a Croatian name)
 
 ## TV (apps/tv/lib/strings.dart)
 
@@ -61,12 +62,13 @@ Choices to confirm:
 | onlyHostAddsPacks | Samo domaćin može dodavati pakete. | Only the host can add packs. | Message on the phone after a pack upload |
 | packsNotReady | Paketi još nisu dostupni. | Packs are not available yet. | Message on the phone after a pack upload |
 | packAdded({title}, {n}) | Dodano: {title} ({n} pitanje/pitanja). | Added: {title} ({n} questions). 1 and 21 take "pitanje", other numbers "pitanja". | Message on the phone after a successful pack upload |
-| packTooBig | Paket je veći od 5 MB. | The pack is bigger than 5 MB. | Message on the phone after a pack upload |
 | builtInPackId({id}) | Ugrađeni paket već koristi oznaku '{id}'. Odaberi drugu oznaku. | A built-in pack already uses the id '{id}'. Pick another id. | Message on the phone after a pack upload |
 | packSaveFailed | TV nije mogao spremiti paket. Oslobodi malo mjesta na TV-u pa pokušaj ponovo. | The TV could not save the pack. Free some space on the TV, then try again. | Message on the phone after a pack upload |
 | startFailed({error}) | Pokretanje nije uspjelo: {error} | Could not start: {error} | TV, full-screen error if the app cannot start |
 
 Not translated on purpose: "CouchPlay" (the app name), "Curve" (the game's name), player names, quiz pack titles and questions (written in the packs).
+
+Also: unknownPlayer = Igrač (Player), TV results, name of a placement whose player left (rare). The pack-size message (413) is core's PackStrings.tooBig, reviewed in core's section.
 
 ## Phone (apps/controller/lib/strings.dart)
 
