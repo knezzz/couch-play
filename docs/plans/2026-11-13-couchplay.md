@@ -636,7 +636,7 @@ Content rules:
     - Back (`LogicalKeyboardKey.goBack` or escape) during a game asks "End this game and return to the lobby?" with Yes and No (focus starts on No). Yes ends the game without placement points.
     - Focus is always visible: a 3 px outline in the accent color.
   - A release APK signed with the debug key, installed on the TV with `flutter install --release -d <tv>`. This is personal use, so no store signing.
-- [ ] **Step 1: Write the failing test.** `back_during_game_confirms_then_returns_to_lobby`: simulate the `goBack` key, check the focus is on No, arrow to Yes, select, and check the phase is `lobby`.
+- [ ] **Step 1: Write the failing test.** `back_during_game_confirms_then_returns_to_lobby`: simulate Back as Android TV sends it, `binding.handlePopRoute()` (changed 2026-11-14: the remote's Back arrives as a system pop, not a key; also cover Back during Curve, where Flame takes key events), check the focus is on No, arrow to Yes, select, and check the phase is `lobby`.
 - [ ] **Step 2: Run.** Expected: FAIL.
 - [ ] **Step 3: Implement** with `Shortcuts`/`Actions`/`FocusTraversalGroup`.
 - [ ] **Step 4: Run all tests.** Run `flutter test` in every member. Expected: all pass.
