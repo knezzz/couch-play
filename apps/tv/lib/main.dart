@@ -16,6 +16,8 @@ import 'ui/curve/curve_game.dart';
 
 const _perf = bool.fromEnvironment('PERF');
 const _botCount = int.fromEnvironment('BOTS', defaultValue: 7);
+// QA only: e.g. QA_POWERUP=ghost puts that power-up just ahead of player 0 every round.
+const _qaPowerUp = String.fromEnvironment('QA_POWERUP');
 
 // Temporary until palette.dart lands in Task 6.
 const _colors = [
@@ -85,6 +87,11 @@ class _TvAppState extends State<TvApp> {
   // Trails are never cleared, so every round gets a fresh CurveGame.
   void _newGame() {
     if (!mounted) return;
+    if (_qaPowerUp.isNotEmpty) {
+      final h = _wiring.sim!.heads.firstWhere((h) => h.id == 0);
+      _wiring.sim!.placePowerUp(PowerUpKind.values.byName(_qaPowerUp),
+          h.x + cos(h.heading) * 120, h.y + sin(h.heading) * 120);
+    }
     setState(() => _game = CurveGame(_wiring.sim!, _colors,
         onBeforeTick: _wiring.bots!.tick, onEvents: _onEvents));
   }
