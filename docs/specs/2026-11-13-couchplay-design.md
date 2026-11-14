@@ -75,7 +75,7 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 
 ### Quiz
 
-- Question on TV (text, optional picture); phone shows the answer buttons, color/shape-coded to match the TV.
+- Question on TV (text, optional picture); phone shows the answer buttons, color/shape-coded to match the TV. After a tap the phone hides the pick: it shows one neutral "Locked in" screen that looks the same whatever was chosen, so nobody nearby can copy it (user request, 2026-11-14).
 - 4 choices, 20 s timer. Points: correct answers score 500–1000, scaled by how fast; wrong or no answer = 0.
 - After each question: reveal the correct answer, show who picked what, update the scoreboard. Round = 10 questions from the chosen pack, shuffled.
 - **Pack format:** one JSON file per pack:
