@@ -172,4 +172,38 @@ void main() {
     expect(t.binding.transientCallbackCount, 0);
     s.dispose();
   });
+
+  testWidgets('a_correct_answer_gets_a_score_pop_at_the_reveal_only', (t) async {
+    s = fresh();
+    final a = join(s, 'Ana'), b = join(s, 'Ben');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    await step(t, const Duration(seconds: 2));
+    answerRight(a);
+    await step(t, const Duration(milliseconds: 200));
+    expect(a.all<Effect>(), isEmpty, reason: 'nothing before the reveal');
+    b.say(Answer((s.quiz!.current.correctIndex + 1) % 4));
+    await step(t, const Duration(milliseconds: 200));
+    expect(a.all<Effect>(), [const Effect('scorePop')]);
+    expect(b.all<Effect>(), isEmpty, reason: 'wrong answers get no pop');
+    expect(a.sent.indexOf(a.last<QuizReveal>()!), lessThan(a.sent.indexOf(const Effect('scorePop'))),
+        reason: 'the phone knows its points when the pop arrives');
+    s.dispose();
+  });
+
+  testWidgets('a_quiz_winner_gets_confetti', (t) async {
+    s = fresh();
+    final a = join(s, 'Ana'), b = join(s, 'Ben');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    var steps = 0;
+    while (s.phase == Phase.quiz) {
+      if (s.quiz!.step == QuizStep.asking) answerRight(a);
+      await step(t, const Duration(milliseconds: 500));
+      expect(++steps, lessThan(1000), reason: 'round must end');
+    }
+    expect(a.all<Effect>().where((e) => e.name == 'confetti'), hasLength(1));
+    expect(b.all<Effect>().where((e) => e.name == 'confetti'), isEmpty);
+    s.dispose();
+  });
 }

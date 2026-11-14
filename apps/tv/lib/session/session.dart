@@ -145,6 +145,11 @@ class Session {
 
   Phase get phase => _phase;
 
+  /// The placements of the game that just ended; empty outside the results
+  /// phase. The TV's results screen draws these.
+  List<Placement> get placements => List.unmodifiable(_placements);
+  var _placements = <Placement>[];
+
   /// Session points per player id.
   Map<int, int> get sessionScores => Map.unmodifiable(_scores);
 
@@ -536,8 +541,11 @@ class Session {
 
   void _sendReveal(Player p) {
     final q = _quiz!;
-    p.socket?.send(QuizReveal(
-        q.current.correctIndex, q.lastPoints[p.id] ?? 0, q.totals[p.id] ?? 0));
+    final points = q.lastPoints[p.id] ?? 0;
+    p.socket?.send(QuizReveal(q.current.correctIndex, points, q.totals[p.id] ?? 0));
+    // A right answer is worth at least 500; the pop follows the reveal so the
+    // phone already knows its points.
+    if (points > 0) p.socket?.send(const Effect('scorePop'));
   }
 
   void _quizTick() {
@@ -652,6 +660,7 @@ class Session {
             p!.socket?.send(CurveStatus(
                 alive: false, score: status.score, target: status.target));
           }
+          p?.socket?.send(const Effect('colorPulse')); // bots have no socket
         case RoundOver():
           roundOver = true;
         case MatchOver():
@@ -687,10 +696,13 @@ class Session {
       }
     }
     _phase = Phase.results;
+    _placements = placements;
     _stopQuiz();
     final results = Results(placements);
+    final winners = {for (final pl in placements) if (pl.place == 1) pl.playerId};
     for (final p in _players) {
       p.socket?.send(results);
+      if (winners.contains(p.id)) p.socket?.send(const Effect('confetti'));
     }
     _notify();
   }
@@ -698,6 +710,7 @@ class Session {
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
   void returnToLobby() {
     _phase = Phase.lobby;
+    _placements = [];
     _stopQuiz();
     _sim = null;
     _bots = null;

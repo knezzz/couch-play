@@ -207,6 +207,22 @@ void main() {
     await t.pumpWidget(const SizedBox());
   });
 
+  testWidgets('an Effect from the TV plays; an unknown one is ignored', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(0, 0, 'tok'));
+    await _send(t, c, _lobby());
+    expect(t.binding.transientCallbackCount, 0);
+    await _send(t, c, const Effect('nope'));
+    expect(t.binding.transientCallbackCount, 0);
+    await _send(t, c, const Effect('confetti'));
+    expect(t.binding.transientCallbackCount, greaterThan(0));
+    await t.pump(const Duration(seconds: 3));
+    await _send(t, c, const Effect('colorPulse'));
+    expect(t.binding.transientCallbackCount, greaterThan(0));
+    await t.pump(const Duration(seconds: 3));
+  });
+
   testWidgets('only the host gets Add quiz pack', (t) async {
     Future<String?> pick(String _) async => null;
     await _pump(t, _lobby(), 0, addPack: pick);
@@ -241,5 +257,17 @@ void main() {
     await t.pump();
     await t.pump();
     expect(find.text("The pack isn't valid JSON."), findsNothing); // old message cleared
+  });
+
+  testWidgets('a score pop plays after a reveal', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(0, 0, 'tok'));
+    await _send(t, c, _lobby());
+    await _send(t, c, const QuizQuestion(1, 10, ['a', 'b', 'c', 'd'], 20));
+    await _send(t, c, const QuizReveal(1, 750, 750));
+    await _send(t, c, const Effect('scorePop'));
+    expect(t.binding.transientCallbackCount, greaterThan(0));
+    await t.pump(const Duration(seconds: 3));
   });
 }

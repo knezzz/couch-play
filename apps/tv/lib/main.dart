@@ -16,6 +16,7 @@ import 'session/session.dart';
 import 'ui/curve/curve_game.dart';
 import 'ui/lobby_screen.dart';
 import 'ui/perf_log.dart';
+import 'ui/results_screen.dart';
 import 'ui/quiz_screen.dart';
 
 const _perf = bool.fromEnvironment('PERF');
@@ -40,6 +41,7 @@ class TvApp extends StatefulWidget {
 
 class _TvAppState extends State<TvApp> {
   final _session = Session();
+  final _nav = GlobalKey<NavigatorState>(); // a context below the EffectLayer
   GameServer? _server;
   Timer? _purge, _resultsTimer;
   String? _error;
@@ -144,6 +146,14 @@ class _TvAppState extends State<TvApp> {
 
   void _onCurveEvents(List<CurveEvent> events) {
     _session.curveEvents(events);
+    final fx = _nav.currentContext;
+    if (fx != null) {
+      for (final e in events) {
+        if (e is Died) {
+          EffectLayer.play(fx, EffectName.colorPulse, color: playerColors[e.id % playerColors.length]);
+        }
+      }
+    }
     if (events.any((e) => e is RoundOver) && _session.phase == Phase.curve) {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) _session.nextRound();
@@ -158,6 +168,8 @@ class _TvAppState extends State<TvApp> {
     return MaterialApp(
       title: 'Couchplay',
       showPerformanceOverlay: _perf,
+      navigatorKey: _nav,
+      builder: (_, child) => EffectLayer(child: child!),
       theme: ThemeData.dark(),
       home: _error != null
           ? Scaffold(body: Center(child: Text(_error!, style: const TextStyle(fontSize: 40))))
@@ -181,7 +193,8 @@ class _TvAppState extends State<TvApp> {
                 )
           : game != null
               ? Scaffold(body: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game))
-              // The results phase shows the lobby too: its scoreboard is the result.
+              : _session.phase == Phase.results
+              ? ResultsScreen(placements: _session.placements, players: _session.playerInfos)
               : LobbyScreen(
                   joinUrl: _session.joinUrl,
                   players: _session.playerInfos,

@@ -615,6 +615,54 @@ void main() {
     a.say(const SetBots(2));
     expect(b.last<LobbyState>()!.players.length, 5);
   });
+  // --- effects on the phones ---
+
+  test('finish_game_sends_confetti_only_to_the_winners_ties_included', () {
+    final a = join(s, 'A');
+    final b = join(s, 'B');
+    final c = join(s, 'C');
+    s.finishGame({idOf(a): 9, idOf(b): 9, idOf(c): 5});
+    expect(a.all<Effect>(), [const Effect('confetti')]);
+    expect(b.all<Effect>(), [const Effect('confetti')]);
+    expect(c.all<Effect>(), isEmpty);
+  });
+
+  test('a bot winner does not break finish_game', () {
+    final a = join(s, 'A');
+    a.say(const SetBots(1));
+    final bot = s.players.firstWhere((p) => p.bot);
+    s.finishGame({idOf(a): 1, bot.id: 9});
+    expect(a.all<Effect>(), isEmpty);
+  });
+
+  test('curve_death_sends_a_color_pulse_to_that_phone_only', () {
+    final a = join(s, 'A');
+    final b = join(s, 'B');
+    a.say(const StartGame(GameKind.curve, null));
+    s.curveEvents([Died(1)]);
+    expect(b.all<Effect>(), [const Effect('colorPulse')]);
+    expect(a.all<Effect>(), isEmpty);
+  });
+
+  test('a bot dying sends no effect to anyone', () {
+    final a = join(s, 'A');
+    final b = join(s, 'B');
+    a.say(const SetBots(1));
+    a.say(const StartGame(GameKind.curve, null));
+    s.curveEvents([Died(2)]); // the bot's color index
+    expect(a.all<Effect>(), isEmpty);
+    expect(b.all<Effect>(), isEmpty);
+  });
+
+  test('placements_are_kept_for_the_results_screen', () {
+    final a = join(s, 'A');
+    expect(s.placements, isEmpty);
+    s.finishGame({idOf(a): 1});
+    expect(s.placements.map((p) => p.playerId), [idOf(a)]);
+    s.returnToLobby();
+    expect(s.placements, isEmpty);
+  });
+
 
   // --- pack upload ---
 

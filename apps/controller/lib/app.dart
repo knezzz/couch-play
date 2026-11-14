@@ -49,42 +49,63 @@ class _AppState extends State<App> {
     super.dispose();
   }
 
-  void _onMessage(Message m) => setState(() {
-    switch (m) {
-      case Welcome():
-        _myId = m.playerId;
-        _error = null;
-        _screen = _Screen.lobby;
-      case LobbyState():
-        _lobby = m;
-        if (_screen != _Screen.kicked) _screen = _Screen.lobby;
-      case Waiting():
-        _waitReason = m.reason;
-        _screen = _Screen.wait;
-      case CurveStatus():
-        if (_screen != _Screen.curve) _error = null;
-        _alive = m.alive;
-        _screen = _Screen.curve;
-      case QuizQuestion():
-        _question = m;
-        _reveal = null;
-        _screen = _Screen.quiz;
-      case QuizReveal():
-        if (_question != null) {
-          _reveal = m;
+  final _nav = GlobalKey<NavigatorState>(); // a context below the EffectLayer
+
+  /// Plays what the TV asks for. A pulse takes this phone's player color.
+  void _playEffect(Effect m) {
+    final ctx = _nav.currentContext;
+    final name = EffectName.values.where((n) => n.name == m.name).firstOrNull;
+    if (ctx == null || name == null) return;
+    final me = _lobby?.players.where((p) => p.id == _myId).firstOrNull;
+    EffectLayer.play(
+      ctx,
+      name,
+      color: me == null
+          ? null
+          : playerColors[me.colorIndex % playerColors.length],
+      text: _reveal == null ? null : '+${_reveal!.yourPoints}',
+    );
+  }
+
+  void _onMessage(Message m) {
+    if (m is Effect) return _playEffect(m);
+    setState(() {
+      switch (m) {
+        case Welcome():
+          _myId = m.playerId;
+          _error = null;
+          _screen = _Screen.lobby;
+        case LobbyState():
+          _lobby = m;
+          if (_screen != _Screen.kicked) _screen = _Screen.lobby;
+        case Waiting():
+          _waitReason = m.reason;
+          _screen = _Screen.wait;
+        case CurveStatus():
+          if (_screen != _Screen.curve) _error = null;
+          _alive = m.alive;
+          _screen = _Screen.curve;
+        case QuizQuestion():
+          _question = m;
+          _reveal = null;
           _screen = _Screen.quiz;
-        }
-      case Results():
-        _placements = m.placements;
-        _screen = _Screen.results;
-      case Kicked():
-        _screen = _Screen.kicked;
-      case ErrorMsg():
-        _error = m.message;
-      default:
-        break;
-    }
-  });
+        case QuizReveal():
+          if (_question != null) {
+            _reveal = m;
+            _screen = _Screen.quiz;
+          }
+        case Results():
+          _placements = m.placements;
+          _screen = _Screen.results;
+        case Kicked():
+          _screen = _Screen.kicked;
+        case ErrorMsg():
+          _error = m.message;
+        default:
+          break;
+      }
+    });
+  }
 
   Widget _body() => switch (_screen) {
     _Screen.join => JoinScreen(widget.conn, onJoined: () {}),
@@ -104,6 +125,8 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'Couchplay',
+    navigatorKey: _nav,
+    builder: (_, child) => EffectLayer(child: child!),
     theme: ThemeData.dark(useMaterial3: true),
     // The join screen shows its own errors.
     home: Column(
