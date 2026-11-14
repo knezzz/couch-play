@@ -90,10 +90,8 @@ class _AppState extends State<App> {
           _reveal = null;
           _screen = _Screen.quiz;
         case QuizReveal():
-          if (_question != null) {
-            _reveal = m;
-            _screen = _Screen.quiz;
-          }
+          _reveal = m; // also after a reconnect mid-reveal, when there is no question
+          _screen = _Screen.quiz;
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
@@ -115,7 +113,7 @@ class _AppState extends State<App> {
           : LobbyScreen(widget.conn, _lobby!, _myId, addPack: widget.addPack),
     _Screen.wait => WaitScreen(_waitReason),
     _Screen.curve => CurveScreen(widget.conn, alive: _alive),
-    _Screen.quiz => QuizScreen(widget.conn, _question!, _reveal, key: ValueKey(_question!.number)),
+    _Screen.quiz => QuizScreen(widget.conn, _question, _reveal, key: ValueKey(_question?.number)),
     _Screen.results => ResultsScreen(_placements, _myId),
     _Screen.kicked => _Kicked(
       onJoinAgain: () => setState(() => _screen = _Screen.join),

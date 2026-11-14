@@ -15,7 +15,7 @@ const _tiles = [
 class QuizScreen extends StatefulWidget {
   const QuizScreen(this.conn, this.question, this.reveal, {super.key});
   final Connection conn;
-  final QuizQuestion question;
+  final QuizQuestion? question; // null after a reconnect mid-reveal
   final QuizReveal? reveal;
 
   @override
@@ -45,7 +45,7 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
       );
     }
-    final c = widget.question.choices;
+    final c = widget.question?.choices ?? const ['', '', '', ''];
     return Scaffold(
       body: Column(
         children: [

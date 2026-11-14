@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 const _shapes = ['▲', '◆', '●', '■'];
-const _tileColors = [Color(0xFFFF4D6D), Color(0xFF22B8F0), Color(0xFFFFB020), Color(0xFF2ECC71)];
+const _tileColors = [
+  Color(0xFFFF4D6D),
+  Color(0xFF22B8F0),
+  Color(0xFFFFB020),
+  Color(0xFF2ECC71),
+];
 const _ink = Color(0xFF14141E);
 
 /// One quiz question on a 1920x1080 canvas, scaled to fit. Pure: [Session]
@@ -41,12 +46,16 @@ class QuizScreen extends StatelessWidget {
   final List<PlayerInfo> players;
   final Map<int, int> totals;
 
-  Color _color(PlayerInfo p) => playerColors[p.colorIndex % playerColors.length];
+  Color _color(PlayerInfo p) =>
+      playerColors[p.colorIndex % playerColors.length];
 
   @override
   Widget build(BuildContext context) {
     final reveal = correctIndex != null;
-    final byScore = [...players]..sort((a, b) => (totals[b.id] ?? 0).compareTo(totals[a.id] ?? 0));
+    final byScore = [
+      for (final p in players)
+        if (totals.containsKey(p.id)) p,
+    ]..sort((a, b) => (totals[b.id] ?? 0).compareTo(totals[a.id] ?? 0));
     return Scaffold(
       backgroundColor: _ink,
       body: FittedBox(
@@ -59,13 +68,23 @@ class QuizScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text('Question $number of $total',
-                        style: const TextStyle(fontSize: 40, color: Colors.white70)),
+                    Text(
+                      'Question $number of $total',
+                      style: const TextStyle(
+                        fontSize: 40,
+                        color: Colors.white70,
+                      ),
+                    ),
                     const Spacer(),
                     if (!reveal)
-                      Text('$answered of $expected answered',
-                          style: const TextStyle(
-                              fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold)),
+                      Text(
+                        '$answered of $expected answered',
+                        style: const TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -84,11 +103,16 @@ class QuizScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(question,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 60, color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text(
+                          question,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 60,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       if (svg != null) ...[
                         const SizedBox(width: 32),
@@ -96,7 +120,9 @@ class QuizScreen extends StatelessWidget {
                           width: 360,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                           child: SvgPicture.memory(svg!),
                         ),
                       ],
@@ -137,20 +163,34 @@ class QuizScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                  width: 28,
-                                  height: 28,
-                                  decoration: BoxDecoration(color: _color(p), shape: BoxShape.circle)),
-                              const SizedBox(width: 12),
-                              Flexible(
-                                child: Text(p.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 34, color: Colors.white)),
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  color: _color(p),
+                                  shape: BoxShape.circle,
+                                ),
                               ),
                               const SizedBox(width: 12),
-                              Text('${totals[p.id] ?? 0}',
+                              Flexible(
+                                child: Text(
+                                  p.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                      fontSize: 34, color: Colors.white, fontWeight: FontWeight.bold)),
+                                    fontSize: 34,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                '${totals[p.id] ?? 0}',
+                                style: const TextStyle(
+                                  fontSize: 34,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -179,17 +219,25 @@ class QuizScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: _tileColors[i],
           borderRadius: BorderRadius.circular(32),
-          border: reveal && !dim ? Border.all(color: Colors.white, width: 10) : null,
+          border: reveal && !dim
+              ? Border.all(color: Colors.white, width: 10)
+              : null,
         ),
         child: Row(
           children: [
             Text(_shapes[i], style: const TextStyle(fontSize: 72, color: _ink)),
             const SizedBox(width: 24),
             Expanded(
-              child: Text(choices[i],
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: _ink)),
+              child: Text(
+                choices[i],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: _ink,
+                ),
+              ),
             ),
             if (voters.isNotEmpty)
               Wrap(

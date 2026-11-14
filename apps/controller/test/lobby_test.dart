@@ -154,6 +154,16 @@ void main() {
     expect(find.text('e'), findsNothing);
   });
 
+  testWidgets('QuizReveal with no current question (reconnect) still shows the reveal', (t) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(1, 1, 'tok'));
+    await _send(t, c, _lobby());
+    await _send(t, c, const QuizReveal(1, 0, 900));
+    expect(find.text('Not this time'), findsOneWidget);
+    expect(find.textContaining('900'), findsOneWidget);
+  });
+
   testWidgets('LobbyState also leaves the curve screen directly', (t) async {
     final c = FakeConnection();
     await t.pumpWidget(App(c));

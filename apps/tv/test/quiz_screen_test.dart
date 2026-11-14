@@ -43,6 +43,33 @@ void main() {
     });
   }
 
+  testWidgets('reveal scoreboard lists only players in the quiz', (t) async {
+    t.view.physicalSize = const Size(1920, 1080);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    await t.pumpWidget(MaterialApp(
+      home: QuizScreen(
+        question: 'q',
+        choices: const ['a', 'b', 'c', 'd'],
+        number: 1,
+        total: 2,
+        remaining: 0.5,
+        answered: 1,
+        expected: 1,
+        correctIndex: 0,
+        players: [
+          PlayerInfo(0, 'Quizzer', 0, true, 0),
+          PlayerInfo(1, 'Latecomer', 1, true, 0),
+          PlayerInfo(2, 'Botty', 2, true, 0, bot: true),
+        ],
+        totals: const {0: 750},
+      ),
+    ));
+    expect(find.text('Quizzer'), findsOneWidget);
+    expect(find.text('Latecomer'), findsNothing);
+    expect(find.text('Botty'), findsNothing);
+  });
+
   testWidgets('tiles fill the grid, not just their text', (t) async {
     t.view.physicalSize = const Size(1920, 1080);
     t.view.devicePixelRatio = 1;
