@@ -2,7 +2,9 @@
 
 Every text the TV and the phones show, in Croatian, with its English meaning and where it appears. Please correct any wording directly in the Croatian column (or note it beside the row); the engineers apply your corrections to the strings files.
 
-Choices to confirm:
+The person's decisions (2026-11-14): neutral wording for every text that addresses the player (no masculine past tense); "Curve" stays; "Robot n", ROBOT and NEMA VEZE stay; informal "ti", "početni zaslon", "Izađi" and "1." places stand. quizNotReady was deleted (dead string).
+
+Choices that were put to the person:
 - informal "ti" everywhere
 - bots are "Robot 1", "Robot 2", …
 - the lobby is "početni zaslon"; Quit is "Izađi"
@@ -52,11 +54,10 @@ Choices to confirm:
 | onlyHost | To može samo domaćin. | Only the host can do that. | Error on the phone |
 | nextGameSoon | Sljedeća igra uskoro počinje. | The next game starts soon. | Phone waiting screen for someone who joined mid-game |
 | gameRunning | Igra je već u tijeku. | A game is already running. | Error on the phone |
-| quizNotReady | Kviz još nije spreman. Za sada odaberi Curve. | The quiz is not ready yet. Pick Curve for now. | Error on the phone |
 | packUnavailable | Taj paket nije dostupan. | That pack is not available. | Error on the phone (quiz pack missing) |
 | curveNeedsTwo | Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja. | Curve needs at least 2 players. Add a bot or invite a friend. | Error on the phone |
 | noSuchPlayer | Tog igrača nema. | That player is not here. | Error on the phone (kick) |
-| cannotKickSelf | Ne možeš izbaciti sam sebe. | You can't kick yourself. | Error on the phone (kick) |
+| cannotKickSelf | Ne možeš izbaciti sebe. | You can't kick yourself. | Error on the phone (kick) |
 | botsBetweenGames | Robote možeš mijenjati samo između igara. | You can change the bots only between games. | Error on the phone |
 | lockedIn | Odgovor je zaključan. Gledaj TV. | Your answer is locked in. Watch the TV. | Phone, after answering a quiz question |
 | onlyHostAddsPacks | Samo domaćin može dodavati pakete. | Only the host can add packs. | Message on the phone after a pack upload |
@@ -83,7 +84,7 @@ Informal "ti". `{x}` is filled in by the app.
 | join | Pridruži se | Join | join button |
 | joinAgain | Pridruži se ponovno | Join again | button after you were removed |
 | emptyName | Upiši ime da se pridružiš. | Type a name to join. | join screen, name empty |
-| removed | Uklonjen si iz igre. | You were removed from the game. | screen after the host removes you |
+| removed | Domaćin te uklonio iz igre. | The host removed you from the game. | screen after the host removes you |
 | ok | U redu | OK | closes a red error bar |
 | waitingForHost | Čekaš da {host} pokrene igru. (fallback: domaćin) | You are waiting for {host} to start the game. | lobby, for non-hosts |
 | pickGame | Odaberi igru | Pick a game | lobby, host only |
@@ -108,10 +109,10 @@ Informal "ti". `{x}` is filled in by the app.
 | correct | Točno | Correct | quiz result, green |
 | notThisTime | Ovaj put ne | Not this time | quiz result, red |
 | yourTotal | Tvoj ukupni rezultat | Your total | quiz result |
-| crashed | Zabio si se. Pričekaj sljedeću rundu. | You crashed. Wait for the next round. | Curve, after you crash |
+| crashed | Sudar! Pričekaj sljedeću rundu. | Crash! Wait for the next round. | Curve, after you crash |
 | rtt | rtt 20ms · p95 40ms · n=300 | (technical readout, not for players) | Curve, tiny top-right text |
 | gameOver | Igra je gotova. | The game is over. | results, if you had no placement |
-| placed | Završio si na {n}. mjestu | You finished in {n}th place | results |
+| placed | Tvoje mjesto: {n}. | Your place: {n}th | results |
 | sessionPoints | +{n} bod / boda / bodova za ovu večer | +{n} points for this evening | results |
 
 Also shown as received from the TV (builder-2's section): error messages and "waiting" lines such as "Sljedeća igra uskoro počinje."
