@@ -162,3 +162,7 @@ Added seats: 3 of 3 (a 4th needs the person's yes). builder-2 goes when Task 14 
   quiz minute 0 over, worst 14.3 ms; startup minute 6 over (load). iPhone RTT at 20 Hz: typical ~10 ms, p95 ~50 ms
   (n=300), no better than 10 Hz, so the spikes are the TV's Wi-Fi, not our code. Person: "Looks great." PM: RTT
   accepted as-is (no TV network changes). Task 5b Step 5 closed. Task 14 Back fix + bundled packs build next.
+- 2026-11-14: TV session 2 (cb9a287): the person confirmed the TV remote works (Back, dialog, focus), ▲◆●■ shapes and
+  Croatian diacritics render on the TV and phones. BUG: no confetti in release builds. effects.dart:185 filled the
+  particle tables inside an assert(), which release strips (since af1e3f5; tests and QA ran debug). Fix and reinstall
+  approved; check-review greps for other release-vs-debug differences; QA effects/UI checks run in release/profile.
