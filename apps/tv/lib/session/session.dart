@@ -275,11 +275,13 @@ class Session {
         // The old socket's last Steer must not keep turning the head; if it
         // never reported closing, nothing else zeroes it.
         if (sid != null) _sim?.setInput(sid, left: false, right: false);
-        _resumeIfEnough();
+        // Only someone in this match can end its pause.
+        if (sid != null) _resumeIfEnough();
         final status = _statusFor(p);
-        peer.send(status ?? _waiting);
+        // Still paused: the phone waits too, it must not show the steering.
+        peer.send(sid != null && _paused ? Waiting(pauseText!) : status ?? _waiting);
       case Phase.quiz:
-        _resumeQuiz();
+        if (_quizIds.contains(p.id)) _resumeQuiz();
         _quizRejoin(p);
       case Phase.results:
         peer.send(_waiting);

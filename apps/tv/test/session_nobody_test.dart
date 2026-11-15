@@ -201,4 +201,57 @@ void main() {
       s.dispose();
     });
   });
+
+  group('outsiders and the returner', () {
+    // Cy is a lobby player who was offline when the game started.
+    Future<FakePeer> startWithOfflineCy(WidgetTester t, GameKind kind) async {
+      now = Duration.zero;
+      s = Session(random: Random(1), clock: () => now);
+      a = join(s, 'Ana', token: 'ta');
+      b = join(s, 'Ben', token: 'tb');
+      final cy = join(s, 'Cy', token: 'tc');
+      cy.close();
+      await t.pump();
+      a.say(StartGame(kind, null));
+      await t.pump();
+      return cy;
+    }
+
+    testWidgets('an_outsider_reattaching_does_not_resume_a_quiz', (t) async {
+      await startWithOfflineCy(t, GameKind.quiz);
+      await bothLeave(t);
+      await step(t, const Duration(seconds: 10));
+      back('Cy', 'tc');
+      await t.pump();
+      expect(s.paused, isTrue);
+      await step(t, const Duration(seconds: 5));
+      expect(s.quiz!.number, 1);
+      expect(s.phase, Phase.quiz);
+      s.dispose();
+    });
+
+    testWidgets('an_outsider_reattaching_does_not_change_a_curve_wait', (t) async {
+      await startWithOfflineCy(t, GameKind.curve);
+      await bothLeave(t);
+      expect(s.pauseText, Strings.waitingForPlayers);
+      await t.pump(const Duration(seconds: 20));
+      back('Cy', 'tc');
+      await t.pump();
+      expect(s.pauseText, Strings.waitingForPlayers);
+      await t.pump(const Duration(seconds: 11)); // still the first 30 s
+      expect(s.phase, Phase.results);
+      s.dispose();
+    });
+
+    testWidgets('the_one_who_comes_back_to_a_wait_is_told_to_wait_not_to_steer', (t) async {
+      await start(t, GameKind.curve);
+      await bothLeave(t);
+      final a2 = back('Ana', 'ta');
+      await t.pump();
+      expect(s.pauseText, Strings.waitingForReturn('Ben'));
+      expect(a2.last<Waiting>(), Waiting(Strings.waitingForReturn('Ben')));
+      expect(a2.sent.last, isA<Waiting>());
+      s.dispose();
+    });
+  });
 }
