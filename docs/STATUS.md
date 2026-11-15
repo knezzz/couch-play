@@ -27,7 +27,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 17 | Show active power-ups and time left; wrap = shrinking white border (person, 2026-11-14) | done on macOS (58c90f8, 077870a, 87ea9c8); see it + frame times on the TV next session | lead |
 | 18 | Keep the TV awake while the app is open (screensaver started mid-game; person, 2026-11-14) | built (9541811); TV check next session | lead |
 | 19 | Curve: a phone button sometimes stops reacting (person, 2026-11-15) | done on macOS (edd0ca4; cause: a crash reset the per-button finger count, the late lift sent it to -1); real phones next session | lead |
-| 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | queued to lead | lead |
+| 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | done on macOS (696669b … 9d7e1bf); real phones + TV next session | lead |
 
 ## Open questions for the person
 
@@ -212,3 +212,6 @@ Added seats running: 2 of 3 (builder-2, content). Each goes when its work is don
   quiz stop seen by the person = the Results screen after the host closed the tab; likely both phones dropped at once
   (nobody connected ends a game at once). PM call: nobody connected waits 30 s in both games. Person: a 2-player
   Curve match ended by the wait keeps its scores, ties included.
+- 2026-11-15: Task 20 accepted on macOS (PM ran core 102, tv 205, controller 47; review clean after 9d7e1bf; QA 11/11
+  nobody-connected cases on release). To watch on the TV: the pause text partly covers a long question's 2nd line; a
+  "Sudar!" 1.5 s after both came back to Curve (read as the passive head crashing).
