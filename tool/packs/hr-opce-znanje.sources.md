@@ -332,3 +332,80 @@ hr-zemljopis-svijeta, which already asks about Kyoto); the made-up distractor "K
 322. Treaty of Rome signed 25 March 1957, created the EEC: https://en.wikipedia.org/wiki/Treaty_of_Rome
 323. Wayne co-founded Apple Computer Company with Wozniak and Jobs on 1 April 1976: https://en.wikipedia.org/wiki/Ronald_Wayne
 324. Anders Celsius (1701-1744), Swedish astronomer, physicist and mathematician: https://en.wikipedia.org/wiki/Anders_Celsius
+325. worked briefly as a research chemist before becoming a barrister: https://en.wikipedia.org/wiki/Margaret_Thatcher
+326. A Soviet journalist dubbed her the 'Iron Lady': https://en.wikipedia.org/wiki/Margaret_Thatcher
+327. Maison Bonaparte in Ajaccio, where Napoleon was born: https://en.wikipedia.org/wiki/Napoleon
+328. Marengo was the famous war horse of Napoleon I: https://en.wikipedia.org/wiki/Marengo_(horse)
+329. Copenhagen was the Duke of Wellington's war horse at Waterloo: https://en.wikipedia.org/wiki/Copenhagen_(horse)
+330. Bucephalus was the horse of Alexander the Great: https://en.wikipedia.org/wiki/Bucephalus
+331. Churchill was born at Blenheim Palace in Oxfordshire: https://en.wikipedia.org/wiki/Winston_Churchill
+332. Born in a one-room log cabin in Kentucky: https://en.wikipedia.org/wiki/Abraham_Lincoln
+333. permanent position at the Swiss Patent Office in Bern: https://en.wikipedia.org/wiki/Albert_Einstein
+334. enrolled as a trainee Russian Orthodox priest at the Tiflis Theological Seminary: https://en.wikipedia.org/wiki/Joseph_Stalin
+335. Vladimir Ilyich Ulyanov: https://en.wikipedia.org/wiki/Vladimir_Lenin
+336. nine children married across the continent, 'grandmother of Europe': https://en.wikipedia.org/wiki/Queen_Victoria
+337. nickname Iron Chancellor (Eiserner Kanzler): https://en.wikipedia.org/wiki/Otto_von_Bismarck
+338. Darwin on the second voyage of HMS Beagle: https://en.wikipedia.org/wiki/Second_voyage_of_HMS_Beagle
+339. monoplane Lindbergh flew in 1927 on the first solo nonstop transatlantic flight: https://en.wikipedia.org/wiki/Spirit_of_St._Louis
+340. torpedoed by German U-boat U-20 on 7 May 1915 off Ireland: https://en.wikipedia.org/wiki/Sinking_of_RMS_Lusitania
+341. transported the Pilgrims from England to the New World in 1620: https://en.wikipedia.org/wiki/Mayflower
+342. led by Norwegian explorer Thor Heyerdahl, 1947 raft: https://en.wikipedia.org/wiki/Kon-Tiki_expedition
+343. Endurance, Shackleton sailed for the Antarctic on the 1914-1917 expedition: https://en.wikipedia.org/wiki/Endurance_(1912_ship)
+344. died 27 April 1521 in the Battle of Mactan; contact with the Philippines: https://en.wikipedia.org/wiki/Ferdinand_Magellan
+345. Rocket won the Rainhill Trials, October 1829: https://en.wikipedia.org/wiki/Stephenson's_Rocket
+346. first line opened shortly before the 1964 Tokyo Olympics: https://en.wikipedia.org/wiki/Shinkansen
+347. He kept bees in summer, and concentrated on climbing in winter: https://en.wikipedia.org/wiki/Edmund_Hillary
+348. 1909 first aeroplane flight across the English Channel: https://en.wikipedia.org/wiki/Louis_Blériot
+349. known as the Red Baron, German WWI fighter pilot: https://en.wikipedia.org/wiki/Manfred_von_Richthofen
+350. 14 May 1796 inoculated James Phipps; cowpox: https://en.wikipedia.org/wiki/Edward_Jenner
+351. vaccine derived from Variolae vaccinae ('pustules of the cow'): https://en.wikipedia.org/wiki/Edward_Jenner
+352. took a radiograph of his wife Anna Bertha's hand: https://en.wikipedia.org/wiki/Wilhelm_Röntgen
+353. distinguished the main blood groups in 1901: https://en.wikipedia.org/wiki/Karl_Landsteiner
+354. South African surgeon, first human heart transplant, 3 December 1967: https://en.wikipedia.org/wiki/Christiaan_Barnard
+355. Hippocrates of Kos: https://en.wikipedia.org/wiki/Hippocrates
+356. development of vaccines for rabies and anthrax: https://en.wikipedia.org/wiki/Louis_Pasteur
+357. 'The Lady with the Lamp', Crimean War: https://en.wikipedia.org/wiki/Florence_Nightingale
+358. introduced carbolic acid (phenol) as a steriliser: https://en.wikipedia.org/wiki/Joseph_Lister
+359. In 1628 he published De Motu Cordis on the circulation of the blood: https://en.wikipedia.org/wiki/William_Harvey
+360. isolated insulin at the University of Toronto: https://en.wikipedia.org/wiki/Frederick_Banting
+361. first publicly demonstrated inhaled ether as a surgical anesthetic in 1846, MGH: https://en.wikipedia.org/wiki/William_T._G._Morton
+362. Hungarian doctor, pioneer of antiseptic procedures, 'saviour of mothers': https://en.wikipedia.org/wiki/Ignaz_Semmelweis
+363. developed one of the first successful polio vaccines: https://en.wikipedia.org/wiki/Jonas_Salk
+364. invented in 1816 by René Laennec: https://en.wikipedia.org/wiki/Stethoscope
+365. Štampar was elected first president of the (First World Health) assembly: https://en.wikipedia.org/wiki/Andrija_Štampar
+366. burned down in 356 BC by an arsonist, popularly identified as Herostratus: https://en.wikipedia.org/wiki/Temple_of_Artemis
+367. made by the Greek sculptor Phidias around 435 BC: https://en.wikipedia.org/wiki/Statue_of_Zeus_at_Olympia
+368. tomb built 353-351 BC in Halicarnassus for Mausolus: https://en.wikipedia.org/wiki/Mausoleum_at_Halicarnassus
+369. opened to the public on May 27, 1937: https://en.wikipedia.org/wiki/Golden_Gate_Bridge
+370. built between 1886 and 1894: https://en.wikipedia.org/wiki/Tower_Bridge
+371. created by French-Polish sculptor Paul Landowski, 1922-1931: https://en.wikipedia.org/wiki/Christ_the_Redeemer_(statue)
+372. Washington, Jefferson, Theodore Roosevelt and Lincoln: https://en.wikipedia.org/wiki/Mount_Rushmore
+373. Big Ben is the nickname for the Great Bell of the Great Clock: https://en.wikipedia.org/wiki/Big_Ben
+374. based on the 1837 fairy tale by Hans Christian Andersen; statue by Edvard Eriksen: https://en.wikipedia.org/wiki/The_Little_Mermaid_(statue)
+375. depicting the armies of Qin Shi Huang, the first emperor of China: https://en.wikipedia.org/wiki/Terracotta_Army
+376. built 1555-1561 on orders from Ivan the Terrible: https://en.wikipedia.org/wiki/Saint_Basil's_Cathedral
+377. leg godt, which means 'play well': https://en.wikipedia.org/wiki/Lego
+378. Ole Kirk Christiansen, a carpenter from Billund: https://en.wikipedia.org/wiki/Lego
+379. introduced on March 9, 1959: https://en.wikipedia.org/wiki/Barbie
+380. named after the 26th president, Theodore Roosevelt: https://en.wikipedia.org/wiki/Teddy_bear
+381. properties named after locations in and around Atlantic City: https://en.wikipedia.org/wiki/Monopoly_(game)
+382. created by Alexey Pajitnov, a Soviet software engineer: https://en.wikipedia.org/wiki/Tetris
+383. first manufactured as a wallpaper cleaner in the 1930s: https://en.wikipedia.org/wiki/Play-Doh
+384. invented by American naval engineer Richard T. James: https://en.wikipedia.org/wiki/Slinky
+385. name derived from the Frisbie Pie Company, whose pie tins Yale students tossed: https://en.wikipedia.org/wiki/Frisbee
+386. originally titled Puck Man in Japan, 1980, Namco: https://en.wikipedia.org/wiki/Pac-Man
+387. Donkey Kong on a construction site, Mario was made a carpenter: https://en.wikipedia.org/wiki/Mario
+388. Adolf created Adidas and Rudolf established Puma: https://en.wikipedia.org/wiki/Adidas
+389. invented by John Stith Pemberton in Atlanta: https://en.wikipedia.org/wiki/Coca-Cola
+390. Volkswagen means 'people's car': https://en.wikipedia.org/wiki/Volkswagen
+391. Horch, meaning 'listen' in German, translates to audi in Latin: https://en.wikipedia.org/wiki/Audi
+392. takes its name from Nike, the Greek goddess of victory: https://en.wikipedia.org/wiki/Nike,_Inc.
+393. Lamborghini Trattori, founded in 1948 by Ferruccio Lamborghini, produces tractors: https://en.wikipedia.org/wiki/Lamborghini
+394. Francesco Baracca, a deceased flying ace who painted the emblem on his airplane: https://en.wikipedia.org/wiki/Ferrari
+395. Jellinek named the 1901 Mercedes 35 hp after his daughter Mercédès: https://en.wikipedia.org/wiki/Mercedes-Benz
+396. the meaning of the hanja Samsung is three stars: https://en.wikipedia.org/wiki/Samsung
+397. Volvo is Latin for 'I roll': https://en.wikipedia.org/wiki/Volvo_Cars
+398. founded by Hans Riegel Sr.; began in Kessenich, Bonn: https://en.wikipedia.org/wiki/Haribo
+399. created in 1893 by Caleb Bradham and named Brad's Drink, sold in his drugstore: https://en.wikipedia.org/wiki/Pepsi
+400. Felix Hoffmann (or Arthur Eichengrün) of Bayer, pure stable form in 1897: https://en.wikipedia.org/wiki/Aspirin
+401. originally established as a pulp mill in 1865: https://en.wikipedia.org/wiki/Nokia
