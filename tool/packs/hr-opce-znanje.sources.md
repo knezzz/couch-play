@@ -199,3 +199,72 @@ hr-zemljopis-svijeta, which already asks about Kyoto); the made-up distractor "K
 189. Sonnet traditionally consists of fourteen lines: https://en.wikipedia.org/wiki/Sonnet
 190. Braille characters formed using a combination of six raised dots: https://en.wikipedia.org/wiki/Braille
 191. The word sauna is an ancient Finnish word: https://en.wikipedia.org/wiki/Sauna
+192. fought on 14 October 1066: https://en.wikipedia.org/wiki/Battle_of_Hastings
+193. sealed by King John at Runnymede on 15 June 1215: https://en.wikipedia.org/wiki/Magna_Carta
+194. Ottoman army commanded by Sultan Mehmed II, 29 May 1453: https://en.wikipedia.org/wiki/Fall_of_Constantinople
+195. largest of the three ships of Columbus's first expedition: https://en.wikipedia.org/wiki/Santa_María_(ship)
+196. completed the first circumnavigation in the Victoria on the Magellan expedition: https://en.wikipedia.org/wiki/Juan_Sebastián_Elcano
+197. landed at Kozhikode (Calicut) on 20 May 1498: https://en.wikipedia.org/wiki/Vasco_da_Gama
+198. Storming of the Bastille, 14 July 1789: https://en.wikipedia.org/wiki/Storming_of_the_Bastille
+199. exiled to Saint Helena, where he died in 1821: https://en.wikipedia.org/wiki/Napoleon
+200. Fall of the Berlin Wall, 9 November 1989: https://en.wikipedia.org/wiki/Fall_of_the_Berlin_Wall
+201. assassinated on the Ides of March (15 March), 44 BC: https://en.wikipedia.org/wiki/Assassination_of_Julius_Caesar
+202. Augustus, the first Roman emperor from 27 BC: https://en.wikipedia.org/wiki/Augustus
+203. Aristotle tutored Alexander the Great from 343 BC: https://en.wikipedia.org/wiki/Aristotle
+204. Carthaginian general; crossed the Alps with war elephants: https://en.wikipedia.org/wiki/Hannibal
+205. In 800, crowned emperor in Rome by Pope Leo III: https://en.wikipedia.org/wiki/Charlemagne
+206. 1337-1453, taking place over 116 years: https://en.wikipedia.org/wiki/Hundred_Years'_War
+207. moved to Rouen, died 30 May 1431: https://en.wikipedia.org/wiki/Joan_of_Arc
+208. Gutenberg Museum founded in his hometown of Mainz: https://en.wikipedia.org/wiki/Johannes_Gutenberg
+209. 7 November 1917; occurred in November of the Gregorian calendar: https://en.wikipedia.org/wiki/October_Revolution
+210. Amundsen's party became the first to reach the South Pole, 14 December 1911: https://en.wikipedia.org/wiki/Roald_Amundsen
+211. tomb discovered in 1922 by excavators led by Howard Carter: https://en.wikipedia.org/wiki/Tutankhamun
+212. tomb of Pharaoh Khufu (Cheops): https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza
+213. founded by Tsar Peter the Great on 27 May 1703: https://en.wikipedia.org/wiki/Saint_Petersburg
+214. divided new lands between Portugal and the Crown of Castile, 7 June 1494: https://en.wikipedia.org/wiki/Treaty_of_Tordesillas
+215. The Code of Hammurabi is a Babylonian legal text: https://en.wikipedia.org/wiki/Code_of_Hammurabi
+216. under the command of Arthur Wellesley, Duke of Wellington: https://en.wikipedia.org/wiki/Battle_of_Waterloo
+217. built by Byzantine emperor Justinian I, 532-537: https://en.wikipedia.org/wiki/Hagia_Sophia
+218. painted in fresco by Michelangelo between 1508 and 1512: https://en.wikipedia.org/wiki/Sistine_Chapel_ceiling
+219. view from his asylum room at Saint-Rémy-de-Provence: https://en.wikipedia.org/wiki/The_Starry_Night
+220. 1937 oil painting by Pablo Picasso: https://en.wikipedia.org/wiki/Guernica_(Picasso)
+221. oil painting by Johannes Vermeer: https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring
+222. 1931 painting by Salvador Dalí: https://en.wikipedia.org/wiki/The_Persistence_of_Memory
+223. Designed by the Spanish architect Antoni Gaudí: https://en.wikipedia.org/wiki/Sagrada_Família
+224. an 1872 painting by Claude Monet: https://en.wikipedia.org/wiki/Impression,_Sunrise
+225. centrepiece for the 1889 Exposition Universelle: https://en.wikipedia.org/wiki/Eiffel_Tower
+226. designed by Bartholdi, metal framework built by Gustave Eiffel: https://en.wikipedia.org/wiki/Statue_of_Liberty
+227. commissioned 1631 by Shah Jahan to house the tomb of Mumtaz Mahal: https://en.wikipedia.org/wiki/Taj_Mahal
+228. the campanile, or freestanding bell tower, of Pisa Cathedral: https://en.wikipedia.org/wiki/Leaning_Tower_of_Pisa
+229. temple on the Athenian Acropolis dedicated to Athena: https://en.wikipedia.org/wiki/Parthenon
+230. dome engineered by Filippo Brunelleschi: https://en.wikipedia.org/wiki/Florence_Cathedral
+231. woodblock print by the ukiyo-e artist Hokusai: https://en.wikipedia.org/wiki/The_Great_Wave_off_Kanagawa
+232. series of 32 paintings by Andy Warhol, 1961-62: https://en.wikipedia.org/wiki/Campbell's_Soup_Cans
+233. Diego Rivera; the couple married in 1929: https://en.wikipedia.org/wiki/Frida_Kahlo
+234. displayed at the Louvre in Paris since 1821: https://en.wikipedia.org/wiki/Venus_de_Milo
+235. moved in 1873 to the Galleria dell'Accademia, Florence: https://en.wikipedia.org/wiki/David_(Michelangelo)
+236. designed by Frank Lloyd Wright, built over a waterfall: https://en.wikipedia.org/wiki/Fallingwater
+237. Designed by Danish architect Jørn Utzon: https://en.wikipedia.org/wiki/Sydney_Opera_House
+238. in the refectory of Santa Maria delle Grazie in Milan: https://en.wikipedia.org/wiki/The_Last_Supper_(Leonardo)
+239. pioneered by Pablo Picasso and Georges Braque: https://en.wikipedia.org/wiki/Cubism
+240. patent for the telephone, March 7, 1876: https://en.wikipedia.org/wiki/Alexander_Graham_Bell
+241. known for inventing dynamite: https://en.wikipedia.org/wiki/Alfred_Nobel
+242. improved on Thomas Newcomen's 1712 steam engine: https://en.wikipedia.org/wiki/James_Watt
+243. best known as the inventor of the World Wide Web: https://en.wikipedia.org/wiki/Tim_Berners-Lee
+244. began developing a system of tactile code for blind people: https://en.wikipedia.org/wiki/Louis_Braille
+245. hrvatski izumitelj električnog brzinomjera; Županići kraj Labina: https://hr.wikipedia.org/wiki/Josip_Belušić
+246. volframove žarne niti; izumitelj žarulje s metalnom niti: https://hr.wikipedia.org/wiki/Franjo_Hanaman
+247. went into effect in October 1582, bull of Pope Gregory XIII: https://en.wikipedia.org/wiki/Gregorian_calendar
+248. named in honour of Julius Caesar in 44 BC: https://en.wikipedia.org/wiki/July
+249. first Sunday after the first full moon on or after the vernal equinox: https://en.wikipedia.org/wiki/Easter
+250. 31 October, eve of All Hallows' Day: https://en.wikipedia.org/wiki/Halloween
+251. Epiphany, 6 January: https://en.wikipedia.org/wiki/Epiphany_(holiday)
+252. unit of mass equal to 200 mg: https://en.wikipedia.org/wiki/Carat_(mass)
+253. 10,000 square metres: https://en.wikipedia.org/wiki/Hectare
+254. one ten-millionth of the distance from the equator to the North Pole: https://en.wikipedia.org/wiki/Metre
+255. The name 'dollar' originates from the thaler: https://en.wikipedia.org/wiki/Dollar
+256. coins and banknotes entered circulation on 1 January 2002: https://en.wikipedia.org/wiki/Euro
+257. jiaozi, first paper money in history, Song dynasty China: https://en.wikipedia.org/wiki/Jiaozi_(currency)
+258. traditionally dated to 776 BC: https://en.wikipedia.org/wiki/Ancient_Olympic_Games
+259. naziv potječe od uporabe kuninih krzna za trgovinu i plaćanje carina: https://hr.wikipedia.org/wiki/Hrvatska_kuna
+260. calibrated with 0 for the boiling point and 100 for the freezing point; reversed 1745: https://en.wikipedia.org/wiki/Anders_Celsius
