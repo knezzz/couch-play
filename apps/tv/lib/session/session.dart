@@ -279,6 +279,7 @@ class Session {
         final status = _statusFor(p);
         peer.send(status ?? _waiting);
       case Phase.quiz:
+        _resumeQuiz();
         _quizRejoin(p);
       case Phase.results:
         peer.send(_waiting);
@@ -528,7 +529,9 @@ class Session {
     return img == null ? null : _quizPack?.images[img];
   }
 
-  Duration _quizNow() => _clock() - _quizOrigin;
+  /// Frozen while the quiz waits for players to come back.
+  Duration _quizNow() => (_quizPausedAt ?? _clock()) - _quizOrigin;
+  Duration? _quizPausedAt; // _clock() when the pause began
 
   void _startQuiz(QuizPack pack, List<Player> parts) {
     _quizPack = pack;
@@ -571,7 +574,7 @@ class Session {
 
   void _quizTick() {
     final q = _quiz;
-    if (_phase != Phase.quiz || q == null) return;
+    if (_phase != Phase.quiz || q == null || _paused) return;
     final step = q.step, number = q.number;
     final now = _quizNow();
     q.advance(now);
@@ -627,16 +630,28 @@ class Session {
     }
   }
 
-  /// With no connected player left the quiz has no audience: end it.
+  /// With no connected player left the quiz waits 30 s for someone to return.
   void _checkQuizEnd() {
     final q = _quiz;
-    if (_phase != Phase.quiz || q == null || quizExpected > 0) return;
-    finishGame(Map.of(q.totals));
+    if (_phase != Phase.quiz || q == null || quizExpected > 0 || _paused) return;
+    _quizPausedAt = _clock();
+    _pause(null);
+    _notify();
+  }
+
+  /// Someone is back: the question's clock carries on where it stopped.
+  void _resumeQuiz() {
+    final at = _quizPausedAt;
+    if (!_paused || at == null) return;
+    _stopWait();
+    _quizPausedAt = null;
+    _quizOrigin += _clock() - at;
   }
 
   void _stopQuiz() {
     _quizTimer?.cancel();
     _quizTimer = null;
+    _quizPausedAt = null;
     _quiz = null;
     _quizPack = null;
     _quizIds.clear();
@@ -652,9 +667,15 @@ class Session {
     final sid = _simIdOf[p.id];
     if (sid == null || !_gone.add(p.id)) return;
     _sim?.setInput(sid, left: false, right: false);
-    if (returnable && !p.bot && _inMatch() <= 1 && _humansLeft() > 0) {
-      _waitFor(p);
-      return;
+    if (returnable && !p.bot) {
+      if (_humansLeft() == 0) {
+        _pause(null); // nobody is connected: wait for anyone
+        return;
+      }
+      if (_inMatch() <= 1) {
+        _pause(p);
+        return;
+      }
     }
     _sim?.kill(sid);
   }
@@ -666,26 +687,40 @@ class Session {
       .where((p) => p != null && !p.bot && p.connected)
       .length;
 
-  // A 2-player match waits this long for the player who left.
+  // A game waits this long for players to come back: a 2-player Curve match
+  // for the one who left, Quiz and Curve for anyone when nobody is connected.
   static const _waitFor30 = Duration(seconds: 30);
-  Player? _waitingFor;
+  bool _paused = false;
+  Player? _waitingFor; // null while paused: everyone is gone
   Timer? _waitTimer;
 
-  /// Who the paused Curve match waits for; the TV shows
-  /// `Strings.waitingForReturn` over the frozen arena. Null when not paused.
+  /// Who the paused Curve match waits for. Null when not paused or when it
+  /// waits for everyone.
   String? get curveWaitingFor => _waitingFor?.name;
 
-  /// The TV's CurveGame must not tick the sim while this is true.
-  bool get curvePaused => _waitingFor != null;
+  /// A running game is frozen, waiting for players to return. The TV's
+  /// CurveGame must not tick the sim while this is true.
+  bool get paused => _paused;
 
-  void _waitFor(Player p) {
-    _waitingFor = p;
+  /// What the TV shows over the frozen game; null when not paused.
+  String? get pauseText => !_paused
+      ? null
+      : _waitingFor == null
+          ? Strings.waitingForPlayers
+          : Strings.waitingForReturn(_waitingFor!.name);
+
+  /// Starts (or restarts) the one 30 s wait. [who] null means everyone.
+  void _pause(Player? who) {
+    _paused = true;
+    _waitingFor = who;
     _waitTimer?.cancel();
     _waitTimer = Timer(_waitFor30, () {
       _stopWait();
       if (_phase == Phase.curve) finishGame(_gameScores());
+      if (_phase == Phase.quiz && _quiz != null) finishGame(Map.of(_quiz!.totals));
     });
-    final msg = Waiting(Strings.waitingForReturn(p.name));
+    if (who == null) return; // nobody to tell
+    final msg = Waiting(Strings.waitingForReturn(who.name));
     for (final q in _players) {
       if (_simIdOf.containsKey(q.id)) q.socket?.send(msg);
     }
@@ -695,13 +730,23 @@ class Session {
     _waitTimer?.cancel();
     _waitTimer = null;
     _waitingFor = null;
+    _paused = false;
   }
 
   /// Someone came back to a paused match: with 2 or more in it again, carry on
   /// from a fresh round (scores kept).
   void _resumeIfEnough() {
     final sim = _sim;
-    if (_waitingFor == null || sim == null || _inMatch() < 2) return;
+    if (!_paused || sim == null) return;
+    if (_inMatch() < 2) {
+      // Someone is back but not enough: wait for the ones still away.
+      final away = _simIdOf.keys
+          .map(_byId)
+          .where((p) => p != null && !p.bot && !p.connected)
+          .firstOrNull;
+      if (_waitingFor == null && away != null) _pause(away);
+      return;
+    }
     _stopWait();
     for (final e in _simIdOf.entries) {
       // A button held through the wait must not turn the new round's head.
@@ -722,7 +767,7 @@ class Session {
         .map(_byId)
         .where((p) => p != null && !p.bot && p.connected)
         .length;
-    if (humans == 0 || (inMatch <= 1 && _waitingFor == null)) finishGame(_gameScores());
+    if (!_paused && (humans == 0 || inMatch <= 1)) finishGame(_gameScores());
   }
 
   Map<int, int> _gameScores() =>
@@ -759,7 +804,7 @@ class Session {
   void nextRound() {
     final sim = _sim;
     if (_phase != Phase.curve || sim == null || !sim.roundOver || sim.matchOver) return;
-    if (_waitingFor != null) return; // paused: the return starts the next round
+    if (_paused) return; // paused: the return starts the next round
     sim.startRound();
     _curveRound++;
     _sendStatuses();

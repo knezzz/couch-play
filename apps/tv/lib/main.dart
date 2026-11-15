@@ -154,7 +154,7 @@ class _TvAppState extends State<TvApp> {
       _game = CurveGame(sim, playerColors,
           onBeforeTick: _session.bots!.tick,
           onEvents: _onCurveEvents,
-          holdWhen: () => _session.curvePaused);
+          holdWhen: () => _session.paused);
     });
   }
 
@@ -173,6 +173,19 @@ class _TvAppState extends State<TvApp> {
         if (mounted) _session.nextRound();
       });
     }
+  }
+
+  /// Over the frozen game while it waits for players to come back.
+  Widget? _pauseOverlay() {
+    final text = _session.pauseText;
+    if (text == null) return null;
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
+        color: const Color(0xCC000000),
+        child: Text(text, style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w700)),
+      ),
+    );
   }
 
   @override
@@ -195,7 +208,8 @@ class _TvAppState extends State<TvApp> {
           ? Scaffold(body: Center(child: Text(_error!, style: const TextStyle(fontSize: 40))))
           : quiz != null
               ? Scaffold(
-                  body: QuizScreen(
+                  body: Stack(children: [
+                    QuizScreen(
                     question: quiz.current.q,
                     svg: _session.quizSvg,
                     choices: quiz.current.choices,
@@ -211,21 +225,15 @@ class _TvAppState extends State<TvApp> {
                     points: quiz.lastPoints,
                     players: _session.playerInfos,
                     totals: quiz.totals,
-                  ),
+                    ),
+                    ?_pauseOverlay(),
+                  ]),
                 )
           : game != null
               ? Scaffold(
                   body: Stack(children: [
                     GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false),
-                    if (_session.curveWaitingFor != null)
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
-                          color: const Color(0xCC000000),
-                          child: Text(Strings.waitingForReturn(_session.curveWaitingFor!),
-                              style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w700)),
-                        ),
-                      ),
+                    ?_pauseOverlay(),
                   ]),
                 )
               : _session.phase == Phase.results

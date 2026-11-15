@@ -59,4 +59,34 @@ void main() {
     expect(text, findsNothing);
     await t.pumpWidget(const SizedBox());
   });
+
+  testWidgets('the_everyone_text_shows_in_a_quiz_when_nobody_is_connected', (t) async {
+    t.view
+      ..physicalSize = const Size(1920, 1080)
+      ..devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    s = Session(random: Random(1));
+    await t.pumpWidget(TvApp(session: s, serve: false));
+    a = join(s, 'Ana', token: 'ta');
+    b = join(s, 'Ben', token: 'tb');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 100));
+    final all = find.text(Strings.waitingForPlayers);
+    expect(all, findsNothing);
+    a.close();
+    await t.pump();
+    expect(all, findsNothing, reason: 'one person is still there');
+    b.close();
+    await t.pump();
+    expect(all, findsOneWidget);
+    final a2 = FakePeer();
+    s.attach(a2);
+    a2.say(const Join('Ana', 'ta'));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 100));
+    expect(all, findsNothing);
+    await t.pumpWidget(const SizedBox());
+    s.dispose();
+  });
 }

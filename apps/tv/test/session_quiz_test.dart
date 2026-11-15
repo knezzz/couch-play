@@ -226,7 +226,7 @@ void main() {
     });
   }
 
-  testWidgets('everyone_leaves_ends_the_game', (t) async {
+  testWidgets('everyone_leaves_waits_30_seconds_then_ends_the_game', (t) async {
     s = fresh();
     final a = join(s, 'Ana');
     a.say(const StartGame(GameKind.quiz, null));
@@ -234,6 +234,8 @@ void main() {
     a.close();
     await t.pump();
     await step(t, const Duration(milliseconds: 200));
+    expect(s.phase, Phase.quiz);
+    await step(t, const Duration(seconds: 31));
     expect(s.phase, Phase.results);
     s.dispose();
   });

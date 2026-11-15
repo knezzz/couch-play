@@ -471,13 +471,15 @@ void main() {
     expect(s.sim!.heads.firstWhere((h) => h.id == 1).alive, isFalse);
   });
 
-  test('curve_ends_when_no_human_is_connected_even_with_bots', () async {
+  test('curve_pauses_when_no_human_is_connected_even_with_bots', () async {
     final a = join(s, 'A');
     a.say(const SetBots(3));
     a.say(const StartGame(GameKind.curve, null));
     expect(s.phase, Phase.curve);
     await a.drop();
-    expect(s.phase, Phase.results);
+    expect(s.phase, Phase.curve);
+    expect(s.paused, isTrue); // the 30 s end is in session_nobody_test
+    s.dispose();
   });
 
   test('kicking_a_player_mid_match_kills_them', () {

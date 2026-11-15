@@ -93,16 +93,6 @@ void main() {
     s.dispose();
   });
 
-  testWidgets('the_last_human_leaving_ends_it_at_once', (t) async {
-    await start(t);
-    a.close();
-    await t.pump();
-    b.close();
-    await t.pump();
-    expect(s.phase, Phase.results);
-    s.dispose();
-  });
-
   testWidgets('a_kicked_player_is_not_waited_for', (t) async {
     await start(t);
     a.say(Kick(idOf(b)));
