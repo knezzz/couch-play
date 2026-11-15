@@ -56,7 +56,7 @@ A party-games console for the living room. An Android TV shows the game; everyon
 1. TV starts the server on a fixed port (8080, falls back to next free) and finds its LAN IPv4 via `NetworkInterface.list()`.
 2. TV shows a QR code for `http://<ip>:<port>/` and the URL in text.
 3. Phone loads the controller, enters a name, is assigned a color, connects to `ws://<ip>:<port>/ws`.
-4. The first player to join is the **host**: picks games, starts rounds, can kick players. If the host leaves, the next-oldest player becomes host.
+4. The first player to join is the **host**: picks games, starts rounds, can kick players. If the host leaves, the next-oldest player becomes host. The game in progress keeps going: a host leaving never stops or ends it (user request, 2026-11-15).
 5. Reconnect: the controller keeps a random player token in `localStorage`; reconnecting with the same token restores the player (name, color, score) if within the session.
 
 ### Session flow
@@ -65,7 +65,7 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 
 - **Session scoreboard (Claude's call):** each game's raw points stay inside that game. After a game, players get placement points for the session board: 1st = N, 2nd = N−1, … last = 1 (N = players in that game), so Quiz and Curve count equally.
 - **D-pad scope (Claude's call):** the remote only needs to move focus and quit/back out of a game. A phone host runs the session; there is no phone-free mode in v1.
-- **Joining and leaving mid-game (Claude's call):** late joiners watch on their phone (“next game starts soon”) and enter at the next lobby. A Curve player who disconnects crashes on the spot; the win target stays fixed at the value set when the match began. A Quiz player who disconnects scores 0 for the questions they miss and keeps their points; reconnecting within the session restores them mid-game.
+- **Joining and leaving mid-game (Claude's call):** late joiners watch on their phone (“next game starts soon”) and enter at the next lobby. A Curve player who disconnects crashes on the spot; the win target stays fixed at the value set when the match began. A Quiz player who disconnects scores 0 for the questions they miss and keeps their points; reconnecting within the session restores them mid-game. Anyone who drops out mid-game, the host included, can come back into the same game: Quiz from the next question, Curve from the next round of the match, with what they missed scoring 0 and their earlier points kept. The host role stays with whoever has it during the game (user request, 2026-11-15).
 
 ### Networking model
 

@@ -26,6 +26,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 16 | Croatian user interface (person, 2026-11-14) | done on macOS (605053a … 526c98e); see it on the TV next session | lead |
 | 17 | Show active power-ups and time left; wrap = shrinking white border (person, 2026-11-14) | done on macOS (58c90f8, 077870a, 87ea9c8); see it + frame times on the TV next session | lead |
 | 18 | Keep the TV awake while the app is open (screensaver started mid-game; person, 2026-11-14) | built (9541811); TV check next session | lead |
+| 19 | Curve: a phone button sometimes stops reacting (person, 2026-11-15) | queued to lead | lead |
+| 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | queued to lead | lead |
 
 ## Open questions for the person
 
@@ -202,3 +204,5 @@ Added seats running: 2 of 3 (builder-2, content). Each goes when its work is don
   are covered by tests only. TV: readability from the couch and frame times still to check.
 - 2026-11-15: Person said push all: main pushed to github.com/knezzz/couch-play (public). The lobby mockup now uses a sample
   address; the TV address stays in the history of c1c5c1d (a home-network address only).
+- 2026-11-15: Person: Curve buttons sometimes stop reacting (often one); the game must not stop when the host leaves,
+  and the host (anyone) can come back in, missing what they missed. Spec + plan Tasks 19, 20; routed to lead.

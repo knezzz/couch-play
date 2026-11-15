@@ -720,3 +720,24 @@ The TV goes into its screensaver during a game: players use their phones, so the
 - [x] **Step 1:** Keep the screen on while CouchPlay is in the foreground (lobby, games and results), and let the TV sleep normally once the app is closed or in the background. Smallest fix: `FLAG_KEEP_SCREEN_ON` on the activity window in `MainActivity.kt`; no new package.
 - [ ] **Step 2: Check.** All tv tests pass. On the real TV (next session, with the person's adb yes): leave a game or the lobby running longer than the TV's screensaver delay; the screensaver doesn't start. After leaving the app, it does.
 - [x] **Step 3: Commit** by path: `fix(tv): keep the screen on while the app is open`.
+
+---
+
+### Task 19: Curve steering stops reacting on the phone (added 2026-11-15, user report)
+
+The person: "Sometimes the curve game stops reacting to buttons on phone (often just one button stops)." The cause is not known yet.
+
+- [ ] **Step 1: Reproduce and find the root cause** (systematic debugging, no guess-patches). Check at least: a press whose release is lost (finger slides off the button, a second finger, pointer cancel, the page scrolling or zooming); both buttons held at once; iOS Safari and Android Chrome; the TV side (the input state for that player, messages arriving after a reconnect or a new round).
+- [ ] **Step 2: Failing test** for the cause found, then fix it at the root.
+- [ ] **Step 3: Check.** All tests pass. QA on a release build with a real phone browser: hold, release, slide off, two fingers, both buttons, many rounds; no stuck or dead button.
+- [ ] **Step 4: Commit** by path.
+
+---
+
+### Task 20: The game keeps going when the host leaves; anyone can come back in (added 2026-11-15, user request)
+
+- [ ] **Step 1: Failing tests** (session): the host disconnects mid-Curve and mid-Quiz: the game keeps running and the next-oldest connected human is host (their phone gets the host controls). The old host reconnects: back in the same game (Quiz from the next question, Curve from the next round), missed questions or rounds score 0, earlier points kept; the new host stays host until the game ends. The same for a non-host player.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement.** Today a Curve player who disconnects is out for the whole match (`_dropFromGame`), and a Quiz player is removed from the round; change that to "out for this round/question, back in after reconnecting". A match still ends when fewer than 2 are left in it or no human is connected.
+- [ ] **Step 4: Run.** Expected: PASS. QA on macOS release with 3 phones: close the host's tab mid-Curve and mid-Quiz, keep playing, reopen it.
+- [ ] **Step 5: Commit** by path.
