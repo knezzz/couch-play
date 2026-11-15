@@ -30,7 +30,8 @@ class QuizScreen extends StatelessWidget {
     required this.expected,
     required this.players,
     this.packTitle = '',
-    this.svg,
+    this.picture,
+    this.pictureName = '',
     this.correctIndex,
     this.picks = const {},
     this.totals = const {},
@@ -39,7 +40,11 @@ class QuizScreen extends StatelessWidget {
   });
 
   final String question, packTitle;
-  final Uint8List? svg;
+
+  /// The question's picture: an SVG or a photo (jpg, png, webp), told apart by
+  /// the extension of [pictureName].
+  final Uint8List? picture;
+  final String pictureName;
   final List<String> choices;
   final int number, total, answered, expected;
 
@@ -66,63 +71,80 @@ class QuizScreen extends StatelessWidget {
         height: 1080,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(96, 56, 96, 72),
-          child: correctIndex == null ? _asking() : _reveal(),
+          // A photo that will not decode falls back to the text layout.
+          child: picture == null
+              ? _layout(false, () {})
+              : _PictureGuard(
+                  picture!,
+                  (broken, report) => _layout(!broken, report),
+                ),
         ),
       ),
     ),
   );
 
+  Widget _layout(bool withPicture, VoidCallback onBroken) {
+    final asking = correctIndex == null;
+    if (!withPicture) return asking ? _asking() : _reveal();
+    return asking ? _askingPicture(onBroken) : _revealPicture(onBroken);
+  }
+
   // --- the question ---
+
+  /// Header row and timer bar, with [gap] around the bar.
+  List<Widget> _header(double gap) => [
+    Row(
+      children: [
+        Text(
+          Strings.questionOf(number, total),
+          style: const TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.w700,
+            color: tvText,
+          ),
+        ),
+        const SizedBox(width: 32),
+        Expanded(
+          child: Text(
+            packTitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 40, color: tvMuted),
+          ),
+        ),
+        const SizedBox(width: 32),
+        Text(
+          Strings.answered(answered, expected),
+          style: const TextStyle(fontSize: 40, color: tvMuted),
+        ),
+      ],
+    ),
+    SizedBox(height: gap),
+    Container(
+      width: double.infinity,
+      height: 16,
+      decoration: BoxDecoration(
+        color: tvRaised,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: FractionallySizedBox(
+        key: const ValueKey('timer-bar'),
+        alignment: Alignment.centerLeft,
+        widthFactor: remaining.clamp(0.0, 1.0),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: tvAccent,
+            borderRadius: BorderRadius.circular(999),
+          ),
+        ),
+      ),
+    ),
+    SizedBox(height: gap),
+  ];
 
   Widget _asking() => Column(
     children: [
-      Row(
-        children: [
-          Text(
-            Strings.questionOf(number, total),
-            style: const TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.w700,
-              color: tvText,
-            ),
-          ),
-          const SizedBox(width: 32),
-          Expanded(
-            child: Text(
-              packTitle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 40, color: tvMuted),
-            ),
-          ),
-          const SizedBox(width: 32),
-          Text(
-            Strings.answered(answered, expected),
-            style: const TextStyle(fontSize: 40, color: tvMuted),
-          ),
-        ],
-      ),
-      const SizedBox(height: 36),
-      Container(
-        width: double.infinity,
-        height: 16,
-        decoration: BoxDecoration(
-          color: tvRaised,
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: FractionallySizedBox(
-          key: const ValueKey('timer-bar'),
-          alignment: Alignment.centerLeft,
-          widthFactor: remaining.clamp(0.0, 1.0),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: tvAccent,
-              borderRadius: BorderRadius.circular(999),
-            ),
-          ),
-        ),
-      ),
-      const SizedBox(height: 36),
+      ..._header(36),
       Expanded(
         child: Row(
           children: [
@@ -140,20 +162,6 @@ class QuizScreen extends StatelessWidget {
                 ),
               ),
             ),
-            if (svg != null) ...[
-              const SizedBox(width: 64),
-              Container(
-                key: const ValueKey('picture-card'),
-                width: 520,
-                height: 347,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: SvgPicture.memory(svg!, fit: BoxFit.contain),
-              ),
-            ],
           ],
         ),
       ),
@@ -172,28 +180,115 @@ class QuizScreen extends StatelessWidget {
     ],
   );
 
-  Widget _tile(int i) {
-    final long = choices[i].length > 24;
+  // --- a picture question: the picture gets what the other parts leave ---
+
+  static const _sideW = 720.0;
+
+  bool get _isSvg => pictureName.toLowerCase().endsWith('.svg');
+
+  /// The picture, whole (never cropped), on a frame that fills its room.
+  Widget _picture(VoidCallback onBroken) => Container(
+    key: const ValueKey('picture'),
+    clipBehavior: Clip.antiAlias,
+    decoration: BoxDecoration(
+      color: _isSvg ? Colors.white : tvSurface,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: _isSvg
+        ? SvgPicture.memory(
+            picture!,
+            fit: BoxFit.contain,
+            errorBuilder: (_, _, _) {
+              WidgetsBinding.instance.addPostFrameCallback((_) => onBroken());
+              return const SizedBox.shrink();
+            },
+          )
+        : Image(
+            // Same bytes -> same cache key: decoded once per question, not per
+            // tick. Decoded no bigger than the screen.
+            image: ResizeImage(
+              MemoryImage(picture!),
+              width: 1920,
+              height: 1080,
+              policy: ResizeImagePolicy.fit,
+            ),
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.medium,
+            gaplessPlayback: true,
+            errorBuilder: (_, _, _) {
+              WidgetsBinding.instance.addPostFrameCallback((_) => onBroken());
+              return const SizedBox.shrink();
+            },
+          ),
+  );
+
+  Widget _askingPicture(VoidCallback onBroken) => Column(
+    children: [
+      ..._header(28),
+      Expanded(
+        child: Row(
+          // Stretch: the frame fills the room, whatever the photo's shape.
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: _picture(onBroken)),
+            const SizedBox(width: 48),
+            SizedBox(
+              width: _sideW,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        question,
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: question.length > 70 ? 44 : 56,
+                          fontWeight: FontWeight.w900,
+                          height: 1.1,
+                          letterSpacing: -1,
+                          color: tvText,
+                        ),
+                      ),
+                    ),
+                  ),
+                  for (var i = 0; i < 4; i++) ...[
+                    const SizedBox(height: 16),
+                    _tile(i, compact: true),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+
+  /// [compact]: the 112 px tile beside a picture, 44/36 px text.
+  Widget _tile(int i, {bool compact = false}) {
+    final long = choices[i].length > (compact ? 20 : 24);
     return Container(
       key: ValueKey('tile-$i'),
-      height: 168,
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+      height: compact ? 112 : 168,
+      padding: EdgeInsets.symmetric(horizontal: compact ? 28 : 40),
       decoration: BoxDecoration(
         color: _tileColors[i],
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         children: [
-          ShapeMark(i, 48, tvInk),
-          const SizedBox(width: 32),
+          ShapeMark(i, compact ? 40 : 48, tvInk),
+          SizedBox(width: compact ? 20 : 32),
           Expanded(
             child: Text(
               choices[i],
-              // Long answers wrap to 3 lines at 40 px.
-              maxLines: 3,
+              // Long answers wrap to 3 lines at 40 px (2 lines at 36 px beside a picture).
+              maxLines: compact ? 2 : 3,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: long ? 40 : 52,
+                fontSize: compact ? (long ? 36 : 44) : (long ? 40 : 52),
                 fontWeight: FontWeight.w700,
                 height: 1.1,
                 color: tvInk,
@@ -225,10 +320,6 @@ class QuizScreen extends StatelessWidget {
 
   Widget _reveal() {
     final right = correctIndex!;
-    final wrong = [
-      for (var i = 0; i < 4; i++)
-        if (i != right) i,
-    ];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -265,47 +356,9 @@ class QuizScreen extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Container(
-                key: ValueKey('tile-$right'),
-                height: 168,
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                decoration: BoxDecoration(
-                  color: _tileColors[right],
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: tvText, width: 6),
-                ),
-                child: Row(
-                  children: [
-                    ShapeMark(right, 48, tvInk),
-                    const SizedBox(width: 32),
-                    Expanded(
-                      child: Text(
-                        choices[right],
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 56,
-                          fontWeight: FontWeight.w900,
-                          height: 1.1,
-                          color: tvInk,
-                        ),
-                      ),
-                    ),
-                    _dots(right, 48),
-                    const SizedBox(width: 32),
-                    const Icon(Icons.check, size: 56, color: tvInk),
-                  ],
-                ),
-              ),
+              _correctTile(right, 168),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  for (final i in wrong) ...[
-                    if (i != wrong.first) const SizedBox(width: 20),
-                    Expanded(child: _wrongTile(i)),
-                  ],
-                ],
-              ),
+              _wrongRow(right, 120),
             ],
           ),
         ),
@@ -315,9 +368,105 @@ class QuizScreen extends StatelessWidget {
     );
   }
 
-  Widget _wrongTile(int i) => Container(
+  Widget _correctTile(int right, double height) => Container(
+    key: ValueKey('tile-$right'),
+    height: height,
+    padding: const EdgeInsets.symmetric(horizontal: 40),
+    decoration: BoxDecoration(
+      color: _tileColors[right],
+      borderRadius: BorderRadius.circular(24),
+      border: Border.all(color: tvText, width: 6),
+    ),
+    child: Row(
+      children: [
+        ShapeMark(right, 48, tvInk),
+        const SizedBox(width: 32),
+        Expanded(
+          child: Text(
+            choices[right],
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 56,
+              fontWeight: FontWeight.w900,
+              height: 1.1,
+              color: tvInk,
+            ),
+          ),
+        ),
+        _dots(right, 48),
+        const SizedBox(width: 32),
+        const Icon(Icons.check, size: 56, color: tvInk),
+      ],
+    ),
+  );
+
+  Widget _wrongRow(int right, double height) => Row(
+    children: [
+      for (var i = 0; i < 4; i++)
+        if (i != right) ...[
+          if (i != (right == 0 ? 1 : 0)) const SizedBox(width: 20),
+          Expanded(child: _wrongTile(i, height)),
+        ],
+    ],
+  );
+
+  Widget _revealPicture(VoidCallback onBroken) {
+    final right = correctIndex!;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _revealLabel(),
+              const SizedBox(height: 12),
+              Text(
+                question,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 56,
+                  fontWeight: FontWeight.w900,
+                  height: 1.1,
+                  letterSpacing: -1,
+                  color: tvText,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: SizedBox(width: double.infinity, child: _picture(onBroken)),
+              ),
+              const SizedBox(height: 16),
+              _correctTile(right, 140),
+              const SizedBox(height: 16),
+              _wrongRow(right, 96),
+            ],
+          ),
+        ),
+        const SizedBox(width: 48),
+        SizedBox(width: 520, child: _scores()),
+      ],
+    );
+  }
+
+  Widget _revealLabel() => Text.rich(
+    TextSpan(
+      children: [
+        TextSpan(
+          text: Strings.questionOf(number, total),
+          style: const TextStyle(fontWeight: FontWeight.w700, color: tvText),
+        ),
+        const TextSpan(text: Strings.answerIs),
+      ],
+    ),
+    style: const TextStyle(fontSize: 40, color: tvMuted),
+  );
+
+  Widget _wrongTile(int i, double height) => Container(
     key: ValueKey('tile-$i'),
-    height: 120,
+    height: height,
     padding: const EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
       color: _tileColors[i].withValues(alpha: 0.25),
@@ -335,9 +484,19 @@ class QuizScreen extends StatelessWidget {
 
   /// A one-word answer shrinks before it would break mid-word beside the voters.
   Widget _wrongAnswer(String text) {
-    const style = TextStyle(fontSize: 40, fontWeight: FontWeight.w500, height: 1.1, color: tvText);
+    const style = TextStyle(
+      fontSize: 40,
+      fontWeight: FontWeight.w500,
+      height: 1.1,
+      color: tvText,
+    );
     if (text.contains(' ')) {
-      return Text(text, maxLines: 2, overflow: TextOverflow.ellipsis, style: style);
+      return Text(
+        text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: style,
+      );
     }
     return FittedBox(
       fit: BoxFit.scaleDown,
@@ -421,6 +580,34 @@ class QuizScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Remembers that this picture failed to decode, so the screen can drop it.
+/// A new picture (other bytes) starts clean.
+class _PictureGuard extends StatefulWidget {
+  const _PictureGuard(this.bytes, this.builder);
+  final Uint8List bytes;
+  final Widget Function(bool broken, VoidCallback report) builder;
+
+  @override
+  State<_PictureGuard> createState() => _PictureGuardState();
+}
+
+class _PictureGuardState extends State<_PictureGuard> {
+  bool _broken = false;
+
+  @override
+  void didUpdateWidget(_PictureGuard old) {
+    super.didUpdateWidget(old);
+    if (!identical(old.bytes, widget.bytes)) _broken = false;
+  }
+
+  void _report() {
+    if (mounted && !_broken) setState(() => _broken = true);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(_broken, _report);
 }
 
 /// Voter dots on a wrong tile (about 280 px of room): overlapped, and past 3

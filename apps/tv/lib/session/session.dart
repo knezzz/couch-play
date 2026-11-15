@@ -525,11 +525,13 @@ class Session {
   /// The running quiz pack's title, or ''.
   String get quizTitle => _quizPack?.title ?? '';
 
-  /// The SVG of the current question, if it has one.
-  Uint8List? get quizSvg {
+  /// The picture of the current question (SVG or photo), and its file name.
+  Uint8List? get quizPicture {
     final img = _quiz?.current.image;
     return img == null ? null : _quizPack?.images[img];
   }
+
+  String get quizPictureName => _quiz?.current.image ?? '';
 
   /// Frozen while the quiz waits for players to come back.
   Duration _quizNow() => (_quizPausedAt ?? _clock()) - _quizOrigin;

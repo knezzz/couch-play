@@ -211,7 +211,8 @@ class _TvAppState extends State<TvApp> {
                   body: Stack(children: [
                     QuizScreen(
                     question: quiz.current.q,
-                    svg: _session.quizSvg,
+                    picture: _session.quizPicture,
+                    pictureName: _session.quizPictureName,
                     choices: quiz.current.choices,
                     number: quiz.number,
                     total: quiz.total,

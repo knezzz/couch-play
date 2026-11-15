@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,8 @@ QuizScreen _quiz({int? correct, bool svg = true, Map<int, int>? picks, Map<int, 
     QuizScreen(
       question: 'Which of these is the capital of the country in the picture? ' * 2,
       packTitle: 'World Flags',
-      svg: svg ? utf8.encode(_svg) : null,
+      picture: svg ? Uint8List.fromList(utf8.encode(_svg)) : null,
+      pictureName: 'p.svg',
       choices: [_long, 'Split', _long, 'Osijek'],
       number: 3,
       total: 10,
@@ -62,12 +64,10 @@ void main() {
       expect((deco.decoration as BoxDecoration).color, tvAccent);
     });
 
-    testWidgets('80 px question, 520 px picture card on the right', (t) async {
-      await _pump(t, _quiz());
+    testWidgets('a text-only question is 80 px, with no picture frame', (t) async {
+      await _pump(t, _quiz(svg: false));
       expect(_fs(t, find.textContaining('Which of these')), 80);
-      expect(t.getSize(find.byKey(const ValueKey('picture-card'))).width, 520);
-      expect(t.getTopLeft(find.byKey(const ValueKey('picture-card'))).dx,
-          greaterThan(t.getTopLeft(find.textContaining('Which of these')).dx + 400));
+      expect(find.byKey(const ValueKey('picture')), findsNothing);
     });
 
     testWidgets('four 168 px tiles in a 2x2 grid; long answers wrap to 3 lines inside the tile', (t) async {
@@ -114,7 +114,7 @@ void main() {
     });
 
     testWidgets('the correct tile is large, outlined white, with a check', (t) async {
-      await _pump(t, _quiz(correct: 2));
+      await _pump(t, _quiz(correct: 2, svg: false));
       final big = find.byKey(const ValueKey('tile-2'));
       expect(t.getSize(big).height, 168);
       expect(find.descendant(of: big, matching: find.byIcon(Icons.check)), findsOneWidget);
