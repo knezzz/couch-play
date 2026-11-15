@@ -200,3 +200,5 @@ Added seats running: 2 of 3 (builder-2, content). Each goes when its work is don
 - 2026-11-14: Task 17 accepted on macOS (PM ran core 101, tv 169, controller 46; looked at the QA screenshots of the
   wrap border and the slowed icons). QA saw slowed, fat, thin and wrap by eye; speed, ghost, clear, wall-crash after wrap
   are covered by tests only. TV: readability from the couch and frame times still to check.
+- 2026-11-15: Person said push all: main pushed to github.com/knezzz/couch-play (public). The lobby mockup now uses a sample
+  address; the TV address stays in the history of c1c5c1d (a home-network address only).
