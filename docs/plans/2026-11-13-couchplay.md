@@ -741,3 +741,15 @@ The person: "Sometimes the curve game stops reacting to buttons on phone (often 
 - [x] **Step 3: Implement.** Today a Curve player who disconnects is out for the whole match (`_dropFromGame`), and a Quiz player is removed from the round; change that to "out for this round/question, back in after reconnecting". A 2-player Curve match that drops to 1 pauses for up to 30 s ("Čekamo da se <ime> vrati" on the TV) and ends only if nobody comes back; a 2-player Quiz keeps going with the one left (person, 2026-11-15). A game still ends when no human is connected. The person saw the stop in a 2-person Quiz too: reproduce that case. A Curve match ended by the 30 s wait keeps its scores (ties included). When nobody is connected, Quiz and Curve pause for 30 s ("Čekamo da se igrači vrate") instead of ending at once.
 - [x] **Step 4: Run.** Expected: PASS. QA on macOS release with 3 phones: close the host's tab mid-Curve and mid-Quiz, keep playing, reopen it.
 - [x] **Step 5: Commit** by path.
+
+---
+
+### Task 21: Croatian packs only, and as big as they can get (added 2026-11-15, user request)
+
+The person: "Let's just have Croatian quizzes for now. Increase general knowledge questions for all. Use existing pub quiz and Potjera data if you can find them." Asked how big: "all of them as big as you can find questions".
+
+- [ ] **Step 1: Bundle only the Croatian packs.** Remove the six English packs from `apps/tv/assets/packs/` (keep their sources in `tool/packs/`). Update `bundled_packs_test.dart` and `pack_store_test.dart`. The default pack stays `hr-opce-znanje`.
+- [ ] **Step 2: Research sources.** Look for Croatian pub-quiz (kviz) question sets and Potjera (HRT) material online. Use them for topics, style and difficulty. Copy question text only where the licence allows it (the repo is public), and record the licence; otherwise write our own wording of the verified fact. Report what was found and under what licence.
+- [ ] **Step 3: Grow every Croatian pack**, Opće znanje first and most (aim for several hundred), then the others (aim for 100+ each where verified facts allow). Same rules as Task 13b: every question verified with a source in the pack's `.sources.md`, stable facts only, no duplicates within or across packs, plausible wrong answers, at most about a third easy. Commit in batches so the TV gets bigger packs early.
+- [ ] **Step 4: Check.** The bundled pack test passes; no duplicate questions (a test or a check script); the pack files still load fast on the TV (size noted).
+- [ ] **Step 5:** New Međimurje questions join the person's review of that pack (Task 13).

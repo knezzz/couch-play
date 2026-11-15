@@ -103,6 +103,8 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
   - Croatian culture and sport
 
   The app interface is in Croatian (changed 2026-11-14 at the user's request; it was English). Every bundled English pack also gets a Croatian version (same pictures for flags and shapes), and the Croatian packs aim at locals: verified facts, harder questions (user request, 2026-11-14). Local Međimurje facts are the hardest to verify, so the user reviews that pack before it's considered done.
+
+  **Croatian packs only, and bigger (user request, 2026-11-15):** for now the TV ships only the Croatian packs; the English packs stay in `tool/packs/` but are not bundled. Every Croatian pack grows as far as verified questions can be found (Opće znanje most of all). Existing Croatian pub-quiz and Potjera material guides the topics, style and difficulty; question text is copied only where its licence allows it (the repo is public), otherwise the questions are our own wording of verified facts.
 - **Adding packs without rebuilding:** the host can upload a pack file from the controller. The TV validates it and stores it in app storage, so it's there next time. Invalid packs are rejected with a readable error.
 
 ### Curve
