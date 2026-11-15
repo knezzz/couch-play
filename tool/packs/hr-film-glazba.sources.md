@@ -92,3 +92,40 @@ converted to Croatian notation.
 77. A Trip to the Moon, 1902 French short film by Georges Méliès: https://en.wikipedia.org/wiki/A_Trip_to_the_Moon
 78. Snow White (1937), first animated feature produced in the US / Disney's first feature-length film: https://en.wikipedia.org/wiki/Snow_White_and_the_Seven_Dwarfs_(film) ; https://hr.wikipedia.org/wiki/Snjeguljica_i_sedam_patuljaka_(1937.)
 79. 1941 drama film by Orson Welles: https://en.wikipedia.org/wiki/Citizen_Kane ; https://hr.wikipedia.org/wiki/Građanin_Kane
+80. 1972 film by Francis Ford Coppola: https://en.wikipedia.org/wiki/The_Godfather ; https://hr.wikipedia.org/wiki/Kum_(1972.)
+81. Humphrey Bogart; Rick Blaine owns a nightclub: https://en.wikipedia.org/wiki/Casablanca_(film)
+82. the story of Scarlett O'Hara (Vivien Leigh): https://en.wikipedia.org/wiki/Gone_with_the_Wind_(film) ; https://hr.wikipedia.org/wiki/Zameo_ih_vjetar
+83. 1968 film by Stanley Kubrick: https://en.wikipedia.org/wiki/2001:_A_Space_Odyssey ; https://hr.wikipedia.org/wiki/2001.:_Odiseja_u_svemiru_(1968.)
+84. 1954 Japanese film by Akira Kurosawa: https://en.wikipedia.org/wiki/Seven_Samurai ; https://hr.wikipedia.org/wiki/Sedam_samuraja
+85. knight ... challenges Death to a game of chess: https://en.wikipedia.org/wiki/The_Seventh_Seal ; https://hr.wikipedia.org/wiki/Sedmi_pečat
+86. 1925 film by Sergei Eisenstein: https://en.wikipedia.org/wiki/Battleship_Potemkin
+87. Laurel i Hardy (Stanlio i Olio): https://hr.wikipedia.org/wiki/Laurel_i_Hardy
+88. Audrey Hepburn; Holly Golightly: https://en.wikipedia.org/wiki/Breakfast_at_Tiffany's_(film) ; https://hr.wikipedia.org/wiki/Doručak_kod_Tiffanyja
+89. 1962 ... first film in the James Bond series, starring Sean Connery: https://en.wikipedia.org/wiki/Dr._No_(film)
+90. Pulp Fiction premiered at the 1994 Cannes Film Festival where it won the Palme d'Or: https://en.wikipedia.org/wiki/Pulp_Fiction ; https://hr.wikipedia.org/wiki/Pakleni_šund
+91. Toy Story: the first entirely computer-animated feature film: https://en.wikipedia.org/wiki/Toy_Story
+92. 2001 film by Hayao Miyazaki: https://en.wikipedia.org/wiki/Spirited_Away ; https://hr.wikipedia.org/wiki/Avanture_male_Chihiro
+93. Apollo 13 (1995) ... 'Houston, we have a problem': https://en.wikipedia.org/wiki/Apollo_13_(film)
+94. Han Solo in Star Wars ... titular character in Indiana Jones: https://en.wikipedia.org/wiki/Harrison_Ford
+95. starring Jodie Foster and Anthony Hopkins: https://en.wikipedia.org/wiki/The_Silence_of_the_Lambs_(film) ; https://hr.wikipedia.org/wiki/Kad_jaganjci_utihnu
+96. based on The Story of the Trapp Family Singers, Maria von Trapp: https://en.wikipedia.org/wiki/The_Sound_of_Music_(film) ; https://hr.wikipedia.org/wiki/Moje_pjesme,_moji_snovi_(1965.)
+97. Croatian film producer best known for Academy Awards for Schindler's List and Gladiator: https://en.wikipedia.org/wiki/Branko_Lustig
+98. Luka Kovač in ER (hr 'Hitna pomoć'): https://en.wikipedia.org/wiki/Goran_Višnjić ; https://hr.wikipedia.org/wiki/Hitna_pomoć
+99. 1969 film directed by Veljko Bulajić ... nominated for the Academy Award for Best Foreign Language Film: https://en.wikipedia.org/wiki/Battle_of_Neretva_(film)
+100. pop grupa iz Zadra, pobjednici Pjesme Eurovizije 1989.: https://hr.wikipedia.org/wiki/Riva_(sastav) ; https://en.wikipedia.org/wiki/Riva_(band)
+101. osnovana u Sarajevu 1974. godine: https://hr.wikipedia.org/wiki/Bijelo_dugme
+102. Azra: Branimir 'Johnny' Štulić: https://hr.wikipedia.org/wiki/Azra ; https://en.wikipedia.org/wiki/Azra_(band)
+103. osnovan 1977. u Zagrebu u naselju Dubrava: https://hr.wikipedia.org/wiki/Prljavo_kazalište
+104. skladatelj Josip Runjanin (authorship not fully certain, hence 'pripisuje'): https://hr.wikipedia.org/wiki/Lijepa_naša_domovino
+105. Simfonija u fis-molu op. 41, praizvedena u Dresdenu 10. 2. 1920.: https://hr.wikipedia.org/wiki/Dora_Pejačević
+106. najpoznatija opereta hrvatskog skladatelja Ive Tijardovića: https://hr.wikipedia.org/wiki/Mala_Floramye
+107. utemeljen 1954: https://hr.wikipedia.org/wiki/Pulski_filmski_festival
+108. osnutak 1972: https://hr.wikipedia.org/wiki/Svjetski_festival_animiranog_filma_Animafest_Zagreb ; https://en.wikipedia.org/wiki/Animafest_Zagreb
+109. Otac lika profesora Baltazara je Zlatko Grgić; Zagreb film 1967.–1978.: https://hr.wikipedia.org/wiki/Profesor_Baltazar
+110. Tup Tup (1972) nominated for an Academy Award for Best Animated Short: https://en.wikipedia.org/wiki/Tup_Tup ; https://hr.wikipedia.org/wiki/Nedeljko_Dragić
+111. režira cjelovečernji animirani film Čudnovate zgode šegrta Hlapića: https://hr.wikipedia.org/wiki/Milan_Blažeković
+112. režija Vinko Brešan: https://hr.wikipedia.org/wiki/Kako_je_počeo_rat_na_mom_otoku_(1996.)
+113. UNESCO nematerijalna baština, godina 2012: https://hr.wikipedia.org/wiki/Klapsko_pjevanje
+114. nastup na Euroviziji 1968 u Londonu s pjesmom 'Jedan dan': https://hr.wikipedia.org/wiki/Dubrovački_trubaduri
+115. Povisilicama se povisuje izvođeni ton za jedan kromatski polustepen: https://www.enciklopedija.hr/clanak/predznaci ; https://en.wikipedia.org/wiki/Sharp_(music)
+116. G-clef ... treble clef placing G4 (g1) on the second line of the staff: https://en.wikipedia.org/wiki/Clef
