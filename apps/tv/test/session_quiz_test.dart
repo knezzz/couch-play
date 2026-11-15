@@ -167,6 +167,36 @@ void main() {
     s.dispose();
   });
 
+  testWidgets('host_leaving_mid_quiz_keeps_going_and_the_old_host_comes_back', (t) async {
+    s = fresh();
+    final a = join(s, 'Ana', token: 'ta'), b = join(s, 'Ben', token: 'tb');
+    final c = join(s, 'Cy', token: 'tc');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    answerRight(a);
+    b.say(const Answer(0));
+    c.say(const Answer(0));
+    await step(t, const Duration(milliseconds: 300)); // reveal
+    final earned = s.quiz!.totals[idOf(a)]!;
+    expect(earned, greaterThan(0));
+    a.close();
+    await t.pump();
+    expect(s.phase, Phase.quiz);
+    expect(s.hostId, idOf(b));
+    await step(t, const Duration(seconds: 4)); // question 2
+    expect(b.last<QuizQuestion>()!.number, 2);
+    final a2 = FakePeer();
+    s.attach(a2);
+    a2.say(const Join('Ana', 'ta'));
+    await t.pump();
+    expect(a2.last<QuizQuestion>()!.number, 2, reason: 'back in at the current question');
+    expect(s.hostId, idOf(b), reason: 'the new host keeps the role');
+    answerRight(a2);
+    await step(t, const Duration(milliseconds: 200));
+    expect(s.quiz!.totals[idOf(a)], greaterThan(earned), reason: 'earlier points kept');
+    s.dispose();
+  });
+
   testWidgets('everyone_leaves_ends_the_game', (t) async {
     s = fresh();
     final a = join(s, 'Ana');

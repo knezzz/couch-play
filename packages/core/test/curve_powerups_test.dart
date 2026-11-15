@@ -350,6 +350,21 @@ void main() {
     expect(s.wrapLeft, 0);
   });
 
+  test('a_killed_head_is_back_at_the_next_round_after_revive', () {
+    final s = _sim();
+    s.kill(1);
+    expect(_head(s, 1).alive, isFalse);
+    s.revive(1);
+    expect(_head(s, 1).alive, isFalse, reason: 'this round stays lost');
+    s.roundOver = true;
+    s.startRound();
+    expect(_head(s, 1).alive, isTrue);
+    s.kill(2);
+    s.roundOver = true;
+    s.startRound();
+    expect(_head(s, 2).alive, isFalse, reason: 'not revived: still gone');
+  });
+
   test('clear_has_no_time_left', () {
     final s = _sim();
     _pickUp(s, PowerUpKind.clear);

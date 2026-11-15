@@ -208,6 +208,10 @@ class CurveSim {
     _pending.add(h);
   }
 
+  /// Takes [id] back into the match: it races again from the next [startRound]
+  /// (this round stays lost). Its score is kept.
+  void revive(int id) => _gone.remove(id);
+
   /// Test hook: put a head somewhere specific.
   void place(int id, double x, double y, double heading) {
     _heads[id]!

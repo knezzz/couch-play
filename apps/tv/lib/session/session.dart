@@ -131,6 +131,10 @@ class Session {
   /// The oldest connected human, so the role passes on when the host drops and
   /// goes back to them if they return. Null if no human is connected.
   int? get hostId {
+    // During a game the role stays with whoever has it, even if the oldest
+    // player comes back.
+    final g = _gameHost == null ? null : _byId(_gameHost!);
+    if (g != null && g.connected) return g.id;
     for (final p in _players) {
       if (!p.bot && p.connected) return p.id;
     }
@@ -138,6 +142,19 @@ class Session {
   }
 
   Phase get phase => _phase;
+
+  // The host of the running game; null in the lobby and results, where the
+  // host is simply the oldest connected human.
+  int? _gameHost;
+
+  /// The game's host left or was removed: the next-oldest connected human
+  /// takes over and keeps the role until the game ends.
+  void _keepGameHost() {
+    final g = _gameHost == null ? null : _byId(_gameHost!);
+    if (_gameHost == null || (g != null && g.connected)) return;
+    _gameHost = null;
+    _gameHost = hostId;
+  }
 
   /// The placements of the game that just ended; empty outside the results
   /// phase. The TV's results screen draws these.
@@ -251,6 +268,9 @@ class Session {
       case Phase.lobby:
         _broadcastLobby();
       case Phase.curve:
+        // Back in the match from the next round; this one stays lost.
+        final sid = _simIdOf[p.id];
+        if (sid != null && _gone.remove(p.id)) _sim?.revive(sid);
         final status = _statusFor(p);
         peer.send(status ?? _waiting);
       case Phase.quiz:
@@ -268,6 +288,7 @@ class Session {
     p.connected = false;
     p.disconnectedAt = _now();
     _dropFromGame(p);
+    _keepGameHost();
     if (_phase == Phase.lobby) _broadcastLobby();
     _notify();
     _checkCurveEnd();
@@ -430,6 +451,7 @@ class Session {
     _sim = sim;
     _bots = Bots(sim, [for (final p in parts) if (p.bot) p.colorIndex], _random);
     _curveRound = 1;
+    _gameHost = hostId;
     _phase = Phase.curve;
     _sendStatuses();
     _notify();
@@ -512,6 +534,7 @@ class Session {
     _quiz = QuizRound(pack, _quizIds.toList(), random: _random);
     _quizOrigin = _clock();
     _stepStart = Duration.zero;
+    _gameHost = hostId;
     _phase = Phase.quiz;
     _sendQuestion();
     _quizTimer?.cancel();
@@ -700,6 +723,7 @@ class Session {
       }
     }
     _phase = Phase.results;
+    _gameHost = null;
     _placements = placements;
     _stopQuiz();
     final results = Results(placements);
@@ -720,6 +744,7 @@ class Session {
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
   void returnToLobby() {
     _phase = Phase.lobby;
+    _gameHost = null;
     _placements = [];
     _stopQuiz();
     _sim = null;
