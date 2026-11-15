@@ -82,7 +82,7 @@ Answered:
 | design | (removed 2026-11-14) | 2026-11-14 | added for design reviews of Tasks 6, 11, 14, 15; removed when done |
 | content | build-content@couchplay | 2026-11-14 | **added**: Task 13 question packs |
 
-Added seats running: 2 of 3 (builder-2, content). Each goes when its work is done.
+Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its work is done.
 
 ## Changelog
 
@@ -218,3 +218,6 @@ Added seats running: 2 of 3 (builder-2, content). Each goes when its work is don
   "Sudar!" 1.5 s after both came back to Curve (read as the passive head crashing).
 - 2026-11-15: Person: Croatian quizzes only for now; all packs as big as questions can be found; use pub-quiz and
   Potjera material. PM: copy text only where the licence allows (public repo). Spec + plan Task 21; routed to lead.
+- 2026-11-15: Added seat content-2 (3 of 3; template rigs/seats/content-2.member.yaml, a copy of content) for Task 21
+  at the lead's request: about 1000 verified questions is too much for one writer. It takes the seven packs other than
+  Opće znanje.
