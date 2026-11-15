@@ -94,6 +94,8 @@
     {"q": "Koja je plemićka obitelj u 18. stoljeću imala vlastelinstvo Međimurje i znatno nadogradila Stari grad u Čakovcu?", "choices": ["Althan", "Batthyány", "Esterházy", "Drašković"], "answer": 0},
     {"q": "Koliko gradova ima Međimurska županija?", "choices": ["Tri", "Sedam", "Dva", "Pet"], "answer": 0},
     {"q": "U kojem je gradu 1620. rođen Nikola Zrinski, pjesnik i hrvatski ban?", "choices": ["U Varaždinu", "U Čakovcu", "U Ozlju", "U Zagrebu"], "answer": 1},
-    {"q": "Koje je godine kroz Čakovec prošla prva željeznička pruga, ona koja je Budimpeštu povezivala s Rijekom i Trstom?", "choices": ["1903.", "1889.", "1848.", "1860."], "answer": 3}
+    {"q": "Koje je godine kroz Čakovec prošla prva željeznička pruga, ona koja je Budimpeštu povezivala s Rijekom i Trstom?", "choices": ["1903.", "1889.", "1848.", "1860."], "answer": 3},
+    {"q": "U kojem se gradu nalazi ovaj dvorac?", "image": "photos/foto-01.webp", "choices": ["U Varaždinu", "U Čakovcu", "U Ozlju", "U Krapini"], "answer": 1},
+    {"q": "U kojem se međimurskom mjestu nalazi ova crkva?", "image": "photos/foto-02.webp", "choices": ["U Prelogu", "U Nedelišću", "U Štrigovi", "U Svetom Martinu na Muri"], "answer": 2}
   ]
 }

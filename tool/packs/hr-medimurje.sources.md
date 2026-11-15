@@ -103,6 +103,13 @@ Shorthand:
 91. datum rođenja 1. svibnja 1620., mjesto rođenja Čakovec: https://hr.wikipedia.org/wiki/Nikola_VII._Zrinski
 92. "prva željeznička pruga sagrađena je 1860., a povezivala je Budimpeštu s lukama Rijekom i Trstom": ČK
 
+## Photo questions (Task 22)
+
+Each photo keeps its own licence; changes: resized to 1280 px on the long side and saved as WebP.
+
+93. photos/foto-01.webp: Stari grad Zrinskih, Čakovec (aerial). Subject from the Commons file page. Photo: Silverije, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Stari_grad_Zrinskih,_%C4%8Cakovec_-_pogled_iz_zraka.JPG (resized to 1280 px, WebP)
+94. photos/foto-02.webp: Crkva sv. Jeronima, Štrigova. Subject from the Commons file page. Photo: Silverije, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Crkva_sv._Jeronima,_%C5%A0trigova_(Croatia)_-_sjeverozapad.jpg (resized to 1280 px, WebP)
+
 ## Dropped from the first version, and why
 
 - "Najsjevernija županija": no source says it in those words. Replaced by the northernmost point (Q11).
@@ -175,3 +182,5 @@ framing of the Althan ownership); the word wrong answers are my choice, so pleas
 - Q90: Koliko gradova ima Međimurska županija? → Tri
 - Q91: U kojem je gradu 1620. rođen Nikola Zrinski, pjesnik i hrvatski ban? → U Čakovcu
 - Q92: Koje je godine kroz Čakovec prošla prva željeznička pruga, ona koja je Budimpeštu povezivala s Rijekom i Trstom? → 1860.
+- Q93 (photo): U kojem se gradu nalazi ovaj dvorac? → U Čakovcu (Stari grad Zrinskih)
+- Q94 (photo): U kojem se međimurskom mjestu nalazi ova crkva? → U Štrigovi (sv. Jeronim)
