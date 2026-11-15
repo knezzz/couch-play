@@ -28,8 +28,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 18 | Keep the TV awake while the app is open (screensaver started mid-game; person, 2026-11-14) | built (9541811); TV check next session | lead |
 | 19 | Curve: a phone button sometimes stops reacting (person, 2026-11-15) | done on macOS (edd0ca4; cause: a crash reset the per-button finger count, the late lift sent it to -1); real phones next session | lead |
 | 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | done on macOS (696669b … 9d7e1bf); real phones + TV next session | lead |
-| 21 | Croatian packs only, all as big as verified questions allow; pub-quiz/Potjera as a guide (person, 2026-11-15) | queued to lead | lead + content |
-| 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | app done on macOS (89c05ab, 335c62b); 20 Commons photos so far (geografija 18, medimurje 2); world cities come with Task 21 | lead + content |
+| 21 | Croatian packs only, all as big as verified questions allow; pub-quiz/Potjera as a guide (person, 2026-11-15) | done (59588ed … 0b07659): 10 packs, ~1,245 questions, all sourced; 52 new Međimurje ones wait on the person | lead + content |
+| 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | app done on macOS (89c05ab, 335c62b); 20 Commons photos so far (geografija 18, medimurje 2); 11 world cities in zemljopis-svijeta (31 photos) | lead + content |
 
 ## Open questions for the person
 
@@ -228,3 +228,6 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-15: Task 22 accepted on macOS (PM ran core 103, tv 218, controller 47; looked at QA's geografija screens).
   Photo credits stay in the packs' .sources.md (the repo copy is credited); no credit line in the app for home use.
   Revisit if the app is ever shared. TV: decode time, memory and frame times with photos still to check.
+- 2026-11-15: Task 21 accepted (PM ran tv 218; sampled opće znanje). ~1,245 questions (opće znanje 401). No openly
+  licensed Croatian pub-quiz/Potjera set exists (HKS: no commercial use; HRT etc. all rights reserved): used for
+  style only, all wording ours. A duplicate test guards the packs. Not done: a native read of ~850 new questions.
