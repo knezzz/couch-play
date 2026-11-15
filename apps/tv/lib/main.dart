@@ -39,13 +39,17 @@ void main() {
 }
 
 class TvApp extends StatefulWidget {
-  const TvApp({super.key});
+  /// Tests pass their own [session] and set [serve] false (no web server, no
+  /// assets).
+  const TvApp({super.key, this.session, this.serve = true});
+  final Session? session;
+  final bool serve;
   @override
   State<TvApp> createState() => _TvAppState();
 }
 
 class _TvAppState extends State<TvApp> {
-  final _session = Session();
+  late final Session _session = widget.session ?? Session();
   final _nav = GlobalKey<NavigatorState>(); // a context below the EffectLayer
   GameServer? _server;
   Timer? _purge, _resultsTimer;
@@ -63,7 +67,7 @@ class _TvAppState extends State<TvApp> {
     super.initState();
     _session.changes.addListener(_onSession);
     _purge = Timer.periodic(const Duration(minutes: 1), (_) => _session.purgeStale());
-    _start();
+    if (widget.serve) _start();
   }
 
   @override
@@ -72,7 +76,7 @@ class _TvAppState extends State<TvApp> {
     _resultsTimer?.cancel();
     _session.changes.removeListener(_onSession);
     _server?.close();
-    _session.dispose();
+    if (widget.session == null) _session.dispose();
     super.dispose();
   }
 
@@ -117,7 +121,11 @@ class _TvAppState extends State<TvApp> {
     }
     final sim = _session.sim;
     if (_session.phase == Phase.curve && sim != null) {
-      if (sim != _gameSim || _session.curveRound != _gameRound) _newGame(sim);
+      if (sim != _gameSim || _session.curveRound != _gameRound) {
+        _newGame(sim);
+      } else {
+        setState(() {}); // e.g. the pause text appears or goes
+      }
     } else if (_game != null) {
       setState(() {
         _game = null;
