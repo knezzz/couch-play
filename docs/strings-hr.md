@@ -140,7 +140,7 @@ Shown on the phone (host uploads a pack) as received from the TV. N = question n
 | emptyQuestion(N) | Pitanje N: tekst pitanja je prazan. Upiši ga u "q". | Question N: the question text is empty. Put it in "q". | upload error |
 | badChoices(N) | Pitanje N: treba točno 4 odgovora i nijedan ne smije biti prazan. | Question N: needs exactly 4 answers and none may be empty. | upload error |
 | badAnswer(N) | Pitanje N: "answer" mora biti 0, 1, 2 ili 3. | Question N: "answer" must be 0, 1, 2 or 3. | upload error |
-| badImage(N, X) | Pitanje N: slika X mora biti relativna putanja do .svg datoteke. | Question N: picture X must be a relative path to an .svg file. | upload error |
+| badImage(N, X) | Pitanje N: slika X mora biti relativna putanja do .svg, .jpg, .png ili .webp datoteke. | Question N: picture X must be a relative path to an .svg, .jpg, .png or .webp file. | upload error |
 | missingImage(N, X) | Pitanje N: slike X nema u zipu. Dodaj je ili ukloni "image". | Question N: picture X is not in the zip. Add it or remove "image". | upload error |
 
 Field names (`format`, `title`, `q`, `choices`, `answer`, `image`) stay English because they are keys in the JSON file.
