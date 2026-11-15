@@ -42,6 +42,48 @@ Checked online on 2026-11-14, read-only (page wikitext fetched through the Wikip
 38. Šipan najveći od Elafita (s Lopudom, Koločepom, Jakljanom): https://hr.wikipedia.org/wiki/Elafitski_otoci
 39. Bajakovo (A3) – Batrovci, granica sa Srbijom: https://en.wikipedia.org/wiki/Croatia–Serbia_border
 40. Karasovići – Debeli Brijeg, granica s Crnom Gorom: https://en.wikipedia.org/wiki/Croatia–Montenegro_border and https://en.wikipedia.org/wiki/Debeli_Brijeg
+41. "Krk, uz susjedni otok Cres najveći otok u Jadranskom moru i ujedno najveći otok u Republici Hrvatskoj (405,78 km²)": https://hr.wikipedia.org/wiki/Krk
+42. "poplavno područje u Baranji ... između rijeka Dunav na istoku i Drave na jugu": https://hr.wikipedia.org/wiki/Park_prirode_Kopački_rit
+43. "godine 2007. Papuk je ... postao dijelom europske i svjetske asocijacije geoparkova i prvim geoparkom u Hrvatskoj": https://hr.wikipedia.org/wiki/Park_prirode_Papuk
+44. utemeljen = 1980.: https://hr.wikipedia.org/wiki/Nacionalni_park_Kornati
+45. adresa parka: Dr. Franje Tuđmana 14a, Starigrad Paklenica: https://hr.wikipedia.org/wiki/Nacionalni_park_Paklenica
+46. visina = Vojak – 1396: https://hr.wikipedia.org/wiki/Učka
+47. visina = Sljeme 1033: https://hr.wikipedia.org/wiki/Medvednica
+48. Žumberačka gora, visina = Sveta Gera - 1178: https://hr.wikipedia.org/wiki/Žumberak
+49. "Ivanščica (zvana i Ivančica) 1060 mnv., najviša planina sjeverozapadne Hrvatske": https://hr.wikipedia.org/wiki/Ivanščica
+50. "Psunj ... najviša planina Slavonije, s najvišim vrhom Brezovo polje na 985 mnv.": https://hr.wikipedia.org/wiki/Psunj
+51. "otok je udaljen 0,5 NM jugoistočno od Dubrovnika": https://hr.wikipedia.org/wiki/Lokrum
+52. "most Ždrelac koji spaja otoke Ugljan i Pašman": https://hr.wikipedia.org/wiki/Ždrelac
+53. "s kopnom je spojen kratkim mostom u mjestu Tisno": https://hr.wikipedia.org/wiki/Murter
+54. "Donji Kamenjak i Medulinski arhipelag nalaze se na krajnjem jugu istarskog poluotoka": https://hr.wikipedia.org/wiki/Rt_Kamenjak
+55. "Crkva hrvatskih mučenika na Udbini", Udbina središte Krbavske županije: https://hr.wikipedia.org/wiki/Udbina
+56. lokacija = brana na Cetini: https://hr.wikipedia.org/wiki/Peručko_jezero
+57. "visok 78 m do prvog jezerca u podnožju ... najviši je slap u Hrvatskoj": https://hr.wikipedia.org/wiki/Veliki_slap
+58. utemeljen = 1949.: https://hr.wikipedia.org/wiki/Nacionalni_park_Plitvička_jezera
+59. "meterološka postaja Zavižan, najviša meteorološka postaja u Hrvatskoj": https://hr.wikipedia.org/wiki/Zavižan
+60. "Bura je jak, suh i hladan, mahovit ... vjetar s kopna, koji ... puše duž istočne obale Jadranskoga mora": https://hr.wikipedia.org/wiki/Bura
+61. "delta Neretve poznato je uzgajalište mandarina, lubenica, rajčica, grožđa": https://hr.wikipedia.org/wiki/Neretva
+62. Beli Manastir, regija = Baranja: https://hr.wikipedia.org/wiki/Beli_Manastir
+63. "Državna ergela Đakovo je ergela u Đakovu i najstarija u Hrvatskoj ... uzgoja, odabira i dresure lipicanaca": https://hr.wikipedia.org/wiki/Ergela_Đakovo
+64. "Varaždin je tako od 1767. do 1776. bio glavni grad Hrvatske": https://hr.wikipedia.org/wiki/Varaždin
+65. "poznat je kao 'grad na četiri rijeke' – Kupi, Korani, Dobri i Mrežnici": https://hr.wikipedia.org/wiki/Karlovac
+66. "Sava i Kupa su plovne upravo do Siska": https://hr.wikipedia.org/wiki/Sisak
+67. "Morske orgulje u Zadru": https://hr.wikipedia.org/wiki/Morske_orgulje
+68. UNESCO – svjetska baština, Starogradsko polje (Stari Grad na Hvaru): https://hr.wikipedia.org/wiki/Starogradsko_polje
+69. lokacija Eufrazijeva ulica 22, Poreč; UNESCO, godina 1997.: https://hr.wikipedia.org/wiki/Eufrazijeva_bazilika
+70. "Delnice su središnje i najveće naselje Grada i cijelog Gorskog kotara": https://hr.wikipedia.org/wiki/Delnice
+71. "Dvorac Trakošćan ... nalazi se u Varaždinskoj županiji, 12 km sjeveroistočno od Krapine": https://hr.wikipedia.org/wiki/Trakošćan
+72. otvorenje = 19. srpnja 1980.: https://hr.wikipedia.org/wiki/Krčki_most
+73. "izvor rijeke Omble se nalazi ... 5 kilometara daleko od Dubrovnika, u mjestu Komolcu, podno stijene poznatije kao Golubov kamen": https://hr.wikipedia.org/wiki/Ombla
+74. naselja = Rijeka, slika: ušće Rječine: https://hr.wikipedia.org/wiki/Rječina
+75. "ulijeva se u Piranski zaljev ... dijelom svoga toka predstavlja granicu između Hrvatske i Slovenije": https://hr.wikipedia.org/wiki/Dragonja
+76. Bosut, naselja = Vinkovci: https://hr.wikipedia.org/wiki/Bosut
+77. "rijeka Vuka na ušću u Dunav u Vukovaru": https://hr.wikipedia.org/wiki/Vuka
+78. "Gospić ... političko je i gospodarsko sjedište Ličko-senjske županije": https://hr.wikipedia.org/wiki/Gospić
+79. "Krapina ... glavni je grad Krapinsko-zagorske županije": https://hr.wikipedia.org/wiki/Krapina
+80. sjedište = Grad Zagreb: https://hr.wikipedia.org/wiki/Zagrebačka_županija
+81. "glavni grad te ... upravno ... središte Šibensko-kninske županije": https://hr.wikipedia.org/wiki/Šibenik
+82. "sjedište je i ujedno najveći grad Koprivničko-križevačke županije": https://hr.wikipedia.org/wiki/Koprivnica
 
 ## Dropped and why
 

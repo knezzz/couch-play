@@ -80,7 +80,7 @@ Checked online on 2026-11-14, read-only (page text fetched through the Wikipedia
 76. s iskopina na Vučedolu, "simbol grada Vukovara, u čijoj se blizini nalazi Vučedol": https://hr.wikipedia.org/wiki/Vučedolska_golubica
 77. "potkraj kolovoza 1899. godine on je ... otkrio u Krapini ... nalazište ljudskih kostiju": https://hr.wikipedia.org/wiki/Dragutin_Gorjanović-Kramberger
 78. "Narona je bila rimski grad na području današnjeg sela Vid kod Metkovića": https://hr.wikipedia.org/wiki/Narona
-79. "antički starogrčki grad Faros utemeljen ... 384. godine prije Krista. Pretpostavlja se da su ga utemeljili grčki doseljenici s otoka Parosa": https://hr.wikipedia.org/wiki/Stari_Grad ✱
+79. "antički starogrčki grad Faros utemeljen ... 384. godine prije Krista. Pretpostavlja se da su ga utemeljili grčki doseljenici s otoka Parosa": https://hr.wikipedia.org/wiki/Stari_Grad; "stanovnici grčkoga otoka Para ... osnovali su 384. pr. Kr. koloniju Far (Pháros)": https://www.enciklopedija.hr/clanak/stari-grad (year left out of the question: sources give 385 or 384)
 80. Viška bitka 20. srpnja 1866., admiral Tegetthoff: https://hr.wikipedia.org/wiki/Viška_bitka
 81. "tvorac mehaničke olovke i nalivpera s krutom tintom", umro u Zagrebu: https://hr.wikipedia.org/wiki/Slavoljub_Penkala
 82. "Nobelova nagrada za kemiju (1975.)": https://hr.wikipedia.org/wiki/Vladimir_Prelog

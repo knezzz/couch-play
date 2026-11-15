@@ -81,7 +81,7 @@
     {"q": "Kraj kojeg je grada pronađena Vučedolska golubica?", "choices": ["Osijeka", "Vinkovaca", "Vukovara", "Iloka"], "answer": 2},
     {"q": "Tko je 1899. otkrio nalazište krapinskog pračovjeka?", "choices": ["Dragutin Gorjanović-Kramberger", "Šime Ljubić", "Frane Bulić", "Josip Brunšmid"], "answer": 0},
     {"q": "Ostaci kojeg se rimskog grada nalaze u selu Vid kod Metkovića?", "choices": ["Salone", "Narone", "Burnuma", "Aserije"], "answer": 1},
-    {"q": "Doseljenici s kojeg su grčkog otoka 384. pr. Kr. osnovali Faros, današnji Stari Grad na Hvaru?", "choices": ["S Krete", "S Parosa", "S Rodosa", "S Krfa"], "answer": 1},
+    {"q": "Doseljenici s kojeg su grčkog otoka osnovali Faros, današnji Stari Grad na Hvaru?", "choices": ["S Krete", "S Parosa", "S Rodosa", "S Krfa"], "answer": 1},
     {"q": "Koji je austrijski admiral 1866. kod Visa pobijedio talijansku flotu?", "choices": ["Wilhelm von Tegetthoff", "Maximilian von Sterneck", "Hermann von Spaun", "Anton Haus"], "answer": 0},
     {"q": "Koji je izumitelj u Zagrebu stvorio mehaničku olovku i nalivpero s krutom tintom?", "choices": ["Ivan Vučetić", "Josip Belušić", "Slavoljub Penkala", "David Schwarz"], "answer": 2},
     {"q": "Koje je godine Vladimir Prelog dobio Nobelovu nagradu za kemiju?", "choices": ["1939.", "1959.", "1975.", "1986."], "answer": 2},
