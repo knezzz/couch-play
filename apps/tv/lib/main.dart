@@ -144,7 +144,9 @@ class _TvAppState extends State<TvApp> {
       _gameSim = sim;
       _gameRound = _session.curveRound;
       _game = CurveGame(sim, playerColors,
-          onBeforeTick: _session.bots!.tick, onEvents: _onCurveEvents);
+          onBeforeTick: _session.bots!.tick,
+          onEvents: _onCurveEvents,
+          holdWhen: () => _session.curvePaused);
     });
   }
 
@@ -204,7 +206,20 @@ class _TvAppState extends State<TvApp> {
                   ),
                 )
           : game != null
-              ? Scaffold(body: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false))
+              ? Scaffold(
+                  body: Stack(children: [
+                    GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false),
+                    if (_session.curveWaitingFor != null)
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
+                          color: const Color(0xCC000000),
+                          child: Text(Strings.waitingForReturn(_session.curveWaitingFor!),
+                              style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w700)),
+                        ),
+                      ),
+                  ]),
+                )
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,

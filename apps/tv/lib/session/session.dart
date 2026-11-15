@@ -111,6 +111,7 @@ class Session {
 
   void dispose() {
     _quizTimer?.cancel();
+    _waitTimer?.cancel();
     _changes.dispose();
   }
 
@@ -274,6 +275,7 @@ class Session {
         // The old socket's last Steer must not keep turning the head; if it
         // never reported closing, nothing else zeroes it.
         if (sid != null) _sim?.setInput(sid, left: false, right: false);
+        _resumeIfEnough();
         final status = _statusFor(p);
         peer.send(status ?? _waiting);
       case Phase.quiz:
@@ -290,7 +292,7 @@ class Session {
     p.socket = null;
     p.connected = false;
     p.disconnectedAt = _now();
-    _dropFromGame(p);
+    _dropFromGame(p, returnable: true);
     _keepGameHost();
     if (_phase == Phase.lobby) _broadcastLobby();
     _notify();
@@ -641,14 +643,72 @@ class Session {
     _picks.clear();
   }
 
-  /// A player who disconnects or is kicked mid-match crashes for good.
-  void _dropFromGame(Player p) {
+  /// A player who disconnects or is kicked mid-match is out for the round.
+  /// A disconnect that leaves one player behind ([returnable]) pauses the match
+  /// instead, so the remaining head can't win by default.
+  void _dropFromGame(Player p, {bool returnable = false}) {
     if (_phase == Phase.quiz) _quiz?.removePlayer(p.id);
     if (_phase != Phase.curve) return;
     final sid = _simIdOf[p.id];
     if (sid == null || !_gone.add(p.id)) return;
     _sim?.setInput(sid, left: false, right: false);
+    if (returnable && !p.bot && _inMatch() <= 1 && _humansLeft() > 0) {
+      _waitFor(p);
+      return;
+    }
     _sim?.kill(sid);
+  }
+
+  int _inMatch() => _simIdOf.keys.where((id) => !_gone.contains(id)).length;
+
+  int _humansLeft() => _simIdOf.keys
+      .map(_byId)
+      .where((p) => p != null && !p.bot && p.connected)
+      .length;
+
+  // A 2-player match waits this long for the player who left.
+  static const _waitFor30 = Duration(seconds: 30);
+  Player? _waitingFor;
+  Timer? _waitTimer;
+
+  /// Who the paused Curve match waits for; the TV shows
+  /// `Strings.waitingForReturn` over the frozen arena. Null when not paused.
+  String? get curveWaitingFor => _waitingFor?.name;
+
+  /// The TV's CurveGame must not tick the sim while this is true.
+  bool get curvePaused => _waitingFor != null;
+
+  void _waitFor(Player p) {
+    _waitingFor = p;
+    _waitTimer?.cancel();
+    _waitTimer = Timer(_waitFor30, () {
+      _stopWait();
+      if (_phase == Phase.curve) finishGame(_gameScores());
+    });
+    final msg = Waiting(Strings.waitingForReturn(p.name));
+    for (final q in _players) {
+      if (_simIdOf.containsKey(q.id)) q.socket?.send(msg);
+    }
+  }
+
+  void _stopWait() {
+    _waitTimer?.cancel();
+    _waitTimer = null;
+    _waitingFor = null;
+  }
+
+  /// Someone came back to a paused match: with 2 or more in it again, carry on
+  /// from a fresh round (scores kept).
+  void _resumeIfEnough() {
+    final sim = _sim;
+    if (_waitingFor == null || sim == null || _inMatch() < 2) return;
+    _stopWait();
+    for (final e in _simIdOf.entries) {
+      if (_gone.contains(e.key)) sim.kill(e.value); // still away: out of this round
+    }
+    sim.startRound();
+    _curveRound++;
+    _sendStatuses();
   }
 
   /// Ends the match at once when fewer than 2 are still in it, or when no
@@ -660,7 +720,7 @@ class Session {
         .map(_byId)
         .where((p) => p != null && !p.bot && p.connected)
         .length;
-    if (inMatch <= 1 || humans == 0) finishGame(_gameScores());
+    if (humans == 0 || (inMatch <= 1 && _waitingFor == null)) finishGame(_gameScores());
   }
 
   Map<int, int> _gameScores() =>
@@ -697,6 +757,7 @@ class Session {
   void nextRound() {
     final sim = _sim;
     if (_phase != Phase.curve || sim == null || !sim.roundOver || sim.matchOver) return;
+    if (_waitingFor != null) return; // paused: the return starts the next round
     sim.startRound();
     _curveRound++;
     _sendStatuses();
@@ -727,6 +788,7 @@ class Session {
     }
     _phase = Phase.results;
     _gameHost = null;
+    _stopWait();
     _placements = placements;
     _stopQuiz();
     final results = Results(placements);
@@ -748,6 +810,7 @@ class Session {
   void returnToLobby() {
     _phase = Phase.lobby;
     _gameHost = null;
+    _stopWait();
     _placements = [];
     _stopQuiz();
     _sim = null;

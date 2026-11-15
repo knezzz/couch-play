@@ -28,6 +28,24 @@ void main() {
     expect(n, 2);
   });
 
+  test('a paused game does not tick the sim', () {
+    final sim = CurveSim([0, 1], config: const CurveConfig(countdown: 0), random: Random(1));
+    var paused = true;
+    final game = CurveGame(sim, const [Color(0xFFFF0000), Color(0xFF00FF00)],
+        holdWhen: () => paused);
+    double x() => sim.heads.first.x;
+    final x0 = x();
+    for (var i = 0; i < 30; i++) {
+      game.update(1 / 60);
+    }
+    expect(x(), x0);
+    paused = false;
+    for (var i = 0; i < 30; i++) {
+      game.update(1 / 60);
+    }
+    expect(x(), isNot(x0));
+  });
+
   test('clear signal resets trail paths and ends', () {
     final sim = _ClearOnce(
       [0],

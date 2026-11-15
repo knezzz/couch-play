@@ -471,17 +471,6 @@ void main() {
     expect(s.sim!.heads.firstWhere((h) => h.id == 1).alive, isFalse);
   });
 
-  test('curve_ends_at_once_when_one_player_is_left', () async {
-    final a = join(s, 'A');
-    final b = join(s, 'B');
-    a.say(const StartGame(GameKind.curve, null)); // only 2 humans
-    expect(s.phase, Phase.curve);
-    await b.drop();
-    expect(s.phase, Phase.results);
-    expect(a.last<Results>(), isNotNull);
-    expect(s.sessionScores[idOf(a)], greaterThan(0));
-  });
-
   test('curve_ends_when_no_human_is_connected_even_with_bots', () async {
     final a = join(s, 'A');
     a.say(const SetBots(3));

@@ -197,6 +197,35 @@ void main() {
     s.dispose();
   });
 
+  for (final during in ['question', 'reveal']) {
+    testWidgets('two_person_quiz_goes_on_when_the_host_leaves_mid_$during', (t) async {
+      s = fresh();
+      final a = join(s, 'Ana', token: 'ta'), b = join(s, 'Ben', token: 'tb');
+      a.say(const StartGame(GameKind.quiz, null));
+      await t.pump();
+      if (during == 'reveal') {
+        answerRight(a);
+        answerRight(b);
+        await step(t, const Duration(milliseconds: 300));
+        expect(s.quiz!.step, QuizStep.revealing);
+      }
+      a.close();
+      await t.pump();
+      expect(s.phase, Phase.quiz);
+      expect(s.hostId, idOf(b));
+      // Ben carries on through every question to the end.
+      var guard = 0;
+      while (s.phase == Phase.quiz && guard++ < 2000) {
+        if (s.quiz!.step == QuizStep.asking) answerRight(b);
+        await step(t, const Duration(milliseconds: 500));
+      }
+      expect(s.phase, Phase.results);
+      expect(s.quiz, isNull);
+      expect(b.last<Results>()!.placements, isNotEmpty);
+      s.dispose();
+    });
+  }
+
   testWidgets('everyone_leaves_ends_the_game', (t) async {
     s = fresh();
     final a = join(s, 'Ana');

@@ -9,13 +9,16 @@ import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, Te
 /// Runs [sim] on a fixed 60 Hz accumulator and draws trails and heads.
 /// The arena is scaled to fit the screen, letterboxed.
 class CurveGame extends FlameGame {
-  CurveGame(this.sim, this.colors, {this.onBeforeTick, this.onEvents});
+  CurveGame(this.sim, this.colors, {this.onBeforeTick, this.onEvents, this.holdWhen});
 
   final CurveSim sim;
   final List<Color> colors;
   /// Called before every sim tick, e.g. `bots.tick`.
   final void Function()? onBeforeTick;
   final void Function(List<CurveEvent>)? onEvents;
+
+  /// While true the sim stands still (a player left; Session waits for them).
+  final bool Function()? holdWhen;
 
   // One Path per (player, width bucket); key = id * 3 + bucket (thin/normal/fat).
   final _paths = <int, Path>{};
@@ -50,6 +53,10 @@ class CurveGame extends FlameGame {
   @override
   void update(double dt) {
     super.update(dt);
+    if (holdWhen?.call() ?? false) {
+      _acc = 0;
+      return;
+    }
     _acc += dt;
     final step = 1 / sim.config.tickHz;
     // Cap catch-up so a stall doesn't spiral.
