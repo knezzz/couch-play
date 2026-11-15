@@ -60,6 +60,26 @@ void main() {
     s.dispose();
   });
 
+  testWidgets('a_held_button_does_not_steer_the_round_after_a_resume', (t) async {
+    await start(t);
+    final sidB = s.players.firstWhere((p) => p.id == idOf(b)).colorIndex;
+    b.say(const Steer(left: true, right: false));
+    a.close();
+    await t.pump();
+    back('Ana', 'ta');
+    await t.pump();
+    for (var i = 0; i < 130; i++) {
+      s.sim!.tick(); // past the 2 s countdown
+    }
+    double heading() => s.sim!.heads.firstWhere((h) => h.id == sidB).heading;
+    final h0 = heading();
+    for (var i = 0; i < 30; i++) {
+      s.sim!.tick();
+    }
+    expect(heading(), h0, reason: 'Ben\'s held button must not carry over');
+    s.dispose();
+  });
+
   testWidgets('no_rejoin_in_30_seconds_ends_the_match', (t) async {
     await start(t);
     a.close();

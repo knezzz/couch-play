@@ -704,6 +704,8 @@ class Session {
     if (_waitingFor == null || sim == null || _inMatch() < 2) return;
     _stopWait();
     for (final e in _simIdOf.entries) {
+      // A button held through the wait must not turn the new round's head.
+      sim.setInput(e.value, left: false, right: false);
       if (_gone.contains(e.key)) sim.kill(e.value); // still away: out of this round
     }
     sim.startRound();
