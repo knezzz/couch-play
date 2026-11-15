@@ -5,50 +5,50 @@ Checked online on 2026-11-15, read-only (raw page text from Wikipedia; hr first,
 1. https://hr.wikipedia.org/wiki/Australija (states: canberra)
 2. https://hr.wikipedia.org/wiki/Kanada (states: ottawa)
 3. https://en.wikipedia.org/wiki/Pacific_Ocean ("largest ocean on Earth")
-4. https://hr.wikipedia.org/wiki/Egipat (states: afri)
+4. Dunav izvire u Schwarzwaldu: https://hr.wikipedia.org/wiki/Dunav
 5. https://en.wikipedia.org/wiki/Seine ("the Seine in Paris")
 6. https://hr.wikipedia.org/wiki/Mount_Everest (states: najviš)
-7. https://hr.wikipedia.org/wiki/Rusija (states: najveća)
+7. flowing ... to the Sea of Azov: https://en.wikipedia.org/wiki/Don_(river)
 8. https://hr.wikipedia.org/wiki/Turska (states: ankara)
 9. https://hr.wikipedia.org/wiki/Švicarska (states: bern)
 10. https://hr.wikipedia.org/wiki/Sahara (states: najveća)
-11. https://hr.wikipedia.org/wiki/Italija (states: čizm)
+11. the only major river to cross the equator twice: https://en.wikipedia.org/wiki/Congo_River
 12. https://hr.wikipedia.org/wiki/Dunav (states: beograd ; budimpešt ; beč)
-13. https://hr.wikipedia.org/wiki/Španjolska (states: madrid)
+13. Khartoum is located at the confluence of the White Nile ... and the Blue Nile: https://en.wikipedia.org/wiki/Khartoum
 14. https://hr.wikipedia.org/wiki/Grenland (states: najveći otok)
 15. https://hr.wikipedia.org/wiki/Tasmanija (states: australij)
-16. https://hr.wikipedia.org/wiki/Norveška (states: oslo)
-17. https://hr.wikipedia.org/wiki/Machu_Picchu (states: peru)
+16. the estuary formed by the confluence of the Uruguay River and the Paraná River: https://en.wikipedia.org/wiki/Río_de_la_Plata
+17. Denali ... is the highest mountain peak in North America: https://en.wikipedia.org/wiki/Denali
 18. https://hr.wikipedia.org/wiki/Jonsko_more (states: grčk ; itali)
-19. https://hr.wikipedia.org/wiki/Egipat (states: kairo)
+19. Aneto is the highest mountain in the Pyrenees: https://en.wikipedia.org/wiki/Aneto
 20. https://hr.wikipedia.org/wiki/Amazona (najduža rijeka na svijetu "ili druga po redu", dakle najduža u Južnoj Americi)
-21. https://hr.wikipedia.org/wiki/Marakeš (states: maroko)
-22. https://hr.wikipedia.org/wiki/Njemačka (states: berlin)
+21. Tatras ... form a natural border between Slovakia and Poland: https://en.wikipedia.org/wiki/Tatra_Mountains
+22. The lake is situated where Germany, Switzerland, and Austria meet: https://en.wikipedia.org/wiki/Lake_Constance
 23. https://hr.wikipedia.org/wiki/Ural (states: azij)
-24. https://hr.wikipedia.org/wiki/Kyoto (states: japan)
+24. Lake Ohrid ... straddles the mountainous border between ... North Macedonia and eastern Albania: https://en.wikipedia.org/wiki/Lake_Ohrid
 25. https://hr.wikipedia.org/wiki/Vatikan (states: najmanj)
-26. https://hr.wikipedia.org/wiki/Portugal (states: lisabon)
+26. Formerly the fourth-largest lake in the world ... began shrinking ... diverted by Soviet irrigation projects: https://en.wikipedia.org/wiki/Aral_Sea
 27. https://en.wikipedia.org/wiki/Canada–United_States_border (states: longest)
-28. https://hr.wikipedia.org/wiki/Maldivi (states: indijsk)
-29. https://hr.wikipedia.org/wiki/Mađarska (states: budimpešt)
-30. https://hr.wikipedia.org/wiki/Veliki_koraljni_greben (states: australij)
-31. https://hr.wikipedia.org/wiki/Argentina (states: buenos aires)
+28. the Dardanelles connects the Sea of Marmara with the Aegean: https://en.wikipedia.org/wiki/Dardanelles
+29. canal that links the North Sea to the Baltic Sea: https://en.wikipedia.org/wiki/Kiel_Canal
+30. Strait of Malacca ... between the Malay Peninsula ... and the Indonesian island of Sumatra: https://en.wikipedia.org/wiki/Strait_of_Malacca
+31. The Strait of Otranto connects the Adriatic Sea with the Ionian Sea: https://en.wikipedia.org/wiki/Strait_of_Otranto
 32. https://hr.wikipedia.org/wiki/Island (states: reykjav)
 33. https://hr.wikipedia.org/wiki/Gibraltarska_vrata (states: afrik)
-34. https://hr.wikipedia.org/wiki/Poljska (states: varšav)
+34. separates the Peloponnese peninsula from the Greek mainland: https://en.wikipedia.org/wiki/Corinth_Canal
 35. https://hr.wikipedia.org/wiki/Kilimandžaro (states: tanzanij)
-36. https://hr.wikipedia.org/wiki/Venecija (states: kanal)
+36. The rest of the island consists of East Malaysia and Brunei: https://en.wikipedia.org/wiki/Borneo
 37. https://en.wikipedia.org/wiki/Netherlands ("Amsterdam is the constitutional capital, while the government ... seated in The Hague")
 38. https://hr.wikipedia.org/wiki/Istanbul (states: bospor)
-39. https://hr.wikipedia.org/wiki/Grčka (states: aten)
+39. otok je podijeljen između Čilea i Argentine: https://hr.wikipedia.org/wiki/Ognjena_zemlja
 40. https://hr.wikipedia.org/wiki/Brazil (states: najveća)
 41. https://hr.wikipedia.org/wiki/Bajkalsko_jezero (states: najdublj)
-42. https://hr.wikipedia.org/wiki/Irska (states: dublin)
-43. https://hr.wikipedia.org/wiki/Temza (states: london)
-44. https://hr.wikipedia.org/wiki/Austrija (states: beč)
-45. https://en.wikipedia.org/wiki/Cyclades ("Greek island group in the Aegean Sea")
-46. https://hr.wikipedia.org/wiki/Slovačka (states: bratislav)
-47. https://hr.wikipedia.org/wiki/Ekvator (states: polutk)
+42. bordered by Poland to the south, Lithuania to the north and east: https://en.wikipedia.org/wiki/Kaliningrad_Oblast
+43. a landlocked exclave of the Republic of Azerbaijan: https://en.wikipedia.org/wiki/Nakhchivan_Autonomous_Republic
+44. two of them doubly landlocked ... (Liechtenstein and Uzbekistan): https://en.wikipedia.org/wiki/Landlocked_country
+45. Biškek ... je glavni grad Republike Kirgistan: https://hr.wikipedia.org/wiki/Biškek
+46. Sucre, the constitutional capital of Bolivia: https://en.wikipedia.org/wiki/Sucre
+47. Ouagadougou ... is the capital and largest city of Burkina Faso: https://en.wikipedia.org/wiki/Ouagadougou
 48. https://hr.wikipedia.org/wiki/Geirangerfjord (states: norve)
 49. https://hr.wikipedia.org/wiki/Kenija (states: nairobi)
 50. https://hr.wikipedia.org/wiki/Aconcagua (states: najviš ; argentin)
@@ -117,6 +117,11 @@ Each photo keeps its own licence; changes: resized to 1280 px on the long side a
 
 ## Least sure
 
-- Q1–Q49 are the Task 13b translation of the English pack, mostly easy capitals, so the pack is still above a third easy.
+- Task 21 easy-share fix: 24 of the easiest of Q1–Q49 (big-country capitals, Egypt's continent, the boot-shaped
+  country, the equator, and the "where is X" ones: Machu Picchu, Great Barrier Reef, Kyoto) were replaced in place by
+  harder rivers, mountains, lakes, straits, exclaves and lesser-known capitals, so the line numbers still match.
+  Easy share: about 50 of 102 before, about 26 of 102 after.
+- Uzbekistan as the only doubly landlocked country besides Liechtenstein, and Sucre as Bolivia's "ustavni" capital
+  (La Paz is the seat of government), depend on that exact wording.
 - Q20 (Amazona): the page says longest or second-longest on Earth; "najduža u Južnoj Americi" follows from that.
 - Q72 (Angelov slap): en.wikipedia says "tallest single drop"; the question says "najviši slap".
