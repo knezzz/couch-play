@@ -96,3 +96,39 @@ Least sure: Halley's period "76" (sources: 74–80 years); Earth–Moon "oko 380
 83. He named oxygen (1778): https://en.wikipedia.org/wiki/Antoine_Lavoisier
 84. Potassium has symbol K (from Neo-Latin kalium): https://en.wikipedia.org/wiki/Potassium
 85. Lead, symbol Pb (from Latin plumbum): https://en.wikipedia.org/wiki/Lead
+86. Oxygen most abundant by mass in continental crust, 46.1%: https://en.wikipedia.org/wiki/Abundance_of_elements_in_Earth's_crust
+87. inner core composed of an iron–nickel alloy: https://en.wikipedia.org/wiki/Earth's_inner_core
+88. Dry ice is the solid form of carbon dioxide: https://en.wikipedia.org/wiki/Dry_ice
+89. tzv. rajski plin ili plin smješkavac: https://hr.wikipedia.org/wiki/Dušikov(I)_oksid
+90. discovery on 1 March 1896 (radioactivity): https://en.wikipedia.org/wiki/Henri_Becquerel
+91. nucleus discovered in 1911 by Ernest Rutherford, gold foil experiment: https://en.wikipedia.org/wiki/Atomic_nucleus
+92. The stapes is the smallest and lightest bone in the human body: https://en.wikipedia.org/wiki/Stapes ; Stremen (lat. stapes): https://hr.wikipedia.org/wiki/Stremen_(uho)
+93. the longest bone in the human body: https://en.wikipedia.org/wiki/Femur
+94. type O Rh D-negative blood are often called universal donors: https://en.wikipedia.org/wiki/Blood_type
+95. hemoglobin, a protein containing iron: https://en.wikipedia.org/wiki/Hemoglobin
+96. secreted by somatotropic cells of the anterior pituitary gland: https://en.wikipedia.org/wiki/Growth_hormone
+97. published in Nature by James Watson and Francis Crick in 1953: https://en.wikipedia.org/wiki/Nucleic_acid_double_helix
+98. Mendel's pea plant experiments 1856–1863: https://en.wikipedia.org/wiki/Gregor_Mendel
+99. Swedish biologist who formalised binomial nomenclature: https://en.wikipedia.org/wiki/Carl_Linnaeus
+100. Hooke's 1665 book Micrographia, in which he coined the term cell: https://en.wikipedia.org/wiki/Robert_Hooke
+101. ruminants' stomachs have four compartments: https://en.wikipedia.org/wiki/Ruminant
+102. the only mammals capable of true and sustained flight: https://en.wikipedia.org/wiki/Bat
+103. platypus, egg-laying mammal (monotreme): https://en.wikipedia.org/wiki/Platypus
+104. endemični vodozemac ... endemična vrsta za područje Dinarida, bezbojna: https://hr.wikipedia.org/wiki/Čovječja_ribica
+105. Talc hardness 1; gypsum 2, calcite 3, quartz 7: https://en.wikipedia.org/wiki/Mohs_scale
+106. metamorphism of carbonate rocks, most commonly limestone or dolomite: https://en.wikipedia.org/wiki/Marble
+107. kras i krš nastali od imena Kras (lat. Carsia): https://hr.wikipedia.org/wiki/Krš
+108. named for Giuseppe Mercalli, Italian volcanologist; measures intensity of shaking: https://en.wikipedia.org/wiki/Mercalli_intensity_scale
+109. The mantle makes up 84% of Earth's volume: https://en.wikipedia.org/wiki/Earth's_mantle
+110. German geophysicist, suggesting in 1912 that the continents are slowly drifting: https://en.wikipedia.org/wiki/Alfred_Wegener
+111. borrowing from the Japanese tsunami, meaning 'harbour wave': https://en.wikipedia.org/wiki/Tsunami
+112. typhoon: tropical cyclone in the Northwestern Pacific Basin: https://en.wikipedia.org/wiki/Typhoon
+113. In the Arctic: northern lights or aurora borealis: https://en.wikipedia.org/wiki/Aurora
+114. especially for his discovery of the law of the photoelectric effect: https://en.wikipedia.org/wiki/Albert_Einstein
+115. in 1831 ... experiments in which he discovered electromagnetic induction; English: https://en.wikipedia.org/wiki/Michael_Faraday
+116. a Danish theoretical physicist: https://en.wikipedia.org/wiki/Niels_Bohr
+117. devised by physicist Erwin Schrödinger in 1935: https://en.wikipedia.org/wiki/Schrödinger's_cat
+118. named after Christian Doppler, who described the phenomenon in 1842: https://en.wikipedia.org/wiki/Doppler_effect
+119. named after Hafnia, the Latin name for Copenhagen: https://en.wikipedia.org/wiki/Hafnium
+120. tellurium named for the Earth, Berzelius named the new element after the Moon: https://en.wikipedia.org/wiki/Selenium
+121. averaging around 378,000 km; semi-major axis 384,399 km: https://en.wikipedia.org/wiki/Moon
