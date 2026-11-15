@@ -128,3 +128,27 @@ is confirmed on matica.hr.
 88. made using dried wine grapes (passito): https://en.wikipedia.org/wiki/Prošek
 89. Sinjski arambaši from Sinj, ground beef in sauerkraut leaves: https://en.wikipedia.org/wiki/Stuffed_leaves
 90. Sir se proizvodi od ovčjeg mlijeka: https://hr.wikipedia.org/wiki/Paški_sir
+91. final in Bratislava, Croatia defeating Slovakia: https://en.wikipedia.org/wiki/2005_Davis_Cup
+92. 3–1 over France in Lille; Čilić beat Pouille 7–6 6–3 6–3 for the third point: https://en.wikipedia.org/wiki/2018_Davis_Cup
+93. Čilić defeated Kei Nishikori in the final: https://en.wikipedia.org/wiki/2014_US_Open_–_Men's_singles
+94. Ivanišević defeated Patrick Rafter in the final: https://en.wikipedia.org/wiki/2001_Wimbledon_Championships_–_Men's_singles
+95. third place: Croatia beat the Netherlands 2–1 (Šuker, Prosinečki): https://en.wikipedia.org/wiki/Croatia_at_the_FIFA_World_Cup
+96. quarter-final vs Germany ended in a 3–0 win: https://en.wikipedia.org/wiki/Croatia_at_the_FIFA_World_Cup
+97. The final score was 4–2 to France: https://en.wikipedia.org/wiki/2018_FIFA_World_Cup_final
+98. QF: Brazil 1 (2), Croatia (p) 1 (4): https://en.wikipedia.org/wiki/2022_FIFA_World_Cup_knockout_stage
+99. Osvojila je svjetsko prvenstvo 2003.: https://hr.wikipedia.org/wiki/Hrvatska_rukometna_reprezentacija
+100. Croatia has since become Olympic champion (2012): https://en.wikipedia.org/wiki/Croatia_men's_national_water_polo_team
+101. 1992 Barcelona Olympics ... won the silver medal: https://en.wikipedia.org/wiki/Croatia_men's_national_basketball_team
+102. died in a car accident in Germany (Denkendorf, Bavaria), 7 June 1993: https://en.wikipedia.org/wiki/Dražen_Petrović
+103. the overall World Cup title in 2011: https://en.wikipedia.org/wiki/Ivica_Kostelić
+104. Vlašić won the World Championships in Osaka (2007): https://en.wikipedia.org/wiki/Blanka_Vlašić
+105. named after Casablanca, where her father won gold at the 1983 Mediterranean Games: https://en.wikipedia.org/wiki/Blanka_Vlašić
+106. two-time Olympic champion (2012 London, 2016 Rio): https://en.wikipedia.org/wiki/Sandra_Elkasević
+107. gold medal in the javelin throw at the 2016 Summer Olympics: https://en.wikipedia.org/wiki/Sara_Kolak
+108. Croatian taekwondo athlete, 2020 Olympic champion in 67 kg: https://en.wikipedia.org/wiki/Matea_Jelić
+109. Mektić and Pavić defeated Čilić and Dodig in the final: https://en.wikipedia.org/wiki/Tennis_at_the_2020_Summer_Olympics_–_Men's_doubles
+110. 2008 Olympic silver medalist on pommel horse: https://en.wikipedia.org/wiki/Filip_Ude
+111. won by Dinamo Zagreb over two legs against Leeds United: https://en.wikipedia.org/wiki/1966–67_Inter-Cities_Fairs_Cup
+112. 2 FIBA European Champions Cups (1985, 1986): https://en.wikipedia.org/wiki/KK_Cibona
+113. European Champions Cup three consecutive years 1989–1991: https://en.wikipedia.org/wiki/KK_Split
+114. Torino 2006: zlato u kombinaciji, srebro u superveleslalomu: https://hr.wikipedia.org/wiki/Janica_Kostelić
