@@ -271,6 +271,9 @@ class Session {
         // Back in the match from the next round; this one stays lost.
         final sid = _simIdOf[p.id];
         if (sid != null && _gone.remove(p.id)) _sim?.revive(sid);
+        // The old socket's last Steer must not keep turning the head; if it
+        // never reported closing, nothing else zeroes it.
+        if (sid != null) _sim?.setInput(sid, left: false, right: false);
         final status = _statusFor(p);
         peer.send(status ?? _waiting);
       case Phase.quiz:

@@ -66,6 +66,22 @@ void main() {
     expect(s.players.any((p) => p.id == idOf(c)), isFalse);
   });
 
+  test('a_new_socket_before_the_old_one_closes_stops_the_steering', () async {
+    final sidB = s.players.firstWhere((p) => p.id == idOf(b)).colorIndex;
+    double heading() => s.sim!.heads.firstWhere((h) => h.id == sidB).heading;
+    b.say(const Steer(left: true, right: false));
+    back(s, 'B', 'tb'); // the new socket arrives before the old one closes
+    expect(b.closed, isTrue);
+    s.sim!.startRound(); // inputs persist across rounds
+    for (var i = 0; i < 130; i++) {
+      s.sim!.tick(); // past the 2 s countdown
+    }
+    final start = heading();
+    for (var i = 0; i < 30; i++) {
+      s.sim!.tick();
+    }
+    expect(heading(), start, reason: 'no steering left over from the old socket');  });
+
   test('a_kicked_player_does_not_come_back', () async {
     a.say(Kick(idOf(c)));
     final c2 = back(s, 'C', 'tc');
