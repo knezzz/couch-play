@@ -263,3 +263,72 @@ hr-zemljopis-svijeta, which already asks about Kyoto); the made-up distractor "K
 253. traditionally dated to 776 BC: https://en.wikipedia.org/wiki/Ancient_Olympic_Games
 254. naziv potječe od uporabe kuninih krzna za trgovinu i plaćanje carina: https://hr.wikipedia.org/wiki/Hrvatska_kuna
 255. calibrated with 0 for the boiling point and 100 for the freezing point; reversed 1745: https://en.wikipedia.org/wiki/Anders_Celsius
+256. UN Charter signed in San Francisco, 26 June 1945: https://en.wikipedia.org/wiki/Charter_of_the_United_Nations
+257. North Atlantic Treaty, also known as the Washington Treaty, signed in Washington: https://en.wikipedia.org/wiki/North_Atlantic_Treaty
+258. Dunant witnessed the aftermath of the Battle of Solferino in 1859; co-founder of the Red Cross: https://en.wikipedia.org/wiki/Henry_Dunant
+259. IOC founded in 1894: https://en.wikipedia.org/wiki/International_Olympic_Committee
+260. EU celebrates Europe Day on 9 May, commemorating the 1950 Schuman Declaration: https://en.wikipedia.org/wiki/Europe_Day
+261. Flag of Europe: twelve golden stars in a circle: https://en.wikipedia.org/wiki/Flag_of_Europe
+262. Peace Prize ceremony held in Oslo City Hall: https://en.wikipedia.org/wiki/Nobel_Peace_Prize
+263. Pulitzer Prizes administered by Columbia University: https://en.wikipedia.org/wiki/Pulitzer_Prize
+264. Pulitzer born 1847 in Makó, about 200 km south-east of Budapest: https://en.wikipedia.org/wiki/Joseph_Pulitzer
+265. Fields Medal awarded to mathematicians under 40 years of age: https://en.wikipedia.org/wiki/Fields_Medal
+266. Turing Award often referred to as the 'Nobel Prize of Computing': https://en.wikipedia.org/wiki/Turing_Award
+267. Stagflation, portmanteau of stagnation and inflation: https://en.wikipedia.org/wiki/Stagflation
+268. Amsterdam stock exchange, oldest 'modern' securities market, trading VOC shares from 1602: https://en.wikipedia.org/wiki/Euronext_Amsterdam
+269. 'bull market' and 'bear market' describe upward and downward trends: https://en.wikipedia.org/wiki/Market_trend
+270. Montesquieu, principal source of the theory of separation of powers, De l'esprit des lois: https://en.wikipedia.org/wiki/Montesquieu
+271. Gerrymandering is a portmanteau of 'salamander' and Elbridge Gerry: https://en.wikipedia.org/wiki/Gerrymandering
+272. Security Council: five permanent members: https://en.wikipedia.org/wiki/United_Nations_Security_Council
+273. Trygve Lie, first secretary-general of the UN: https://en.wikipedia.org/wiki/Trygve_Lie
+274. Double jeopardy, principle non bis in idem ('not twice against the same'): https://en.wikipedia.org/wiki/Double_jeopardy
+275. Tomlinson invented first email program on ARPANET in 1971, used the @ sign: https://en.wikipedia.org/wiki/Ray_Tomlinson
+276. ENIAC, first programmable electronic general-purpose digital computer, completed 1945: https://en.wikipedia.org/wiki/ENIAC
+277. Z3 designed by Konrad Zuse, completed 1941: https://en.wikipedia.org/wiki/Z3_(computer)
+278. Ada Lovelace known for work on Charles Babbage's analytical engine: https://en.wikipedia.org/wiki/Ada_Lovelace
+279. Name derives from Monty Python's Flying Circus: https://en.wikipedia.org/wiki/Python_(programming_language)
+280. Torvalds born in Helsinki, Finland; creator of the Linux kernel: https://en.wikipedia.org/wiki/Linus_Torvalds
+281. Founded by Jimmy Wales and Larry Sanger in 2001: https://en.wikipedia.org/wiki/Wikipedia
+282. Microsoft founded 1975 by Bill Gates and Paul Allen: https://en.wikipedia.org/wiki/Microsoft
+283. A googol is 10^100: https://en.wikipedia.org/wiki/Googol
+284. Pascaline, mechanical calculator invented by Blaise Pascal in 1642: https://en.wikipedia.org/wiki/Pascaline
+285. Launched by the Soviet Union on 4 October 1957: https://en.wikipedia.org/wiki/Sputnik_1
+286. Laika flew aboard Sputnik 2, launched 3 November 1957: https://en.wikipedia.org/wiki/Laika
+287. Vostok 1, 12 April 1961, Yuri Gagarin: https://en.wikipedia.org/wiki/Vostok_1
+288. Tereshkova, first woman in space, Vostok 6, 16 June 1963: https://en.wikipedia.org/wiki/Valentina_Tereshkova
+289. 18 March 1965, Leonov became first person to conduct a spacewalk, Voskhod 2: https://en.wikipedia.org/wiki/Alexei_Leonov
+290. Discovery launched Hubble on 24 April 1990, STS-31: https://en.wikipedia.org/wiki/Hubble_Space_Telescope
+291. 28 January 1986, Challenger broke apart 73 seconds into its flight: https://en.wikipedia.org/wiki/Space_Shuttle_Challenger_disaster
+292. Mir, space station in low Earth orbit 1986 to 2001: https://en.wikipedia.org/wiki/Mir
+293. Established in 1958 amid the Space Race: https://en.wikipedia.org/wiki/NASA
+294. Saturn V technical design led most notably by Wernher von Braun: https://en.wikipedia.org/wiki/Saturn_V
+295. Watt named in honor of James Watt, 18th-century Scottish inventor: https://en.wikipedia.org/wiki/Watt
+296. First successful proof released 1994 by Andrew Wiles: https://en.wikipedia.org/wiki/Fermat's_Last_Theorem
+297. Golden ratio φ = 1.618033988749...: https://en.wikipedia.org/wiki/Golden_ratio
+298. Leonardo Bonacci, also Leonardo da Pisa: https://en.wikipedia.org/wiki/Fibonacci
+299. Elements written c. 300 BC by Euclid: https://en.wikipedia.org/wiki/Euclid's_Elements
+300. John Wallis introduced the infinity symbol in 1655: https://en.wikipedia.org/wiki/Infinity_symbol
+301. Hilbert's problems are 23 problems published by David Hilbert in 1900: https://en.wikipedia.org/wiki/Hilbert's_problems
+302. Maastricht Treaty, concluded 1992, foundation treaty of the EU: https://en.wikipedia.org/wiki/Maastricht_Treaty
+303. Prizes first awarded in 1901, fifth anniversary of Nobel's death: https://en.wikipedia.org/wiki/Nobel_Prize
+304. Established in 1968 by Sweden's central bank, Sveriges Riksbank: https://en.wikipedia.org/wiki/Nobel_Memorial_Prize_in_Economic_Sciences
+305. Published 9 March 1776 by Scottish economist Adam Smith: https://en.wikipedia.org/wiki/The_Wealth_of_Nations
+306. 'veto' comes from the Latin for 'I forbid': https://en.wikipedia.org/wiki/Veto
+307. Accepted by the General Assembly 10 December 1948 at the Palais de Chaillot in Paris: https://en.wikipedia.org/wiki/Universal_Declaration_of_Human_Rights
+308. On 1 November 1920 the League's headquarters moved from London to Geneva: https://en.wikipedia.org/wiki/League_of_Nations
+309. ARPANET established by ARPA of the US Department of Defense: https://en.wikipedia.org/wiki/ARPANET
+310. About 1947 operators traced an error in the Mark II to a moth trapped in a relay: https://en.wikipedia.org/wiki/Software_bug
+311. Byte commonly consists of eight bits: https://en.wikipedia.org/wiki/Byte
+312. Armstrong and Aldrin descended aboard the LM Eagle: https://en.wikipedia.org/wiki/Apollo_11
+313. Collins remained in lunar orbit aboard the CM Columbia: https://en.wikipedia.org/wiki/Apollo_11
+314. Apollo 17 (December 1972), the final crewed mission of NASA's Apollo program: https://en.wikipedia.org/wiki/Apollo_17
+315. Herman Potočnik (pseudonym Noordung), born 22 Dec 1892 in Pola (now Pula), astronautics theorist: https://en.wikipedia.org/wiki/Herman_Potočnik
+316. Perelman proved the Poincaré conjecture: https://en.wikipedia.org/wiki/Grigori_Perelman
+317. e ≈ 2.718281828: https://en.wikipedia.org/wiki/E_(mathematical_constant)
+318. Four color theorem: no more than four colors are required; proven 1976: https://en.wikipedia.org/wiki/Four_color_theorem
+319. Napier is best known as the discoverer of logarithms: https://en.wikipedia.org/wiki/John_Napier
+320. Bilijun je broj koji znači tisuću milijardā, odnosno milijun milijuna: https://hr.wikipedia.org/wiki/Bilijun
+321. UNESCO: Organizacija Ujedinjenih naroda za obrazovanje, znanost i kulturu: https://hr.wikipedia.org/wiki/UNESCO
+322. Treaty of Rome signed 25 March 1957, created the EEC: https://en.wikipedia.org/wiki/Treaty_of_Rome
+323. Wayne co-founded Apple Computer Company with Wozniak and Jobs on 1 April 1976: https://en.wikipedia.org/wiki/Ronald_Wayne
+324. Anders Celsius (1701-1744), Swedish astronomer, physicist and mathematician: https://en.wikipedia.org/wiki/Anders_Celsius
