@@ -85,6 +85,29 @@ Checked online on 2026-11-14, read-only (page wikitext fetched through the Wikip
 81. "glavni grad te ... upravno ... središte Šibensko-kninske županije": https://hr.wikipedia.org/wiki/Šibenik
 82. "sjedište je i ujedno najveći grad Koprivničko-križevačke županije": https://hr.wikipedia.org/wiki/Koprivnica
 
+## Photo questions (Task 22)
+
+Each photo keeps its own licence; changes: resized to 1280 px on the long side and saved as WebP.
+
+83. photos/foto-01.webp: Dubrovnik. Subject from the Commons file page. Photo: Sean MacEntee from Monaghan, Ireland, CC BY 2.0, https://commons.wikimedia.org/wiki/File:Dubrovnik_Old_Town_(5782431713).jpg (resized to 1280 px, WebP)
+84. photos/foto-02.webp: Hvar. Subject from the Commons file page. Photo: Carsten Steger, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Aerial_image_of_Hvar_(view_from_the_south).jpg (resized to 1280 px, WebP)
+85. photos/foto-03.webp: Korčula. Subject from the Commons file page. Photo: Quintin Soloviev, CC BY 4.0, https://commons.wikimedia.org/wiki/File:Kor%C4%8Dula,_Croatia.jpg (resized to 1280 px, WebP)
+86. photos/foto-04.webp: Motovun. Subject from the Commons file page. Photo: Jernej Furman from Slovenia, CC BY 2.0, https://commons.wikimedia.org/wiki/File:Medieval_town_Motovun_on_a_top_of_a_hill,_Croatia_(52829257291).jpg (resized to 1280 px, WebP)
+87. photos/foto-05.webp: Osijek. Subject from the Commons file page. Photo: Pudelek, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Tvr%C4%91a,_Osijek_01.jpg (resized to 1280 px, WebP)
+88. photos/foto-06.webp: Plitvička jezera. Subject from the Commons file page. Photo: Tesla Delacroix, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Plitvice_Lakes1.jpg (resized to 1280 px, WebP)
+89. photos/foto-07.webp: Primošten. Subject from the Commons file page. Photo: Martin Vorel, CC0, https://commons.wikimedia.org/wiki/File:Primo%C5%A1ten_Croatia.jpg (resized to 1280 px, WebP)
+90. photos/foto-08.webp: U Puli. Subject from the Commons file page. Photo: Diego Delso, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Anfiteatro_de_Pula,_Croacia,_2017-04-17,_DD_13-18_HDR_PAN.jpg (resized to 1280 px, WebP)
+91. photos/foto-09.webp: Rijeka. Subject from the Commons file page. Photo: Koreanovsky, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Rijeka_Korzo_in_July_2023.jpg (resized to 1280 px, WebP)
+92. photos/foto-10.webp: Rovinj. Subject from the Commons file page. Photo: Ironbernietyrol, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Rovinj_Sunrise.jpg (resized to 1280 px, WebP)
+93. photos/foto-11.webp: Katedrala sv. Jakova u Šibeniku. Subject from the Commons file page. Photo: Bernard Gagnon, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Cathedral_of_St._James,_%C5%A0ibenik_01.jpg (resized to 1280 px, WebP)
+94. photos/foto-12.webp: Skradinski buk. Subject from the Commons file page. Photo: kallerna, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Skradinski_buk_Krka_National_Park_3.jpg (resized to 1280 px, WebP)
+95. photos/foto-13.webp: Split. Subject from the Commons file page. Photo: Kaiser87, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Split_-_pogled_na_rivu.jpg (resized to 1280 px, WebP)
+96. photos/foto-14.webp: Trogir. Subject from the Commons file page. Photo: Qypchak, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Trogir_Air_view.jpg (resized to 1280 px, WebP)
+97. photos/foto-15.webp: U Varaždinu. Subject from the Commons file page. Photo: Ptrnc7965, CC0, https://commons.wikimedia.org/wiki/File:Vara%C5%BEdin_Stari_Grad_Castle_August_2025.jpg (resized to 1280 px, WebP)
+98. photos/foto-16.webp: U Vukovaru. Subject from the Commons file page. Photo: Pudelek (Marcin Szala), CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Vukovar_water_tower_(by_Pudelek).JPG (resized to 1280 px, WebP)
+99. photos/foto-17.webp: Zadar. Subject from the Commons file page. Photo: VitVit, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Zadar_ul._%C5%A0irok%C3%A1_a_%C5%99%C3%ADmsk%C3%A9_f%C3%B3rum_panorama.jpg (resized to 1280 px, WebP)
+100. photos/foto-18.webp: U Zagrebu. Subject from the Commons file page. Photo: Stebunik, CC0, https://commons.wikimedia.org/wiki/File:Zg_0146_Zagreb-Cathedral_with_flowers.jpg (resized to 1280 px, WebP)
+
 ## Dropped and why
 
 - Broj županija, broj susjednih država, morem koje pripada obala, broj otoka, Arena u Puli, Dioklecijanova palača, Morske orgulje, Medvednica nad Zagrebom, Učka u Istri, Gorski kotar između Karlovca i Rijeke, Pag (sir, čipka, sol), Kornati, Osijek (Tvrđa, Drava), Vukovar na Dunavu, delta Neretve i mandarine: true but too easy; made way for harder questions.
@@ -102,3 +125,4 @@ Checked online on 2026-11-14, read-only (page wikitext fetched through the Wikip
 - Q15: only one page checked; it says "izvire sjeverno od Vrlike". Not cross-checked on enciklopedija.hr.
 - Q28: Krapje and Mužilovčica (distractors) exist on hr.wikipedia, but I did not confirm on a page that they lie inside PP Lonjsko polje.
 - Q34: Since 1957 the Dobra's water is partly diverted to HE Gojak; the question says "završava u Đulinu ponoru", which the page states ("kanjonom svoj tok završava rijeka Dobra").
+- Q91 (photo, Rijeka Korzo): small shop signs are in the frame; none looked readable at 1280 px, but I did not zoom into every sign.

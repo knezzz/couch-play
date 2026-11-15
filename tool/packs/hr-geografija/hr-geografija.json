@@ -84,6 +84,24 @@
     {"q": "Koji je grad sjedište Krapinsko-zagorske županije?", "choices": ["Zabok", "Krapina", "Pregrada", "Donja Stubica"], "answer": 1},
     {"q": "Gdje je sjedište Zagrebačke županije?", "choices": ["U Velikoj Gorici", "U Samoboru", "U Gradu Zagrebu", "U Zaprešiću"], "answer": 2},
     {"q": "Koji je grad sjedište Šibensko-kninske županije?", "choices": ["Knin", "Šibenik", "Drniš", "Vodice"], "answer": 1},
-    {"q": "Koji je grad sjedište Koprivničko-križevačke županije?", "choices": ["Križevci", "Đurđevac", "Koprivnica", "Ludbreg"], "answer": 2}
+    {"q": "Koji je grad sjedište Koprivničko-križevačke županije?", "choices": ["Križevci", "Đurđevac", "Koprivnica", "Ludbreg"], "answer": 2},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-01.webp", "choices": ["Dubrovnik", "Kotor", "Trogir", "Korčula"], "answer": 0},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-02.webp", "choices": ["Stari Grad", "Hvar", "Makarska", "Vis"], "answer": 1},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-03.webp", "choices": ["Orebić", "Korčula", "Cavtat", "Rab"], "answer": 1},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-04.webp", "choices": ["Hum", "Buzet", "Motovun", "Grožnjan"], "answer": 2},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-05.webp", "choices": ["Osijek", "Vukovar", "Ilok", "Slavonski Brod"], "answer": 0},
+    {"q": "Koji je ovo nacionalni park?", "image": "photos/foto-06.webp", "choices": ["Krka", "Paklenica", "Mljet", "Plitvička jezera"], "answer": 3},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-07.webp", "choices": ["Rovinj", "Primošten", "Trogir", "Vodice"], "answer": 1},
+    {"q": "U kojem se gradu nalazi ova građevina?", "image": "photos/foto-08.webp", "choices": ["U Puli", "U Solinu", "U Zadru", "U Splitu"], "answer": 0},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-09.webp", "choices": ["Zagreb", "Opatija", "Rijeka", "Pula"], "answer": 2},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-10.webp", "choices": ["Poreč", "Rovinj", "Novigrad", "Umag"], "answer": 1},
+    {"q": "Koja je ovo katedrala?", "image": "photos/foto-11.webp", "choices": ["Katedrala sv. Stošije u Zadru", "Katedrala sv. Lovre u Trogiru", "Katedrala sv. Jakova u Šibeniku", "Katedrala sv. Duje u Splitu"], "answer": 2},
+    {"q": "Koji je ovo slap?", "image": "photos/foto-12.webp", "choices": ["Roški slap", "Veliki slap", "Manojlovac", "Skradinski buk"], "answer": 3},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-13.webp", "choices": ["Šibenik", "Makarska", "Split", "Zadar"], "answer": 2},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-14.webp", "choices": ["Nin", "Trogir", "Šibenik", "Korčula"], "answer": 1},
+    {"q": "U kojem se gradu nalazi ova utvrda?", "image": "photos/foto-15.webp", "choices": ["U Karlovcu", "U Varaždinu", "U Koprivnici", "U Čakovcu"], "answer": 1},
+    {"q": "U kojem se gradu nalazi ovaj vodotoranj?", "image": "photos/foto-16.webp", "choices": ["U Osijeku", "U Vinkovcima", "U Vukovaru", "U Iloku"], "answer": 2},
+    {"q": "Koji je ovo grad?", "image": "photos/foto-17.webp", "choices": ["Pula", "Šibenik", "Zadar", "Split"], "answer": 2},
+    {"q": "U kojem se gradu nalazi ova katedrala?", "image": "photos/foto-18.webp", "choices": ["U Osijeku", "U Đakovu", "U Varaždinu", "U Zagrebu"], "answer": 3}
   ]
 }
