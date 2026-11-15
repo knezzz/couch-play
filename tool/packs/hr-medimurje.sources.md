@@ -52,6 +52,56 @@ Shorthand:
 40. zajtrek = doručak (Čakovec): RJ-S.
 41. vurmuhar = urar (Vratišinec): RJ-G.
 42. devenica = krvavica (Štrigova): RJ-G.
+43. buksa = novčanik (Čakovec): RJ-S.
+44. dešč = kiša (Mursko Središće): RJ-G.
+45. mrelo = kišobran (Peklenica): RJ-G.
+46. rafunkerač = dimnjačar (Štrigova): RJ-G.
+47. šrajfenciger = odvijač (Sveti Martin na Muri): RJ-G.
+48. štacun = dućan (Mursko Središće): RJ-G.
+49. vanjkuš = jastuk (Gornji Hrašćan): RJ-G.
+50. Vuzem = uskrs (Sveti Martin na Muri): RJ-G.
+51. žganica = rakija (Štrigova): RJ-G.
+52. klešč = krpelj (Štrigova): RJ-G.
+53. očole = naočale (Sveti Martin na Muri): RJ-G.
+54. lagev = bačva (Mursko Središće): RJ-G.
+55. norc = budala (Mursko Središće): RJ-G.
+56. fonek = krafna (Sveti Martin na Muri): RJ-G.
+57. špajz = smočnica (Mursko Središće): RJ-G.
+58. trahtar = lijevak (Štrigova): RJ-G.
+59. puca = djevojka (Vratišinec): RJ-G.
+60. kača = zmija (Strahoninec): RJ-S.
+61. cug = vlak (Mala Subotica): RJ-S.
+62. cujzek = konj (Mala Subotica): RJ-S.
+63. škrlak = šešir (Mala Subotica): RJ-S.
+64. raca = patka (Nedelišće): RJ-S.
+65. tejer = tanjur (Mihovljan): RJ-S.
+66. protuletje = proljeće (Strahoninec): RJ-S.
+67. penezi = novac (Čakovec): RJ-S.
+68. rešt = zatvor (Nedelišće): RJ-S.
+69. kiklja = haljina (Šenkovec): RJ-S.
+70. klajbas = olovka (Šenkovec): RJ-S.
+71. gmajna = pašnjak (Totovec): RJ-S.
+72. cvirki = čvarci (Totovec): RJ-S.
+73. frtalj = četvrtina (Strahoninec): RJ-S.
+74. bažul = grah (Prelog): RJ-D.
+75. coprnica = vještica (Kotoriba): RJ-D.
+76. ftič = ptica (Dekanovec): RJ-D.
+77. rišpet = krevet (Prelog): RJ-D.
+78. robača = košulja (Goričan): RJ-D.
+79. štomfe = čarape (Hodošan): RJ-D.
+80. vročtvo = lijek (Hodošan): RJ-D.
+81. žlifta = blato (Turčišće): RJ-D.
+82. zabadav = uzalud (Čehovec): RJ-D.
+83. čuda = puno (Donja Dubrava): RJ-D.
+84. "Godine 1849., ban Josip Jelačić je oslobodio kraj od Mađara koji su tu vladali od 1720.": ME (the year is left out: 1848 and 1849 both appear in the literature).
+85. "najsjevernija je hrvatska rijeka ... Izvire u Austriji (Visoke Ture)": https://hr.wikipedia.org/wiki/Mura
+86. spjev "Sirena Jadranskoga mora" koji je Petar objavio 1660.: https://hr.wikipedia.org/wiki/Petar_IV._Zrinski
+87. "Nakon 1. svjetskog rata počinje eksploatacija ugljena. Isprva je to bilo u Peklenici, a onda i na području Murskog Središća": https://hr.wikipedia.org/wiki/Mursko_Središće
+88. "HE Dubrava je hidroelektrana smještena na rijeci Dravi i posljednja je u nizu od 3 hidroelektrane ... do ušća Mure"; Dubravsko jezero od Preloga prema Donjoj Dubravi: https://hr.wikipedia.org/wiki/Hidroelektrana_Dubrava
+89. vlastelinstvo Međimurje u posjedu austrijsko-češke obitelji Althan, "koji borave u Čakovcu i značajno nadograđuju Stari grad": ČK
+90. broj gradova = 3 (Čakovec, Prelog, Mursko Središće): MŽ
+91. datum rođenja 1. svibnja 1620., mjesto rođenja Čakovec: https://hr.wikipedia.org/wiki/Nikola_VII._Zrinski
+92. "prva željeznička pruga sagrađena je 1860., a povezivala je Budimpeštu s lukama Rijekom i Trstom": ČK
 
 ## Dropped from the first version, and why
 
@@ -68,3 +118,60 @@ Shorthand:
 - Q31: tiblica = wooden vessel (the sources disagree on the word).
 - Q37: jurjevščak = travanj comes from a single village's entry (Hodošan).
 - Q34: "najstariji hrvatski speedway klub" is the Prelog article's own claim.
+
+## Novo u Task 21 (čeka pregled)
+
+Added on 2026-11-15 (Task 21), not yet reviewed by the person. Q43–Q83 are dictionary words (Mali međimurski rječnik, one village each);
+Q84–Q92 are facts. Less sure: Q84 (the source says 1849, so the question leaves the year out); Q89 ("18. stoljeće" is the article's
+framing of the Althan ownership); the word wrong answers are my choice, so please flag any that is also a local meaning.
+
+- Q43: Što na međimurskom (npr. u Čakovcu) znači 'buksa'? → Novčanik
+- Q44: Što na međimurskom (npr. u Murskom Središću) znači 'dešč'? → Kiša
+- Q45: Što na međimurskom (npr. u Peklenici) znači 'mrelo'? → Kišobran
+- Q46: Tko je na međimurskom (npr. u Štrigovi) 'rafunkerač'? → Dimnjačar
+- Q47: Što na međimurskom (npr. u Svetom Martinu na Muri) znači 'šrajfenciger'? → Odvijač
+- Q48: Što na međimurskom (npr. u Murskom Središću) znači 'štacun'? → Dućan
+- Q49: Što na međimurskom (npr. u Gornjem Hrašćanu) znači 'vanjkuš'? → Jastuk
+- Q50: Što na međimurskom (npr. u Svetom Martinu na Muri) znači 'Vuzem'? → Uskrs
+- Q51: Što na međimurskom (npr. u Štrigovi) znači 'žganica'? → Rakija
+- Q52: Što na međimurskom (npr. u Štrigovi) znači 'klešč'? → Krpelj
+- Q53: Što na međimurskom (npr. u Svetom Martinu na Muri) znači 'očole'? → Naočale
+- Q54: Što na međimurskom (npr. u Murskom Središću) znači 'lagev'? → Bačva
+- Q55: Tko je na međimurskom (npr. u Murskom Središću) 'norc'? → Budala
+- Q56: Što na međimurskom (npr. u Svetom Martinu na Muri) znači 'fonek'? → Krafna
+- Q57: Što na međimurskom (npr. u Murskom Središću) znači 'špajz'? → Smočnica
+- Q58: Što na međimurskom (npr. u Štrigovi) znači 'trahtar'? → Lijevak
+- Q59: Tko je na međimurskom (npr. u Vratišincu) 'puca'? → Djevojka
+- Q60: Što na međimurskom (npr. u Strahonincu) znači 'kača'? → Zmija
+- Q61: Što na međimurskom (npr. u Maloj Subotici) znači 'cug'? → Vlak
+- Q62: Što na međimurskom (npr. u Maloj Subotici) znači 'cujzek'? → Konj
+- Q63: Što na međimurskom (npr. u Maloj Subotici) znači 'škrlak'? → Šešir
+- Q64: Što na međimurskom (npr. u Nedelišću) znači 'raca'? → Patka
+- Q65: Što na međimurskom (npr. u Mihovljanu) znači 'tejer'? → Tanjur
+- Q66: Što na međimurskom (npr. u Strahonincu) znači 'protuletje'? → Proljeće
+- Q67: Što na međimurskom (npr. u Čakovcu) znači 'penezi'? → Novac
+- Q68: Što na međimurskom (npr. u Nedelišću) znači 'rešt'? → Zatvor
+- Q69: Što na međimurskom (npr. u Šenkovcu) znači 'kiklja'? → Haljina
+- Q70: Što na međimurskom (npr. u Šenkovcu) znači 'klajbas'? → Olovka
+- Q71: Što na međimurskom (npr. u Totovcu) znači 'gmajna'? → Pašnjak
+- Q72: Što na međimurskom (npr. u Totovcu) znači 'cvirki'? → Čvarci
+- Q73: Što na međimurskom (npr. u Strahonincu) znači 'frtalj'? → Četvrtina
+- Q74: Što na međimurskom (npr. u Prelogu) znači 'bažul'? → Grah
+- Q75: Tko je na međimurskom (npr. u Kotoribi) 'coprnica'? → Vještica
+- Q76: Što na međimurskom (npr. u Dekanovcu) znači 'ftič'? → Ptica
+- Q77: Što na međimurskom (npr. u Prelogu) znači 'rišpet'? → Krevet
+- Q78: Što na međimurskom (npr. u Goričanu) znači 'robača'? → Košulja
+- Q79: Što na međimurskom (npr. u Hodošanu) znači 'štomfe'? → Čarape
+- Q80: Što na međimurskom (npr. u Hodošanu) znači 'vročtvo'? → Lijek
+- Q81: Što na međimurskom (npr. u Turčišću) znači 'žlifta'? → Blato
+- Q82: Što na međimurskom (npr. u Čehovcu) znači 'zabadav'? → Uzalud
+- Q83: Što na međimurskom (npr. u Donjoj Dubravi) znači 'čuda'? → Puno
+- Q84: Koji je ban sredinom 19. stoljeća oslobodio Međimurje mađarske vlasti, koja je trajala od 1720.? → Josip Jelačić
+- Q85: U kojem gorju izvire Mura, najsjevernija hrvatska rijeka? → U Visokim Turama
+- Q86: Kako se zove spjev koji je Petar Zrinski objavio 1660.? → Sirena Jadranskoga mora
+- Q87: Što se nakon Prvoga svjetskog rata vadilo u rudnicima Peklenice i Murskog Središća? → Ugljen
+- Q88: Kako se zove hidroelektrana kod Preloga, posljednja od triju hrvatskih hidroelektrana na Dravi prije ušća Mure? → HE Dubrava
+- Q89: Koja je plemićka obitelj u 18. stoljeću imala vlastelinstvo Međimurje i znatno nadogradila Stari grad u Čakovcu? → Althan
+- Q90: Koliko gradova ima Međimurska županija? → Tri
+- Q91: U kojem je gradu 1620. rođen Nikola Zrinski, pjesnik i hrvatski ban? → U Čakovcu
+- Q92: Koje je godine kroz Čakovec prošla prva željeznička pruga, ona koja je Budimpeštu povezivala s Rijekom i Trstom? → 1860.
