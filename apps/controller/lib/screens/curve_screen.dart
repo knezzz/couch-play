@@ -25,8 +25,9 @@ class CurveScreen extends StatefulWidget {
 
 class _CurveScreenState extends State<CurveScreen> {
   bool _left = false, _right = false;
-  // Pointer counts live here, not in build(): the 1 s Pong rebuild must not reset them.
-  final _held = [0, 0];
+  // Pointer ids per side live here, not in build(): the 1 s Pong rebuild must not reset them.
+  // Ids, not a counter: a release the crash already cleared must not go below zero.
+  final _held = [<int>{}, <int>{}];
   int? _rtt;
   final _samples = <int>[]; // last 300 round trips, ms
   Timer? _ping;
@@ -59,7 +60,8 @@ class _CurveScreenState extends State<CurveScreen> {
       // Ignored pointers never send their release, so release for them or the
       // TV keeps turning this player.
       final held = _left || _right;
-      _held[0] = _held[1] = 0;
+      _held[0].clear();
+      _held[1].clear();
       if (held) _set(left: false, right: false);
     }
   }
@@ -77,19 +79,19 @@ class _CurveScreenState extends State<CurveScreen> {
     widget.conn.send(Steer(left: _left, right: _right));
   }
 
+  void _release(int side, int pointer, void Function(bool) set) {
+    if (_held[side].remove(pointer) && _held[side].isEmpty) set(false);
+  }
+
   Widget _half(int side, bool left, void Function(bool) set, Color color) {
     return Expanded(
       child: Listener(
         behavior: HitTestBehavior.opaque,
-        onPointerDown: (_) {
-          if (_held[side]++ == 0) set(true);
+        onPointerDown: (e) {
+          if (_held[side].add(e.pointer) && _held[side].length == 1) set(true);
         },
-        onPointerUp: (_) {
-          if (--_held[side] == 0) set(false);
-        },
-        onPointerCancel: (_) {
-          if (--_held[side] == 0) set(false);
-        },
+        onPointerUp: (e) => _release(side, e.pointer, set),
+        onPointerCancel: (e) => _release(side, e.pointer, set),
         child: Container(
           color: color,
           alignment: Alignment.center,

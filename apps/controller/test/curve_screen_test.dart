@@ -78,4 +78,19 @@ void main() {
     await g.up();
     await t.pumpWidget(const SizedBox());
   });
+
+  testWidgets('a button still works after release during a crash', (t) async {
+    final c = _Fake();
+    await t.pumpWidget(MaterialApp(home: CurveScreen(c)));
+    final g = await t.startGesture(const Offset(50, 300));
+    await t.pumpWidget(MaterialApp(home: CurveScreen(c, alive: false)));
+    await g.up(); // released while dead
+    await t.pumpWidget(MaterialApp(home: CurveScreen(c)));
+    c.sent.clear();
+    final g2 = await t.startGesture(const Offset(50, 300));
+    expect(c.sent.last, const Steer(left: true, right: false));
+    await g2.up();
+    expect(c.sent.last, const Steer(left: false, right: false));
+    await t.pumpWidget(const SizedBox());
+  });
 }
