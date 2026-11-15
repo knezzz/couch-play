@@ -124,3 +124,78 @@ hr-zemljopis-svijeta, which already asks about Kyoto); the made-up distractor "K
 114. A sous chef is second-in-command of a kitchen, directly below the head chef: https://en.wikipedia.org/wiki/Sous-chef
 115. A sari is a draped cloth and women's garment in the Indian subcontinent: https://en.wikipedia.org/wiki/Sari
 116. the international nautical mile is defined as exactly 1,852 metres: https://en.wikipedia.org/wiki/Nautical_mile
+117. R.U.R. (1920 play by Karel Čapek) introduced the word robot: https://en.wikipedia.org/wiki/R.U.R.
+118. English land agent whose ostracism by his local community in Ireland gave English the term boycott: https://en.wikipedia.org/wiki/Charles_Boycott
+119. Masochism named after Leopold von Sacher-Masoch, Austrian author: https://en.wikipedia.org/wiki/Sadomasochism
+120. a je az, b je buky, v je vede: https://hr.wikipedia.org/wiki/Glagoljica
+121. Od 30 slova u hrvatskome jeziku 27 jednoslova, 3 dvoslova: https://hr.wikipedia.org/wiki/Hrvatska_abeceda
+122. Euclidean alphabet with 24 letters, alpha to omega, became standard: https://en.wikipedia.org/wiki/Greek_alphabet
+123. The Korean alphabet ... Hangul internationally: https://en.wikipedia.org/wiki/Hangul
+124. Devanagari, official script in India; languages include Hindi: https://en.wikipedia.org/wiki/Devanagari
+125. Cuneiform, region Sumer, c. 2900 BC: https://en.wikipedia.org/wiki/Cuneiform
+126. Champollion, French philologist, decipherer of Egyptian hieroglyphs: https://en.wikipedia.org/wiki/Jean-François_Champollion
+127. Esperanto created by L. L. Zamenhof in 1887: https://en.wikipedia.org/wiki/Esperanto
+128. Homonyms are words with the same spelling or pronunciation but different meanings: https://en.wikipedia.org/wiki/Homonym
+129. Hrvatski jezik tradicionalno se opisuje kao jezik sa sedam padeža: https://hr.wikipedia.org/wiki/Padež
+130. An Achilles' heel is a weakness despite overall strength: https://en.wikipedia.org/wiki/Achilles'_heel
+131. Trojan Horse: Laocoon, Timeo Danaos et dona ferentes: https://en.wikipedia.org/wiki/Trojan_Horse
+132. Gods condemned him to push an immense boulder up a hill for eternity: https://en.wikipedia.org/wiki/Sisyphus
+133. Alexander the Great cut through the Gordian Knot with his sword: https://en.wikipedia.org/wiki/Gordian_Knot
+134. Named after King Pyrrhus of Epirus: https://en.wikipedia.org/wiki/Pyrrhic_victory
+135. Words spoken by Julius Caesar at the crossing of the Rubicon, 49 BC: https://en.wikipedia.org/wiki/Alea_iacta_est
+136. Cogito, ergo sum, first principle of René Descartes, 1637: https://en.wikipedia.org/wiki/Cogito,_ergo_sum
+137. Saying derived from Plato's account of Socrates: https://en.wikipedia.org/wiki/I_know_that_I_know_nothing
+138. Heraclitus: Panta rhei, world constantly in flux: https://en.wikipedia.org/wiki/Heraclitus
+139. Carpe diem, from book 1 of Horace's Odes: https://en.wikipedia.org/wiki/Carpe_diem
+140. 1967 novel by Colombian author Gabriel García Márquez: https://en.wikipedia.org/wiki/One_Hundred_Years_of_Solitude
+141. Captain Ahab, monomaniacal captain of the Pequod in Moby-Dick: https://en.wikipedia.org/wiki/Captain_Ahab
+142. Crime and Punishment, novel by Fyodor Dostoevsky, 1866: https://en.wikipedia.org/wiki/Crime_and_Punishment
+143. Rocinante is Don Quixote's horse in Cervantes' novel: https://en.wikipedia.org/wiki/Rocinante
+144. Nineteen Eighty-Four, novel by English writer George Orwell: https://en.wikipedia.org/wiki/Nineteen_Eighty-Four
+145. Penelope, wife of Odysseus, known for her fidelity: https://en.wikipedia.org/wiki/Penelope
+146. Dante is accompanied by three guides: Virgil, ...: https://en.wikipedia.org/wiki/Divine_Comedy
+147. The Metamorphosis: Gregor Samsa wakes transformed into a huge insect: https://en.wikipedia.org/wiki/The_Metamorphosis
+148. Tolstoy's Anna Karenina begins: All happy families are alike...: https://en.wikipedia.org/wiki/Anna_Karenina_principle
+149. Opening line: a single man in possession of a good fortune must be in want of a wife: https://en.wikipedia.org/wiki/Pride_and_Prejudice
+150. Faust, tragic play in two parts by Johann Wolfgang von Goethe: https://en.wikipedia.org/wiki/Faust_(Goethe)
+151. Les Misérables, French epic novel by Victor Hugo, 1862: https://en.wikipedia.org/wiki/Les_Misérables
+152. Edmond Dantès, title character of Dumas's The Count of Monte Cristo: https://en.wikipedia.org/wiki/Edmond_Dantès
+153. The Old Man and the Sea, 1952 novella by Ernest Hemingway: https://en.wikipedia.org/wiki/The_Old_Man_and_the_Sea
+154. Lilliput, fictional island nation in Gulliver's Travels: https://en.wikipedia.org/wiki/Lilliput_and_Blefuscu
+155. The Decameron, collection of short stories by Giovanni Boccaccio: https://en.wikipedia.org/wiki/The_Decameron
+156. Cerberus, hound of Hades, usually three heads, guards the gates of the underworld: https://en.wikipedia.org/wiki/Cerberus
+157. Romans equated Minerva with the Greek goddess Athena: https://en.wikipedia.org/wiki/Minerva
+158. Hephaestus, Greek god of blacksmiths, fire, metalworking: https://en.wikipedia.org/wiki/Hephaestus
+159. Mjölnir is the hammer of the thunder god Thor: https://en.wikipedia.org/wiki/Mjölnir
+160. Yggdrasil, immense central sacred tree in Norse cosmology: https://en.wikipedia.org/wiki/Yggdrasil
+161. Odin possessing only one eye, having sacrificed the other for wisdom: https://en.wikipedia.org/wiki/Odin
+162. At Ragnarök Odin is killed by the monstrous wolf Fenrir: https://en.wikipedia.org/wiki/Odin
+163. Perseus beheaded the Gorgon Medusa: https://en.wikipedia.org/wiki/Perseus
+164. Jason, leader of the Argonauts, quest for the Golden Fleece: https://en.wikipedia.org/wiki/Jason
+165. Theseus, famous for slaying the Minotaur: https://en.wikipedia.org/wiki/Theseus
+166. Daedalus, father of Icarus, made wings to escape Crete: https://en.wikipedia.org/wiki/Daedalus
+167. Janus represented with two faces; January is named for Janus: https://en.wikipedia.org/wiki/Janus
+168. Calliope, Muse who presides over eloquence and epic poetry: https://en.wikipedia.org/wiki/Calliope
+169. Narcissus becomes enamoured with his own reflection in a pool: https://en.wikipedia.org/wiki/Narcissus_(mythology)
+170. Book of Revelation is canonically the last book of the New Testament: https://en.wikipedia.org/wiki/Book_of_Revelation
+171. Peter denied knowing Jesus three times, then heard the rooster crow: https://en.wikipedia.org/wiki/Denial_of_Peter
+172. Mount Sinai, where Moses received the Ten Commandments: https://en.wikipedia.org/wiki/Mount_Sinai
+173. Matthew mentioned in Matthew 9:9 as a tax collector: https://en.wikipedia.org/wiki/Matthew_the_Apostle
+174. The Five Pillars of Islam: https://en.wikipedia.org/wiki/Five_Pillars_of_Islam
+175. Hanukkah lasts for eight nights and days: https://en.wikipedia.org/wiki/Hanukkah
+176. Siddhartha Gautama, most commonly referred to as the Buddha: https://en.wikipedia.org/wiki/The_Buddha
+177. Ganesha readily identified by his elephant head and four arms: https://en.wikipedia.org/wiki/Ganesha
+178. Vulgate, late-4th-century Latin Bible, largely the work of Saint Jerome: https://en.wikipedia.org/wiki/Vulgate
+179. Written 1517 by Martin Luther, professor at the University of Wittenberg: https://en.wikipedia.org/wiki/Ninety-five_Theses
+180. Rain fell for forty days and forty nights: https://en.wikipedia.org/wiki/Genesis_flood_narrative
+181. The Ugly Duckling, literary fairy tale by Hans Christian Andersen: https://en.wikipedia.org/wiki/The_Ugly_Duckling
+182. Perrault: Little Red Riding Hood, Cinderella; 1697 Histoires ou contes du temps passé: https://en.wikipedia.org/wiki/Charles_Perrault
+183. The Brothers Grimm, Jacob (1785-1863) and Wilhelm (1786-1859): https://en.wikipedia.org/wiki/Brothers_Grimm
+184. The Fox and the Grapes is one of Aesop's Fables: https://en.wikipedia.org/wiki/The_Fox_and_the_Grapes
+185. The Adventures of Pinocchio, 1883 novel by Carlo Collodi: https://en.wikipedia.org/wiki/The_Adventures_of_Pinocchio
+186. Alice's Adventures in Wonderland, 1865 novel by Lewis Carroll: https://en.wikipedia.org/wiki/Alice's_Adventures_in_Wonderland
+187. The Little Prince, novella by Antoine de Saint-Exupéry: https://en.wikipedia.org/wiki/The_Little_Prince
+188. Scheherazade, legendary narrator of One Thousand and One Nights: https://en.wikipedia.org/wiki/Scheherazade
+189. Sonnet traditionally consists of fourteen lines: https://en.wikipedia.org/wiki/Sonnet
+190. Braille characters formed using a combination of six raised dots: https://en.wikipedia.org/wiki/Braille
+191. The word sauna is an ancient Finnish word: https://en.wikipedia.org/wiki/Sauna
