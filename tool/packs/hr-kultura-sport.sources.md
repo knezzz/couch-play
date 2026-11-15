@@ -1,50 +1,13 @@
 # hr-kultura-sport: sources
 
-Checked online on 2026-11-14, read-only. One line per question, in pack order. E = easy, ✱ = least sure (see the end).
+Checked online on 2026-11-14 (Task 13b) and re-checked on 2026-11-15 (Task 21), read-only. One line per question, in
+pack order: the fact as found, then the page. Question wording is ours; nothing is copied from quiz sites
+(see SOURCES-research.md). Questions 1-43 are from Task 13b; from 44 on they are new in Task 21.
 
-1. E. Kravata spread through Europe in the 17th century via Croatian soldiers: https://hr.wikipedia.org/wiki/Kravata
-2. E. Mihanović wrote "Horvatska domovina", which became the anthem: https://hr.wikipedia.org/wiki/Antun_Mihanović
-3. Sinjska alka marks the 14 August 1715 victory that ended the siege: https://hr.wikipedia.org/wiki/Sinjska_alka (changed: old "held since 1715" claim is not what the page says; first written mention is 1784)
-4. E. Moreška performed yearly on Korčula since the 15th century: https://hr.wikipedia.org/wiki/Moreška
-5. Ojkanje put on UNESCO's list in need of urgent safeguarding, 16 Nov 2010: https://hr.wikipedia.org/wiki/Ojkanje ✱
-6. Zvončari, Kastavština, UNESCO 2009: https://hr.wikipedia.org/wiki/Zvončari
-7. Za križen, Hvar, Maundy Thursday, six processions start at 22:00: https://hr.wikipedia.org/wiki/Za_križen
-8. Aloe (agave) lace made only by Benedictine nuns in Hvar: https://ich.unesco.org/en/RL/lacemaking-in-croatia-00245 and https://hr.wikipedia.org/wiki/Čipkarstvo (Pag needle lace, Lepoglava bobbin lace, Hvar agave lace)
-9. Nijemo kolo, Dalmatinska zagora, danced without music: https://hr.wikipedia.org/wiki/Nijemo_kolo
-10. E. Festa sv. Vlaha, 3 February, Dubrovnik: https://hr.wikipedia.org/wiki/Festa_sv._Vlaha
-11. E. Licitar, most often heart-shaped, UNESCO 2010: https://hr.wikipedia.org/wiki/Licitar
-12. Soparnik, from Poljica, baked under embers: https://hr.wikipedia.org/wiki/Soparnik
-13. Judita written 1501, published 1521: https://hr.wikipedia.org/wiki/Judita_(Marko_Marulić)
-14. Osman, by Ivan Gundulić, about Osman II: https://hr.wikipedia.org/wiki/Osman_(Gundulić)
-15. E. Dundo Maroje by Marin Držić: https://hr.wikipedia.org/wiki/Dundo_Maroje
-16. Smrt Smail-age Čengića by Ivan Mažuranić, 1846: https://hr.wikipedia.org/wiki/Smrt_Smail-age_Čengića
-17. E. Zlatarovo zlato by Šenoa, first Croatian historical novel: https://hr.wikipedia.org/wiki/Zlatarovo_zlato
-18. Last line of Matoš's sonnet "Jesenje veče": https://www.hkv.hr/hkvpedija/poezija/40356-poezija-nedjeljom-22.html (full text) and https://www.matica.hr/kolo/435/mjesto-soneta-jesenje-vece-u-matosevom-lirskom-govoru-24011/
-19. Lelek sebra is Tin Ujević's work: https://hr.wikipedia.org/wiki/Tin_Ujević (infobox, "Važnija djela")
-20. Balade Petrice Kerempuha by Krleža, 1936: https://hr.wikipedia.org/wiki/Balade_Petrice_Kerempuha
-21. Kiklop by Ranko Marinković, 1965, main character Melkior Tresić, theatre critic: https://hr.wikipedia.org/wiki/Kiklop_(roman)
-22. Majstor Radovan, Trogir portal, carved and signed 1240: https://hr.wikipedia.org/wiki/Majstor_Radovan
-23. Juraj Dalmatinac's wreath of heads ("Jurjev vijenac od ljudskih glava") on Šibenik cathedral: https://hr.wikipedia.org/wiki/Katedrala_svetog_Jakova_u_Šibeniku
-24. Zdenac života in front of HNK Zagreb: https://hr.wikipedia.org/wiki/Zdenac_života
-25. Augustinčić, "Vjesnik mira" in front of the UN in New York: https://hr.wikipedia.org/wiki/Antun_Augustinčić ✱
-26. Bukovac, "Hrvatski narodni preporod (zastor)"; Iveković and Čikoš Sesija listed as influenced by him: https://hr.wikipedia.org/wiki/Vlaho_Bukovac
-27. Hegedušić started painting in Hlebine in 1930 with Generalić and Mraz: https://hr.wikipedia.org/wiki/Hlebinska_slikarska_škola and https://hr.wikipedia.org/wiki/Krsto_Hegedušić
-28. Ljubav i zloba, Lisinski, first Croatian opera, 1846: https://hr.wikipedia.org/wiki/Ljubav_i_zloba
-29. "U boj" is the finale of Zajc's Nikola Šubić Zrinjski: https://hr.wikipedia.org/wiki/Nikola_Šubić_Zrinjski_(opera)
-30. Ero s onoga svijeta, Jakov Gotovac, 1935: https://hr.wikipedia.org/wiki/Ero_s_onoga_svijeta
-31. Surogat (1961), Dušan Vukotić, Oscar in 1962; Piccolo and Igra are his films before and after: https://hr.wikipedia.org/wiki/Surogat ✱
-32. Tko pjeva zlo ne misli (1970), directed by Krešo Golik: https://hr.wikipedia.org/wiki/Tko_pjeva_zlo_ne_misli
-33. Founding of Hajduk agreed in Prague in February 1911 by Split students (registered in Split); the question says "dogovorili osnivanje": https://hr.wikipedia.org/wiki/HNK_Hajduk_Split
-34. E. Šuker top scorer of the 1998 World Cup (6 goals): https://en.wikipedia.org/wiki/1998_FIFA_World_Cup
-35. E. Modrić, Ballon d'Or for 2018: https://hr.wikipedia.org/wiki/Luka_Modrić
-36. E. Ivanišević won Wimbledon 2001 as a wild card: https://hr.wikipedia.org/wiki/Goran_Ivanišević
-37. Iva Majoli won Roland Garros 1997: https://hr.wikipedia.org/wiki/Iva_Majoli
-38. Janica Kostelić, three golds at Salt Lake City 2002 (slalom, giant slalom, combined): https://hr.wikipedia.org/wiki/Janica_Kostelić
-39. Mate Parlov, Olympic gold Munich 1972: https://hr.wikipedia.org/wiki/Mate_Parlov
-40. Đurđica Bjedov, gold 100 m breaststroke Mexico City 1968 (silver in 200 m breaststroke): https://hr.wikipedia.org/wiki/Đurđica_Bjedov
-41. Matija Ljubek, canoe (C-1 1000 m) gold Montreal 1976: https://hr.wikipedia.org/wiki/Matija_Ljubek
-42. Sinković brothers, Rio 2016 gold in double sculls (2x); Tokyo and Paris golds were in the coxless pair (2-): https://hr.wikipedia.org/wiki/Valent_Sinković
-43. Handball, Olympic gold 1996 and 2004: https://hr.wikipedia.org/wiki/Hrvatska_rukometna_reprezentacija
+Task 21 review of the 43: 42 kept, 1 fixed. Q13 used to ask the year Marulić wrote Judita (1501), the same fact as
+hr-povijest; it now asks where Judita was first printed (Venice, 1521). Q5 is settled: UNESCO's Croatia page lists
+ojkanje (2010) as the only Croatian item on the urgent safeguarding list. Q18's hkv.hr source returned 403; the line
+is confirmed on matica.hr.
 
 ## Dropped and why
 
@@ -65,8 +28,103 @@ Checked online on 2026-11-14, read-only. One line per question, in pack order. E
 
 ## Least sure
 
-- Q5: the wrong choices (klapa, bećarac, dvoglasje) are on UNESCO's representative list, not the urgent list. I did not fetch a page listing every Croatian item to confirm that ojkanje is the only one on the urgent list.
 - Q25: hr.wikipedia calls the statue "Vjesnik mira"; it is also widely called "Mir". The question uses the page's name.
 - Q31: "Koncert za mašinsku pušku" (a wrong choice) is from memory as another Vukotić film; not on a fetched page. Piccolo and Igra are confirmed.
 - Q9: the nijemo kolo page has two different UNESCO years (infobox 2009, text 2011), so the question does not ask for a year.
-- Q13: 1521 (publication year) is a deliberate trap choice next to 1501 (year written). Fair, but hard.
+- Dingač: the source says plavac mali is the most planted variety, so the question asks exactly that.
+- Davis Cup 2018: Čilić's win over Pouille made it 3–1 per the results table; "clinching" is read from the table.
+- 2022 quarter-final: Brazil on penalties (4–2) is from the knockout bracket on en.wikipedia.
+- Zajc and the Chilean navy anthem rests on one hr.wikipedia sentence.
+- Blanka Vlašić, Osaka 2007: the fetched sentence names Osaka; the year is in the question.
+- Some wrong choices (Arijadna, Mila Wod, Semeljci) are from the drafter's knowledge, not a fetched page.
+
+1. Europom se raširila u 17. st. posredovanjem hrvatskih vojnika: https://hr.wikipedia.org/wiki/Kravata
+2. u Rijeci je napisao stihove pjesme Horvatska domovina (Lijepa naša): https://hr.wikipedia.org/wiki/Antun_Mihanović
+3. godišnjica pobjede 14. kolovoza kojom je okončana opsada grada 1715.: https://hr.wikipedia.org/wiki/Sinjska_alka
+4. od 15. stoljeća svake godine izvodi na Korčuli: https://hr.wikipedia.org/wiki/Moreška
+5. 2010 Ojkanje singing, List in Need of Urgent Safeguarding (the only Croatian USL item; klapa 2012, bećarac 2011, Istrian scale 2009 are RL): https://en.wikipedia.org/wiki/Ojkanje and https://ich.unesco.org/en/state/croatia-HR
+6. najbogatije zvončarskim skupinama je Kastavština; UNESCO RL 2009: https://hr.wikipedia.org/wiki/Zvončari and https://en.wikipedia.org/wiki/Zvončari
+7. točno u 22 sata šest procesija istovremeno kreće (Vrbanj, Vrboska, Jelsa...): https://hr.wikipedia.org/wiki/Za_križen
+8. The Benedictine nuns in the town of Hvar are the only ones who make the Hvar (aloe) lace: https://en.wikipedia.org/wiki/Lacemaking_in_Croatia
+9. izvodi se bez glazbe, najčešće u Zagori: https://hr.wikipedia.org/wiki/Nijemo_kolo
+10. blagdan 3. veljače: https://hr.wikipedia.org/wiki/Festa_svetog_Vlaha
+11. najčešće u obliku srca; upisan na UNESCO-ov popis: https://hr.wikipedia.org/wiki/Licitar
+12. jelo od blitve iz Poljica, prekriva se žeravicom: https://hr.wikipedia.org/wiki/Soparnik
+13. first edition printed in Venice by Guglielmo da Fontaneto, 13 August 1521: https://en.wikipedia.org/wiki/Judita and https://hr.wikipedia.org/wiki/Judita_(Marko_Marulić)
+14. Osman II.: https://hr.wikipedia.org/wiki/Osman_(Gundulić)
+15. najpoznatija komedija Marina Držića: https://hr.wikipedia.org/wiki/Dundo_Maroje
+16. spjev Ivana Mažuranića, objavljen 1846.: https://hr.wikipedia.org/wiki/Smrt_Smail-age_Čengića
+17. prvi hrvatski povijesni roman (Šenoa): https://hr.wikipedia.org/wiki/Zlatarovo_zlato
+18. Matica hrvatska (Kolo) quotes the last line of Jesenje veče: Kao da je samac usred svemira: https://www.matica.hr/kolo/435/mjesto-soneta-jesenje-vece-u-matosevom-lirskom-govoru-24011/ (hkv.hr full text returned 403 this time)
+19. objavljuje zbirke Lelek sebra i Kolajna: https://hr.wikipedia.org/wiki/Tin_Ujević
+20. zbirka pjesama Miroslava Krleže, 1936.: https://hr.wikipedia.org/wiki/Balade_Petrice_Kerempuha
+21. drama kazališnog kritičara Melkiora Tresića: https://hr.wikipedia.org/wiki/Kiklop_(roman)
+22. Radovanov portal u Trogiru isklesao 1240.: https://hr.wikipedia.org/wiki/Majstor_Radovan
+23. vijenac individualiziranih glava prirodne veličine; Jurjev vijenac od ljudskih glava: https://hr.wikipedia.org/wiki/Katedrala_sv._Jakova_u_Šibeniku
+24. postavio na trg pred zgradom zagrebačkog kazališta gdje je i danas: https://hr.wikipedia.org/wiki/Zdenac_života
+25. Vjesnika mira – ispred zgrade Ujedinjenih naroda u New Yorku: https://hr.wikipedia.org/wiki/Antun_Augustinčić
+26. Zastor za HNK, tema Hrvatski narodni preporod: https://hr.wikipedia.org/wiki/Vlaho_Bukovac
+27. u Hlebinama Krsto Hegedušić počeo 1930.: https://hr.wikipedia.org/wiki/Hlebinska_slikarska_škola
+28. Smatra se prvom hrvatskom operom (Lisinski, 1846.): https://hr.wikipedia.org/wiki/Ljubav_i_zloba
+29. Finale: U boj: https://hr.wikipedia.org/wiki/Nikola_Šubić_Zrinjski_(opera)
+30. Gotovac počeo skladati opere svibnja 1935.: https://hr.wikipedia.org/wiki/Ero_s_onoga_svijeta
+31. Surogat, Oscar 1962. za najbolji crtani film: https://hr.wikipedia.org/wiki/Surogat_(1961.)
+32. najpoznatiji film Kreše Golika: https://hr.wikipedia.org/wiki/Tko_pjeva_zlo_ne_misli_(1970.)
+33. Hajduk je u veljači 1911. u Pragu osnovala skupina splitskih studenata: https://hr.wikipedia.org/wiki/HNK_Hajduk_Split
+34. Davor Šuker ... secure the golden boot: https://en.wikipedia.org/wiki/1998_FIFA_World_Cup
+35. Ballon d'Or France Footballa 2018.: https://hr.wikipedia.org/wiki/Luka_Modrić
+36. jedini pobijedio na Wimbledonu s pozivnicom (2001.): https://hr.wikipedia.org/wiki/Goran_Ivanišević
+37. osvajačica Roland Garrosa 1997.: https://hr.wikipedia.org/wiki/Iva_Majoli
+38. Salt Lake City 2002: zlato u slalomu, veleslalomu i kombinaciji, srebro u superveleslalomu: https://hr.wikipedia.org/wiki/Janica_Kostelić
+39. OI München 1972., olimpijski osvajač zlata: https://hr.wikipedia.org/wiki/Mate_Parlov
+40. zlato na 100 m prsno, srebro na dvostruko duljoj dionici, Ciudad Mexico 1968.: https://hr.wikipedia.org/wiki/Đurđica_Bjedov
+41. hrvatski kanuist, 1976. (Montreal): https://hr.wikipedia.org/wiki/Matija_Ljubek
+42. Rio: zlato, dvojac na pariće (s Martinom Sinkovićem): https://hr.wikipedia.org/wiki/Valent_Sinković
+43. dva naslova olimpijskog pobjednika (1996., 2004.): https://hr.wikipedia.org/wiki/Hrvatska_rukometna_reprezentacija
+44. Najvažnije djelo Petra Hektorovića, objavljeno 1568.: https://hr.wikipedia.org/wiki/Ribanje_i_ribarsko_prigovaranje
+45. Planine, prvi hrvatski roman, Zoranić, Mleci 1569.: https://hr.wikipedia.org/wiki/Planine_(roman)
+46. Robinja prva je svjetovna drama na hrvatskom: https://hr.wikipedia.org/wiki/Hanibal_Lucić
+47. Dubrava alegorija Dubrovnika i slobode; praizvedba 1628.: https://hr.wikipedia.org/wiki/Dubravka_(Gundulić)
+48. ponio svoju nedovršenu poemu Jama: https://hr.wikipedia.org/wiki/Ivan_Goran_Kovačić
+49. U registraturi je roman Ante Kovačića: https://hr.wikipedia.org/wiki/U_registraturi
+50. socijalni roman Vjenceslava Novaka: https://hr.wikipedia.org/wiki/Posljednji_Stipančići
+51. roman Proljeća Ivana Galeba (1957.): https://hr.wikipedia.org/wiki/Vladan_Desnica
+52. knjiga Slobodana Novaka iz 1968.: https://hr.wikipedia.org/wiki/Mirisi,_zlato_i_tamjan
+53. svoju jedinu zbirku pjesama Preobraženja (1920.): https://hr.wikipedia.org/wiki/Antun_Branko_Šimić
+54. Breza (predložak za film Ante Babaje): https://hr.wikipedia.org/wiki/Slavko_Kolar
+55. Voćka poslije kiše, Zagreb, 1978.: https://hr.wikipedia.org/wiki/Dobriša_Cesarić
+56. Mojsije, Lucida intervalla (1893.): https://hr.wikipedia.org/wiki/Silvije_Strahimir_Kranjčević
+57. Zagorka i roman Grička vještica: https://hr.wikipedia.org/wiki/Grička_vještica
+58. published in 1774 by Alberto Fortis in Viaggio in Dalmazia: https://en.wikipedia.org/wiki/Hasanaginica
+59. Veli Jože, novel by Vladimir Nazor, 1908: https://en.wikipedia.org/wiki/Veli_Jože
+60. Kratki izlet tiskan 1965.: https://hr.wikipedia.org/wiki/Antun_Šoljan
+61. Gartlic za čas kratiti, written in prison: https://en.wikipedia.org/wiki/Fran_Krsto_Frankopan
+62. Porin je druga hrvatska opera, Lisinski: https://hr.wikipedia.org/wiki/Porin_(opera)
+63. Ivan Zajc (Rijeka, 3. kolovoza 1832.): https://hr.wikipedia.org/wiki/Ivan_Zajc
+64. Glazba za himnu čileanske ratne mornarice preuzeta je iz opere Nikola Šubić Zrinjski: https://hr.wikipedia.org/wiki/Ivan_Zajc
+65. obitavala u obiteljskom dvorcu u Našicama: https://hr.wikipedia.org/wiki/Dora_Pejačević
+66. zgrada HNK djelo Ferdinanda Fellnera i Hermanna Helmera; listopad 1895.: https://hr.wikipedia.org/wiki/Hrvatsko_narodno_kazalište_u_Zagrebu
+67. festival utemeljen 1950.: https://hr.wikipedia.org/wiki/Dubrovačke_ljetne_igre
+68. Utemeljeno je 1612.: https://hr.wikipedia.org/wiki/Hvarsko_kazalište
+69. rad na humorističkoj seriji Naše malo misto iz 1970.: https://hr.wikipedia.org/wiki/Miljenko_Smoje
+70. Ivan Meštrović (Vrpolje, 15. kolovoza 1883.): https://hr.wikipedia.org/wiki/Ivan_Meštrović
+71. Vlaho Bukovac (Cavtat, 4. srpnja 1855.): https://hr.wikipedia.org/wiki/Vlaho_Bukovac
+72. Prizemljeno sunce u Zagrebu: https://hr.wikipedia.org/wiki/Ivan_Kožarić
+73. Grižane, 1498.; zvan Michelangelo minijature: https://hr.wikipedia.org/wiki/Julije_Klović
+74. Deaf since birth; greatest Croatian watercolorist: https://en.wikipedia.org/wiki/Slava_Raškaj
+75. gradnju je vodio Hermann Bollé (nacrti F. von Schmidta): https://hr.wikipedia.org/wiki/Zagrebačka_katedrala
+76. Zelena potkova ili Lenucijeva potkova: https://hr.wikipedia.org/wiki/Lenucijeva_potkova
+77. Spring procession of Ljelje/Kraljice from Gorjani, 2009: https://ich.unesco.org/en/state/croatia-HR
+78. Traditional manufacturing of children's wooden toys in Hrvatsko Zagorje, 2009: https://ich.unesco.org/en/state/croatia-HR
+79. U Splitu se slavi spomendan 7. svibnja: https://hr.wikipedia.org/wiki/Sveti_Dujam
+80. Beč slavodobitnika nagrađivao nagradom od 100 forinti: https://hr.wikipedia.org/wiki/Sinjska_alka
+81. Trka na prstenac održava se u Barbanu: https://hr.wikipedia.org/wiki/Trka_na_prstenac
+82. Batana, rovinjska drvena brodica; Ekomuzej batana: https://hr.wikipedia.org/wiki/Batana and https://ich.unesco.org/en/state/croatia-HR
+83. Bećarac singing and playing from Eastern Croatia, 2011: https://ich.unesco.org/en/state/croatia-HR
+84. Festivity of Saint Tryphon and the Kolo of Saint Tryphon, 2022: https://ich.unesco.org/en/state/croatia-HR
+85. Lumblija, jelo s otoka Korčule: https://hr.wikipedia.org/wiki/Lumblija
+86. liker koji se proizvodi iz višnje maraske: https://hr.wikipedia.org/wiki/Maraschino
+87. Najzastupljenija sorta je plavac mali: https://hr.wikipedia.org/wiki/Vinogorje_Dingač
+88. made using dried wine grapes (passito): https://en.wikipedia.org/wiki/Prošek
+89. Sinjski arambaši from Sinj, ground beef in sauerkraut leaves: https://en.wikipedia.org/wiki/Stuffed_leaves
+90. Sir se proizvodi od ovčjeg mlijeka: https://hr.wikipedia.org/wiki/Paški_sir
