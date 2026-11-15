@@ -23,7 +23,7 @@ class PackStrings {
       'Pitanje $n: treba točno 4 odgovora i nijedan ne smije biti prazan.';
   static String badAnswer(int n) => 'Pitanje $n: "answer" mora biti 0, 1, 2 ili 3.';
   static String badImage(int n, Object? image) =>
-      'Pitanje $n: slika $image mora biti relativna putanja do .svg datoteke.';
+      'Pitanje $n: slika $image mora biti relativna putanja do .svg, .jpg, .png ili .webp datoteke.';
   static String missingImage(int n, String image) =>
       'Pitanje $n: slike $image nema u zipu. Dodaj je ili ukloni "image".';
 }

@@ -8,6 +8,9 @@ import '../strings.dart';
 const _maxPack = 5 * 1024 * 1024;
 const _maxUnzipped = 20 * 1024 * 1024;
 
+/// SVG or a photo; the extension tells which.
+final _imageExt = RegExp(r'\.(svg|jpe?g|png|webp)$', caseSensitive: false);
+
 class PackQuestion {
   const PackQuestion(this.q, this.image, this.choices, this.answer);
   final String q;
@@ -118,7 +121,7 @@ PackResult _parse(Uint8List bytes) {
     final image = m['image'];
     if (image != null) {
       if (image is! String ||
-          !image.endsWith('.svg') ||
+          !_imageExt.hasMatch(image) ||
           image.startsWith('/') ||
           image.contains('\\') ||
           image.split('/').contains('..')) {

@@ -93,8 +93,18 @@ void main() {
     expect(err(json(pack(questions: [q(answer: 'x')]))), PackStrings.badAnswer(1));
   });
 
-  test('image path must be relative .svg without ..', () {
-    for (final p in ['../x.svg', 'a/../x.svg', '/x.svg', 'x.png']) {
+  test('photos load: jpg, jpeg, png, webp, any case, bytes kept', () {
+    final bytes = [for (final n in ['a.jpg', 'b.JPEG', 'c/d.png', 'e.WebP']) n];
+    final r = parsePack(zip({
+      'p.json': json(pack(questions: [for (final n in bytes) q(image: n)])),
+      for (final n in bytes) n: [n.length],
+    }));
+    expect(r, isA<PackOk>(), reason: r is PackError ? r.message : '');
+    expect((r as PackOk).pack.images.keys, bytes);
+  });
+
+  test('image path must be relative .svg, .jpg, .jpeg, .png or .webp without ..', () {
+    for (final p in ['../x.svg', 'a/../x.svg', '/x.svg', '../x.jpg', '/x.png', 'x.gif', 'x.bmp', 'x', 'x.jpg.exe']) {
       expect(err(zip({'p.json': json(pack(questions: [q(image: p)])), 'x.svg': [1]})),
           PackStrings.badImage(1, p));
     }
