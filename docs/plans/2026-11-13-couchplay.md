@@ -753,3 +753,19 @@ The person: "Let's just have Croatian quizzes for now. Increase general knowledg
 - [ ] **Step 3: Grow every Croatian pack**, Opće znanje first and most (aim for several hundred), then the others (aim for 100+ each where verified facts allow). Same rules as Task 13b: every question verified with a source in the pack's `.sources.md`, stable facts only, no duplicates within or across packs, plausible wrong answers, at most about a third easy. Commit in batches so the TV gets bigger packs early.
 - [ ] **Step 4: Check.** The bundled pack test passes; no duplicate questions (a test or a check script); the pack files still load fast on the TV (size noted).
 - [ ] **Step 5:** New Međimurje questions join the person's review of that pack (Task 13).
+
+---
+
+### Task 22: Photo questions, and pictures as big as possible on the TV (added 2026-11-15, user request)
+
+The person: "Also add some questions like what is this city and show an image. Add image questions as well. Update TV UI to show as much of image as possible."
+
+**Files:**
+- Modify: `packages/core/lib/src/quiz_pack.dart` (+ tests), `docs/quiz-pack-format.md`, `packages/core/lib/strings.dart` (the image error message), `apps/tv/lib/ui/quiz_screen.dart` (+ the reveal), `tool/pack_zip.sh` if needed
+- Content: `tool/packs/*.json`, `tool/packs/<id>.sources.md`, the image files
+
+- [ ] **Step 1: Format (core).** `image` may be `.svg`, `.jpg`/`.jpeg`, `.png` or `.webp`. Keep the existing size limits (5 MB pack, 20 MB unzipped) unless they block the content; say so first if they do. Failing tests first: a zip with a `.jpg` loads; an unknown extension is rejected with the Croatian message. Update the doc.
+- [ ] **Step 2: TV layout.** On a picture question, the picture gets as much of the screen as the layout allows: the question text and the answer tiles shrink to fit around it, and the picture is shown whole (fit, never cropped). The same on the reveal. Text-only questions keep today's layout. QA on a macOS release build with a tall photo, a wide photo and an SVG.
+- [ ] **Step 3: Content.** Photo questions in the Croatian packs: "Koji je ovo grad?" (Croatian cities in `hr-geografija`, world cities in `hr-zemljopis-svijeta`), plus landmarks, places and other picture questions where they fit (Međimurje too; those join the person's review). Only freely licensed photos (Wikimedia Commons or similar); the `.sources.md` lists author, licence and URL per photo. Re-encode to a sensible size (e.g. 1280 px on the long side) so packs stay inside the limit. No photo that shows the answer as text (signs, captions). Packs with pictures become `.zip`.
+- [ ] **Step 4: Check.** All tests pass; the bundled pack test loads every picture; QA sees several photo questions on the release build.
+- [ ] **Step 5: Commit** by path.

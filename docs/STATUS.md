@@ -29,6 +29,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 19 | Curve: a phone button sometimes stops reacting (person, 2026-11-15) | done on macOS (edd0ca4; cause: a crash reset the per-button finger count, the late lift sent it to -1); real phones next session | lead |
 | 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | done on macOS (696669b … 9d7e1bf); real phones + TV next session | lead |
 | 21 | Croatian packs only, all as big as verified questions allow; pub-quiz/Potjera as a guide (person, 2026-11-15) | queued to lead | lead + content |
+| 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | queued to lead | lead + content |
 
 ## Open questions for the person
 
@@ -221,3 +222,6 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-15: Added seat content-2 (3 of 3; template rigs/seats/content-2.member.yaml, a copy of content) for Task 21
   at the lead's request: about 1000 verified questions is too much for one writer. It takes the seven packs other than
   Opće znanje.
+- 2026-11-15: Person (typed in content-2's pane): photo questions like "what is this city", more picture questions,
+  pictures as big as possible on the TV. PM: photos (JPEG/PNG/WebP) join the format, freely licensed only, credited
+  per photo. Spec + plan Task 22; routed to lead.
