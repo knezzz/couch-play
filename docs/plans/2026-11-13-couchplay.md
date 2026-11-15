@@ -727,10 +727,10 @@ The TV goes into its screensaver during a game: players use their phones, so the
 
 The person: "Sometimes the curve game stops reacting to buttons on phone (often just one button stops)." The cause is not known yet.
 
-- [ ] **Step 1: Reproduce and find the root cause** (systematic debugging, no guess-patches). Check at least: a press whose release is lost (finger slides off the button, a second finger, pointer cancel, the page scrolling or zooming); both buttons held at once; iOS Safari and Android Chrome; the TV side (the input state for that player, messages arriving after a reconnect or a new round).
-- [ ] **Step 2: Failing test** for the cause found, then fix it at the root.
-- [ ] **Step 3: Check.** All tests pass. QA on a release build with a real phone browser: hold, release, slide off, two fingers, both buttons, many rounds; no stuck or dead button.
-- [ ] **Step 4: Commit** by path.
+- [x] **Step 1: Reproduce and find the root cause** (systematic debugging, no guess-patches). Check at least: a press whose release is lost (finger slides off the button, a second finger, pointer cancel, the page scrolling or zooming); both buttons held at once; iOS Safari and Android Chrome; the TV side (the input state for that player, messages arriving after a reconnect or a new round).
+- [x] **Step 2: Failing test** for the cause found, then fix it at the root.
+- [x] **Step 3: Check.** All tests pass. QA on a release build with a real phone browser: hold, release, slide off, two fingers, both buttons, many rounds; no stuck or dead button.
+- [x] **Step 4: Commit** by path.
 
 ---
 
@@ -738,6 +738,6 @@ The person: "Sometimes the curve game stops reacting to buttons on phone (often 
 
 - [ ] **Step 1: Failing tests** (session): the host disconnects mid-Curve and mid-Quiz: the game keeps running and the next-oldest connected human is host (their phone gets the host controls). The old host reconnects: back in the same game (Quiz from the next question, Curve from the next round), missed questions or rounds score 0, earlier points kept; the new host stays host until the game ends. The same for a non-host player.
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement.** Today a Curve player who disconnects is out for the whole match (`_dropFromGame`), and a Quiz player is removed from the round; change that to "out for this round/question, back in after reconnecting". A 2-player Curve match that drops to 1 pauses for up to 30 s ("Čekamo da se <ime> vrati" on the TV) and ends only if nobody comes back; a 2-player Quiz keeps going with the one left (person, 2026-11-15). A game still ends when no human is connected. The person saw the stop in a 2-person Quiz too: reproduce that case.
+- [ ] **Step 3: Implement.** Today a Curve player who disconnects is out for the whole match (`_dropFromGame`), and a Quiz player is removed from the round; change that to "out for this round/question, back in after reconnecting". A 2-player Curve match that drops to 1 pauses for up to 30 s ("Čekamo da se <ime> vrati" on the TV) and ends only if nobody comes back; a 2-player Quiz keeps going with the one left (person, 2026-11-15). A game still ends when no human is connected. The person saw the stop in a 2-person Quiz too: reproduce that case. A Curve match ended by the 30 s wait keeps its scores (ties included). When nobody is connected, Quiz and Curve pause for 30 s ("Čekamo da se igrači vrate") instead of ending at once.
 - [ ] **Step 4: Run.** Expected: PASS. QA on macOS release with 3 phones: close the host's tab mid-Curve and mid-Quiz, keep playing, reopen it.
 - [ ] **Step 5: Commit** by path.
