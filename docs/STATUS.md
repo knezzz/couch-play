@@ -206,3 +206,5 @@ Added seats running: 2 of 3 (builder-2, content). Each goes when its work is don
   address; the TV address stays in the history of c1c5c1d (a home-network address only).
 - 2026-11-15: Person: Curve buttons sometimes stop reacting (often one); the game must not stop when the host leaves,
   and the host (anyone) can come back in, missing what they missed. Spec + plan Tasks 19, 20; routed to lead.
+- 2026-11-15: Person (Task 20): the stop happened with 2 people, in both Quiz and Curve. Rule: a 2-player Curve match
+  pauses up to 30 s for the one who left, then ends; a 2-player Quiz keeps going.
