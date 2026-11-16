@@ -879,7 +879,7 @@ The person: "Put more questions with images. Dodaj umjetnost, psihologija, ljuds
   - Memeovi: text questions about memes (where it came from, the catchphrase, the year, the film or show behind it). A meme picture only if it is freely licensed on Commons or similar; most meme images are copyrighted, and the repo is public.
   - Psihologija: well-established findings and terms, not pop myths.
 - More picture questions in the existing packs where a picture makes a better question (Povijest: people, buildings; Kultura i sport: athletes, venues; Znanost: animals, plants; Film i glazba: only freely licensed images), with licences in the `.sources.md` as in Task 22. Keep every pack inside the 5 MB limit.
-- Check: bundled pack and duplicate tests pass; the new packs show in the pack list; pack sizes noted.
+- [x] Check: bundled pack and duplicate tests pass; the new packs show in the pack list; pack sizes noted.
 
 ---
 
