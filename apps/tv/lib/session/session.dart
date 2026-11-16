@@ -207,6 +207,8 @@ class Session {
         _kick(peer, playerId);
       case SetBots(:final count):
         _setBots(peer, count);
+      case SetSettings(:final settings):
+        _setSettings(peer, settings);
       case Answer(:final index):
         final p = _playerOf(peer);
         if (p != null) _answer(p, index);
@@ -305,7 +307,10 @@ class Session {
 
   void _broadcastLobby() {
     final lobby = LobbyState(
-        players: playerInfos, packs: packStore?.infos ?? const [], hostId: hostId ?? -1);
+        players: playerInfos,
+        packs: packStore?.infos ?? const [],
+        hostId: hostId ?? -1,
+        settings: _settings);
     for (final p in _players) {
       p.socket?.send(lobby);
     }
@@ -409,6 +414,23 @@ class Session {
     setBotCount(count);
   }
 
+  /// What the host set for this session (no persistence). A game takes the
+  /// values it starts with; changes only count from the next game.
+  GameSettings get settings => _settings;
+  GameSettings _settings = const GameSettings();
+
+  void _setSettings(PeerSocket peer, GameSettings wanted) {
+    final from = _playerOf(peer);
+    if (from == null || _phase != Phase.lobby) return;
+    if (from.id != hostId) {
+      peer.send(_onlyHost);
+      return;
+    }
+    _settings = wanted.clamped();
+    _broadcastLobby();
+    _notify();
+  }
+
   /// Sets the number of bots, clamped so players + bots <= 8. Lobby only.
   void setBotCount(int count) {
     if (_phase != Phase.lobby) return;
@@ -455,6 +477,7 @@ class Session {
       ..addEntries(parts.map((p) => MapEntry(p.id, p.colorIndex)));
     _gone.clear();
     final sim = CurveSim([for (final p in parts) p.colorIndex],
+        config: CurveConfig(countdown: _settings.curveCountdown.toDouble()),
         random: _random, names: {for (final p in parts) p.colorIndex: p.name});
     _sim = sim;
     _bots = Bots(sim, [for (final p in parts) if (p.bot) p.colorIndex], _random);
@@ -543,7 +566,11 @@ class Session {
       ..clear()
       ..addAll(parts.map((p) => p.id));
     _picks.clear();
-    _quiz = QuizRound(pack, _quizIds.toList(), random: _random);
+    _quiz = QuizRound(pack, _quizIds.toList(),
+        random: _random,
+        length: _settings.quizQuestions,
+        limit: Duration(seconds: _settings.quizSeconds),
+        reveal: Duration(seconds: _settings.revealSeconds));
     _quizOrigin = _clock();
     _stepStart = Duration.zero;
     _gameHost = hostId;
