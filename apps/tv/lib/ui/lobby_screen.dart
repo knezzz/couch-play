@@ -279,7 +279,8 @@ class _GameCard extends StatelessWidget {
   final GameSettings settings;
   final String? packTitle;
 
-  /// Few players leave room: type one step larger for the couch.
+  /// Few players leave room: a bigger heading and more air. (Larger body text
+  /// no longer fits half the card's width.)
   final bool roomy;
 
   @override
@@ -303,7 +304,7 @@ class _GameCard extends StatelessWidget {
           ]),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: roomy ? 40 : 32),
+          style: const TextStyle(fontSize: 32),
         );
     return Container(
       key: const ValueKey('game-card'),
@@ -327,7 +328,7 @@ class _GameCard extends StatelessWidget {
           Text(Strings.gameBlurb(kind),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: roomy ? 36 : 32, color: tvMuted)),
+              style: const TextStyle(fontSize: 32, color: tvMuted)),
           SizedBox(height: roomy ? 24 : 16),
           // Two columns, row by row.
           for (var i = 0; i < items.length; i += 2)
