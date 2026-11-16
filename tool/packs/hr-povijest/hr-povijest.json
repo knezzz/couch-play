@@ -103,6 +103,16 @@
     {"q": "Koje je godine provedena operacija Maslenica?", "choices": ["1991.", "1992.", "1993.", "1995."], "answer": 2},
     {"q": "Što se prema geslu Dubrovačke Republike ne prodaje ni za sve zlato svijeta?", "choices": ["Vjera", "Čast", "Sloboda", "Domovina"], "answer": 2},
     {"q": "Koje je godine održan prvi poznati slavonski sabor, od kojeg se računa početak Hrvatskog sabora?", "choices": ["1102.", "1273.", "1527.", "1712."], "answer": 1},
-    {"q": "Obranu kojeg je ugarskog grada 1532. predvodio senjski plemić Nikola Jurišić?", "choices": ["Sigeta", "Kisega", "Budima", "Egera"], "answer": 1}
+    {"q": "Obranu kojeg je ugarskog grada 1532. predvodio senjski plemić Nikola Jurišić?", "choices": ["Sigeta", "Kisega", "Budima", "Egera"], "answer": 1},
+    {"q": "Koji je hrvatski ban na ovom portretu?", "image": "photos/foto-01.webp", "choices": ["Károly Khuen-Héderváry", "Josip Jelačić", "Toma Bakač Erdődy", "Ivan Mažuranić"], "answer": 1},
+    {"q": "Tko je na ovom portretu?", "image": "photos/foto-02.webp", "choices": ["Petar Preradović", "Ljudevit Gaj", "Ivan Kukuljević Sakcinski", "Janko Drašković"], "answer": 1},
+    {"q": "Tko je na ovoj fotografiji?", "image": "photos/foto-03.webp", "choices": ["Eugen Kvaternik", "Josip Frank", "Stjepan Radić", "Ante Starčević"], "answer": 3},
+    {"q": "Tko je na ovom portretu?", "image": "photos/foto-04.webp", "choices": ["Ivan Mažuranić", "Ante Starčević", "Eugen Kvaternik", "Franjo Rački"], "answer": 2},
+    {"q": "Tko je na ovoj fotografiji?", "image": "photos/foto-05.webp", "choices": ["Vladko Maček", "Frano Supilo", "Stjepan Radić", "Ante Trumbić"], "answer": 2},
+    {"q": "Tko je na ovoj fotografiji?", "image": "photos/foto-06.webp", "choices": ["Franjo Rački", "Josip Juraj Strossmayer", "Juraj Haulik", "Alojzije Stepinac"], "answer": 1},
+    {"q": "Kojeg branitelja Sigeta prikazuje ovo poprsje u Zagrebu?", "image": "photos/foto-07.webp", "choices": ["Petra Zrinskog", "Nikolu Jurišića", "Nikolu Šubića Zrinskog", "Frana Krstu Frankopana"], "answer": 2},
+    {"q": "Koji je dubrovački isusovac i znanstvenik 18. stoljeća na ovom portretu?", "image": "photos/foto-08.webp", "choices": ["Ivan Gundulić", "Marin Getaldić", "Ruđer Bošković", "Faust Vrančić"], "answer": 2},
+    {"q": "Kojoj prapovijesnoj kulturi pripada ova posuda u obliku ptice?", "image": "photos/foto-09.webp", "choices": ["Vučedolskoj", "Starčevačkoj", "Badenskoj", "Sopotskoj"], "answer": 0},
+    {"q": "Kako se zove ovaj kameni spomenik s glagoljskim natpisom?", "image": "photos/foto-10.webp", "choices": ["Plominski natpis", "Branimirov natpis", "Bašćanska ploča", "Valunska ploča"], "answer": 2}
   ]
 }

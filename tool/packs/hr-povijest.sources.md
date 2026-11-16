@@ -103,6 +103,16 @@ Checked online on 2026-11-14, read-only (page text fetched through the Wikipedia
 99. geslo "Non bene pro toto libertas venditur auro" (sloboda se ne prodaje za sve zlato svijeta): https://hr.wikipedia.org/wiki/Dubrovačka_Republika
 100. osnovano 19. travnja 1273. "(prvi poznati slavonski sabor)": https://hr.wikipedia.org/wiki/Hrvatski_sabor
 101. rođen u Senju, "najzapaženiji događaj obrana Kisega 1532. godine": https://hr.wikipedia.org/wiki/Nikola_Jurišić
+102. https://hr.wikipedia.org/wiki/Josip_Jela%C4%8Di%C4%87 (states: ban-josip-jelacic.jpg)
+103. https://hr.wikipedia.org/wiki/Ljudevit_Gaj (states: matica, ljudevit gaj.jpg)
+104. https://hr.wikipedia.org/wiki/Ante_Star%C4%8Devi%C4%87 (states: ante starčević portrait.jpg)
+105. https://hr.wikipedia.org/wiki/Eugen_Kvaternik (states: eugen kvaternik's portrait.jpg)
+106. https://hr.wikipedia.org/wiki/Stjepan_Radi%C4%87 (states: stefan radic)
+107. https://hr.wikipedia.org/wiki/Josip_Juraj_Strossmayer (states: strossmayer.jpg)
+108. https://hr.wikipedia.org/wiki/Nikola_%C5%A0ubi%C4%87_Zrinski (states: nikola šubić zrinski - poprsje u zagrebu.jpg)
+109. https://hr.wikipedia.org/wiki/Ru%C4%91er_Bo%C5%A1kovi%C4%87 (states: rudjer boskovic.jpg)
+110. https://hr.wikipedia.org/wiki/Vu%C4%8Dedolska_golubica (states: zgvucdove.jpg, vučedolsk)
+111. https://hr.wikipedia.org/wiki/Ba%C5%A1%C4%87anska_plo%C4%8Da (states: bascanska ploca.jpg)
 
 ## Dropped from the input, and why
 
@@ -121,3 +131,18 @@ Checked online on 2026-11-14, read-only (page text fetched through the Wikipedia
 - Q5: the Šuplja crkva and Gebizon detail is from en.wikipedia; the hr page only says "u Solinu ... krunu koju mu je poslao Papa".
 - Q15–17 (Dubrovnik) rest on en.wikipedia only; hr.wikipedia's Dubrovačka Republika article does not mention them. Not checked on enciklopedija.hr.
 - Q29: the year 1874 comes from the Strossmayer page; the Mažuranić page says he founded the university but gives no year.
+
+## Photo questions (Task 28)
+
+Each image keeps its own licence (author, licence, file page). Changes: resized (at most 1280 px on the long side) and saved as WebP.
+
+102. photos/foto-01.webp: Josip Jelačić. Ivan Zasche (1826-1863), Public domain, https://commons.wikimedia.org/wiki/File:Ban-josip-jelacic.jpg (resized, WebP)
+103. photos/foto-02.webp: Ljudevit Gaj. Unknown author, Public domain, https://commons.wikimedia.org/wiki/File:Matica,_ljudevit_gaj.jpg (resized, WebP)
+104. photos/foto-03.webp: Ante Starčević. Unknown Zagreb photographer, Public domain, https://commons.wikimedia.org/wiki/File:Ante_Star%C4%8Devi%C4%87_portrait.jpg (resized, WebP)
+105. photos/foto-04.webp: Eugen Kvaternik. Stjepan Kovačević, Public domain, https://commons.wikimedia.org/wiki/File:Eugen_Kvaternik%27s_portrait.jpg (resized, WebP)
+106. photos/foto-05.webp: Stjepan Radić. Bundesarchiv, Bild 183-2010-0420-502 / o.Ang., CC BY-SA 3.0 de, https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-2010-0420-502,_Stefan_Radic,_cropped.jpg (resized, WebP)
+107. photos/foto-06.webp: Josip Juraj Strossmayer. unknown, Public domain, https://commons.wikimedia.org/wiki/File:Strossmayer.jpg (resized, WebP)
+108. photos/foto-07.webp: Nikola Šubić Zrinski, bust in Zagreb. Silverije, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Nikola_%C5%A0ubi%C4%87_Zrinski_-_poprsje_u_Zagrebu.jpg (cropped to remove a name, resized, WebP)
+109. photos/foto-08.webp: Ruđer Bošković. unknown, Public domain, https://commons.wikimedia.org/wiki/File:Rudjer_Boskovic.jpg (resized, WebP)
+110. photos/foto-09.webp: Vučedolska golubica. Crucifixion, Public domain, https://commons.wikimedia.org/wiki/File:ZGvucdove.jpg (resized, WebP)
+111. photos/foto-10.webp: Bašćanska ploča. unknown, Public domain, https://commons.wikimedia.org/wiki/File:Bascanska_ploca.jpg (resized, WebP)
