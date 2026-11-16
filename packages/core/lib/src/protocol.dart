@@ -17,16 +17,20 @@ class PlayerInfo with _JsonEq {
   final int id, colorIndex, sessionScore;
   final String name;
   final bool connected, bot;
+
+  /// An id from `characterIds`; '' while none is chosen.
+  final String character;
   const PlayerInfo(
       this.id, this.name, this.colorIndex, this.connected, this.sessionScore,
-      {this.bot = false});
+      {this.bot = false, this.character = ''});
   factory PlayerInfo.fromJson(Map<String, dynamic> j) => PlayerInfo(
       j['id'] as int,
       j['name'] as String,
       j['colorIndex'] as int,
       j['connected'] as bool,
       j['sessionScore'] as int,
-      bot: (j['bot'] as bool?) ?? false);
+      bot: (j['bot'] as bool?) ?? false,
+      character: (j['character'] as String?) ?? '');
   @override
   Map<String, Object?> toJson() => {
         'id': id,
@@ -35,6 +39,7 @@ class PlayerInfo with _JsonEq {
         'connected': connected,
         'sessionScore': sessionScore,
         'bot': bot,
+        'character': character,
       };
 }
 
@@ -150,7 +155,9 @@ sealed class Message with _JsonEq {
       List<T> list<T>(String k, T Function(Map<String, dynamic>) f) =>
           [for (final e in m[k] as List) f(e as Map<String, dynamic>)];
       return switch (m['type']) {
-        'join' => Join(m['name'] as String, m['token'] as String),
+        'join' => Join(m['name'] as String, m['token'] as String,
+            character: m['character'] as String?),
+        'character' => SetCharacter(m['id'] as String),
         'steer' =>
           Steer(left: m['left'] as bool, right: m['right'] as bool),
         'answer' => Answer(m['index'] as int),
@@ -162,7 +169,8 @@ sealed class Message with _JsonEq {
         'select' => SelectGame(m['game'] == null ? null : GameKind.values.byName(m['game'] as String)),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
-          Welcome(m['playerId'] as int, m['colorIndex'] as int, m['token'] as String),
+          Welcome(m['playerId'] as int, m['colorIndex'] as int, m['token'] as String,
+              character: (m['character'] as String?) ?? ''),
         'lobby' => LobbyState(
             players: list('players', PlayerInfo.fromJson),
             packs: list('packs', PackInfo.fromJson),
@@ -199,11 +207,25 @@ sealed class Message with _JsonEq {
 
 class Join extends Message {
   final String name, token;
-  const Join(this.name, this.token);
+
+  /// A character the phone proposes; the TV may give another if it is taken.
+  final String? character;
+  const Join(this.name, this.token, {this.character});
   @override
   String get type => 'join';
   @override
-  Map<String, Object?> get fields => {'name': name, 'token': token};
+  Map<String, Object?> get fields =>
+      {'name': name, 'token': token, 'character': character};
+}
+
+/// Lobby only: change my character. A taken one is refused with an ErrorMsg.
+class SetCharacter extends Message {
+  final String id;
+  const SetCharacter(this.id);
+  @override
+  String get type => 'character';
+  @override
+  Map<String, Object?> get fields => {'id': id};
 }
 
 class Steer extends Message {
@@ -290,12 +312,15 @@ class Ping extends Message {
 class Welcome extends Message {
   final int playerId, colorIndex;
   final String token;
-  const Welcome(this.playerId, this.colorIndex, this.token);
+
+  /// This player's character id; '' if none.
+  final String character;
+  const Welcome(this.playerId, this.colorIndex, this.token, {this.character = ''});
   @override
   String get type => 'welcome';
   @override
   Map<String, Object?> get fields =>
-      {'playerId': playerId, 'colorIndex': colorIndex, 'token': token};
+      {'playerId': playerId, 'colorIndex': colorIndex, 'token': token, 'character': character};
 }
 
 class LobbyState extends Message {

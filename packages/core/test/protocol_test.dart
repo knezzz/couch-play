@@ -5,6 +5,9 @@ void main() {
   test('roundtrip_all_messages', () {
     final messages = <Message>[
       const Join('Ana', 'tok'),
+      const Join('Ana', 'tok', character: 'owl'),
+      const SetCharacter('frog'),
+      const Welcome(1, 2, 'tok', character: 'fox'),
       const Steer(left: true, right: false),
       const Answer(2),
       const StartGame(GameKind.quiz, 'pack1'),
@@ -21,7 +24,7 @@ void main() {
       const LobbyState(
         players: [
           PlayerInfo(1, 'Ana', 0, true, 5),
-          PlayerInfo(2, 'Bot 1', 1, true, 0, bot: true),
+          PlayerInfo(2, 'Bot 1', 1, true, 0, bot: true, character: 'bear'),
         ],
         packs: [PackInfo('p', 'Pack', 10)],
         hostId: 1,
@@ -71,6 +74,36 @@ void main() {
         '{"type":"lobby","players":[{"id":1,"name":"Ana","colorIndex":0,'
         '"connected":true,"sessionScore":0}],"packs":[],"hostId":1}');
     expect((m as LobbyState).players.single.bot, isFalse);
+  });
+
+  group('characters', () {
+    test('sixteen_unique_ids', () {
+      expect(characterIds, hasLength(16));
+      expect(characterIds.toSet(), hasLength(16));
+      expect(characterIds.first, 'fox');
+    });
+
+    test('isCharacter_knows_only_the_ids', () {
+      expect(isCharacter('fox'), isTrue);
+      expect(isCharacter('Fox'), isFalse);
+      expect(isCharacter(''), isFalse);
+    });
+
+    test('old_messages_without_a_character_still_decode', () {
+      expect(Message.decode('{"type":"join","name":"Ana","token":"t"}'), const Join('Ana', 't'));
+      expect((Message.decode('{"type":"join","name":"Ana","token":"t"}') as Join).character, isNull);
+      expect(Message.decode('{"type":"welcome","playerId":1,"colorIndex":2,"token":"t"}'),
+          const Welcome(1, 2, 't'));
+      final lobby = Message.decode(
+          '{"type":"lobby","players":[{"id":1,"name":"A","colorIndex":0,"connected":true,"sessionScore":0}],"packs":[],"hostId":1}');
+      expect((lobby as LobbyState).players.single.character, '');
+    });
+
+    test('a_wrong_typed_character_is_null', () {
+      expect(Message.decode('{"type":"character","id":5}'), isNull);
+      expect(Message.decode('{"type":"character"}'), isNull);
+      expect(Message.decode('{"type":"join","name":"A","token":"t","character":3}'), isNull);
+    });
   });
 
   group('game settings', () {

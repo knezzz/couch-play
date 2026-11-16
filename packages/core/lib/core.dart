@@ -8,3 +8,4 @@ export 'src/names.dart';
 export 'src/palette.dart';
 export 'src/shape_mark.dart';
 export 'strings.dart';
+export 'src/characters.dart';
