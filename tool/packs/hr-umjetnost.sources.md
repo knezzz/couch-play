@@ -56,6 +56,74 @@ One source per question; the phrases in brackets are what the page states.
 52. https://en.wikipedia.org/wiki/Paul_Gauguin (states: tahiti)
 53. https://en.wikipedia.org/wiki/Henri_de_Toulouse-Lautrec (states: moulin rouge)
 54. https://en.wikipedia.org/wiki/Edgar_Degas (states: dancers)
+55. https://en.wikipedia.org/wiki/Water_Lilies_(Monet_series) (states: giverny, approximately 250)
+56. https://en.wikipedia.org/wiki/El_Greco (states: crete)
+57. https://en.wikipedia.org/wiki/El_Greco (states: toledo)
+58. https://en.wikipedia.org/wiki/Piet%C3%A0_(Michelangelo) (states: st. peter's basilica)
+59. https://en.wikipedia.org/wiki/David_(Donatello,_bronze) (states: donatello, first freestanding)
+60. https://en.wikipedia.org/wiki/Florence_Baptistery (states: ghiberti, gates of paradise)
+61. https://en.wikipedia.org/wiki/Scrovegni_Chapel (states: giotto)
+62. https://en.wikipedia.org/wiki/St._Peter%27s_Square (states: bernini, colonnade)
+63. https://en.wikipedia.org/wiki/Peter_Paul_Rubens (states: antwerp)
+64. https://en.wikipedia.org/wiki/Johannes_Vermeer (states: delft)
+65. https://en.wikipedia.org/wiki/Guggenheim_Museum_Bilbao (states: frank gehry)
+66. https://en.wikipedia.org/wiki/Solomon_R._Guggenheim_Museum (states: frank lloyd wright)
+67. https://en.wikipedia.org/wiki/Guernica_(Picasso) (states: reina sofía)
+68. https://en.wikipedia.org/wiki/The_Kiss_(Klimt) (states: belvedere)
+69. https://en.wikipedia.org/wiki/Ukiyo-e (states: floating world)
+70. https://en.wikipedia.org/wiki/The_Great_Wave_off_Kanagawa (states: thirty-six views of mount fuji)
+71. https://en.wikipedia.org/wiki/The_Thinker (states: the gates of hell)
+72. https://en.wikipedia.org/wiki/Psyche_Revived_by_Cupid%27s_Kiss (states: canova)
+73. https://en.wikipedia.org/wiki/Trevi_Fountain (states: nicola salvi)
+74. https://en.wikipedia.org/wiki/Nighthawks_(Hopper) (states: edward hopper)
+75. https://en.wikipedia.org/wiki/Roy_Lichtenstein (states: ben-day)
+76. https://en.wikipedia.org/wiki/Etching (states: acid)
+77. https://en.wikipedia.org/wiki/Lithography (states: stone)
+78. https://en.wikipedia.org/wiki/Veduta (states: canaletto)
+79. https://en.wikipedia.org/wiki/Canaletto (states: venice)
+80. https://en.wikipedia.org/wiki/Mona_Lisa (states: 1911)
+81. https://en.wikipedia.org/wiki/Louvre (states: 1793)
+82. https://en.wikipedia.org/wiki/Louvre_Pyramid (states: i. m. pei)
+83. https://en.wikipedia.org/wiki/Centre_Pompidou (states: renzo piano, richard rogers)
+84. https://en.wikipedia.org/wiki/Cave_of_Altamira (states: spain, bison)
+85. https://en.wikipedia.org/wiki/Terracotta_Army (states: qin shi huang)
+86. https://en.wikipedia.org/wiki/M._C._Escher (states: impossible)
+87. https://en.wikipedia.org/wiki/American_Gothic (states: grant wood)
+88. https://en.wikipedia.org/wiki/Black_Square_(painting) (states: malevich)
+89. https://en.wikipedia.org/wiki/Vitruvian_Man (states: leonardo)
+90. https://en.wikipedia.org/wiki/Bayeux_Tapestry (states: norman conquest)
+91. https://en.wikipedia.org/wiki/Trinity_(Andrei_Rublev) (states: rublev)
+92. https://hr.wikipedia.org/wiki/Josip_Ra%C4%8Di%C4%87 (states: 1908, josip racic, autoportret)
+93. https://hr.wikipedia.org/wiki/Miroslav_Kraljevi%C4%87 (states: miroslav kraljevic, autoportret sa psom)
+94. https://en.wikipedia.org/wiki/Gregory_of_Nin (states: statue of grgur ninski by ivan meštrović in split)
+95. https://hr.wikipedia.org/wiki/Andrija_Buvina (states: 1214, vratnice splitske katedrale)
+96. https://hr.wikipedia.org/wiki/Katedrala_sv._Jakova_u_%C5%A0ibeniku (states: juraj dalmatinac i nikola firentinac)
+97. https://hr.wikipedia.org/wiki/Katedrala_sv._Jakova_u_%C5%A0ibeniku (states: jurjev vijenac od ljudskih glava)
+98. https://hr.wikipedia.org/wiki/Vincent_iz_Kastva (states: škrilinama, 1474)
+99. https://hr.wikipedia.org/wiki/Galerija_Me%C5%A1trovi%C4%87 (states: split)
+100. https://hr.wikipedia.org/wiki/Ivan_Me%C5%A1trovi%C4%87 (states: sveučilištu notre dame, south bend)
+101. https://hr.wikipedia.org/wiki/Grupa_Zemlja (states: od 1929. do 1935.)
+102. https://hr.wikipedia.org/wiki/EXAT_51 (states: 1951, zalagao za apstraktnu umjetnost)
+103. https://hr.wikipedia.org/wiki/Julije_Knifer (states: motiv kniferove umjetnosti je od šezdesetih 20. stoljeća meandar)
+104. https://hr.wikipedia.org/wiki/Julije_Knifer (states: grupe gorgona, od 1959. do 1966.)
+105. https://hr.wikipedia.org/wiki/Vlaho_Bukovac (states: mjesto smrti = prag)
+106. https://hr.wikipedia.org/wiki/M%C3%BCnchenski_krug (states: josipu račiću, miroslavu kraljeviću, vladimiru beciću i oskaru hermanu)
+107. https://hr.wikipedia.org/wiki/Ivan_Rendi%C4%87 (states: kačiću miošiću postavljeni u makarskoj 1890)
+108. https://hr.wikipedia.org/wiki/Robert_Frange%C5%A1-Mihanovi%C4%87 (states: kralj tomislav, 1928. – 1938., bronca)
+109. https://hr.wikipedia.org/wiki/Anton_Dominik_Fernkorn (states: spomenik banu josipu jelačiću)
+110. https://hr.wikipedia.org/wiki/Andrija_Meduli%C4%87 (states: andrea schiavone)
+111. https://hr.wikipedia.org/wiki/Ivan_Duknovi%C4%87 (states: vinišće, dvor matije korvina)
+112. https://hr.wikipedia.org/wiki/Muzej_Mimara (states: donacijom svjetski poznatog skupljača umjetnina ante topića mimare)
+113. https://hr.wikipedia.org/wiki/Franjo_Vranjanin (states: (zadar, oko 1430.)
+114. https://hr.wikipedia.org/wiki/Oton_Ivekovi%C4%87 (states: dolazak hrvata na jadran, krunidba kralja tomislava)
+115. https://hr.wikipedia.org/wiki/Mato_Celestin_Medovi%C4%87 (states: u kuni na poluotoku pelješcu)
+116. https://hr.wikipedia.org/wiki/Min%C4%8Deta (states: izgradnju minčete preuzima i nastavlja juraj dalmatinac)
+117. https://hr.wikipedia.org/wiki/Juraj_Dalmatinac (states: u anconi, loggia dei mercanti)
+118. https://hr.wikipedia.org/wiki/Josip_Ra%C4%8Di%C4%87 (states: smrt = 19. lipnja 1908., mjesto smrti = pariz)
+119. https://hr.wikipedia.org/wiki/Miroslav_Kraljevi%C4%87 (states: mjesto rođenja = gospić)
+120. https://hr.wikipedia.org/wiki/Ivan_Lackovi%C4%87_Croata (states: naivnog slikarstva, batinske)
+121. https://hr.wikipedia.org/wiki/Emanuel_Vidovi%C4%87 (states: mjesto rođenja=split, mjesto smrti = split, period = impresionizam)
+122. https://hr.wikipedia.org/wiki/Ivan_Generali%C4%87 (states: ivan generalić (hlebine, začetnik je suvremene hrvatske naivne umjetnosti)
 
 ## Photos
 
@@ -92,3 +160,26 @@ derivative work: Papa Lima Whiskey 2, Public domain, https://commons.wikimedia.o
 29. photos/foto-28.webp: The Tower of Babel (Bruegel). Pieter Bruegel the Elder, Public domain, https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_(Vienna)_-_Google_Art_Project_-_edited.jpg (resized, WebP)
 30. photos/foto-29.webp: The Thinker. Kaisching, Public domain, https://commons.wikimedia.org/wiki/File:Le_Penseur_by_Rodin_(Kunsthalle_Bielefeld)_2014-04-10.JPG (resized, WebP)
 31. photos/foto-30.webp: Winged Victory of Samothrace. Shonagon, CC0, https://commons.wikimedia.org/wiki/File:Victoire_de_Samothrace_-_Musee_du_Louvre_-_20190812.jpg (resized, WebP)
+87. photos/foto-31.webp: American Gothic. Grant Wood, Public domain, https://commons.wikimedia.org/wiki/File:Grant_Wood_-_American_Gothic_(1930).jpg (cropped to remove the signature, resized, WebP)
+88. photos/foto-32.webp: Black Square (painting). Kazimir Malevich, Public domain, https://commons.wikimedia.org/wiki/File:Kazimir_Malevich,_1915,_Black_Suprematic_Square,_oil_on_linen_canvas,_79.5_x_79.5_cm,_Tretyakov_Gallery,_Moscow.jpg (resized, WebP)
+89. photos/foto-33.webp: Vitruvian Man. Leonardo da Vinci, Public domain, https://commons.wikimedia.org/wiki/File:Da_Vinci_Vitruve_Luc_Viatour.jpg (resized, WebP)
+90. photos/foto-34.webp: Bayeux Tapestry. Myrabella, Public domain, https://commons.wikimedia.org/wiki/File:Bayeux_Tapestry_scene57_Harold_death.jpg (resized, WebP)
+91. photos/foto-35.webp: Trinity (Andrei Rublev). Andrei Rublev, Public domain, https://commons.wikimedia.org/wiki/File:Angelsatmamre-trinity-rublev-1410.jpg (resized, WebP)
+92. photos/foto-36.webp: Josip Račić, Autoportret (1908), Moderna galerija Zagreb. Josip Račić, Public domain, https://commons.wikimedia.org/wiki/File:1908,_Josip_Racic,_Autoportret,_ulje,_65,1x53,1,_Moderna_galerija_Zagreb.jpg (resized, WebP)
+93. photos/foto-37.webp: Miroslav Kraljević, Autoportret sa psom (1910), Moderna galerija Zagreb. Miroslav Kraljević, Public domain, https://commons.wikimedia.org/wiki/File:1910,_Miroslav_Kraljevic,_Autoportret_sa_psom,_ulje,_110x85,5,_Moderna_galerija_Zagreb.jpg (resized, WebP)
+94. photos/foto-38.webp: Ivan Meštrović, Grgur Ninski (1929), Split; photo of a public monument, Croatian freedom of panorama. Kommandant-Brot, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Gregory_statue.jpg (resized, WebP)
+
+## Least sure
+
+- "Noćna straža": the Amsterdam Museum owns it and lends it permanently to the Rijksmuseum, so the question asks where it is shown ("izložena"), not who owns it.
+- The "Mislilac" photo shows a bronze cast in Kunsthalle Bielefeld, not the Paris original; the question asks only for the sculptor.
+- The "Dama s hermelinom" picture has a later inscription in the top-left corner that names Leonardo; the question names him already and asks for the city.
+- The Bayeux Tapestry scene has its Latin caption ("Harold rex interfectus est"); it names Harold, not the answer (the Norman conquest).
+- Painters' signatures: the four I could read at TV size (Klimt, Munch, Mondrian's "PM", Grant Wood) are cropped off. I did not check every painting at full size for tiny signatures.
+- Grgur Ninski (Meštrović, d. 1962): the sculpture is still in copyright; the photo is on Commons under Croatian freedom of panorama for public monuments.
+
+## Dropped and why
+
+- Duchamp's "Fontana": en.wikipedia now gives the attribution as disputed (Elsa von Freytag-Loringhoven), so it is not a stable fact.
+- Picture questions for Repin's "Ivan Grozni i njegov sin" (no usable Commons file found), "Vrt zemaljskih užitaka" (many small nudes on a family TV; kept as a text question), Manet's "Olympia" and "Doručak na travi", Ingres's "Velika odaliska", Michelangelo's "David" and "Laokoont" (nudes), Dürer's self-portrait, David's "Napoleon" and "Marat" (the painter's or sitter's name is painted on them).
+- Mona Lisa, Vermeer's "Djevojka s bisernom naušnicom", "Guernica", "Postojanost pamćenja", "Impresija, izlazak sunca", Warhol, Bukovac's HNK curtain, Hegedušić, Augustinčić, Kožarić, Klović, Slava Raškaj: already asked in Opće znanje or Kultura i sport.
