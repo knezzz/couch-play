@@ -30,10 +30,10 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | done on macOS (696669b … 9d7e1bf); real phones + TV next session | lead |
 | 21 | Croatian packs only, all as big as verified questions allow; pub-quiz/Potjera as a guide (person, 2026-11-15) | done (59588ed … 0b07659): 10 packs, ~1,245 questions, all sourced; 52 new Međimurje ones wait on the person | lead + content |
 | 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | app done on macOS (89c05ab, 335c62b); 20 Commons photos so far (geografija 18, medimurje 2); 11 world cities in zemljopis-svijeta (31 photos) | lead + content |
-| 23 | Host game settings: quiz time per question, questions per game, time between questions; Curve pause between rounds (person, 2026-11-16) | queued to lead | lead |
-| 24 | Curve modes (Kaos, Uravnoteženo, Mirno, Samo za tebe); speed up hits others, slow down is yours; thin/fat last longer (person, 2026-11-16) | queued to lead, after Task 23 | lead |
-| 25 | Fat stacks, ghost leaves no line, thin removed, reverse-others added (person, 2026-11-16) | queued to lead | lead |
-| 26 | Sound effects on the TV (person, 2026-11-16) | queued to lead | lead |
+| 23 | Host game settings: quiz time per question, questions per game, time between questions; Curve pause between rounds (person, 2026-11-16) | done; on the TV in a286dc2 | lead |
+| 24 | Curve modes (Kaos, Uravnoteženo, Mirno, Samo za tebe); speed up hits others, slow down is yours; thin/fat last longer (person, 2026-11-16) | done; on the TV in a286dc2 (Kaos tuned by guess) | lead |
+| 25 | Fat stacks, ghost leaves no line, thin removed, reverse-others added (person, 2026-11-16) | done on macOS; fat stacking, ghost line return, the swap itself unit-tested only; on the TV in a286dc2 | lead |
+| 26 | Sound effects on the TV (person, 2026-11-16) | built; nobody has heard it yet; on the TV in a286dc2 | lead |
 | 27 | Host picks a game from a carousel; details with settings, mirrored on the TV; Igraj starts it (person, 2026-11-16) | queued to lead | lead |
 | 28 | Six new packs (Umjetnost, Psihologija, Ljudsko tijelo, Memeovi, Fizika, Matematika) + more picture questions (person, 2026-11-16) | queued to lead | lead + content |
 | 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | queued to lead | lead |
@@ -252,3 +252,7 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-16: Person: players choose a character, shown on the TV. Chosen: drawn animals, one per player. Task 29.
 - 2026-11-16: The 49e10cd TV session has no PERF numbers (built without --dart-define=PERF=true). The next install
   (tv-install2, on the first Task 28 pack) is built with PERF on and checked for PERF lines in the first minute.
+- 2026-11-16: a286dc2 on the TV (PERF on; first new pack hr-psihologija 112). Tasks 23, 24, 25 accepted on macOS,
+  Task 26 built (lead ran core 132, tv 281, controller 66 on a286dc2; PM ran core 132, controller 67 on main; tv not
+  re-run: another seat has uncommitted lobby edits). PERF overlay covered the TV; person chose a log-only PERF and a
+  reinstall.

@@ -784,11 +784,11 @@ The person: "Can we have host set the quiz duration and wait times between the r
 - Speed scoring stays 500–1000, scaled to the chosen time per question.
 - The TV remembers the settings across app restarts (a small JSON file next to the user packs, read and clamped at start; person, 2026-11-16). The Curve mode from Task 24 is remembered the same way.
 
-- [ ] **Step 1: Failing tests:** protocol round-trip of the settings message; the session clamps out-of-range values and ignores a non-host; a quiz uses the set count, limit and reveal; speed points scale to the set limit; a Curve match uses the set countdown; changes mid-game apply only from the next game.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** core (protocol, `QuizRound`/`CurveConfig` already take these values), TV session, phone lobby UI; add the strings to the strings files and `docs/strings-hr.md`.
-- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + the release web controller: set each value to its min and max and see it in play; a non-host phone sees the values but can't change them; fit at 360–390 px.
-- [ ] **Step 5: Commit** by path.
+- [x] **Step 1: Failing tests:** protocol round-trip of the settings message; the session clamps out-of-range values and ignores a non-host; a quiz uses the set count, limit and reveal; speed points scale to the set limit; a Curve match uses the set countdown; changes mid-game apply only from the next game.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** core (protocol, `QuizRound`/`CurveConfig` already take these values), TV session, phone lobby UI; add the strings to the strings files and `docs/strings-hr.md`.
+- [x] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + the release web controller: set each value to its min and max and see it in play; a non-host phone sees the values but can't change them; fit at 360–390 px.
+- [x] **Step 5: Commit** by path.
 
 ---
 
@@ -809,11 +809,11 @@ Builds on Task 23's host settings (same lobby settings area, same session-only r
   The mode is a set of `CurveConfig` values (spawn interval, max on board, allowed kinds); the builder tunes Kaos so it is fun, not unplayable. Bots keep working in every mode.
 - Croatian names as above (the person may rename them); strings in the strings files and `docs/strings-hr.md`.
 
-- [ ] **Step 1: Failing tests:** the swapped speed/slow effects hit the right players; thin/fat last longer than the rest; Mirno spawns nothing; Samo za tebe spawns only green kinds; Kaos spawns more than Uravnoteženo over the same seeded time; the session passes the host's mode to the match; a non-host can't change it.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** core (config, kinds), TV (icons, indicators, session), phone (mode picker in the host settings).
-- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: each mode played with bots; the new speed/slow seen working with their colors and indicators; thin/fat run longer; Kaos frame times still fine.
-- [ ] **Step 5: Commit** by path. Kaos gets its own frame-time check on the real TV at the next session.
+- [x] **Step 1: Failing tests:** the swapped speed/slow effects hit the right players; thin/fat last longer than the rest; Mirno spawns nothing; Samo za tebe spawns only green kinds; Kaos spawns more than Uravnoteženo over the same seeded time; the session passes the host's mode to the match; a non-host can't change it.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** core (config, kinds), TV (icons, indicators, session), phone (mode picker in the host settings).
+- [x] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: each mode played with bots; the new speed/slow seen working with their colors and indicators; thin/fat run longer; Kaos frame times still fine.
+- [x] **Step 5: Commit** by path. Kaos gets its own frame-time check on the real TV at the next session.
 
 ---
 
@@ -826,11 +826,11 @@ The person, after playing on the TV: "thick powerups should stack; when you are 
 - Thin is removed (enum, icon, bots, modes, tests).
 - New: **reverse others** (red): everyone else's left and right swap for `effectSeconds`; stacks by restarting its timer. Icon and indicator like the others. Bots handle it (their steering is reversed too). Samo za tebe keeps only green kinds (slow, ghost).
 
-- [ ] **Step 1: Failing tests:** fat twice is fatter than once (and capped); ghost paints nothing and leaves no grid cells; no thin kind spawns; reverse others swaps left/right for the others only, then expires.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** core, TV icons/indicators, bots.
-- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release: each change seen.
-- [ ] **Step 5: Commit** by path.
+- [x] **Step 1: Failing tests:** fat twice is fatter than once (and capped); ghost paints nothing and leaves no grid cells; no thin kind spawns; reverse others swaps left/right for the others only, then expires.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** core, TV icons/indicators, bots.
+- [x] **Step 4: Run.** Expected: PASS in every member. QA on macOS release: each change seen.
+- [x] **Step 5: Commit** by path.
 
 ---
 
@@ -841,10 +841,10 @@ The person: "Add sound effects." TV only (person's choice); phones stay silent.
 - Sounds: Curve countdown beeps, power-up pickup, crash, round win, match win; quiz question start, last-5-seconds tick, reveal right/wrong, winner fanfare; lobby join blip.
 - Freely licensed (CC0) or made for the project; list each file's source and licence in `apps/tv/assets/sounds/SOURCES.md`. Small files (short OGG/WAV).
 - Use an existing small audio package only if Flutter has none built in; low latency on Android TV; sounds must never stall the 60 Hz game loop. Preload at start.
-- [ ] **Step 1:** pick and add the sounds; a failing test that the session triggers the right sound for each event (through a fake player).
-- [ ] **Step 2:** implement; tests pass.
+- [x] **Step 1:** pick and add the sounds; a failing test that the session triggers the right sound for each event (through a fake player).
+- [x] **Step 2:** implement; tests pass.
 - [ ] **Step 3:** QA on macOS release (hear each one; nothing too loud); then on the real TV with the person (latency, volume, frame times).
-- [ ] **Step 4: Commit** by path.
+- [x] **Step 4: Commit** by path.
 
 ---
 
