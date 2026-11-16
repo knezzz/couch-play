@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:core/core.dart';
@@ -418,6 +420,19 @@ class Session {
   /// values it starts with; changes only count from the next game.
   GameSettings get settings => _settings;
   GameSettings _settings = const GameSettings();
+  File? _settingsFile;
+
+  /// Remembers the settings in [file] across restarts: reads it now (a missing
+  /// or broken file means the defaults) and writes it on every host change.
+  void loadSettings(File file) {
+    _settingsFile = file;
+    try {
+      _settings =
+          GameSettings.fromJson(jsonDecode(file.readAsStringSync()) as Map<String, dynamic>).clamped();
+    } catch (_) {
+      _settings = const GameSettings();
+    }
+  }
 
   void _setSettings(PeerSocket peer, GameSettings wanted) {
     final from = _playerOf(peer);
@@ -427,6 +442,9 @@ class Session {
       return;
     }
     _settings = wanted.clamped();
+    try {
+      _settingsFile?.writeAsStringSync(jsonEncode(_settings.toJson()));
+    } catch (_) {} // not remembered, still set for this session
     _broadcastLobby();
     _notify();
   }

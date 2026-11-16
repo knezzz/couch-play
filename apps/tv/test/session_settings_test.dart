@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:core/core.dart';
@@ -178,4 +179,61 @@ void main() {
       s.dispose();
     });
   });
+
+  group('remembered across restarts', () {
+    late File file;
+    setUp(() {
+      final dir = Directory.systemTemp.createTempSync('settings');
+      addTearDown(() => dir.deleteSync(recursive: true));
+      file = File('${dir.path}/settings.json');
+    });
+
+    test('a_change_by_the_host_survives_a_new_session', () {
+      setUpSession();
+      s.loadSettings(file);
+      a.say(const SetSettings(custom_));
+      s.dispose();
+      final s2 = Session()..loadSettings(file);
+      expect(s2.settings, custom_.clamped());
+      expect(s2.settings.curveMode, CurveMode.chaos);
+      s2.dispose();
+    });
+
+    test('a_missing_file_gives_the_defaults', () {
+      final s2 = Session()..loadSettings(file);
+      expect(s2.settings, const GameSettings());
+      s2.dispose();
+    });
+
+    test('a_broken_or_wrong_typed_file_gives_the_defaults', () {
+      for (final text in ['', 'not json', '[1,2]', '{"quizSeconds":"20"}', '{"quizSeconds":30}', '{"curveMode":"wild"}']) {
+        file.writeAsStringSync(text);
+        final s2 = Session()..loadSettings(file);
+        expect(s2.settings, const GameSettings(), reason: text);
+        s2.dispose();
+      }
+    });
+
+    test('out_of_range_values_in_the_file_come_back_clamped', () {
+      file.writeAsStringSync(
+          '{"quizSeconds":999,"quizQuestions":1,"revealSeconds":-3,"curveCountdown":99,"curveMode":"peaceful"}');
+      final s2 = Session()..loadSettings(file);
+      expect(s2.settings,
+          const GameSettings(quizSeconds: 60, quizQuestions: 5, revealSeconds: 2, curveCountdown: 10, curveMode: CurveMode.peaceful));
+      s2.dispose();
+    });
+
+    test('a_rejected_change_is_not_saved_and_an_unwritable_path_does_not_crash', () {
+      setUpSession();
+      s.loadSettings(file);
+      b.say(const SetSettings(custom_)); // non-host
+      expect(file.existsSync(), isFalse);
+      s.loadSettings(File('${file.parent.path}/no/such/dir/settings.json'));
+      a.say(const SetSettings(custom_));
+      expect(s.settings, custom_.clamped());
+      s.dispose();
+    });
+  });
 }
+
+const custom_ = GameSettings(quizSeconds: 40, quizQuestions: 15, revealSeconds: 7, curveCountdown: 5, curveMode: CurveMode.chaos);

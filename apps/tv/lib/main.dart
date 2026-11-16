@@ -89,6 +89,7 @@ class _TvAppState extends State<TvApp> {
       await extractControllerZip(zip.buffer.asUint8List(), web);
       _session.packStore = await PackStore.load(
           bundled: await loadBundledPacks(rootBundle), userDir: Directory('${support.path}/packs'));
+      _session.loadSettings(File('${support.path}/settings.json'));
       final server = await GameServer.start(
         webRoot: web,
         onPeer: _session.attach,
