@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Pick a quiz pack</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 48px 20px 24px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 10px">
+  <a href="PhoneQuizDetails.dc.html" style="align-self: flex-start; font-size: 18px; font-weight: 500; color: #4DD9FF; text-decoration: none; height: 44px; display: flex; align-items: center">‹ Natrag</a>
+  <div style="font-size: 26px; font-weight: 900">Paket pitanja</div>
+  <div role="radiogroup" aria-label="Paket pitanja" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+    <sc-for list="{{packs}}" as="p" hint-placeholder-count="16">
+      <button role="radio" aria-checked="{{p.on}}" onClick="{{p.pick}}" style="{{p.style}}">
+        <span style="font-size: 17px; font-weight: 700; line-height: 1.2">{{p.name}}</span>
+        <span style="font-size: 13px; opacity: 0.8">{{p.meta}}</span>
+      </button>
+    </sc-for>
+  </div>
+  <button style="font: inherit; font-size: 18px; font-weight: 500; color: #4DD9FF; background: transparent; border: 2px solid #2A2A3A; border-radius: 12px; height: 52px; margin-top: auto">Dodaj svoj paket…</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { pick: 'Opće znanje' }; }
+  renderVals() {
+    const list = [
+      ['Opće znanje', '401'], ['Međimurje', '94 · slike'], ['Geografija', '100 · slike'], ['Zemljopis svijeta', '102 · slike'],
+      ['Povijest', '111 · slike'], ['Kultura i sport', '114'], ['Znanost', '121'], ['Film i glazba', '116'],
+      ['Zastave', '46 · slike'], ['Oblici', '50 · slike'], ['Psihologija', '112 · novo'], ['Umjetnost', 'slike · novo'],
+      ['Ljudsko tijelo', 'slike · novo'], ['Memeovi', 'novo'], ['Fizika', 'novo'], ['Matematika', 'novo']
+    ];
+    const packs = list.map(([name, n]) => {
+      const on = this.state.pick === name;
+      return {
+        name, meta: /^\d/.test(n) ? n.replace(/^(\d+)/, '$1 pitanja') : n, on: on ? 'true' : 'false',
+        pick: () => this.setState({ pick: name }),
+        style: 'font: inherit; text-align: left; min-height: 64px; border-radius: 14px; padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; gap: 2px; cursor: pointer; ' +
+          (on ? 'background: #4DD9FF; color: #14141E; border: 0;' : 'background: #1F1F2C; color: #F4F4F8; border: 0;')
+      };
+    });
+    return { packs };
+  }
+}
+</script>
+</body>
+</html>

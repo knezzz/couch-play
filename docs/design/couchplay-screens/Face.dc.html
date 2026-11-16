@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Character face</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: {{box}}; height: {{box}}; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 100 100" width="{{px}}" height="{{px}}" role="img" aria-label="{{label}}">
+<path d="{{back}}" fill="{{backFill}}"></path>
+<path d="{{ears}}" fill="{{earsFill}}"></path>
+<path d="{{inner}}" fill="{{dark}}"></path>
+<circle cx="50" cy="56" r="36" fill="{{color}}"></circle>
+<path d="{{marks}}" fill="{{dark}}"></path>
+<path d="{{lite}}" fill="{{liteC}}"></path>
+<circle cx="38" cy="{{eyeY}}" r="5.5" fill="#14141E"></circle>
+<circle cx="62" cy="{{eyeY}}" r="5.5" fill="#14141E"></circle>
+<path d="{{nose}}" fill="#14141E"></path>
+<path d="{{mouth}}" fill="none" stroke="#14141E" stroke-width="3" stroke-linecap="round"></path>
+</svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"animal":{"editor":"enum","options":["fox","owl","frog","bear","cat","dog","rabbit","penguin","lion","panda","pig","koala","mouse","tiger","duck","monkey"],"default":"fox"},"color":{"editor":"color","default":"#FF4D6D"},"size":{"editor":"int","default":200},"$preview":{"width":200,"height":200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const a = this.props.animal ?? 'fox';
+    const c = this.props.color ?? '#FF4D6D';
+    const size = this.props.size ?? 200;
+    const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+    const mix = (h, to, t) => {
+      const x = hex(h), y = hex(to);
+      return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, '0')).join('');
+    };
+    const E = (cx, cy, rx, ry) => `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${2 * rx} 0 a${rx} ${ry} 0 1 0 ${-2 * rx} 0 `;
+    const muzzle = E(50, 70, 18, 13);
+    const smallNose = E(50, 64, 5, 4);
+    const smile = 'M43 74 Q50 80 57 74';
+    const A = {
+      fox: { ears: 'M16 42 L24 4 L46 28 Z M84 42 L76 4 L54 28 Z', inner: 'M23 34 L27 14 L39 27 Z M77 34 L73 14 L61 27 Z', lite: E(50, 72, 22, 15), nose: E(50, 64, 6, 5) },
+      owl: { ears: 'M20 34 L28 4 L44 26 Z M80 34 L72 4 L56 26 Z', lite: E(37, 52, 13, 13) + E(63, 52, 13, 13), nose: 'M45 62 L55 62 L50 74 Z', mouth: '' },
+      frog: { ears: E(32, 28, 15, 15) + E(68, 28, 15, 15), lite: E(32, 26, 10, 10) + E(68, 26, 10, 10), eyeY: 26, nose: '', mouth: 'M32 70 Q50 82 68 70' },
+      bear: { ears: E(24, 26, 13, 13) + E(76, 26, 13, 13), inner: E(24, 26, 6, 6) + E(76, 26, 6, 6), lite: muzzle, nose: E(50, 64, 7, 5) },
+      cat: { ears: 'M18 40 L22 8 L44 26 Z M82 40 L78 8 L56 26 Z', inner: 'M24 33 L26 16 L37 26 Z M76 33 L74 16 L63 26 Z', nose: 'M45 62 L55 62 L50 68 Z', mouth: 'M38 74 Q44 78 50 72 Q56 78 62 74' },
+      dog: { ears: 'M18 30 Q2 40 8 70 Q14 82 26 70 L28 34 Z M82 30 Q98 40 92 70 Q86 82 74 70 L72 34 Z', earsFill: 'dark', lite: muzzle, nose: E(50, 63, 8, 6) },
+      rabbit: { ears: E(36, 16, 8, 22) + E(64, 16, 8, 22), lite: E(36, 18, 4, 14) + E(64, 18, 4, 14) + E(50, 72, 14, 10), nose: E(50, 65, 4, 3) },
+      penguin: { marks: 'M14 56 A36 36 0 0 1 86 56 Q70 46 50 60 Q30 46 14 56 Z', nose: 'M42 64 L58 64 L50 74 Z', liteBeak: true, mouth: '' },
+      lion: { back: E(50, 54, 47, 47), backFill: 'dark', ears: E(24, 28, 10, 10) + E(76, 28, 10, 10), lite: muzzle, nose: 'M44 62 L56 62 L50 69 Z' },
+      panda: { ears: E(24, 26, 13, 13) + E(76, 26, 13, 13), earsFill: 'deep', marks: E(36, 52, 10, 13) + E(64, 52, 10, 13), eyeLite: true, lite: muzzle, nose: E(50, 64, 6, 4) },
+      pig: { ears: 'M20 34 L22 12 L42 26 Z M80 34 L78 12 L58 26 Z', lite: E(50, 68, 15, 11), nose: E(44, 68, 3, 4) + E(56, 68, 3, 4), mouth: '' },
+      koala: { ears: E(20, 34, 17, 17) + E(80, 34, 17, 17), inner: '', lite: E(20, 34, 9, 9) + E(80, 34, 9, 9), nose: E(50, 64, 8, 11), mouth: '' },
+      mouse: { ears: E(22, 26, 18, 18) + E(78, 26, 18, 18), inner: E(22, 26, 10, 10) + E(78, 26, 10, 10), nose: E(50, 66, 5, 4) },
+      tiger: { ears: E(24, 26, 12, 12) + E(76, 26, 12, 12), inner: E(24, 26, 5, 5) + E(76, 26, 5, 5), marks: 'M46 20 L50 36 L54 20 Z M16 52 L32 56 L16 60 Z M84 52 L68 56 L84 60 Z', lite: muzzle, nose: 'M44 62 L56 62 L50 69 Z' },
+      duck: { ears: 'M46 22 Q50 6 58 14 Q52 16 54 22 Z', nose: E(50, 70, 18, 8), liteBeak: true, mouth: '' },
+      monkey: { ears: E(12, 56, 12, 12) + E(88, 56, 12, 12), inner: E(12, 56, 6, 6) + E(88, 56, 6, 6), lite: E(39, 52, 12, 14) + E(61, 52, 12, 14) + E(50, 70, 20, 14), nose: E(46, 64, 2, 2) + E(54, 64, 2, 2) }
+    };
+    const s = A[a] || A.fox;
+    const dark = mix(c, '#14141E', 0.45);
+    const deep = mix(c, '#14141E', 0.7);
+    const liteC = mix(c, '#FFFFFF', 0.7);
+    const pick = (k) => (k === 'dark' ? dark : k === 'deep' ? deep : c);
+    return {
+      box: size + 'px', px: size, label: a,
+      color: c, dark, liteC,
+      back: s.back || '', backFill: pick(s.backFill),
+      ears: s.ears || '', earsFill: pick(s.earsFill),
+      inner: s.inner || '', marks: s.marks || '',
+      lite: s.lite || '', eyeY: s.eyeY || 52,
+      nose: s.nose ?? smallNose, mouth: s.mouth ?? smile
+    };
+  }
+}
+</script>
+</body>
+</html>

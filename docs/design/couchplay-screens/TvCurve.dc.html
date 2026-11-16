@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Curve in play</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="height: 88px; display: flex; align-items: center; gap: 36px; padding: 0 40px">
+    <span style="font-size: 36px; font-weight: 700; color: #A9A9BC">Runda 3 · do 30</span>
+    <sc-for list="{{players}}" as="p" hint-placeholder-count="4">
+      <span style="display: flex; align-items: center; gap: 12px; font-size: 36px; opacity: {{p.op}}">
+        <dc-import name="Face" animal="{{p.animal}}" color="{{p.color}}" size="{{s48}}" hint-size="48px,48px"></dc-import>
+        <span>{{p.name}}</span><span style="font-weight: 900">{{p.score}}</span>
+      </span>
+    </sc-for>
+    <span style="margin-left: auto; font-size: 32px; color: #A9A9BC">Kaos</span>
+  </div>
+  <svg viewBox="0 0 1920 992" width="1920" height="992" role="img" aria-label="Arena with trails, power-ups and the shrinking wrap border">
+    <rect x="0" y="0" width="1920" height="992" fill="#14141E"></rect>
+    <path d="M40 4 L1916 4 L1916 988 L900 988" fill="none" stroke="#FFFFFF" stroke-width="8"></path>
+    <path d="M300 820 C420 600 380 420 600 380 S900 520 1000 360 S1180 160 1320 260" fill="none" stroke="#FF4D6D" stroke-width="10" stroke-linecap="round"></path>
+    <path d="M1700 860 C1500 820 1460 700 1300 720 S1000 860 860 760" fill="none" stroke="#FFB020" stroke-width="30" stroke-linecap="round"></path>
+    <path d="M200 160 C400 200 520 120 700 200 L760 230" fill="none" stroke="#2ECC71" stroke-width="10" stroke-linecap="round"></path>
+    <path d="M1000 960 C1100 900 1180 940 1240 880" fill="none" stroke="#2ECC71" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 22" opacity="0.5"></path>
+    <path d="M1600 120 C1560 300 1700 420 1640 560" fill="none" stroke="#9B5CFF" stroke-width="30" stroke-linecap="round"></path>
+    <circle cx="1320" cy="260" r="9" fill="#FFFFFF"></circle>
+    <circle cx="860" cy="760" r="9" fill="#FFFFFF"></circle>
+    <circle cx="1240" cy="880" r="9" fill="#FFFFFF" opacity="0.6"></circle>
+    <circle cx="1640" cy="560" r="9" fill="#FFFFFF"></circle>
+    <g transform="translate(1262 230)">
+      <circle r="26" fill="none" stroke="#2A2A3A" stroke-width="6"></circle>
+      <circle r="26" fill="none" stroke="#FF4D4D" stroke-width="6" stroke-dasharray="163" stroke-dashoffset="60" transform="rotate(-90)"></circle>
+      <circle r="19" fill="#FF4D4D"></circle>
+      <path d="M-11 -9 L-1 0 L-11 9 M1 -9 L11 0 L1 9" fill="none" stroke="#14141E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+    </g>
+    <g transform="translate(920 730)">
+      <circle r="26" fill="none" stroke="#2A2A3A" stroke-width="6"></circle>
+      <circle r="26" fill="none" stroke="#FF4D4D" stroke-width="6" stroke-dasharray="163" stroke-dashoffset="30" transform="rotate(-90)"></circle>
+      <circle r="19" fill="#FF4D4D"></circle>
+      <rect x="-12" y="-6" width="24" height="12" rx="2" fill="#14141E"></rect>
+      <circle cx="-8" cy="40" r="4" fill="#F4F4F8"></circle><circle cx="4" cy="40" r="4" fill="#F4F4F8"></circle>
+    </g>
+    <g transform="translate(1186 900)">
+      <circle r="26" fill="none" stroke="#2A2A3A" stroke-width="6"></circle>
+      <circle r="26" fill="none" stroke="#3DDC84" stroke-width="6" stroke-dasharray="163" stroke-dashoffset="90" transform="rotate(-90)"></circle>
+      <circle r="19" fill="#3DDC84"></circle>
+      <path d="M-10 14 L-10 -2 A10 10 0 0 1 10 -2 L10 14 L5 9 L0 14 L-5 9 Z" fill="#14141E"></path>
+    </g>
+    <g transform="translate(560 560)"><circle r="40" fill="#4DA6FF"></circle><path d="M-22 -22 L22 -22 L22 22 L-22 22 Z M0 -12 L0 12 M-12 0 L12 0" fill="none" stroke="#14141E" stroke-width="6" stroke-linecap="round"></path></g>
+    <g transform="translate(1100 560)"><circle r="40" fill="#FF4D4D"></circle><path d="M-18 -12 L18 -12 M10 -20 L18 -12 L10 -4 M18 12 L-18 12 M-10 4 L-18 12 L-10 20" fill="none" stroke="#14141E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path></g>
+    <g transform="translate(400 900)"><circle r="40" fill="#3DDC84"></circle><path d="M8 -18 L-10 0 L8 18 M-8 -18 L-26 0 L-8 18" fill="none" stroke="#14141E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" transform="translate(9 0)"></path></g>
+  </svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      s48: 48,
+      players: [
+        { animal: 'fox', color: '#FF4D6D', name: 'Luka', score: 12, op: 1 },
+        { animal: 'owl', color: '#FFB020', name: 'Ana', score: 9, op: 1 },
+        { animal: 'frog', color: '#2ECC71', name: 'Marko', score: 7, op: 1 },
+        { animal: 'panda', color: '#9B5CFF', name: 'Robot 1', score: 4, op: 1 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

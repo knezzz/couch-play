@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Waiting for a player</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; align-items: center; justify-content: center">
+  <div style="width: 1040px; background: #1F1F2C; border-radius: 40px; padding: 64px; display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center">
+    <dc-import name="Face" animal="owl" color="#FFB020" size="{{s160}}" hint-size="160px,160px"></dc-import>
+    <div style="font-size: 64px; font-weight: 900">Čekamo da se Ana vrati</div>
+    <div style="font-size: 40px; color: #A9A9BC">Igra je zaustavljena. Još 22 s, onda završava.</div>
+    <div style="width: 100%; height: 16px; border-radius: 8px; background: #2A2A3A">
+      <div style="width: 73%; height: 16px; border-radius: 8px; background: #4DD9FF"></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() { return { s160: 160 }; }
+}
+</script>
+</body>
+</html>

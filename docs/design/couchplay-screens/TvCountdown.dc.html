@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Curve countdown</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif">
+  <div style="position: absolute; left: 0; right: 0; top: 380px; text-align: center; font-size: 220px; font-weight: 900; color: #2A2A3A">2</div>
+  <sc-for list="{{heads}}" as="h" hint-placeholder-count="4">
+    <div style="position: absolute; left: {{h.lx}}; top: {{h.ly}}; display: flex; align-items: center; gap: 12px; background: #1F1F2C; border-radius: 999px; padding: 6px 22px 6px 6px">
+      <dc-import name="Face" animal="{{h.animal}}" color="{{h.color}}" size="{{s64}}" hint-size="64px,64px"></dc-import>
+      <span style="font-size: 44px; font-weight: 700">{{h.name}}</span>
+    </div>
+    <svg style="position: absolute; left: {{h.ax}}; top: {{h.ay}}" width="160" height="160" viewBox="-80 -80 160 160" aria-hidden="true">
+      <g transform="rotate({{h.deg}})">
+        <path d="M18 0 L64 0 M48 -14 L64 0 L48 14" fill="none" stroke="{{h.color}}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </g>
+      <circle r="18" fill="{{h.color}}"></circle>
+    </svg>
+  </sc-for>
+  <div style="position: absolute; left: 0; right: 0; bottom: 48px; text-align: center; font-size: 36px; color: #A9A9BC">Pronađi svoju točku. Strelica pokazuje kamo kreneš.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const mk = (animal, color, name, x, y, deg) => ({
+      animal, color, name, deg,
+      ax: (x - 80) + 'px', ay: (y - 80) + 'px',
+      lx: (x - 110) + 'px', ly: (y - 130) + 'px'
+    });
+    return {
+      s64: 64,
+      heads: [
+        mk('fox', '#FF4D6D', 'Luka', 420, 300, 30),
+        mk('owl', '#FFB020', 'Ana', 1480, 320, 150),
+        mk('frog', '#2ECC71', 'Marko', 460, 820, -40),
+        mk('panda', '#9B5CFF', 'Robot 1', 1500, 800, -140)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

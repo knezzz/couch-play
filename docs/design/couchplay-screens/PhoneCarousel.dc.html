@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Host picks a game</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 0 32px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+  <div style="margin: 0 20px; background: #FF4D6D; color: #14141E; border-radius: 20px; padding: 10px 16px; display: flex; align-items: center; gap: 12px">
+    <dc-import name="Face" animal="fox" color="#FFFFFF" size="{{s44}}" hint-size="44px,44px"></dc-import>
+    <span style="font-size: 26px; font-weight: 900; flex-grow: 1">Luka</span>
+    <span style="font-size: 16px; font-weight: 700; background: #14141E; color: #F4F4F8; border-radius: 999px; padding: 4px 12px">★ Domaćin</span>
+  </div>
+  <div style="margin: 8px 20px 0; font-size: 22px; font-weight: 700">Odaberi igru</div>
+  <div style="display: flex; gap: 14px; padding: 0 20px">
+    <a href="PhoneQuizDetails.dc.html" style="flex: 0 0 290px; height: 360px; box-sizing: border-box; border-radius: 28px; background: #22B8F0; color: #14141E; padding: 24px; display: flex; flex-direction: column; gap: 12px; text-decoration: none">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 150px">
+        <span style="height: 64px; border-radius: 14px; background: #FF4D6D; display: flex; align-items: center; justify-content: center; font-size: 28px">▲</span>
+        <span style="height: 64px; border-radius: 14px; background: #14141E; color: #22B8F0; display: flex; align-items: center; justify-content: center; font-size: 28px">◆</span>
+        <span style="height: 64px; border-radius: 14px; background: #FFB020; display: flex; align-items: center; justify-content: center; font-size: 28px">●</span>
+        <span style="height: 64px; border-radius: 14px; background: #2ECC71; display: flex; align-items: center; justify-content: center; font-size: 28px">■</span>
+      </div>
+      <div style="font-size: 40px; font-weight: 900; margin-top: auto">Kviz</div>
+      <div style="font-size: 18px; line-height: 1.35">Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.</div>
+      <div style="font-size: 16px; font-weight: 700">Opće znanje · 10 pitanja · 20 s</div>
+    </a>
+    <a href="PhoneCurveDetails.dc.html" style="flex: 0 0 290px; height: 360px; box-sizing: border-box; border-radius: 28px; background: #1F1F2C; color: #F4F4F8; padding: 24px; display: flex; flex-direction: column; gap: 12px; text-decoration: none; border: 3px solid #2A2A3A">
+      <svg viewBox="0 0 240 120" width="240" height="120" aria-hidden="true"><path d="M10 100 C60 20 100 110 150 50 S220 30 230 90" fill="none" stroke="#FF4D6D" stroke-width="8" stroke-linecap="round"></path><path d="M20 20 C80 70 120 10 190 40" fill="none" stroke="#2ECC71" stroke-width="8" stroke-linecap="round"></path></svg>
+      <div style="font-size: 40px; font-weight: 900; margin-top: auto">Curve</div>
+      <div style="font-size: 18px; line-height: 1.35; color: #A9A9BC">Vozi svoju krivulju i ne udari u druge.</div>
+    </a>
+  </div>
+  <div style="display: flex; justify-content: center; gap: 8px" aria-hidden="true">
+    <span style="width: 24px; height: 8px; border-radius: 4px; background: #4DD9FF"></span>
+    <span style="width: 8px; height: 8px; border-radius: 4px; background: #2A2A3A"></span>
+  </div>
+  <div style="margin: 0 20px; display: flex; align-items: center; gap: 12px; background: #1F1F2C; border-radius: 16px; padding: 8px 8px 8px 16px">
+    <span style="font-size: 20px; font-weight: 500; flex-grow: 1">Roboti</span>
+    <button aria-label="Ukloni robota" style="font: inherit; font-size: 28px; font-weight: 700; color: #F4F4F8; background: #2A2A3A; border: 0; border-radius: 12px; width: 56px; height: 56px">−</button>
+    <span style="font-size: 24px; font-weight: 700; width: 32px; text-align: center">1</span>
+    <button aria-label="Dodaj robota" style="font: inherit; font-size: 28px; font-weight: 700; color: #F4F4F8; background: #2A2A3A; border: 0; border-radius: 12px; width: 56px; height: 56px">+</button>
+  </div>
+  <div style="margin: 0 20px; font-size: 18px; font-weight: 700; color: #A9A9BC">Ostali · 3</div>
+  <div style="margin: 0 20px; display: flex; flex-direction: column; gap: 6px">
+    <sc-for list="{{others}}" as="p" hint-placeholder-count="3">
+      <div style="display: flex; align-items: center; gap: 12px; height: 48px">
+        <dc-import name="Face" animal="{{p.animal}}" color="{{p.color}}" size="{{s40}}" hint-size="40px,40px"></dc-import>
+        <span style="font-size: 20px; flex-grow: 1">{{p.name}}</span>
+        <span style="font-size: 14px; color: #A9A9BC">{{p.tag}}</span>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      s44: 44, s40: 40,
+      others: [
+        { animal: 'owl', color: '#FFB020', name: 'Ana', tag: '' },
+        { animal: 'frog', color: '#2ECC71', name: 'Marko', tag: '' },
+        { animal: 'panda', color: '#9B5CFF', name: 'Robot 1', tag: 'ROBOT' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

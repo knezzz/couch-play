@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>All power-ups</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; padding: 64px 96px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 36px">
+  <div style="display: flex; align-items: baseline; gap: 32px">
+    <div style="font-size: 64px; font-weight: 900">Pojačanja</div>
+    <div style="display: flex; gap: 28px; font-size: 32px; color: #A9A9BC">
+      <span style="display: flex; align-items: center; gap: 10px"><span style="width: 28px; height: 28px; border-radius: 50%; background: #3DDC84"></span>na tebe</span>
+      <span style="display: flex; align-items: center; gap: 10px"><span style="width: 28px; height: 28px; border-radius: 50%; background: #FF4D4D"></span>na sve ostale</span>
+      <span style="display: flex; align-items: center; gap: 10px"><span style="width: 28px; height: 28px; border-radius: 50%; background: #4DA6FF"></span>na sve</span>
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px">
+    <sc-for list="{{kinds}}" as="k" hint-placeholder-count="7">
+      <div style="background: #1F1F2C; border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 16px; min-height: 300px; box-sizing: border-box">
+        <svg viewBox="0 0 100 100" width="112" height="112" role="img" aria-label="{{k.name}}">
+          <circle cx="50" cy="50" r="46" fill="{{k.color}}"></circle>
+          <path d="{{k.glyph}}" fill="{{k.fill}}" stroke="#14141E" stroke-width="{{k.sw}}" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <div style="font-size: 44px; font-weight: 700">{{k.name}}</div>
+        <div style="font-size: 30px; line-height: 1.3; color: #A9A9BC">{{k.what}}</div>
+        <div style="font-size: 28px; font-weight: 700; color: {{k.color}}; margin-top: auto">{{k.time}}</div>
+      </div>
+    </sc-for>
+    <div style="background: #1F1F2C; border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 18px; box-sizing: border-box">
+      <div style="font-size: 36px; font-weight: 700">Uz liniju: što je aktivno</div>
+      <div style="display: flex; align-items: center; gap: 18px">
+        <svg viewBox="0 0 100 100" width="84" height="84" aria-hidden="true">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="#2A2A3A" stroke-width="8"></circle>
+          <circle cx="50" cy="50" r="44" fill="none" stroke="#3DDC84" stroke-width="8" stroke-dasharray="276" stroke-dashoffset="110" transform="rotate(-90 50 50)" stroke-linecap="round"></circle>
+          <circle cx="50" cy="50" r="32" fill="#3DDC84"></circle>
+          <path d="M56 36 L42 50 L56 64 M40 36 L26 50 L40 64" fill="none" stroke="#14141E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span style="font-size: 28px; color: #A9A9BC; line-height: 1.3">Prsten se prazni dok vrijeme ističe.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 18px">
+        <svg viewBox="0 0 100 120" width="84" height="100" aria-hidden="true">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="#FF4D4D" stroke-width="8"></circle>
+          <circle cx="50" cy="50" r="32" fill="#FF4D4D"></circle>
+          <rect x="26" y="38" width="48" height="24" rx="4" fill="#14141E"></rect>
+          <circle cx="34" cy="112" r="6" fill="#F4F4F8"></circle><circle cx="50" cy="112" r="6" fill="#F4F4F8"></circle><circle cx="66" cy="112" r="6" fill="#2A2A3A"></circle>
+        </svg>
+        <span style="font-size: 28px; color: #A9A9BC; line-height: 1.3">Debela linija: točkice = koliko puta (do 3).</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const G = '#3DDC84', R = '#FF4D4D', B = '#4DA6FF';
+    const line = (d) => ({ glyph: d, fill: 'none', sw: 7 });
+    const solid = (d) => ({ glyph: d, fill: '#14141E', sw: 0 });
+    const kinds = [
+      { name: 'Usporavanje', color: G, what: 'Ti voziš sporije i lakše skrećeš.', time: '5 s', ...line('M58 32 L40 50 L58 68 M40 32 L22 50 L40 68') },
+      { name: 'Duh', color: G, what: 'Prolaziš kroz linije i ne ostavljaš trag. Zid te i dalje ubija.', time: '5 s', ...solid('M30 76 L30 46 A20 20 0 0 1 70 46 L70 76 L63 69 L56 76 L50 69 L44 76 L37 69 Z M42 44 a4 5 0 1 0 0.1 0 Z M58 44 a4 5 0 1 0 0.1 0 Z') },
+      { name: 'Ubrzanje', color: R, what: 'Svi ostali voze brže.', time: '5 s', ...line('M42 32 L60 50 L42 68 M60 32 L78 50 L60 68') },
+      { name: 'Debela linija', color: R, what: 'Svima ostalima linija je deblja. Svako novo pojačanje je još deblja (do 3 puta).', time: '7,5 s', ...solid('M22 38 L78 38 L78 62 L22 62 Z') },
+      { name: 'Obrnuto', color: R, what: 'Svima ostalima lijevo i desno su zamijenjeni.', time: '5 s', ...line('M30 38 L70 38 M60 28 L70 38 L60 48 M70 62 L30 62 M40 52 L30 62 L40 72') },
+      { name: 'Čišćenje', color: B, what: 'Sve linije nestaju s ploče. Igra ide dalje.', time: 'odmah', ...line('M30 30 L70 70 M70 30 L30 70') },
+      { name: 'Kroz zid', color: B, what: 'Svi prolaze kroz zid i izlaze na drugoj strani. Bijeli rub pokazuje koliko još traje.', time: '5 s', ...line('M24 24 L76 24 L76 76 L24 76 Z M50 36 L50 64 M38 50 L62 50') }
+    ];
+    return { kinds };
+  }
+}
+</script>
+</body>
+</html>

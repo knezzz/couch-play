@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Pick a character</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 20px 32px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 16px">
+  <div style="font-size: 32px; font-weight: 900">CouchPlay</div>
+  <label for="ime" style="font-size: 18px; color: #A9A9BC">Tvoje ime</label>
+  <input id="ime" value="Ana" style="font: inherit; font-size: 24px; color: #F4F4F8; background: #1F1F2C; border: 2px solid #4DD9FF; border-radius: 14px; height: 60px; padding: 0 16px; margin-top: -8px; box-sizing: border-box">
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <div style="font-size: 18px; color: #A9A9BC">Odaberi lik</div>
+    <div style="font-size: 16px; color: #A9A9BC">Sivi su zauzeti</div>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+    <sc-for list="{{chars}}" as="ch" hint-placeholder-count="16">
+      <button aria-label="{{ch.label}}" onClick="{{ch.pick}}" style="{{ch.style}}">
+        <dc-import name="Face" animal="{{ch.id}}" color="{{ch.color}}" size="{{ch.size}}" hint-size="60px,60px"></dc-import>
+      </button>
+    </sc-for>
+  </div>
+  <div style="display: flex; align-items: center; gap: 14px; background: #1F1F2C; border-radius: 18px; padding: 12px 16px">
+    <dc-import name="Face" animal="{{pickedId}}" color="#FFB020" size="{{big}}" hint-size="56px,56px"></dc-import>
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 22px; font-weight: 700">Ana</span>
+      <span style="font-size: 16px; color: #A9A9BC">{{pickedName}} · tvoja boja</span>
+    </div>
+  </div>
+  <button style="font: inherit; font-size: 24px; font-weight: 700; color: #14141E; background: #4DD9FF; border: 0; border-radius: 16px; height: 64px; margin-top: auto">Pridruži se</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { picked: 'fox' }; }
+  renderVals() {
+    const ids = ['fox','owl','frog','bear','cat','dog','rabbit','penguin','lion','panda','pig','koala','mouse','tiger','duck','monkey'];
+    const hr = { fox: 'Lisica', owl: 'Sova', frog: 'Žaba', bear: 'Medvjed', cat: 'Mačka', dog: 'Pas', rabbit: 'Zec', penguin: 'Pingvin', lion: 'Lav', panda: 'Panda', pig: 'Svinja', koala: 'Koala', mouse: 'Miš', tiger: 'Tigar', duck: 'Patka', monkey: 'Majmun' };
+    const taken = { owl: 1, lion: 1, duck: 1 };
+    const picked = this.state.picked;
+    const chars = ids.map((id) => {
+      const t = !!taken[id], sel = id === picked;
+      return {
+        id, size: 60, label: hr[id] + (t ? ' (zauzet)' : ''),
+        color: t ? '#5A5A6E' : '#FFB020',
+        pick: () => { if (!t) this.setState({ picked: id }); },
+        style: 'font: inherit; height: 76px; border-radius: 16px; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; ' +
+          (sel ? 'background: #2A2A3A; border: 3px solid #4DD9FF;' : 'background: #1F1F2C; border: 3px solid transparent;') +
+          (t ? ' opacity: 0.45;' : '')
+      };
+    });
+    return { chars, pickedId: picked, pickedName: hr[picked], big: 56 };
+  }
+}
+</script>
+</body>
+</html>
