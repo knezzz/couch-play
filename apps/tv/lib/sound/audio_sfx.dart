@@ -31,7 +31,9 @@ class AudioSfx implements Sfx {
     final p = _players[sound];
     if (p == null) return;
     try {
-      unawaited(p.resume().catchError((_) {}));
+      // stop() first: on Android a low-latency player never reports that it
+      // finished, so a bare resume() would be ignored after the first play.
+      unawaited(p.stop().then((_) => p.resume()).catchError((_) {}));
     } catch (_) {}
   }
 }

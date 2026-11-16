@@ -538,6 +538,8 @@ class Session {
 
   void _startCurve(List<Player> parts) {
     _selected = null;
+    _wasCounting = false; // the last match may have ended mid-countdown
+    _countTicks = 0;
     _simIdOf
       ..clear()
       ..addEntries(parts.map((p) => MapEntry(p.id, p.colorIndex)));

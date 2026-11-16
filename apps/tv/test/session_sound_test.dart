@@ -86,6 +86,23 @@ void main() {
       s.dispose();
     });
 
+    testWidgets('a_match_that_ended_mid_countdown_does_not_spoil_the_next_ones_beeps', (t) async {
+      await start(t, countdown: 3);
+      ticks(70); // one beep, then the host ends the game mid-countdown
+      s.endGame();
+      s.returnToLobby();
+      a.say(const StartGame(GameKind.curve, null));
+      await t.pump();
+      sfx.played.clear();
+      ticks(1);
+      expect(sfx.played, [Sound.countdownBeep], reason: 'the new countdown starts with its own beep');
+      ticks(3 * 60 - 1);
+      expect(sfx.played, [Sound.countdownBeep, Sound.countdownBeep, Sound.countdownBeep]);
+      ticks(2);
+      expect(sfx.played.last, Sound.countdownGo);
+      s.dispose();
+    });
+
     testWidgets('pickup_crash_round_and_match_events', (t) async {
       await start(t);
       s.curveEvents([PickedUp(0, PowerUpKind.values.first)]);
