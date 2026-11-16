@@ -845,3 +845,23 @@ The person: "Add sound effects." TV only (person's choice); phones stay silent.
 - [ ] **Step 2:** implement; tests pass.
 - [ ] **Step 3:** QA on macOS release (hear each one; nothing too loud); then on the real TV with the person (latency, volume, frame times).
 - [ ] **Step 4: Commit** by path.
+
+---
+
+### Task 27: Game carousel and details on the host's phone, mirrored on the TV (added 2026-11-16, user request)
+
+The person: "Also have the host select a game from the carousel. When game is selected show details view with settings and show on TV. Then you click on play game."
+
+Replaces Task 23's settings area: the settings move into each game's details.
+
+- **Phone (host):** the games as a horizontal carousel of big cards (Kviz, Curve; name, one-line description, an icon or picture). Tap → details: description, that game's settings (Kviz: pack, time per question, questions per game, time between questions; Curve: mode, pause before each round), and a large "Igraj" button. Back → carousel. Reference tokens; 56 px+ targets; fits 360–390 px.
+- **Phone (others):** "<host> gleda: Kviz" (or similar), read-only.
+- **TV:** while the host is on a game's details, the lobby shows that game's card with its current settings, large enough to read from the couch (players and QR stay visible). On the carousel or Back, the plain lobby. Settings changes show on the TV at once.
+- **Protocol:** the host's current selection (none / quiz / curve) goes to the TV; the TV is authoritative and broadcasts it with the settings. Start stays host-only.
+- The TV lobby settings line from Task 23 goes away if the game card replaces it (builder's call, say which).
+
+- [ ] **Step 1: Failing tests:** protocol round-trip of the selection; only the host can select; the TV lobby shows the selected game's card and its settings; a non-host phone sees the selection read-only; Igraj starts the selected game with its settings.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** core protocol, TV session + lobby, phone carousel/details; Croatian strings into the strings files and `docs/strings-hr.md`.
+- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: the whole flow, settings mirror on the TV, Back, non-host view, fit at 360–390 px, D-pad still fine on the TV lobby.
+- [ ] **Step 5: Commit** by path.

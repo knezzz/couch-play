@@ -61,7 +61,9 @@ A party-games console for the living room. An Android TV shows the game; everyon
 
 ### Session flow
 
-Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game → results screen → back to lobby with the scoreboard updated. Scores persist for the session only.
+Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game → results screen → back to lobby with the scoreboard updated.
+
+**Picking a game (user request, 2026-11-16):** the host's phone shows the games as a swipeable carousel of cards. Tapping a card opens its details: a short description and that game's settings (Quiz: pack, time per question, questions per game, time between questions; Curve: mode, pause before each round). While the host is on the details, the TV lobby shows the same game and its settings, so the room sees what's coming. A "Igraj" button on the details starts the game; Back returns to the carousel and the TV goes back to the plain lobby. Other phones see which game the host is looking at. Scores persist for the session only.
 
 - **Session scoreboard (Claude's call):** each game's raw points stay inside that game. After a game, players get placement points for the session board: 1st = N, 2nd = N−1, … last = 1 (N = players in that game), so Quiz and Curve count equally.
 - **D-pad scope (Claude's call):** the remote only needs to move focus and quit/back out of a game. A phone host runs the session; there is no phone-free mode in v1.

@@ -34,6 +34,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 24 | Curve modes (Kaos, Uravnoteženo, Mirno, Samo za tebe); speed up hits others, slow down is yours; thin/fat last longer (person, 2026-11-16) | queued to lead, after Task 23 | lead |
 | 25 | Fat stacks, ghost leaves no line, thin removed, reverse-others added (person, 2026-11-16) | queued to lead | lead |
 | 26 | Sound effects on the TV (person, 2026-11-16) | queued to lead | lead |
+| 27 | Host picks a game from a carousel; details with settings, mirrored on the TV; Igraj starts it (person, 2026-11-16) | queued to lead | lead |
 
 ## Open questions for the person
 
@@ -242,3 +243,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-16: Person: yes, remember the host settings (and the Curve mode) across restarts. Added to Tasks 23/24.
 - 2026-11-16: TV session: 49e10cd installed on the BRAVIA (person asked). Person: fat should stack, ghost leaves no
   line, drop thin and add reverse-others; add sound effects (TV only). Tasks 25, 26.
+- 2026-11-16: Person: game carousel on the host phone, details view with settings mirrored on the TV, then Igraj. Task 27
+  (settings move from Task 23's area into each game's details).
