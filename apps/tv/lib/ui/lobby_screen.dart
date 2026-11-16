@@ -13,6 +13,7 @@ class LobbyScreen extends StatelessWidget {
     required this.players,
     required this.hostId,
     required this.onQuit,
+    this.settings = const GameSettings(),
     super.key,
   });
 
@@ -20,6 +21,9 @@ class LobbyScreen extends StatelessWidget {
   final String? joinUrl;
   final List<PlayerInfo> players;
   final int? hostId;
+
+  /// The host's game settings, shown read-only.
+  final GameSettings settings;
 
   /// The Quit item: exits the app.
   final VoidCallback onQuit;
@@ -66,7 +70,7 @@ class LobbyScreen extends StatelessWidget {
                               _Chip(p, host: p.id == hostId, tight: players.length > 4),
                           ],
                         ),
-                        SizedBox(height: players.length > 4 ? 20 : 32),
+                        SizedBox(height: players.length > 4 ? 12 : 32),
                         _Scoreboard(byScore),
                         const Spacer(),
                         if (host != null)
@@ -76,6 +80,16 @@ class LobbyScreen extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontSize: 40, color: tvMuted),
                           ),
+                        // One line; a longer text shrinks rather than wraps.
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            Strings.settingsLine(settings),
+                            maxLines: 1,
+                            style: const TextStyle(fontSize: 28, color: tvMuted),
+                          ),
+                        ),
                       ],
                     ],
                   ),

@@ -27,17 +27,50 @@ Future<void> _pump(
   String? url = 'http://192.168.1.5:8080/',
   List<PlayerInfo> players = _players,
   int? hostId = 0,
+  GameSettings settings = const GameSettings(),
 }) {
   _big(t);
   return t.pumpWidget(MaterialApp(
     theme: tvTheme(),
-    home: LobbyScreen(joinUrl: url, players: players, hostId: hostId, onQuit: _noop),
+    home: LobbyScreen(joinUrl: url, players: players, hostId: hostId, settings: settings, onQuit: _noop),
   ));
 }
 
 double _fs(WidgetTester t, Finder f) => t.widget<Text>(f).style!.fontSize!;
 
 void main() {
+  testWidgets('one muted line shows the host settings and follows changes', (t) async {
+    await _pump(t);
+    const quiz = 'Kviz: 10 pitanja · odgovor 20 s · pauza 4 s';
+    const curve = 'Curve: Uravnoteženo · pauza prije runde 2 s';
+    final line = find.text('$quiz     $curve');
+    expect(line, findsOneWidget);
+    expect(t.widget<Text>(line).style!.color, tvMuted);
+    expect(t.widget<Text>(line).style!.fontSize, lessThanOrEqualTo(32));
+    expect(t.getSize(line).height, lessThan(32 * 1.5), reason: 'one line');
+    expect(t.getRect(line).right, lessThanOrEqualTo(1920 - 96));
+
+    await _pump(t,
+        settings: const GameSettings(
+            quizQuestions: 25, quizSeconds: 45, revealSeconds: 7, curveCountdown: 5, curveMode: CurveMode.onlyYou));
+    expect(find.text('Kviz: 25 pitanja · odgovor 45 s · pauza 7 s     Curve: Samo za tebe · pauza prije runde 5 s'),
+        findsOneWidget);
+    expect(line, findsNothing);
+  });
+
+  testWidgets('every Curve mode has its name on the line', (t) async {
+    for (final m in CurveMode.values) {
+      await _pump(t, settings: GameSettings(curveMode: m));
+      expect(find.textContaining(Strings.curveModeName(m)), findsOneWidget);
+    }
+    expect(CurveMode.values.map(Strings.curveModeName), ['Kaos', 'Uravnoteženo', 'Mirno', 'Samo za tebe']);
+  });
+
+  testWidgets('no settings line while nobody has joined', (t) async {
+    await _pump(t, players: const []);
+    expect(find.textContaining('Kviz:'), findsNothing);
+  });
+
   testWidgets('title, QR on a 560 px white card, caption and one-line URL', (t) async {
     await _pump(t);
     expect(find.text('CouchPlay'), findsOneWidget);

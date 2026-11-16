@@ -1,3 +1,5 @@
+import 'package:core/core.dart';
+
 /// Every word the TV app shows or sends to phones, in Croatian. One file, no
 /// i18n framework: the interface is Croatian only. Ti-form, plain words.
 /// Review table: docs/strings-hr.md.
@@ -22,6 +24,18 @@ abstract final class Strings {
       '2. Skeniraj kod ili upiši adresu u preglednik na mobitelu.\n'
       '3. Upiši ime i dodirni Pridruži se.';
   static const gotIt = 'U redu';
+
+  /// The host's settings, one muted line at the bottom of the lobby. Same mode
+  /// names as the phone (apps/controller/lib/strings.dart).
+  static String curveModeName(CurveMode m) => switch (m) {
+        CurveMode.chaos => 'Kaos',
+        CurveMode.balanced => 'Uravnoteženo',
+        CurveMode.peaceful => 'Mirno',
+        CurveMode.onlyYou => 'Samo za tebe',
+      };
+  static String settingsLine(GameSettings s) =>
+      'Kviz: ${s.quizQuestions} pitanja · odgovor ${s.quizSeconds} s · pauza ${s.revealSeconds} s'
+      '     Curve: ${curveModeName(s.curveMode)} · pauza prije runde ${s.curveCountdown} s';
 
   /// Bots are named "Robot 1", "Robot 2", ...
   static String botName(int n) => 'Robot $n';
