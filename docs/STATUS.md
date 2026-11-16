@@ -34,9 +34,9 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 24 | Curve modes (Kaos, Uravnoteženo, Mirno, Samo za tebe); speed up hits others, slow down is yours; thin/fat last longer (person, 2026-11-16) | done; on the TV in a286dc2 (Kaos tuned by guess) | lead |
 | 25 | Fat stacks, ghost leaves no line, thin removed, reverse-others added (person, 2026-11-16) | done on macOS; fat stacking, ghost line return, the swap itself unit-tested only; on the TV in a286dc2 | lead |
 | 26 | Sound effects on the TV (person, 2026-11-16) | built; nobody has heard it yet; on the TV in a286dc2 | lead |
-| 27 | Host picks a game from a carousel; details with settings, mirrored on the TV; Igraj starts it (person, 2026-11-16) | queued to lead | lead |
+| 27 | Host picks a game from a carousel; details with settings, mirrored on the TV; Igraj starts it (person, 2026-11-16) | done; on the TV since a286dc2 (polish 3ec57e3 next install) | lead |
 | 28 | Six new packs (Umjetnost, Psihologija, Ljudsko tijelo, Memeovi, Fizika, Matematika) + more picture questions (person, 2026-11-16) | queued to lead | lead + content |
-| 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | queued to lead | lead |
+| 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | done; on the TV since a286dc2 (chip contrast 9826952 next install); join screen does not grey taken faces | lead |
 
 ## Open questions for the person
 
@@ -256,3 +256,6 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   Task 26 built (lead ran core 132, tv 281, controller 66 on a286dc2; PM ran core 132, controller 67 on main; tv not
   re-run: another seat has uncommitted lobby edits). PERF overlay covered the TV; person chose a log-only PERF and a
   reinstall.
+- 2026-11-16: Tasks 27 and 29 accepted (lead ran core 132, tv 281, controller 66 at ecf8eb9; review clean; QA pass).
+  ecf8eb9 on the TV (PERF log-only; new packs matematika, memeovi, fizika, umjetnost, ljudsko-tijelo); TV was in
+  standby. Design canvas updated with Curve, power-ups, characters and game picker screens (19ef448).

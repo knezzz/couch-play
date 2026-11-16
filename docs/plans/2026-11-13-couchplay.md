@@ -860,11 +860,11 @@ Replaces Task 23's settings area: the settings move into each game's details.
 - **Protocol:** the host's current selection (none / quiz / curve) goes to the TV; the TV is authoritative and broadcasts it with the settings. Start stays host-only.
 - The TV lobby settings line from Task 23 goes away if the game card replaces it (builder's call, say which).
 
-- [ ] **Step 1: Failing tests:** protocol round-trip of the selection; only the host can select; the TV lobby shows the selected game's card and its settings; a non-host phone sees the selection read-only; Igraj starts the selected game with its settings.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** core protocol, TV session + lobby, phone carousel/details; Croatian strings into the strings files and `docs/strings-hr.md`.
-- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: the whole flow, settings mirror on the TV, Back, non-host view, fit at 360–390 px, D-pad still fine on the TV lobby.
-- [ ] **Step 5: Commit** by path.
+- [x] **Step 1: Failing tests:** protocol round-trip of the selection; only the host can select; the TV lobby shows the selected game's card and its settings; a non-host phone sees the selection read-only; Igraj starts the selected game with its settings.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** core protocol, TV session + lobby, phone carousel/details; Croatian strings into the strings files and `docs/strings-hr.md`.
+- [x] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: the whole flow, settings mirror on the TV, Back, non-host view, fit at 360–390 px, D-pad still fine on the TV lobby.
+- [x] **Step 5: Commit** by path.
 
 ---
 
@@ -892,8 +892,8 @@ The person: "Add a way for players to choose a character. Show characters on TV 
 - TV shows the character next to the name everywhere players appear: lobby chips, quiz header/scores/reveal voters, results, session board, Curve countdown (the dot stays the line head; the character goes with the name label).
 - Phone shows your own character in the header.
 
-- [ ] **Step 1: Failing tests:** protocol round-trip of the pick; the TV refuses a taken character; reconnect keeps it; bots get a free one; the lobby/results widgets show the character.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** core (SVGs + protocol), TV session + screens, phone join/lobby; strings into the strings files and `docs/strings-hr.md`.
-- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web: 8 players and bots, every screen with characters, fit at 360–390 px, characters readable on the TV.
-- [ ] **Step 5: Commit** by path.
+- [x] **Step 1: Failing tests:** protocol round-trip of the pick; the TV refuses a taken character; reconnect keeps it; bots get a free one; the lobby/results widgets show the character.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** core (SVGs + protocol), TV session + screens, phone join/lobby; strings into the strings files and `docs/strings-hr.md`.
+- [x] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web: 8 players and bots, every screen with characters, fit at 360–390 px, characters readable on the TV.
+- [x] **Step 5: Commit** by path.
