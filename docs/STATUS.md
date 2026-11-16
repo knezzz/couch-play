@@ -250,3 +250,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-16: Person: more picture questions; new packs umjetnost, psihologija, ljudsko tijelo, memes, fizika,
   matematika. PM: memes as text unless the image is freely licensed (public repo). Task 28.
 - 2026-11-16: Person: players choose a character, shown on the TV. Chosen: drawn animals, one per player. Task 29.
+- 2026-11-16: The 49e10cd TV session has no PERF numbers (built without --dart-define=PERF=true). The next install
+  (tv-install2, on the first Task 28 pack) is built with PERF on and checked for PERF lines in the first minute.
