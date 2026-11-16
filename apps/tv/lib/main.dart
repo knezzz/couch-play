@@ -247,6 +247,7 @@ class _TvAppState extends State<TvApp> {
                   joinUrl: _session.joinUrl,
                   players: _session.playerInfos,
                   hostId: _session.hostId,
+                  settings: _session.settings,
                   onQuit: SystemNavigator.pop),
     );
   }
