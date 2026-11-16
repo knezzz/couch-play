@@ -61,6 +61,7 @@ Choices that were put to the person:
 | typeName | Upiši ime da se pridružiš. | Type a name to join. | Error on the phone (empty name) |
 | gameFull | Igra je puna (8 igrača). | The game is full (8 players). | Error on the phone |
 | onlyHost | To može samo domaćin. | Only the host can do that. | Error on the phone |
+| characterTaken | Taj lik je već zauzet. Odaberi drugi. | That character is taken. Pick another. | Error on the phone (lobby character change refused) |
 | nextGameSoon | Sljedeća igra uskoro počinje. | The next game starts soon. | Phone waiting screen for someone who joined mid-game |
 | gameRunning | Igra je već u tijeku. | A game is already running. | Error on the phone |
 | packUnavailable | Taj paket nije dostupan. | That pack is not available. | Error on the phone (quiz pack missing) |
