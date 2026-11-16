@@ -134,4 +134,48 @@ void main() {
     expect(s.sim!.countingDown, isFalse);
     s.dispose();
   });
+
+  group('curve mode', () {
+    Future<CurveConfig> matchWith(WidgetTester t, CurveMode m) async {
+      setUpSession();
+      a.say(SetSettings(GameSettings(curveMode: m, curveCountdown: 4)));
+      a.say(const StartGame(GameKind.curve, null));
+      await t.pump();
+      final c = s.sim!.config;
+      s.dispose();
+      return c;
+    }
+
+    testWidgets('the_match_gets_the_hosts_mode_and_countdown', (t) async {
+      final peaceful = await matchWith(t, CurveMode.peaceful);
+      expect(peaceful.powerUps, isFalse);
+      expect(peaceful.countdown, 4);
+      expect((await matchWith(t, CurveMode.chaos)).powerUpMax, greaterThan(3));
+      expect((await matchWith(t, CurveMode.onlyYou)).powerUpKinds,
+          [PowerUpKind.slow, PowerUpKind.thin, PowerUpKind.ghost]);
+      expect((await matchWith(t, CurveMode.balanced)).powerUpKinds, isNull);
+    });
+
+    test('default_is_balanced_and_a_non_host_cannot_change_it', () {
+      setUpSession();
+      expect(s.settings.curveMode, CurveMode.balanced);
+      b.say(const SetSettings(GameSettings(curveMode: CurveMode.chaos)));
+      expect(s.settings.curveMode, CurveMode.balanced);
+      a.say(const SetSettings(GameSettings(curveMode: CurveMode.chaos)));
+      expect(s.settings.curveMode, CurveMode.chaos);
+      expect(b.last<LobbyState>()!.settings.curveMode, CurveMode.chaos);
+      s.dispose();
+    });
+
+    testWidgets('a_mode_set_mid_match_waits_for_the_next_match', (t) async {
+      setUpSession();
+      a.say(const SetSettings(GameSettings(curveMode: CurveMode.peaceful)));
+      a.say(const StartGame(GameKind.curve, null));
+      await t.pump();
+      a.say(const SetSettings(GameSettings(curveMode: CurveMode.chaos))); // stale
+      expect(s.settings.curveMode, CurveMode.peaceful);
+      expect(s.sim!.config.powerUps, isFalse);
+      s.dispose();
+    });
+  });
 }

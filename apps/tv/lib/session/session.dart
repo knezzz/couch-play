@@ -477,7 +477,8 @@ class Session {
       ..addEntries(parts.map((p) => MapEntry(p.id, p.colorIndex)));
     _gone.clear();
     final sim = CurveSim([for (final p in parts) p.colorIndex],
-        config: CurveConfig(countdown: _settings.curveCountdown.toDouble()),
+        config: CurveConfig.forMode(_settings.curveMode,
+            countdown: _settings.curveCountdown.toDouble()),
         random: _random, names: {for (final p in parts) p.colorIndex: p.name});
     _sim = sim;
     _bots = Bots(sim, [for (final p in parts) if (p.bot) p.colorIndex], _random);
