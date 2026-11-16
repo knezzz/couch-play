@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'protocol.dart' show CurveMode;
+
 class CurveConfig {
   const CurveConfig({
     this.arenaW = 1600,
@@ -21,7 +23,21 @@ class CurveConfig {
     this.powerUpMax = 3,
     this.powerUpRadius = 24,
     this.effectSeconds = 5,
+    this.powerUpKinds,
   });
+
+  /// A mode is only a set of these values. [countdown] is the host's setting.
+  factory CurveConfig.forMode(CurveMode mode, {double countdown = 2.0}) => switch (mode) {
+        // Many, often: a power-up every 1-2.5 s and up to 8 on the board.
+        CurveMode.chaos => CurveConfig(
+            countdown: countdown, powerUpEveryMin: 1, powerUpEveryMax: 2.5, powerUpMax: 8),
+        CurveMode.balanced => CurveConfig(countdown: countdown),
+        CurveMode.peaceful => CurveConfig(countdown: countdown, powerUps: false),
+        // Only the kinds that help you: slow, thin, ghost.
+        CurveMode.onlyYou => CurveConfig(
+            countdown: countdown,
+            powerUpKinds: [PowerUpKind.slow, PowerUpKind.thin, PowerUpKind.ghost]),
+      };
 
   final int arenaW, arenaH;
   final double speed, turnRate, lineWidth;
@@ -36,6 +52,9 @@ class CurveConfig {
   final bool powerUps;
   final double powerUpEveryMin, powerUpEveryMax, powerUpRadius, effectSeconds;
   final int powerUpMax;
+
+  /// Which kinds may spawn; null means all of them.
+  final List<PowerUpKind>? powerUpKinds;
 }
 
 /// Green ones act on the picker (slow, thin, ghost), red ones on everyone else
@@ -425,7 +444,8 @@ class CurveSim {
 
   void _spawn() {
     if (_powerUps.length >= config.powerUpMax) return;
-    final kind = PowerUpKind.values[_random.nextInt(PowerUpKind.values.length)];
+    final kinds = config.powerUpKinds ?? PowerUpKind.values;
+    final kind = kinds[_random.nextInt(kinds.length)];
     final keep = config.powerUpRadius * 3;
     for (var i = 0; i < 10; i++) {
       final x = 60 + _random.nextDouble() * (config.arenaW - 120);
