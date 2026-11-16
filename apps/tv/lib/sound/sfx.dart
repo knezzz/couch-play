@@ -1,0 +1,28 @@
+/// Every sound the TV plays. Phones stay silent.
+enum Sound {
+  join,
+  countdownBeep,
+  countdownGo,
+  pickup,
+  crash,
+  roundWin,
+  matchWin,
+  quizStart,
+  tick,
+  right,
+  wrong,
+  fanfare,
+}
+
+/// The session calls this on each event. Fire and forget: it must never block
+/// or throw (the Curve loop calls it 60 times a second).
+abstract interface class Sfx {
+  void play(Sound sound);
+}
+
+/// Used until a real player is ready, and in tests.
+class SilentSfx implements Sfx {
+  const SilentSfx();
+  @override
+  void play(Sound sound) {}
+}

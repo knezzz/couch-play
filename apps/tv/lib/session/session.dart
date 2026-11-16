@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import '../packs/pack_store.dart';
 import '../packs/test_pack.dart';
 import '../server/game_server.dart';
+import '../sound/sfx.dart';
 import 'bots.dart';
 import '../strings.dart';
 
@@ -255,6 +256,7 @@ class Session {
     _scores[p.id] = 0;
     peer.send(Welcome(p.id, p.colorIndex, token));
     if (_phase == Phase.lobby) {
+      sfx.play(Sound.join);
       _broadcastLobby();
     } else {
       peer.send(_waiting);
@@ -420,6 +422,9 @@ class Session {
   /// values it starts with; changes only count from the next game.
   GameSettings get settings => _settings;
   GameSettings _settings = const GameSettings();
+
+  /// Sound effects; silent until the TV hands in a real player.
+  Sfx sfx = const SilentSfx();
   File? _settingsFile;
 
   /// Remembers the settings in [file] across restarts: reads it now (a missing
@@ -607,11 +612,15 @@ class Session {
 
   void _sendQuestion() {
     final q = _quiz!;
+    _lastTickSec = null;
+    sfx.play(Sound.quizStart);
     final msg = _questionFor(q);
     for (final id in _quizIds) {
       _byId(id)?.socket?.send(msg);
     }
   }
+
+  int? _lastTickSec; // the last whole second that ticked, this question
 
   void _sendReveal(Player p) {
     final q = _quiz!;
@@ -632,6 +641,7 @@ class Session {
       _stepStart = now;
       switch (q.step) {
         case QuizStep.revealing:
+          sfx.play(q.lastPoints.values.any((v) => v > 0) ? Sound.right : Sound.wrong);
           for (final id in _quizIds) {
             final p = _byId(id);
             if (p != null) _sendReveal(p);
@@ -640,8 +650,17 @@ class Session {
           _picks.clear();
           _sendQuestion();
         case QuizStep.done:
+          sfx.play(Sound.fanfare);
           finishGame(Map.of(q.totals));
           return;
+      }
+    }
+    if (q.step == QuizStep.asking) {
+      final left = q.limit - (now - _stepStart);
+      final sec = (left.inMilliseconds / 1000).ceil();
+      if (sec >= 1 && sec <= 5 && sec != _lastTickSec) {
+        _lastTickSec = sec;
+        sfx.play(Sound.tick);
       }
     }
     _notify();
@@ -823,6 +842,25 @@ class Session {
   Map<int, int> _gameScores() =>
       {for (final e in _simIdOf.entries) e.key: _sim?.scores[e.value] ?? 0};
 
+  var _countTicks = 0;
+  var _wasCounting = false;
+
+  /// The TV calls this before every `CurveSim.tick()`: the countdown beeps once
+  /// a second and says go when it ends. (The sim has no countdown hook; this
+  /// counts the same ticks.)
+  void beforeTick() {
+    final sim = _sim;
+    if (sim == null) return;
+    if (sim.countingDown) {
+      if (!_wasCounting) _countTicks = 0;
+      _wasCounting = true;
+      if (_countTicks++ % sim.config.tickHz == 0) sfx.play(Sound.countdownBeep);
+    } else if (_wasCounting) {
+      _wasCounting = false;
+      sfx.play(Sound.countdownGo);
+    }
+  }
+
   /// Feed this the events of every `CurveSim.tick()` (CurveGame.onEvents).
   void curveEvents(List<CurveEvent> events) {
     if (_phase != Phase.curve || _sim == null) return;
@@ -830,6 +868,7 @@ class Session {
     for (final e in events) {
       switch (e) {
         case Died(:final id):
+          sfx.play(Sound.crash);
           final p = _byId(_simIdOf.entries.where((x) => x.value == id).firstOrNull?.key ?? -1);
           final status = p == null ? null : _statusFor(p);
           if (status != null) {
@@ -843,8 +882,13 @@ class Session {
         case MatchOver():
           matchOver = true;
         case PickedUp():
-          break;
+          sfx.play(Sound.pickup);
       }
+    }
+    if (matchOver) {
+      sfx.play(Sound.matchWin);
+    } else if (roundOver) {
+      sfx.play(Sound.roundWin);
     }
     if (roundOver) _sendStatuses();
     if (matchOver) finishGame(_gameScores());
