@@ -28,7 +28,8 @@ const _full = ErrorMsg(Strings.gameFull);
 const _waiting = Waiting(Strings.nextGameSoon);
 
 class Player {
-  Player(this.id, this.name, this.colorIndex, {this.token = '', this.bot = false});
+  Player(this.id, this.name, this.colorIndex,
+      {this.token = '', this.bot = false, this.character = ''});
 
   /// Stable for the whole session. Bots and humans share one id space.
   final int id;
@@ -36,6 +37,9 @@ class Player {
 
   /// 0..7, unique among current players; the lowest free one when handed out.
   int colorIndex;
+
+  /// An id from `characterIds`, unique among the players.
+  String character;
 
   /// Empty for bots.
   final String token;
@@ -129,7 +133,7 @@ class Session {
   List<PlayerInfo> get playerInfos => [
         for (final p in _players)
           PlayerInfo(p.id, p.name, p.colorIndex, p.connected, _scores[p.id] ?? 0,
-              bot: p.bot),
+              bot: p.bot, character: p.character),
       ];
 
   /// The oldest connected human, so the role passes on when the host drops and
@@ -199,8 +203,8 @@ class Session {
     switch (m) {
       case Ping(:final t):
         peer.send(Pong(t));
-      case Join(:final name, :final token):
-        _join(peer, name, token);
+      case Join(:final name, :final token, :final character):
+        _join(peer, name, token, character);
       case Steer(:final left, :final right):
         final p = _playerOf(peer);
         if (p != null) _steer(p, left, right);
@@ -208,6 +212,9 @@ class Session {
         _start(peer, game, packId);
       case Kick(:final playerId):
         _kick(peer, playerId);
+      case SetCharacter(:final id):
+        final p = _playerOf(peer);
+        if (p != null) _setCharacter(p, id);
       case SetBots(:final count):
         _setBots(peer, count);
       case SelectGame(:final game):
@@ -224,7 +231,7 @@ class Session {
     }
   }
 
-  void _join(PeerSocket peer, String rawName, String token) {
+  void _join(PeerSocket peer, String rawName, String token, String? character) {
     if (token.isEmpty || token.length > 64) {
       peer.send(const ErrorMsg(Strings.reloadPage));
       return;
@@ -252,11 +259,11 @@ class Session {
     }
     final p = Player(
         _nextId++, dedupeName(name, _players.map((p) => p.name)), _lowestFreeColor(),
-        token: token)
+        token: token, character: _freeCharacter(character))
       ..socket = peer;
     _players.add(p);
     _scores[p.id] = 0;
-    peer.send(Welcome(p.id, p.colorIndex, token));
+    peer.send(Welcome(p.id, p.colorIndex, token, character: p.character));
     if (_phase == Phase.lobby) {
       sfx.play(Sound.join);
       _broadcastLobby();
@@ -272,7 +279,7 @@ class Session {
     p.connected = true;
     p.disconnectedAt = null;
     if (old != null && old != peer) old.close();
-    peer.send(Welcome(p.id, p.colorIndex, p.token));
+    peer.send(Welcome(p.id, p.colorIndex, p.token, character: p.character));
     switch (_phase) {
       case Phase.lobby:
         _broadcastLobby();
@@ -480,6 +487,26 @@ class Session {
         curveMode: _settings.curveMode);
   }
 
+  /// [want] if it is a character and nobody has it, else a random free one.
+  /// 8 players at most and 16 characters: there is always one.
+  String _freeCharacter(String? want) {
+    final taken = {for (final p in _players) p.character};
+    if (want != null && isCharacter(want) && !taken.contains(want)) return want;
+    final free = [for (final c in characterIds) if (!taken.contains(c)) c];
+    return free[_random.nextInt(free.length)];
+  }
+
+  void _setCharacter(Player p, String id) {
+    if (_phase != Phase.lobby || !isCharacter(id) || id == p.character) return;
+    if (_players.any((q) => q.character == id)) {
+      p.socket?.send(const ErrorMsg(Strings.characterTaken));
+      return;
+    }
+    p.character = id;
+    _broadcastLobby();
+    _notify();
+  }
+
   void _setSettings(PeerSocket peer, GameSettings wanted) {
     final from = _playerOf(peer);
     if (from == null || _phase != Phase.lobby) return;
@@ -511,7 +538,8 @@ class Session {
       while (names.contains(Strings.botName(n).toLowerCase())) {
         n++;
       }
-      final bot = Player(_nextId++, Strings.botName(n), _lowestFreeColor(), bot: true);
+      final bot = Player(_nextId++, Strings.botName(n), _lowestFreeColor(),
+          bot: true, character: _freeCharacter(null));
       _players.add(bot);
       _scores[bot.id] = 0;
       bots.add(bot);

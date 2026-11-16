@@ -95,6 +95,7 @@ abstract final class Strings {
   static const cannotKickSelf = 'Ne možeš izbaciti sebe.';
   static const botsBetweenGames = 'Robote možeš mijenjati samo između igara.';
   static const lockedIn = 'Odgovor je zaključan. Gledaj TV.';
+  static const characterTaken = 'Taj lik je već zauzet. Odaberi drugi.';
 
   // --- Adding a quiz pack from a phone ---
 
