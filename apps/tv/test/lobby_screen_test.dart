@@ -28,17 +28,98 @@ Future<void> _pump(
   List<PlayerInfo> players = _players,
   int? hostId = 0,
   GameSettings settings = const GameSettings(),
+  GameKind? selected,
+  String? packTitle,
 }) {
   _big(t);
   return t.pumpWidget(MaterialApp(
     theme: tvTheme(),
-    home: LobbyScreen(joinUrl: url, players: players, hostId: hostId, settings: settings, onQuit: _noop),
+    home: LobbyScreen(joinUrl: url, players: players, hostId: hostId, settings: settings, selected: selected, packTitle: packTitle, onQuit: _noop),
   ));
 }
 
 double _fs(WidgetTester t, Finder f) => t.widget<Text>(f).style!.fontSize!;
 
 void main() {
+  group('the host\'s game card', () {
+    final card = find.byKey(const ValueKey('game-card'));
+    String text(WidgetTester t) => t
+        .widgetList<Text>(find.descendant(of: card, matching: find.byType(Text)))
+        .map((w) => w.data ?? w.textSpan!.toPlainText())
+        .join(' | ');
+
+    testWidgets('no selection: no card, the plain lobby with the settings line and scores', (t) async {
+      await _pump(t);
+      expect(card, findsNothing);
+      expect(find.textContaining('Kviz:'), findsOneWidget);
+      expect(find.text(Strings.scoreboard), findsOneWidget);
+    });
+
+    testWidgets('Kviz selected: name, description, pack and its settings, players and QR still there', (t) async {
+      await _pump(t,
+          selected: GameKind.quiz,
+          packTitle: 'Međimurje',
+          settings: const GameSettings(quizQuestions: 15, quizSeconds: 25, revealSeconds: 6));
+      expect(card, findsOneWidget);
+      final s = text(t);
+      expect(s, contains('Kviz'));
+      expect(s, contains(Strings.gameBlurb(GameKind.quiz)));
+      expect(s, contains('Paket pitanja: Međimurje'));
+      expect(s, contains('Broj pitanja: 15'));
+      expect(s, contains('Vrijeme za odgovor: 25 s'));
+      expect(s, contains('Pauza između pitanja: 6 s'));
+      expect(s, isNot(contains('Način igre')));
+      expect(find.byType(QrImageView), findsOneWidget);
+      expect(find.text('Luka'), findsWidgets);
+      expect(find.textContaining('Kviz:'), findsNothing, reason: 'the card replaces the settings line');
+      expect(find.text(Strings.scoreboard), findsNothing);
+    });
+
+    testWidgets('Curve selected: mode and pause before each round only', (t) async {
+      await _pump(t,
+          selected: GameKind.curve, settings: const GameSettings(curveMode: CurveMode.chaos, curveCountdown: 7));
+      final s = text(t);
+      expect(s, contains(Strings.gameBlurb(GameKind.curve)));
+      expect(s, contains('Način igre: Kaos'));
+      expect(s, contains('Pauza prije runde: 7 s'));
+      expect(s, isNot(contains('Paket pitanja')));
+      expect(s, isNot(contains('Broj pitanja')));
+    });
+
+    testWidgets('a settings change shows at once; going back removes the card', (t) async {
+      await _pump(t, selected: GameKind.curve, settings: const GameSettings(curveCountdown: 2));
+      expect(text(t), contains('Pauza prije runde: 2 s'));
+      await _pump(t, selected: GameKind.curve, settings: const GameSettings(curveCountdown: 9));
+      expect(text(t), contains('Pauza prije runde: 9 s'));
+      await _pump(t, selected: GameKind.quiz, packTitle: 'A', settings: const GameSettings());
+      expect(text(t), contains('Paket pitanja: A'));
+      await _pump(t);
+      expect(card, findsNothing);
+    });
+
+    testWidgets('8 players with long names and a long pack title fit, and the buttons keep focus', (t) async {
+      final many = [
+        for (var i = 0; i < 8; i++) PlayerInfo(i, 'Abcdefghijklmnop', i, true, i, bot: i > 5),
+      ];
+      await _pump(t,
+          players: many,
+          selected: GameKind.quiz,
+          packTitle: 'Zemljopis svijeta za naprednije igrače, težak paket',
+          settings: const GameSettings(quizQuestions: 30, quizSeconds: 60, revealSeconds: 15));
+      expect(t.takeException(), isNull);
+      final r = t.getRect(card);
+      expect(r.bottom, lessThanOrEqualTo(1080 - 56));
+      expect(r.right, lessThanOrEqualTo(1920 - 96));
+      expect(r.height, greaterThan(150));
+      final waiting = t.getRect(find.textContaining('Čekamo da'));
+      expect(r.bottom, lessThanOrEqualTo(waiting.top));
+      // D-pad: the first button still has focus and Right moves to Quit.
+      final focus = FocusManager.instance.primaryFocus!.context!;
+      expect(find.descendant(of: find.byWidget(focus.widget), matching: find.text(Strings.howToJoin)),
+          findsOneWidget);
+    });
+  });
+
   testWidgets('one muted line shows the host settings and follows changes', (t) async {
     await _pump(t);
     const quiz = 'Kviz: 10 pitanja · odgovor 20 s · pauza 4 s';

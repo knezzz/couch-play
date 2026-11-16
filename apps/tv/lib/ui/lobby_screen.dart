@@ -14,6 +14,8 @@ class LobbyScreen extends StatelessWidget {
     required this.hostId,
     required this.onQuit,
     this.settings = const GameSettings(),
+    this.selected,
+    this.packTitle,
     super.key,
   });
 
@@ -24,6 +26,13 @@ class LobbyScreen extends StatelessWidget {
 
   /// The host's game settings, shown read-only.
   final GameSettings settings;
+
+  /// The game whose details the host has open (null: the carousel). While set,
+  /// its card takes the scoreboard's place and the settings line is not shown.
+  final GameKind? selected;
+
+  /// Title of the pack Igraj would start (Kviz card only).
+  final String? packTitle;
 
   /// The Quit item: exits the app.
   final VoidCallback onQuit;
@@ -71,7 +80,10 @@ class LobbyScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: players.length > 4 ? 12 : 32),
-                        _Scoreboard(byScore),
+                        if (selected == null)
+                          _Scoreboard(byScore)
+                        else
+                          _GameCard(selected!, settings, packTitle, roomy: players.length <= 4),
                         const Spacer(),
                         if (host != null)
                           Text(
@@ -81,6 +93,7 @@ class LobbyScreen extends StatelessWidget {
                             style: const TextStyle(fontSize: 40, color: tvMuted),
                           ),
                         // One line; a longer text shrinks rather than wraps.
+                        if (selected == null)
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
@@ -256,6 +269,80 @@ class _Badge extends StatelessWidget {
           ),
         ),
       );
+}
+
+/// The host's open game: name, description and its current settings, in the
+/// scoreboard's place and no taller than it is with 8 players.
+class _GameCard extends StatelessWidget {
+  const _GameCard(this.kind, this.settings, this.packTitle, {required this.roomy});
+  final GameKind kind;
+  final GameSettings settings;
+  final String? packTitle;
+
+  /// Few players leave room: type one step larger for the couch.
+  final bool roomy;
+
+  @override
+  Widget build(BuildContext context) {
+    final quiz = kind == GameKind.quiz;
+    final items = quiz
+        ? [
+            (Strings.settingPack, packTitle ?? '–'),
+            (Strings.settingQuestions, '${settings.quizQuestions}'),
+            (Strings.settingAnswerTime, '${settings.quizSeconds} s'),
+            (Strings.settingReveal, '${settings.revealSeconds} s'),
+          ]
+        : [
+            (Strings.settingMode, Strings.curveModeName(settings.curveMode)),
+            (Strings.settingCountdown, '${settings.curveCountdown} s'),
+          ];
+    Widget item((String, String) it) => Text.rich(
+          TextSpan(children: [
+            TextSpan(text: '${it.$1}: ', style: const TextStyle(color: tvMuted)),
+            TextSpan(text: it.$2, style: const TextStyle(color: tvText, fontWeight: FontWeight.w700)),
+          ]),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: roomy ? 40 : 32),
+        );
+    return Container(
+      key: const ValueKey('game-card'),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
+      decoration: BoxDecoration(
+        color: tvSurface,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: tvAccent, width: 3),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Icon(quiz ? Icons.help_outline : Icons.gesture, size: 48, color: tvAccent),
+            const SizedBox(width: 20),
+            Text(Strings.gameName(kind),
+                style: TextStyle(fontSize: roomy ? 56 : 44, fontWeight: FontWeight.w700, color: tvText)),
+          ]),
+          const SizedBox(height: 8),
+          Text(Strings.gameBlurb(kind),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: roomy ? 36 : 32, color: tvMuted)),
+          SizedBox(height: roomy ? 24 : 16),
+          // Two columns, row by row.
+          for (var i = 0; i < items.length; i += 2)
+            Padding(
+              padding: EdgeInsets.only(bottom: roomy ? 12 : 6),
+              child: Row(children: [
+                Expanded(child: item(items[i])),
+                const SizedBox(width: 32),
+                Expanded(child: i + 1 < items.length ? item(items[i + 1]) : const SizedBox()),
+              ]),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 class _Scoreboard extends StatelessWidget {

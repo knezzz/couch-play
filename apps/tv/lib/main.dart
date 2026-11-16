@@ -253,6 +253,8 @@ class _TvAppState extends State<TvApp> {
                   players: _session.playerInfos,
                   hostId: _session.hostId,
                   settings: _session.settings,
+                  selected: _session.selectedGame,
+                  packTitle: _session.selectedPackTitle,
                   onQuit: SystemNavigator.pop),
     );
   }

@@ -29,7 +29,12 @@ Choices that were put to the person:
 | scoreboardEmpty | Bodovi se pojavljuju nakon prve igre. | Scores appear after the first game. | TV lobby, scoreboard card before any game was played |
 | waitingForHost({name}) | Čekamo da {name} odabere igru. | Waiting for {name} to pick a game. | TV lobby, bottom right |
 | curveModeName(mode) | Kaos / Uravnoteženo / Mirno / Samo za tebe | Chaos / Balanced / Peaceful / Only for you | TV lobby settings line (same names as the phone) |
-| settingsLine(s) | Kviz: {n} pitanja · odgovor {a} s · pauza {r} s     Curve: {mode} · pauza prije runde {c} s | Quiz: {n} questions · answer {a} s · pause {r} s     Curve: {mode} · pause before each round {c} s | TV lobby, bottom right under "waiting for host": one small muted line, the host's settings |
+| gameName(quiz / curve) | Kviz / Curve | Quiz / Curve | TV lobby, game card heading |
+| gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | TV lobby, game card (same words as the phone) |
+| gameBlurb(curve) | Vozi svoju krivulju i ne udari u druge. | Steer your curve and do not hit the others. | TV lobby, game card (same words as the phone) |
+| settingPack / settingQuestions / settingAnswerTime / settingReveal | Paket pitanja / Broj pitanja / Vrijeme za odgovor / Pauza između pitanja | Question pack / Number of questions / Time to answer / Pause between questions | TV lobby, Kviz card: label before the value (same as the phone) |
+| settingMode / settingCountdown | Način igre / Pauza prije runde | Game mode / Pause before each round | TV lobby, Curve card: label before the value (same as the phone) |
+| settingsLine(s) | Kviz: {n} pitanja · odgovor {a} s · pauza {r} s     Curve: {mode} · pauza prije runde {c} s | Quiz: {n} questions · answer {a} s · pause {r} s     Curve: {mode} · pause before each round {c} s | TV lobby, bottom right under "waiting for host": one small muted line, the host's settings; hidden while a game card is shown |
 | waitingForReturn({name}) | Čekamo da se {name} vrati | Waiting for {name} to come back | 2-player Curve paused (up to 30 s): TV over the arena, and the other player's phone |
 | waitingForPlayers | Čekamo da se igrači vrate | Waiting for the players to come back | Quiz or Curve paused (up to 30 s) because nobody is connected: TV over the game |
 | howToJoin | Kako se pridružiti | How to join | TV lobby button, and the title of its dialog |
@@ -99,7 +104,11 @@ Informal "ti". `{x}` is filled in by the app.
 | bots | Roboti | Bots | lobby, stepper label |
 | fewerBots | Manje robota | Fewer bots | accessibility label of the − button |
 | moreBots | Više robota | More bots | accessibility label of the + button |
-| settings | Postavke | Settings | lobby, collapsible section header (host and guests) |
+| back | Natrag | Back | game details, button at the top (returns to the game carousel) |
+| play | Igraj | Play | game details, big button that starts the game |
+| gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | game card and details, one-line description |
+| gameBlurb(curve) | Vozi svoju krivulju i ne udari u druge. | Steer your curve and do not hit the others. | game card and details, one-line description |
+| watching(host, game) | host gleda: game | host is looking at: game | guest lobby, while the host has a game's details open |
 | quizSeconds | Vrijeme za odgovor | Time to answer | Postavke, label of the stepper (10-60 s) |
 | quizQuestions | Broj pitanja | Number of questions | Postavke, label of the stepper (5-30) |
 | revealSeconds | Pauza između pitanja | Pause between questions | Postavke, label of the stepper (2-15 s) |

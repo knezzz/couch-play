@@ -33,6 +33,18 @@ abstract final class Strings {
         CurveMode.peaceful => 'Mirno',
         CurveMode.onlyYou => 'Samo za tebe',
       };
+  /// The host's game card on the lobby, same words as the phone's game details.
+  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve' };
+  static String gameBlurb(GameKind k) => switch (k) {
+        GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
+        GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
+      };
+  static const settingPack = 'Paket pitanja';
+  static const settingQuestions = 'Broj pitanja';
+  static const settingAnswerTime = 'Vrijeme za odgovor';
+  static const settingReveal = 'Pauza između pitanja';
+  static const settingMode = 'Način igre';
+  static const settingCountdown = 'Pauza prije runde';
   static String settingsLine(GameSettings s) =>
       'Kviz: ${s.quizQuestions} pitanja · odgovor ${s.quizSeconds} s · pauza ${s.revealSeconds} s'
       '     Curve: ${curveModeName(s.curveMode)} · pauza prije runde ${s.curveCountdown} s';
