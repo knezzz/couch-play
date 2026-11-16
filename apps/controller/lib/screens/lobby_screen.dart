@@ -668,10 +668,18 @@ class _MyChip extends StatelessWidget {
         if (p.character.isNotEmpty) ...[
           KeyedSubtree(
             key: ValueKey('my-character-${p.character}'),
-            child: CharacterFace(
-              p.character,
-              44,
-              ink.withValues(alpha: 0.15),
+            // A dark disc behind the face: the face is drawn in the player's own
+            // color, which would vanish on a chip of that same color.
+            child: Container(
+              width: 48,
+              height: 48,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(color: ink, shape: BoxShape.circle),
+              child: CharacterFace(
+                p.character,
+                40,
+                playerColors[p.colorIndex % playerColors.length],
+              ),
             ),
           ),
           const SizedBox(width: 12),

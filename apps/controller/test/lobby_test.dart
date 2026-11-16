@@ -656,6 +656,35 @@ void characterTests() {
       expect(find.byKey(const ValueKey('my-character-owl')), findsNothing);
     });
 
+    testWidgets('the face reads on all 8 player colors: ink disc, contrast >= 3', (
+      t,
+    ) async {
+      double lum(Color c) => c.computeLuminance();
+      double contrast(Color a, Color b) {
+        final hi = lum(a) > lum(b) ? lum(a) : lum(b);
+        final lo = lum(a) > lum(b) ? lum(b) : lum(a);
+        return (hi + 0.05) / (lo + 0.05);
+      }
+      for (var i = 0; i < playerColors.length; i++) {
+        final l = LobbyState(
+          hostId: 0,
+          packs: const [],
+          players: [PlayerInfo(0, 'P0', i, true, 0, character: 'lion')],
+        );
+        await _pump(t, l, 0);
+        final face = t.widget<CharacterFace>(find.byType(CharacterFace));
+        final disc = t.widget<Container>(
+          find.ancestor(of: find.byType(CharacterFace), matching: find.byType(Container)).first,
+        );
+        final discColor = (disc.decoration as BoxDecoration).color!;
+        final chip = playerColors[i];
+        expect(face.color, chip, reason: 'drawn in the player color #$i');
+        expect(contrast(face.color, discColor), greaterThanOrEqualTo(3), reason: 'face on disc #$i');
+        expect(contrast(discColor, chip), greaterThanOrEqualTo(3), reason: 'disc on chip #$i');
+        await t.pumpWidget(const SizedBox());
+      }
+    });
+
     testWidgets('Promijeni lik: a free one sends SetCharacter, taken and own send nothing', (
       t,
     ) async {
