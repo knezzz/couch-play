@@ -71,6 +71,7 @@ Future<void> _openGame(
 
 void main() {
   settingsTests();
+  characterTests();
   testWidgets('host sees game, bots and kick controls; others do not', (
     t,
   ) async {
@@ -185,7 +186,7 @@ void main() {
   testWidgets(
     'Remove and BOT are 18 px and a row fits at 360 px with a 16-letter name',
     (t) async {
-      t.view.physicalSize = const Size(360, 640);
+      t.view.physicalSize = const Size(360, 1000);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
       const wide = 'WWWWWWWWWWWWWWWW';
@@ -634,6 +635,62 @@ void settingsTests() {
         expect(t.getSize(row).height, greaterThanOrEqualTo(56));
       }
       expect(t.takeException(), isNull);
+    });
+  });
+}
+
+LobbyState _chars() => LobbyState(
+  hostId: 0,
+  packs: const [],
+  players: const [
+    PlayerInfo(0, 'P0', 0, true, 0, character: 'fox'),
+    PlayerInfo(1, 'P1', 1, true, 0, character: 'owl'),
+  ],
+);
+
+void characterTests() {
+  group('character', () {
+    testWidgets('the header shows my character next to my name', (t) async {
+      await _pump(t, _chars(), 0);
+      expect(find.byKey(const ValueKey('my-character-fox')), findsOneWidget);
+      expect(find.byKey(const ValueKey('my-character-owl')), findsNothing);
+    });
+
+    testWidgets('Promijeni lik: a free one sends SetCharacter, taken and own send nothing', (
+      t,
+    ) async {
+      final c = await _pump(t, _chars(), 0);
+      await t.tap(find.text(Strings.changeCharacter));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('char-owl')), warnIfMissed: false); // taken by P1
+      await t.pumpAndSettle();
+      expect(c.sent.whereType<SetCharacter>(), isEmpty);
+      expect(find.text(Strings.pickCharacter), findsOneWidget); // sheet still open
+      await t.tap(find.byKey(const ValueKey('char-fox'))); // my own
+      await t.pumpAndSettle();
+      expect(c.sent.whereType<SetCharacter>(), isEmpty);
+      await t.tap(find.text(Strings.changeCharacter));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('char-bear')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const SetCharacter('bear'));
+    });
+
+    testWidgets('a refused pick shows the TV reason and keeps the old character', (
+      t,
+    ) async {
+      final c = FakeConnection();
+      await t.pumpWidget(App(c));
+      await _send(t, c, const Welcome(0, 0, 'tok', character: 'fox'));
+      await _send(t, c, _chars());
+      await t.tap(find.text(Strings.changeCharacter));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('char-bear')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const SetCharacter('bear'));
+      await _send(t, c, const ErrorMsg('Taj lik je zauzet.'));
+      expect(find.text('Taj lik je zauzet.'), findsOneWidget);
+      expect(find.byKey(const ValueKey('my-character-fox')), findsOneWidget);
     });
   });
 }

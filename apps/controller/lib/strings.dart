@@ -9,6 +9,8 @@ abstract final class Strings {
   static const nameLabel = 'Tvoje ime';
   static const nameLimit = 'Najviše 16 znakova.';
   static const join = 'Pridruži se';
+  static const pickCharacter = 'Odaberi svoj lik';
+  static const changeCharacter = 'Promijeni lik';
   static const joinAgain = 'Pridruži se ponovno';
   static const emptyName = 'Upiši ime da se pridružiš.';
   static const removed = 'Domaćin te uklonio iz igre.';

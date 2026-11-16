@@ -1,6 +1,7 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
+import '../character_grid.dart';
 import '../connection.dart';
 import '../theme.dart';
 import '../strings.dart';
@@ -35,6 +36,49 @@ class _LobbyScreenState extends State<LobbyScreen> {
   Future<void> _addPack() async {
     final msg = await widget.addPack!(widget.conn.token);
     if (mounted) setState(() => _packMessage = msg);
+  }
+
+  /// A tap only asks. The TV answers with a LobbyState (changed) or an
+  /// ErrorMsg (refused: the banner shows its reason, the old one stays).
+  Future<void> _pickCharacter(PlayerInfo me, List<PlayerInfo> players) async {
+    final taken = {
+      for (final p in players)
+        if (p.id != me.id && p.character.isNotEmpty) p.character,
+    };
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: surface,
+      barrierColor: const Color(0xCC0A0A10),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (c) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                Strings.pickCharacter,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: 16),
+              CharacterGrid(
+                selected: me.character,
+                taken: taken,
+                color: playerColors[me.colorIndex % playerColors.length],
+                onPick: (id) {
+                  Navigator.pop(c);
+                  if (id != me.character) widget.conn.send(SetCharacter(id));
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _confirmKick(PlayerInfo p) async {
@@ -256,7 +300,21 @@ class _LobbyScreenState extends State<LobbyScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           children: [
-            if (me != null) _MyChip(me, host: isHost),
+            if (me != null) ...[
+              _MyChip(me, host: isHost),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(0, 56),
+                    foregroundColor: accent,
+                    textStyle: const TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () => _pickCharacter(me, players),
+                  child: const Text(Strings.changeCharacter),
+                ),
+              ),
+            ],
             if (!isHost) ...[
               const SizedBox(height: 16),
               Text(
@@ -607,6 +665,17 @@ class _MyChip extends StatelessWidget {
     ),
     child: Row(
       children: [
+        if (p.character.isNotEmpty) ...[
+          KeyedSubtree(
+            key: ValueKey('my-character-${p.character}'),
+            child: CharacterFace(
+              p.character,
+              44,
+              ink.withValues(alpha: 0.15),
+            ),
+          ),
+          const SizedBox(width: 12),
+        ],
         Expanded(
           child: Text(
             p.name,

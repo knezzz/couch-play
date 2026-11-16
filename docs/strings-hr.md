@@ -105,6 +105,8 @@ Informal "ti". `{x}` is filled in by the app.
 | bots | Roboti | Bots | lobby, stepper label |
 | fewerBots | Manje robota | Fewer bots | accessibility label of the − button |
 | moreBots | Više robota | More bots | accessibility label of the + button |
+| pickCharacter | Odaberi svoj lik | Pick your character | join screen label above the character grid; title of the change sheet |
+| changeCharacter | Promijeni lik | Change character | lobby, button under your chip (opens the grid) |
 | back | Natrag | Back | game details, button at the top (returns to the game carousel) |
 | play | Igraj | Play | game details, big button that starts the game |
 | gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | game card and details, one-line description |
