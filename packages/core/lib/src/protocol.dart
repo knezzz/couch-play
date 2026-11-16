@@ -38,6 +38,52 @@ class PlayerInfo with _JsonEq {
       };
 }
 
+/// What the host can set in the lobby. Seconds, or a count of questions.
+class GameSettings with _JsonEq {
+  /// Time to answer a question: 10-60 in steps of 5.
+  final int quizSeconds;
+
+  /// Questions per game: 5-30 in steps of 5 (never more than the pack has).
+  final int quizQuestions;
+
+  /// How long the answer shows between questions: 2-15.
+  final int revealSeconds;
+
+  /// Curve pause before each round: 1-10.
+  final int curveCountdown;
+  const GameSettings({
+    this.quizSeconds = 20,
+    this.quizQuestions = 10,
+    this.revealSeconds = 4,
+    this.curveCountdown = 2,
+  });
+  factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
+      quizSeconds: j['quizSeconds'] as int,
+      quizQuestions: j['quizQuestions'] as int,
+      revealSeconds: j['revealSeconds'] as int,
+      curveCountdown: j['curveCountdown'] as int);
+
+  /// The same values pulled into range and onto their steps.
+  GameSettings clamped() {
+    int snap(int v, int lo, int hi, int step) =>
+        ((v / step).round() * step).clamp(lo, hi);
+    return GameSettings(
+      quizSeconds: snap(quizSeconds, 10, 60, 5),
+      quizQuestions: snap(quizQuestions, 5, 30, 5),
+      revealSeconds: snap(revealSeconds, 2, 15, 1),
+      curveCountdown: snap(curveCountdown, 1, 10, 1),
+    );
+  }
+
+  @override
+  Map<String, Object?> toJson() => {
+        'quizSeconds': quizSeconds,
+        'quizQuestions': quizQuestions,
+        'revealSeconds': revealSeconds,
+        'curveCountdown': curveCountdown,
+      };
+}
+
 class PackInfo with _JsonEq {
   final String id, title;
   final int questionCount;
@@ -91,13 +137,17 @@ sealed class Message with _JsonEq {
             GameKind.values.byName(m['game'] as String), m['packId'] as String?),
         'kick' => Kick(m['playerId'] as int),
         'bots' => SetBots(m['count'] as int),
+        'settings' => SetSettings(GameSettings.fromJson(m)),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
           Welcome(m['playerId'] as int, m['colorIndex'] as int, m['token'] as String),
         'lobby' => LobbyState(
             players: list('players', PlayerInfo.fromJson),
             packs: list('packs', PackInfo.fromJson),
-            hostId: m['hostId'] as int),
+            hostId: m['hostId'] as int,
+            settings: m['settings'] == null
+                ? const GameSettings()
+                : GameSettings.fromJson(m['settings'] as Map<String, dynamic>)),
         'quizQ' => QuizQuestion(m['number'] as int, m['total'] as int,
             [for (final c in m['choices'] as List) c as String], m['seconds'] as int),
         'quizReveal' => QuizReveal(
@@ -179,6 +229,17 @@ class SetBots extends Message {
   Map<String, Object?> get fields => {'count': count};
 }
 
+/// Host only, lobby only: the game settings. The TV clamps them and answers
+/// with a fresh [LobbyState].
+class SetSettings extends Message {
+  final GameSettings settings;
+  const SetSettings(this.settings);
+  @override
+  String get type => 'settings';
+  @override
+  Map<String, Object?> get fields => settings.toJson();
+}
+
 class Ping extends Message {
   final int t;
   const Ping(this.t);
@@ -205,8 +266,12 @@ class LobbyState extends Message {
   final List<PlayerInfo> players;
   final List<PackInfo> packs;
   final int hostId;
+  final GameSettings settings;
   const LobbyState(
-      {required this.players, required this.packs, required this.hostId});
+      {required this.players,
+      required this.packs,
+      required this.hostId,
+      this.settings = const GameSettings()});
   @override
   String get type => 'lobby';
   @override
@@ -214,6 +279,7 @@ class LobbyState extends Message {
         'players': [for (final p in players) p.toJson()],
         'packs': [for (final p in packs) p.toJson()],
         'hostId': hostId,
+        'settings': settings.toJson(),
       };
 }
 
