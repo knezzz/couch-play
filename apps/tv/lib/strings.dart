@@ -39,6 +39,8 @@ abstract final class Strings {
         GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
         GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
       };
+  /// Bottom of the lobby while the host has a game's card open (the phones say the same).
+  static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
   static const settingPack = 'Paket pitanja';
   static const settingQuestions = 'Broj pitanja';
   static const settingAnswerTime = 'Vrijeme za odgovor';

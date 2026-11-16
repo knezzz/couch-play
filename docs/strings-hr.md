@@ -32,6 +32,7 @@ Choices that were put to the person:
 | gameName(quiz / curve) | Kviz / Curve | Quiz / Curve | TV lobby, game card heading |
 | gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | TV lobby, game card (same words as the phone) |
 | gameBlurb(curve) | Vozi svoju krivulju i ne udari u druge. | Steer your curve and do not hit the others. | TV lobby, game card (same words as the phone) |
+| watching(host, game) | {host} gleda: {game} | {host} is looking at: {game} | TV lobby, bottom right, replaces "waiting for host" while a game card is shown (same words as the phone) |
 | settingPack / settingQuestions / settingAnswerTime / settingReveal | Paket pitanja / Broj pitanja / Vrijeme za odgovor / Pauza između pitanja | Question pack / Number of questions / Time to answer / Pause between questions | TV lobby, Kviz card: label before the value (same as the phone) |
 | settingMode / settingCountdown | Način igre / Pauza prije runde | Game mode / Pause before each round | TV lobby, Curve card: label before the value (same as the phone) |
 | settingsLine(s) | Kviz: {n} pitanja · odgovor {a} s · pauza {r} s     Curve: {mode} · pauza prije runde {c} s | Quiz: {n} questions · answer {a} s · pause {r} s     Curve: {mode} · pause before each round {c} s | TV lobby, bottom right under "waiting for host": one small muted line, the host's settings; hidden while a game card is shown |

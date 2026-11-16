@@ -87,7 +87,9 @@ class LobbyScreen extends StatelessWidget {
                         const Spacer(),
                         if (host != null)
                           Text(
-                            Strings.waitingForHost(host.name),
+                            selected == null
+                                ? Strings.waitingForHost(host.name)
+                                : Strings.watching(host.name, selected!),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontSize: 40, color: tvMuted),
@@ -292,16 +294,21 @@ class _GameCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final quiz = kind == GameKind.quiz;
-    final items = quiz
+    // Rows of one or two items. The pack name is long, so it gets a row to itself.
+    final rows = quiz
         ? [
-            (Strings.settingPack, packTitle ?? '–'),
-            (Strings.settingQuestions, '${settings.quizQuestions}'),
-            (Strings.settingAnswerTime, '${settings.quizSeconds} s'),
-            (Strings.settingReveal, '${settings.revealSeconds} s'),
+            [(Strings.settingPack, packTitle ?? '–')],
+            [
+              (Strings.settingQuestions, '${settings.quizQuestions}'),
+              (Strings.settingAnswerTime, '${settings.quizSeconds} s'),
+            ],
+            [(Strings.settingReveal, '${settings.revealSeconds} s')],
           ]
         : [
-            (Strings.settingMode, Strings.curveModeName(settings.curveMode)),
-            (Strings.settingCountdown, '${settings.curveCountdown} s'),
+            [
+              (Strings.settingMode, Strings.curveModeName(settings.curveMode)),
+              (Strings.settingCountdown, '${settings.curveCountdown} s'),
+            ],
           ];
     Widget item((String, String) it) => Text.rich(
           TextSpan(children: [
@@ -336,14 +343,12 @@ class _GameCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 32, color: tvMuted)),
           SizedBox(height: roomy ? 24 : 16),
-          // Two columns, row by row.
-          for (var i = 0; i < items.length; i += 2)
+          for (final row in rows)
             Padding(
               padding: EdgeInsets.only(bottom: roomy ? 12 : 6),
               child: Row(children: [
-                Expanded(child: item(items[i])),
-                const SizedBox(width: 32),
-                Expanded(child: i + 1 < items.length ? item(items[i + 1]) : const SizedBox()),
+                Expanded(child: item(row[0])),
+                if (row.length > 1) ...[const SizedBox(width: 32), Expanded(child: item(row[1]))],
               ]),
             ),
         ],

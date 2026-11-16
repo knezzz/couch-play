@@ -115,6 +115,28 @@ void main() {
       expect(find.text(Strings.scoreboard), findsNothing);
     });
 
+    testWidgets('while a card is up the waiting line says what the host is looking at', (t) async {
+      await _pump(t, selected: GameKind.quiz, packTitle: 'A');
+      expect(find.text('Ana gleda: Kviz'), findsOneWidget);
+      expect(find.text(Strings.waitingForHost('Ana')), findsNothing);
+      await _pump(t, selected: GameKind.curve);
+      expect(find.text('Ana gleda: Curve'), findsOneWidget);
+      await _pump(t);
+      expect(find.text(Strings.waitingForHost('Ana')), findsOneWidget);
+      expect(find.textContaining('gleda'), findsNothing);
+    });
+
+    testWidgets('the pack gets its own full-width row, above the other settings', (t) async {
+      await _pump(t, selected: GameKind.quiz, packTitle: 'Hrvatska - kultura i sport');
+      Finder item(String label) => find.descendant(of: card, matching: find.textContaining(label));
+      final pack = t.getRect(item('Paket pitanja'));
+      final inner = t.getRect(card);
+      expect(pack.width, greaterThan((inner.width - 96) * 0.9), reason: 'the whole row, not half of it');
+      for (final other in ['Broj pitanja', 'Vrijeme za odgovor', 'Pauza između pitanja']) {
+        expect(t.getRect(item(other)).top, greaterThanOrEqualTo(pack.bottom), reason: other);
+      }
+    });
+
     testWidgets('Curve selected: mode and pause before each round only', (t) async {
       await _pump(t,
           selected: GameKind.curve, settings: const GameSettings(curveMode: CurveMode.chaos, curveCountdown: 7));
@@ -151,7 +173,7 @@ void main() {
       expect(r.bottom, lessThanOrEqualTo(1080 - 56));
       expect(r.right, lessThanOrEqualTo(1920 - 96));
       expect(r.height, greaterThan(150));
-      final waiting = t.getRect(find.textContaining('Čekamo da'));
+      final waiting = t.getRect(find.textContaining('gleda:'));
       expect(r.bottom, lessThanOrEqualTo(waiting.top));
       // D-pad: the first button still has focus and Right moves to Quit.
       final focus = FocusManager.instance.primaryFocus!.context!;
