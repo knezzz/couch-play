@@ -71,3 +71,63 @@ Housewives").
 57. rediscovered in 2000 at Barter Books, a bookshop in Alnwick: https://en.wikipedia.org/wiki/Keep_Calm_and_Carry_On
 58. he instead says 'No, I am your father': https://en.wikipedia.org/wiki/False_memory
 59. dubbed the 'Mandela Effect' by Fiona Broome; Vader 'Luke, I am your father' example: https://en.wikipedia.org/wiki/False_memory
+60. image macro of Vegeta crushing his scouter: https://en.wikipedia.org/wiki/It's_Over_9000!
+61. in the original Japanese ... read as 'over 8000!': https://en.wikipedia.org/wiki/It's_Over_9000!
+62. a catchphrase from the 2007 video game Portal: https://en.wikipedia.org/wiki/The_cake_is_a_lie
+63. warn that GLaDOS, the game's main villain, was deceiving the player: https://en.wikipedia.org/wiki/The_cake_is_a_lie
+64. originated from Call of Duty: Advanced Warfare, 2014: https://en.wikipedia.org/wiki/Press_F_to_pay_respects
+65. 'Friday', 2011 single by Rebecca Black: https://en.wikipedia.org/wiki/Friday_(Rebecca_Black_song)
+66. Song by Tay Zonday, released 2007-04-23: https://en.wikipedia.org/wiki/Chocolate_Rain
+67. caption: 'I move away from the mic to breathe in': https://en.wikipedia.org/wiki/Chocolate_Rain
+68. Ylvis, EMI Norway (Norwegian comedy duo): https://en.wikipedia.org/wiki/The_Fox_(What_Does_the_Fox_Say?)
+69. Eduard Khil, Trololo, the 'Russian Rickroll': https://en.wikipedia.org/wiki/Eduard_Khil
+70. in 2010, when a 1976 clip of him singing: https://en.wikipedia.org/wiki/Eduard_Khil
+71. Moldovan saxophonist, SunStroke Project at Eurovision 2010: https://en.wikipedia.org/wiki/Sergey_Stepanov_(musician)
+72. instrumental by Finnish DJ and record producer Darude: https://en.wikipedia.org/wiki/Sandstorm_(instrumental)
+73. Orihime twirling a spring onion (Japanese original) or a leek: https://en.wikipedia.org/wiki/Ievan_polkka
+74. made by Metro Trains in Melbourne to promote railway safety: https://en.wikipedia.org/wiki/Dumb_Ways_to_Die
+75. standing in front of two elephants at the San Diego Zoo: https://en.wikipedia.org/wiki/Me_at_the_zoo
+76. uploaded on April 23, 2005, the first video uploaded to the platform: https://en.wikipedia.org/wiki/Me_at_the_zoo
+77. coined by Richard Dawkins in his 1976 book The Selfish Gene: https://en.wikipedia.org/wiki/Meme
+78. credited to Scott Fahlman ... Carnegie Mellon University in 1982: https://en.wikipedia.org/wiki/Emoticon
+79. Face with Tears of Joy was chosen as the Word of the Year by Oxford Dictionaries in 2015: https://en.wikipedia.org/wiki/Face_with_Tears_of_Joy_emoji
+80. The word emoji comes from Japanese e 'picture' + moji 'character': https://en.wikipedia.org/wiki/Emoji
+81. probability of a comparison involving Nazis or Hitler approaches one: https://en.wikipedia.org/wiki/Godwin's_law
+82. a video of a raccoon kit above a rotating camera: https://en.wikipedia.org/wiki/Pedro_(song)
+83. 1980 single by Raffaella Carrà: https://en.wikipedia.org/wiki/Pedro_(song)
+84. Thai pygmy hippopotamus (born 2024): https://en.wikipedia.org/wiki/Moo_Deng
+85. both released on July 21, 2023: https://en.wikipedia.org/wiki/Barbenheimer
+86. Facebook event on and around September 20, 2019: https://en.wikipedia.org/wiki/Storm_Area_51
+87. sound designer Ben Burtt incorporated it into Star Wars: https://en.wikipedia.org/wiki/Wilhelm_scream
+88. Default wallpaper of Windows XP: https://en.wikipedia.org/wiki/Bliss_(photograph)
+89. a sensation early 2007 with the advent of I Can Has Cheezburger?: https://en.wikipedia.org/wiki/Lolcat
+90. originally taken for the high school's 2005–06 yearbook: https://en.wikipedia.org/wiki/Bad_Luck_Brian
+91. a submission to a contest held by Justin Bieber: https://en.wikipedia.org/wiki/Overly_Attached_Girlfriend
+92. seen tapping his finger on his head: https://en.wikipedia.org/wiki/Roll_Safe
+93. Brazilian actress Renata Sorrah, telenovela Senhora do Destino: https://knowyourmeme.com/memes/math-lady-confused-lady
+94. spoken by a non-player character who voiced the Whiterun guard: https://en.wikipedia.org/wiki/Arrow_in_the_knee
+95. Leonidas, King of Sparta: 'Madness? This is Sparta!': https://knowyourmeme.com/memes/this-is-sparta
+96. line uttered by The Joker, played by Heath Ledger, The Dark Knight (2008): https://knowyourmeme.com/memes/why-so-serious
+97. Obi-Wan Kenobi, Revenge of the Sith: https://knowyourmeme.com/memes/hello-there
+98. Peppy Hare orders you to 'do a barrel roll!': https://knowyourmeme.com/memes/do-a-barrel-roll
+99. he gives Link a sword: https://en.wikipedia.org/wiki/It's_dangerous_to_go_alone!
+100. renewed popularity as a meme, largely due to its association with Shrek: https://en.wikipedia.org/wiki/All_Star_(song)
+101. 1999 single by Smash Mouth: https://en.wikipedia.org/wiki/All_Star_(song)
+102. alternating caps to convey a mocking tone starting May 2017: https://en.wikipedia.org/wiki/Alternating_caps
+103. SpongeBob acts like a chicken: https://knowyourmeme.com/memes/mocking-spongebob
+104. Roundabout, 1971 song by Yes, JoJo's Bizarre Adventure: https://knowyourmeme.com/memes/to-be-continued
+105. replacing the roast with hamburgers from Krusty Burger: https://en.wikipedia.org/wiki/22_Short_Films_About_Springfield
+106. image macro featuring the character Fry: https://knowyourmeme.com/memes/shut-up-and-take-my-money
+107. 'The Sound of Silence', Simon & Garfunkel, 1964: https://knowyourmeme.com/memes/hello-darkness-my-old-friend
+108. Flossing was featured in Fortnite Battle Royale as an emote: https://en.wikipedia.org/wiki/Floss_(dance)
+109. 'In My Feelings', 2018 song by Drake, Kiki Challenge: https://en.wikipedia.org/wiki/In_My_Feelings
+110. Star Wars character also known as Baby Yoda: https://en.wikipedia.org/wiki/Grogu
+111. the motto of House Stark: https://en.wikipedia.org/wiki/Winter_Is_Coming
+112. his nemesis Constantine dressed as a Sith Lord, Muppets Most Wanted: https://knowyourmeme.com/memes/evil-kermit
+113. Captain Jean-Luc Picard (Patrick Stewart): https://knowyourmeme.com/memes/facepalm
+114. Gru presents a plan to steal the moon: https://knowyourmeme.com/memes/grus-plan
+115. John Travolta in the 1994 film Pulp Fiction as Vincent Vega: https://knowyourmeme.com/memes/confused-travolta
+116. Kermit the Frog drinking a glass of iced tea / Lipton tea: https://knowyourmeme.com/memes/but-thats-none-of-my-business
+117. Keanu Reeves presenting Cyberpunk 2077 at E3 2019: https://knowyourmeme.com/memes/youre-breathtaking
+118. an intentional misspelling of the word 'stocks': https://knowyourmeme.com/memes/stonks
+119. books from the children's horror fiction series Goosebumps: https://knowyourmeme.com/memes/ermahgerd
