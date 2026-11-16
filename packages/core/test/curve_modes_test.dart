@@ -47,18 +47,28 @@ void main() {
   });
 
   test('a_kinds_list_limits_what_spawns', () {
-    final got = spawned(const CurveConfig(powerUpKinds: [PowerUpKind.thin, PowerUpKind.ghost]));
+    final got = spawned(const CurveConfig(powerUpKinds: [PowerUpKind.slow, PowerUpKind.ghost]));
     expect(got, isNotEmpty);
-    expect(got.toSet().difference({PowerUpKind.thin, PowerUpKind.ghost}), isEmpty);
+    expect(got.toSet().difference({PowerUpKind.slow, PowerUpKind.ghost}), isEmpty);
   });
 
   test('only_you_spawns_only_the_green_kinds_at_balanced_pace', () {
-    const green = {PowerUpKind.slow, PowerUpKind.thin, PowerUpKind.ghost};
+    const green = {PowerUpKind.slow, PowerUpKind.ghost};
     final c = CurveConfig.forMode(CurveMode.onlyYou);
     final got = spawned(c, rounds: 300);
     expect(got, isNotEmpty);
     expect(got.toSet().difference(green), isEmpty);
-    expect(got.toSet(), green, reason: 'all three green kinds turn up');
+    expect(got.toSet(), green, reason: 'both green kinds turn up');
     expect([c.powerUpEveryMin, c.powerUpEveryMax, c.powerUpMax], [4, 8, 3]);
+  });
+
+  test('no_thin_kind_exists_or_spawns_in_any_mode', () {
+    expect(PowerUpKind.values.map((k) => k.name), isNot(contains('thin')));
+    for (final m in CurveMode.values) {
+      final got = spawned(CurveConfig.forMode(m), rounds: 300);
+      expect(got.map((k) => k.name), isNot(contains('thin')));
+    }
+    expect(spawned(CurveConfig.forMode(CurveMode.balanced), rounds: 300).toSet(),
+        contains(PowerUpKind.reverseOthers));
   });
 }

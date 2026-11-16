@@ -11,11 +11,22 @@ class _Fx extends CurveSim {
   _Fx() : super([0], config: const CurveConfig(countdown: 0, powerUps: false));
   double wrap = 0;
   final fx = <PowerUpKind, double>{};
+  int stacks = 0;
+  List<TrailSegment> segs = [];
   @override
   double get wrapLeft => wrap;
   @override
   double effectLeft(int playerId, PowerUpKind kind) =>
       kind == PowerUpKind.wrap ? wrap : fx[kind] ?? 0;
+  @override
+  int effectStacks(int playerId, PowerUpKind kind) => kind == PowerUpKind.fatOthers ? stacks : 0;
+  @override
+  List<TrailSegment> takeNewSegments() {
+    if (segs.isEmpty) return super.takeNewSegments();
+    final out = segs;
+    segs = [];
+    return out;
+  }
 }
 
 // Arena 1600x900 drawn 1:1, so arena units are pixels.
@@ -128,7 +139,7 @@ void main() {
       expect(_near(_at(d, 800 + ring, 410), _green), isTrue, reason: 'right half stays');
       expect(_near(_at(d, 800 - ring, 410), _bg), isTrue, reason: 'left half drained');
 
-      sim.fx[PowerUpKind.thin] = 1; // second icon, one step further back
+      sim.fx[PowerUpKind.ghost] = 1; // second icon, one step further back
       d = await _render(sim);
       expect(_near(_at(d, 750, 410 - ring), _green), isTrue);
       expect(_near(_at(d, 800, 410 - ring), _green), isTrue);
@@ -138,6 +149,49 @@ void main() {
         ..[PowerUpKind.fatOthers] = 1;
       d = await _render(sim);
       expect(_near(_at(d, 800, 410 - ring), const Color(0xFFFF4D4D)), isTrue, reason: 'red = others');
+    });
+  });
+
+  testWidgets('reverse others is a red icon; fat shows one dark dot per stack', (tester) async {
+    await tester.runAsync(() async {
+      final sim = _Fx();
+      sim.place(0, 800, 450, 0);
+      const red = Color(0xFFFF4D4D), ring = 18 * 1.35;
+      sim.fx[PowerUpKind.reverseOthers] = 1;
+      var d = await _render(sim);
+      expect(_near(_at(d, 800, 410 - ring), red), isTrue, reason: 'red = others');
+      expect(_near(_at(d, 800, 410 - 12), red), isTrue, reason: 'disc, above the arrows');
+
+      sim.fx
+        ..clear()
+        ..[PowerUpKind.fatOthers] = 1;
+      for (final n in [0, 1, 2, 3]) {
+        sim.stacks = n;
+        d = await _render(sim);
+        // Dot centres at x = 800 + (i - (n-1)/2) * 0.32 * 18, y = 410 + 0.62 * 18.
+        final dots = [for (var i = 0; i < n; i++) 800 + (i - (n - 1) / 2) * 0.32 * 18];
+        for (final x in [800 - 5.76, 800.0, 800 + 5.76]) {
+          final dark = dots.any((c) => (c - x).abs() < 0.5);
+          expect(_near(_at(d, x, 410 + 11.2), _bg), dark, reason: '$n stacks, x=$x');
+        }
+      }
+    });
+  });
+
+  testWidgets('a trail is as wide as the stacks it was painted with (x1 to x4)', (tester) async {
+    await tester.runAsync(() async {
+      for (final mult in [1, 2, 3, 4]) {
+        final sim = _Fx()..place(0, 1500, 800, 0);
+        sim.segs = [TrailSegment(0, 100, 100, 300, 100, 6.0 * mult)];
+        final game = CurveGame(sim, const [Color(0xFFFF0000)])..onGameResize(Vector2(1600, 900));
+        game.update(1 / 60);
+        final rec = PictureRecorder();
+        game.render(Canvas(rec));
+        final d = (await (await rec.endRecording().toImage(1600, 900)).toByteData())!;
+        final half = 3.0 * mult;
+        expect(_near(_at(d, 200, 100 + half - 1), const Color(0xFFFF0000)), isTrue, reason: 'x$mult inside');
+        expect(_near(_at(d, 200, 100 + half + 2), _bg), isTrue, reason: 'x$mult outside');
+      }
     });
   });
 

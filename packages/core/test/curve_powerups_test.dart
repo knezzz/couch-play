@@ -42,21 +42,17 @@ void _pickUp(CurveSim s, PowerUpKind k) {
 }
 
 void main() {
-  test('thin_and_fat_last_one_and_a_half_times_as_long', () {
-    // 1 s effects = 60 ticks; thin and fat get 90, the rest 60.
+  test('fat_lasts_one_and_a_half_times_as_long', () {
+    // 1 s effects = 60 ticks; fat gets 90, the rest 60.
     final s = _sim();
-    _pickUp(s, PowerUpKind.thin);
     _pickUp(s, PowerUpKind.slow);
     s.placePowerUp(PowerUpKind.fatOthers, _head(s, 0).x, _head(s, 0).y);
     s.tick();
-    expect(s.effectLeft(0, PowerUpKind.thin), closeTo(1 - 2 / 90, 0.001));
     expect(s.effectLeft(1, PowerUpKind.fatOthers), 1.0);
     _ticks(s, 60);
     expect(s.hasEffect(0, PowerUpKind.slow), isFalse);
-    expect(s.hasEffect(0, PowerUpKind.thin), isTrue);
     expect(s.hasEffect(1, PowerUpKind.fatOthers), isTrue);
     _ticks(s, 30);
-    expect(s.hasEffect(0, PowerUpKind.thin), isFalse);
     expect(s.hasEffect(1, PowerUpKind.fatOthers), isFalse);
   });
 
@@ -93,19 +89,6 @@ void main() {
     final winner = picked.single.playerId;
     expect(s.hasEffect(winner, PowerUpKind.slow), isTrue);
     expect(s.hasEffect(winner == 0 ? 1 : 0, PowerUpKind.slow), isFalse);
-  });
-
-  test('thin_halves_the_painted_width_then_expires', () {
-    final s = _sim();
-    _pickUp(s, PowerUpKind.thin);
-    s.takeNewSegments();
-    s.tick();
-    final thin = s.takeNewSegments().firstWhere((g) => g.id == 0);
-    expect(thin.width, 3);
-    _ticks(s, 90);
-    s.takeNewSegments();
-    s.tick();
-    expect(s.takeNewSegments().firstWhere((g) => g.id == 0).width, 6);
   });
 
   test('speed_others_speeds_everyone_but_the_picker', () {
@@ -145,17 +128,121 @@ void main() {
     expect(alive(true), [false]);
   });
 
-  test('thin_and_fat_cancel_out', () {
-    final s = _sim();
-    _pickUp(s, PowerUpKind.thin); // 0 is thin
-    // Player 1 picks fat-others, which makes 0 (and 2) fat too.
-    s.placePowerUp(PowerUpKind.fatOthers, _head(s, 1).x, _head(s, 1).y);
-    s.tick();
-    expect(s.hasEffect(0, PowerUpKind.thin), isTrue);
-    expect(s.hasEffect(0, PowerUpKind.fatOthers), isTrue);
+  /// Width of the newest segment player [id] paints.
+  double width(CurveSim s, int id) {
     s.takeNewSegments();
     s.tick();
-    expect(s.takeNewSegments().firstWhere((g) => g.id == 0).width, 6);
+    return s.takeNewSegments().firstWhere((g) => g.id == id).width;
+  }
+
+  test('fat_stacks_fatter_each_pickup_up_to_three_and_the_picker_is_spared', () {
+    final s = _sim(effectSeconds: 20);
+    expect(width(s, 1), 6);
+    final seen = <double>[];
+    for (var i = 0; i < 5; i++) {
+      s.placePowerUp(PowerUpKind.fatOthers, _head(s, 0).x, _head(s, 0).y);
+      s.tick();
+      seen.add(width(s, 1));
+    }
+    expect(seen, [12, 18, 24, 24, 24], reason: 'x2, x3, x4, then capped at 3 stacks');
+    expect(width(s, 2), 24);
+    expect(width(s, 0), 6);
+    expect([for (final id in [0, 1, 2]) s.effectStacks(id, PowerUpKind.fatOthers)], [0, 3, 3]);
+  });
+
+  test('a_fat_pickup_restarts_the_timer_and_stacks_start_over_after_it_ends', () {
+    final s = _sim(); // fat = 90 ticks
+    s.placePowerUp(PowerUpKind.fatOthers, _head(s, 0).x, _head(s, 0).y);
+    s.tick();
+    _ticks(s, 60);
+    s.placePowerUp(PowerUpKind.fatOthers, _head(s, 0).x, _head(s, 0).y);
+    s.tick();
+    expect(s.effectLeft(1, PowerUpKind.fatOthers), 1.0);
+    expect(s.effectStacks(1, PowerUpKind.fatOthers), 2);
+    _ticks(s, 100);
+    expect(s.hasEffect(1, PowerUpKind.fatOthers), isFalse);
+    expect(s.effectStacks(1, PowerUpKind.fatOthers), 0);
+    s.placePowerUp(PowerUpKind.fatOthers, _head(s, 0).x, _head(s, 0).y);
+    s.tick();
+    expect(s.effectStacks(1, PowerUpKind.fatOthers), 1, reason: 'a new run starts at one stack');
+  });
+
+  test('stacked_fat_collides_with_its_full_width', () {
+    // Radius 12 at 3 stacks: 13 units from the wall is safe for normal and one
+    // stack (radius 6) but not for three stacks.
+    bool survives(int stacks) {
+      final t = _sim(effectSeconds: 20);
+      for (var i = 0; i < stacks; i++) {
+        t.placePowerUp(PowerUpKind.fatOthers, _head(t, 0).x, _head(t, 0).y);
+        t.tick();
+      }
+      t.place(2, 13, 450, pi);
+      t.tick();
+      return _head(t, 2).alive;
+    }
+
+    expect(survives(1), isTrue);
+    expect(survives(3), isFalse);
+  });
+
+  test('reverse_others_swaps_left_and_right_for_the_others_only_then_expires', () {
+    final s = _sim(); // 60 ticks
+    for (final id in [0, 1, 2]) {
+      s.place(id, id == 0 ? 800 : 100, id == 0 ? 450 : id == 1 ? 100 : 800, 0);
+      s.setInput(id, left: true, right: false);
+    }
+    _pickUp(s, PowerUpKind.reverseOthers);
+    expect(s.hasEffect(0, PowerUpKind.reverseOthers), isFalse);
+    expect(s.hasEffect(1, PowerUpKind.reverseOthers), isTrue);
+    expect(s.hasEffect(2, PowerUpKind.reverseOthers), isTrue);
+    final h0 = _head(s, 0).heading, h1 = _head(s, 1).heading;
+    _ticks(s, 10);
+    expect(_head(s, 0).heading, lessThan(h0), reason: 'the picker steers left as asked');
+    expect(_head(s, 1).heading, greaterThan(h1), reason: 'the others go right');
+    _ticks(s, 60);
+    expect(s.hasEffect(1, PowerUpKind.reverseOthers), isFalse);
+    final before = _head(s, 1).heading;
+    _ticks(s, 5);
+    expect(_head(s, 1).heading, lessThan(before), reason: 'back to normal');
+  });
+
+  test('a_second_reverse_pickup_restarts_the_timer', () {
+    final s = _sim();
+    _pickUp(s, PowerUpKind.reverseOthers);
+    _ticks(s, 40);
+    _pickUp(s, PowerUpKind.reverseOthers);
+    expect(s.effectLeft(1, PowerUpKind.reverseOthers), 1.0);
+    expect(s.effectLeft(0, PowerUpKind.reverseOthers), 0);
+    _ticks(s, 30);
+    expect(s.hasEffect(1, PowerUpKind.reverseOthers), isTrue);
+  });
+
+  test('a_ghost_paints_no_line_and_leaves_no_grid_cells_while_it_lasts', () {
+    final s = _sim(effectSeconds: 20);
+    s.place(0, 300, 450, 0);
+    s.placePowerUp(PowerUpKind.ghost, 301, 450);
+    s.tick();
+    s.takeNewSegments();
+    _ticks(s, 30);
+    expect(s.takeNewSegments().where((g) => g.id == 0), isEmpty);
+    // Nothing on the grid behind it: no probe along its path is blocked.
+    for (var x = 310.0; x < _head(s, 0).x; x += 4) {
+      expect(s.isBlocked(x, 450), isFalse, reason: 'x=$x');
+    }
+    // Control: a head without ghost leaves a trail the probe finds.
+    final c = _sim();
+    c.place(0, 300, 450, 0);
+    _ticks(c, 30);
+    expect(c.isBlocked(_head(c, 0).x - 40, 450), isTrue);
+    // After the ghost ends the line comes back.
+    final e = _sim(effectSeconds: 1);
+    e.place(0, 300, 450, 0);
+    e.placePowerUp(PowerUpKind.ghost, 301, 450);
+    e.tick();
+    _ticks(e, 70);
+    e.takeNewSegments();
+    e.tick();
+    expect(e.takeNewSegments().where((g) => g.id == 0), isNotEmpty);
   });
 
   test('ghost_passes_trail_not_wall', () {
@@ -277,7 +364,7 @@ void main() {
     final s = _sim(effectSeconds: 20);
     _pickUp(s, PowerUpKind.slow);
     _pickUp(s, PowerUpKind.wrap);
-    s.placePowerUp(PowerUpKind.thin, 1000, 100);
+    s.placePowerUp(PowerUpKind.ghost, 1000, 100);
     s.startRound();
     expect(s.hasEffect(0, PowerUpKind.slow), isFalse);
     expect(s.powerUps, isEmpty);

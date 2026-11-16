@@ -20,7 +20,7 @@ class CurveGame extends FlameGame {
   /// While true the sim stands still (a player left; Session waits for them).
   final bool Function()? holdWhen;
 
-  // One Path per (player, width bucket); key = id * 3 + bucket (thin/normal/fat).
+  // One Path per (player, width bucket); key = id * 4 + bucket (line width x1 to x4: normal and up to 3 fat stacks).
   final _paths = <int, Path>{};
   final _ends = <int, Offset>{}; // where each key's last segment ended
   final _names = <int, TextPainter>{}; // laid out once per player
@@ -32,11 +32,11 @@ class CurveGame extends FlameGame {
   double _acc = 0;
 
   int debugSubpathCount(int id) =>
-      [for (var b = 0; b < 3; b++) _paths[id * 3 + b]]
+      [for (var b = 0; b < 4; b++) _paths[id * 4 + b]]
           .whereType<Path>()
           .fold(0, (n, p) => n + p.computeMetrics().length);
 
-  double debugTrailLength(int id) => [for (var b = 0; b < 3; b++) _paths[id * 3 + b]]
+  double debugTrailLength(int id) => [for (var b = 0; b < 4; b++) _paths[id * 4 + b]]
       .whereType<Path>()
       .expand((p) => p.computeMetrics())
       .fold(0.0, (n, m) => n + m.length);
@@ -46,8 +46,7 @@ class CurveGame extends FlameGame {
   Color _color(int id) => colors[id % colors.length];
 
   int _bucket(double width) {
-    final n = sim.config.lineWidth;
-    return width < n * 0.75 ? 0 : (width > n * 1.5 ? 2 : 1);
+    return (width / sim.config.lineWidth).round().clamp(1, 4) - 1;
   }
 
   @override
@@ -73,7 +72,7 @@ class CurveGame extends FlameGame {
       _ends.clear();
     }
     for (final s in sim.takeNewSegments()) {
-      final key = s.id * 3 + _bucket(s.width);
+      final key = s.id * 4 + _bucket(s.width);
       final path = _paths[key] ??= Path();
       // Continue the subpath unless a gap (or round start) broke the line.
       // Sim computes x1 as x - vx, so ends differ by float rounding: use a tolerance.
@@ -100,8 +99,8 @@ class CurveGame extends FlameGame {
     final base = sim.config.lineWidth;
     for (final e in _paths.entries) {
       _trail
-        ..strokeWidth = base * const [0.5, 1.0, 2.0][e.key % 3]
-        ..color = _color(e.key ~/ 3);
+        ..strokeWidth = base * (e.key % 4 + 1)
+        ..color = _color(e.key ~/ 4);
       canvas.drawPath(e.value, _trail);
     }
     for (final u in sim.powerUps) {
@@ -174,7 +173,6 @@ class CurveGame extends FlameGame {
   static final Map<PowerUpKind, Path> _glyphs = {
     PowerUpKind.slow: _chevrons(-1),
     PowerUpKind.speedOthers: _chevrons(1),
-    PowerUpKind.thin: Path()..addRect(const Rect.fromLTWH(-0.6, -0.05, 1.2, 0.1)),
     PowerUpKind.fatOthers: Path()..addRect(const Rect.fromLTWH(-0.6, -0.3, 1.2, 0.6)),
     PowerUpKind.ghost: Path()
       ..moveTo(-0.45, 0.5)
@@ -184,6 +182,18 @@ class CurveGame extends FlameGame {
       ..lineTo(0.15, 0.3)
       ..lineTo(-0.15, 0.5)
       ..close(),
+    // Two arrows the opposite way round: left and right swap.
+    PowerUpKind.reverseOthers: Path()
+      ..moveTo(-0.55, -0.25)
+      ..lineTo(0.55, -0.25)
+      ..moveTo(0.25, -0.5)
+      ..lineTo(0.55, -0.25)
+      ..lineTo(0.25, 0)
+      ..moveTo(0.55, 0.25)
+      ..lineTo(-0.55, 0.25)
+      ..moveTo(-0.25, 0)
+      ..lineTo(-0.55, 0.25)
+      ..lineTo(-0.25, 0.5),
     PowerUpKind.clear: Path()
       ..moveTo(-0.5, -0.5)
       ..lineTo(0.5, 0.5)
@@ -211,14 +221,14 @@ class CurveGame extends FlameGame {
     ..lineTo(0.05 * dir, 0.45);
 
   static Color _powerUpColor(PowerUpKind k) => switch (k) {
-        PowerUpKind.slow || PowerUpKind.thin || PowerUpKind.ghost => _green,
-        PowerUpKind.speedOthers || PowerUpKind.fatOthers => _red,
+        PowerUpKind.slow || PowerUpKind.ghost => _green,
+        PowerUpKind.speedOthers || PowerUpKind.fatOthers || PowerUpKind.reverseOthers => _red,
         PowerUpKind.clear || PowerUpKind.wrap => _blue,
       };
 
     /// Draws kind's icon at (x, y); with [left] (0..1; -1 = none) a ring around it drains.
   void _drawPowerUp(Canvas canvas, double x, double y, PowerUpKind kind, double r,
-      [double left = -1]) {
+      [double left = -1, int stacks = 0]) {
     canvas
       ..save()
       ..translate(x, y)
@@ -235,10 +245,17 @@ class CurveGame extends FlameGame {
       ..strokeJoin = StrokeJoin.round;
     final g = _glyphs[kind]!;
     // Solid shapes are filled, line glyphs stroked.
-    if (kind == PowerUpKind.fatOthers || kind == PowerUpKind.thin || kind == PowerUpKind.ghost) {
+    if (kind == PowerUpKind.fatOthers || kind == PowerUpKind.ghost) {
       _icon.style = PaintingStyle.fill;
     }
     canvas.drawPath(g, _icon);
+    // Fat stacks: one dark dot per stack under the bar.
+    if (stacks > 0) {
+      _icon.style = PaintingStyle.fill;
+      for (var i = 0; i < stacks; i++) {
+        canvas.drawCircle(Offset((i - (stacks - 1) / 2) * 0.32, 0.62), 0.11, _icon);
+      }
+    }
     if (left >= 0) {
       // Ring drains clockwise from the top.
       _icon
@@ -257,10 +274,10 @@ class CurveGame extends FlameGame {
   static const effectIconRadius = 18.0, _effectSide = 40.0, _effectStep = 50.0;
   static const _effectKinds = [
     PowerUpKind.slow,
-    PowerUpKind.thin,
     PowerUpKind.ghost,
     PowerUpKind.speedOthers,
     PowerUpKind.fatOthers,
+    PowerUpKind.reverseOthers,
   ];
 
   final _iconPos = Float64List(2);
@@ -287,7 +304,8 @@ class CurveGame extends FlameGame {
       final left = sim.effectLeft(hd.id, kind);
       if (left <= 0) continue;
       effectIconPos(hd.x, hd.y, hd.heading, i++, w, h, _iconPos);
-      _drawPowerUp(canvas, _iconPos[0], _iconPos[1], kind, effectIconRadius, left);
+      _drawPowerUp(canvas, _iconPos[0], _iconPos[1], kind, effectIconRadius, left,
+          sim.effectStacks(hd.id, kind));
     }
   }
 

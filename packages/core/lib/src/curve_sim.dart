@@ -33,10 +33,10 @@ class CurveConfig {
             countdown: countdown, powerUpEveryMin: 1, powerUpEveryMax: 2.5, powerUpMax: 8),
         CurveMode.balanced => CurveConfig(countdown: countdown),
         CurveMode.peaceful => CurveConfig(countdown: countdown, powerUps: false),
-        // Only the kinds that help you: slow, thin, ghost.
+        // Only the kinds that help you: slow, ghost.
         CurveMode.onlyYou => CurveConfig(
             countdown: countdown,
-            powerUpKinds: [PowerUpKind.slow, PowerUpKind.thin, PowerUpKind.ghost]),
+            powerUpKinds: [PowerUpKind.slow, PowerUpKind.ghost]),
       };
 
   final int arenaW, arenaH;
@@ -57,9 +57,9 @@ class CurveConfig {
   final List<PowerUpKind>? powerUpKinds;
 }
 
-/// Green ones act on the picker (slow, thin, ghost), red ones on everyone else
-/// (speedOthers, fatOthers), blue ones on the board (clear, wrap).
-enum PowerUpKind { slow, thin, ghost, speedOthers, fatOthers, clear, wrap }
+/// Green ones act on the picker (slow, ghost), red ones on everyone else
+/// (speedOthers, fatOthers, reverseOthers), blue ones on the board (clear, wrap).
+enum PowerUpKind { slow, ghost, speedOthers, fatOthers, reverseOthers, clear, wrap }
 
 class CurvePowerUp {
   const CurvePowerUp(this.id, this.kind, this.x, this.y);
@@ -98,7 +98,7 @@ class CurveHead {
   final bool alive, inGap;
 }
 
-/// [width] is the line width when painted: lineWidth x 0.5 (thin), 1, or 2 (fat).
+/// [width] is the line width when painted: lineWidth x 1..4 (1 + fat stacks).
 class TrailSegment {
   const TrailSegment(this.id, this.x1, this.y1, this.x2, this.y2, [this.width = 6]);
   final int id;
@@ -119,9 +119,13 @@ class _Head {
   double get speedFactor =>
       (has(PowerUpKind.speedOthers) ? _speedUp : 1) *
       (has(PowerUpKind.slow) ? _slowDown : 1);
-  double get widthFactor =>
-      (has(PowerUpKind.thin) ? 0.5 : 1) * (has(PowerUpKind.fatOthers) ? 2 : 1);
+  /// Fat pickups running on this head (0 when fat is off), 1..[maxFatStacks].
+  int fatStacks = 0;
+  double get widthFactor => has(PowerUpKind.fatOthers) ? 1.0 + fatStacks : 1;
 }
+
+/// Each fat pickup widens the others' lines by one more line width, up to this.
+const maxFatStacks = 3;
 
 const _speedUp = 1.6, _slowDown = 0.6;
 
@@ -183,11 +187,11 @@ class CurveSim {
     return _heads[playerId]?.has(kind) ?? false;
   }
 
-  /// Thin and fat last this much longer than the other effects.
+  /// Fat lasts this much longer than the other effects.
   static const _longFactor = 1.5;
 
   int _ticksFor(PowerUpKind k) => (config.effectSeconds *
-          (k == PowerUpKind.thin || k == PowerUpKind.fatOthers ? _longFactor : 1) *
+          (k == PowerUpKind.fatOthers ? _longFactor : 1) *
           config.tickHz)
       .round();
 
@@ -200,6 +204,10 @@ class CurveSim {
     final ticks = _heads[playerId]?.fx[kind.index] ?? 0;
     return ticks <= 0 ? 0 : ticks / _ticksFor(kind);
   }
+
+  /// Fat pickups stacked on [playerId] (0 when none, or for any other kind).
+  int effectStacks(int playerId, PowerUpKind kind) =>
+      kind == PowerUpKind.fatOthers && hasEffect(playerId, kind) ? _heads[playerId]!.fatStacks : 0;
 
   /// The wrap fraction left, 1 down to 0 (0 when wrap is off).
   double get wrapLeft => _wrapLeft <= 0 ? 0 : _wrapLeft / _ticksFor(PowerUpKind.wrap);
@@ -338,7 +346,8 @@ class CurveSim {
       for (var k = 0; k < f.length; k++) {
         if (f[k] > 0) f[k]--;
       }
-      h.heading += config.turnRate * dt * ((h.right ? 1 : 0) - (h.left ? 1 : 0));
+      final steer = (h.right ? 1 : 0) - (h.left ? 1 : 0);
+      h.heading += config.turnRate * dt * (h.has(PowerUpKind.reverseOthers) ? -steer : steer);
       final step = config.speed * h.speedFactor * dt;
       h.x += cos(h.heading) * step;
       h.y += sin(h.heading) * step;
@@ -370,7 +379,7 @@ class CurveSim {
             ? (config.gapLength * config.tickHz).round()
             : _nextGap();
       }
-      if (h.inGap) continue;
+      if (h.inGap || h.has(PowerUpKind.ghost)) continue; // a ghost paints nothing
       final width = config.lineWidth * h.widthFactor;
       final r = width / 2;
       final c0 = max(0, ((h.x - r) / config.cell).floor());
@@ -424,13 +433,17 @@ class CurveSim {
     final ticks = _ticksFor(kind);
     switch (kind) {
       case PowerUpKind.slow:
-      case PowerUpKind.thin:
       case PowerUpKind.ghost:
         picker.fx[kind.index] = ticks;
       case PowerUpKind.speedOthers:
       case PowerUpKind.fatOthers:
+      case PowerUpKind.reverseOthers:
         for (final h in _heads.values) {
-          if (h != picker) h.fx[kind.index] = ticks;
+          if (h == picker) continue;
+          if (kind == PowerUpKind.fatOthers) {
+            h.fatStacks = h.has(kind) ? min(h.fatStacks + 1, maxFatStacks) : 1;
+          }
+          h.fx[kind.index] = ticks;
         }
       case PowerUpKind.wrap:
         _wrapLeft = ticks;
@@ -479,8 +492,8 @@ class CurveSim {
     if (!wrap) {
       if (h.x < 0 || h.y < 0 || cx >= _cols || cy >= _rows) return true;
       if (fat) {
-        // A fat line has radius lineWidth, so it touches the wall earlier.
-        final r = config.lineWidth;
+        // A fat line is wider, so it touches the wall earlier.
+        final r = config.lineWidth * h.widthFactor / 2;
         if (h.x - r < 0 || h.y - r < 0 ||
             h.x + r >= config.arenaW || h.y + r >= config.arenaH) {
           return true;
@@ -490,7 +503,7 @@ class CurveSim {
     if (h.has(PowerUpKind.ghost)) return false; // passes trails, not walls
     if (!fat) return _cellKills(cy * _cols + cx, h);
     // Fat: every cell under the wide line. Out-of-grid cells (wrap) are empty.
-    final r = config.lineWidth;
+    final r = config.lineWidth * h.widthFactor / 2;
     final c0 = max(0, ((h.x - r) / cell).floor());
     final c1 = min(_cols - 1, ((h.x + r) / cell).floor());
     final r0 = max(0, ((h.y - r) / cell).floor());
