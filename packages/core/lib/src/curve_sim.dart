@@ -393,7 +393,7 @@ class CurveSim {
           // made a line immune to its own old trail.
           if (_owner[i] == 0 ||
               (_owner[i] == h.id + 1 &&
-                  _tick - _paintTick[i] <= config.selfGraceTicks)) {
+                  _tick - _paintTick[i] <= _grace(h))) {
             _owner[i] = h.id + 1;
             _paintTick[i] = _tick;
           }
@@ -482,8 +482,14 @@ class CurveSim {
     final o = _owner[i];
     if (o == 0) return false;
     if (o != h.id + 1) return true;
-    return _tick - _paintTick[i] > config.selfGraceTicks;
+    return _tick - _paintTick[i] > _grace(h);
   }
+
+  /// Own cells this young are harmless. It is a distance in disguise: a wider
+  /// line reaches further back along a turn and a slower head covers less
+  /// ground per tick, so the tick count scales with width / speed (12 at normal).
+  int _grace(_Head h) =>
+      (config.selfGraceTicks * h.widthFactor / h.speedFactor).ceil();
 
   bool _hits(_Head h, bool wrap) {
     final cell = config.cell;

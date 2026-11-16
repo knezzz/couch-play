@@ -185,6 +185,53 @@ void main() {
     expect(survives(3), isFalse);
   });
 
+  /// Head 1 gets [stacks] fat (from head 0) and maybe slow, then holds right
+  /// from the centre. Heads 0 and 2 turn ghost in the corners so the round never
+  /// ends. Returns the tick head 1 died, or -1. (Probe from check-review.)
+  int circle(int stacks, bool slow) {
+    final s = CurveSim([0, 1, 2],
+        config: const CurveConfig(
+            countdown: 0, gapEveryMin: 1e6, gapEveryMax: 1e6 + 1, powerUps: false, effectSeconds: 100),
+        random: Random(1));
+    s.place(0, 300, 200, 0);
+    s.place(1, 300, 800, -pi / 2);
+    s.place(2, 1300, 700, pi);
+    for (var i = 0; i < stacks; i++) {
+      s.placePowerUp(PowerUpKind.fatOthers, _head(s, 0).x, _head(s, 0).y);
+      s.tick();
+    }
+    if (slow) {
+      s.placePowerUp(PowerUpKind.slow, _head(s, 1).x, _head(s, 1).y);
+      s.tick();
+    }
+    s.placePowerUp(PowerUpKind.ghost, _head(s, 0).x, _head(s, 0).y);
+    s.tick();
+    s.placePowerUp(PowerUpKind.ghost, _head(s, 2).x, _head(s, 2).y);
+    s.tick();
+    s.place(0, 200, 200, 0);
+    s.place(2, 1400, 700, 0);
+    s.place(1, 800, 450, 0);
+    s.setInput(0, left: false, right: true);
+    s.setInput(2, left: false, right: true);
+    s.setInput(1, left: false, right: true);
+    for (var t = 1; t <= 95; t++) {
+      s.tick();
+      if (!_head(s, 1).alive) return t;
+    }
+    return -1;
+  }
+
+  test('a_fat_or_slow_head_does_not_die_on_its_own_fresh_trail_while_turning', () {
+    // The grace for own cells is a distance, not a fixed tick count: fat x4 at
+    // 0.6 speed died at tick 38. The circle closes into its own start at about tick 100 (x4, slow) to 120, so
+    // 95 ticks is the longest check that cannot be a real self-hit.
+    for (final slow in [false, true]) {
+      for (var stacks = 0; stacks <= 3; stacks++) {
+        expect(circle(stacks, slow), -1, reason: 'stacks=$stacks slow=$slow');
+      }
+    }
+  });
+
   test('reverse_others_swaps_left_and_right_for_the_others_only_then_expires', () {
     final s = _sim(); // 60 ticks
     for (final id in [0, 1, 2]) {
