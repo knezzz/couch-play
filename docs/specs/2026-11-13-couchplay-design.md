@@ -109,6 +109,11 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 
   **Croatian packs only, and bigger (user request, 2026-11-15):** for now the TV ships only the Croatian packs; the English packs stay in `tool/packs/` but are not bundled. Every Croatian pack grows as far as verified questions can be found (Opće znanje most of all). Existing Croatian pub-quiz and Potjera material guides the topics, style and difficulty; question text is copied only where its licence allows it (the repo is public), otherwise the questions are our own wording of verified facts.
 
+  **More packs and more pictures (user request, 2026-11-16):** new Croatian packs Umjetnost, Psihologija, Ljudsko tijelo,
+  Memeovi, Fizika and Matematika, each a choice in the pack list; and more picture questions across the packs. Memes
+  are mostly copyrighted images, so the Memeovi pack asks about memes in text (origin, catchphrase, year) and shows a
+  picture only where the image is freely licensed.
+
   **Photo questions (user request, 2026-11-15):** questions like "Koji je ovo grad?" with a photo, and other picture questions (landmarks, places, people, things). The pack format accepts photos (JPEG, PNG or WebP) as well as SVG. Photos come only from freely licensed sources (e.g. Wikimedia Commons); the pack's `.sources.md` credits the author and licence of each one. On a picture question the TV gives the picture as much of the screen as it can, uncropped.
 - **Adding packs without rebuilding:** the host can upload a pack file from the controller. The TV validates it and stores it in app storage, so it's there next time. Invalid packs are rejected with a readable error.
 

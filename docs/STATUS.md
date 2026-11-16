@@ -35,6 +35,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 25 | Fat stacks, ghost leaves no line, thin removed, reverse-others added (person, 2026-11-16) | queued to lead | lead |
 | 26 | Sound effects on the TV (person, 2026-11-16) | queued to lead | lead |
 | 27 | Host picks a game from a carousel; details with settings, mirrored on the TV; Igraj starts it (person, 2026-11-16) | queued to lead | lead |
+| 28 | Six new packs (Umjetnost, Psihologija, Ljudsko tijelo, Memeovi, Fizika, Matematika) + more picture questions (person, 2026-11-16) | queued to lead | lead + content |
 
 ## Open questions for the person
 
@@ -245,3 +246,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   line, drop thin and add reverse-others; add sound effects (TV only). Tasks 25, 26.
 - 2026-11-16: Person: game carousel on the host phone, details view with settings mirrored on the TV, then Igraj. Task 27
   (settings move from Task 23's area into each game's details).
+- 2026-11-16: Person: more picture questions; new packs umjetnost, psihologija, ljudsko tijelo, memes, fizika,
+  matematika. PM: memes as text unless the image is freely licensed (public repo). Task 28.

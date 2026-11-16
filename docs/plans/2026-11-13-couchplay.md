@@ -865,3 +865,18 @@ Replaces Task 23's settings area: the settings move into each game's details.
 - [ ] **Step 3: Implement** core protocol, TV session + lobby, phone carousel/details; Croatian strings into the strings files and `docs/strings-hr.md`.
 - [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: the whole flow, settings mirror on the TV, Back, non-host view, fit at 360–390 px, D-pad still fine on the TV lobby.
 - [ ] **Step 5: Commit** by path.
+
+---
+
+### Task 28: Six new packs and more picture questions (added 2026-11-16, user request)
+
+The person: "Put more questions with images. Dodaj umjetnost, psihologija, ljudsko tijelo. I dodaj neki kviz sa memeovima. I fiziku i matematiku dodaj kao opciju."
+
+- New Croatian packs, each a choice in the pack list (ids `hr-umjetnost`, `hr-psihologija`, `hr-ljudsko-tijelo`, `hr-memeovi`, `hr-fizika`, `hr-matematika`), aiming at 100+ questions each, same rules as Tasks 13b/21 (a source per question, stable facts, our own wording, plausible wrong answers, mostly not easy, no duplicates across packs; the duplicate test covers them).
+  - Umjetnost: lots of pictures: public-domain artworks from Wikimedia Commons ("Tko je naslikao ovu sliku?", style, period), Croatian art included.
+  - Ljudsko tijelo: pictures where they help (freely licensed diagrams, or SVG drawn for the project).
+  - Fizika and Matematika: SVG diagrams where they help (a circuit, a graph, a shape); questions answerable in your head in 20 s.
+  - Memeovi: text questions about memes (where it came from, the catchphrase, the year, the film or show behind it). A meme picture only if it is freely licensed on Commons or similar; most meme images are copyrighted, and the repo is public.
+  - Psihologija: well-established findings and terms, not pop myths.
+- More picture questions in the existing packs where a picture makes a better question (Povijest: people, buildings; Kultura i sport: athletes, venues; Znanost: animals, plants; Film i glazba: only freely licensed images), with licences in the `.sources.md` as in Task 22. Keep every pack inside the 5 MB limit.
+- Check: bundled pack and duplicate tests pass; the new packs show in the pack list; pack sizes noted.
