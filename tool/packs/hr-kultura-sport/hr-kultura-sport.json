@@ -116,6 +116,14 @@
     {"q": "Koji je engleski klub Dinamo pobijedio u finalu Kupa velesajamskih gradova 1967.?", "choices": ["Leeds United", "Liverpool", "Arsenal", "Chelsea"], "answer": 0},
     {"q": "Koji je hrvatski košarkaški klub bio prvak Europe 1985. i 1986.?", "choices": ["Jugoplastika", "Cibona", "Zadar", "Šibenka"], "answer": 1},
     {"q": "Koji je klub od 1989. do 1991. tri puta zaredom bio košarkaški prvak Europe?", "choices": ["Cibona", "Zadar", "Jugoplastika (Split)", "Partizan"], "answer": 2},
-    {"q": "U kojoj je disciplini Janica Kostelić osvojila zlato na Olimpijskim igrama u Torinu 2006.?", "choices": ["U slalomu", "U veleslalomu", "U superveleslalomu", "U kombinaciji"], "answer": 3}
+    {"q": "U kojoj je disciplini Janica Kostelić osvojila zlato na Olimpijskim igrama u Torinu 2006.?", "choices": ["U slalomu", "U veleslalomu", "U superveleslalomu", "U kombinaciji"], "answer": 3},
+    {"q": "Koji je hrvatski nogometaš na ovoj fotografiji?", "image": "photos/foto-01.webp", "choices": ["Ivan Rakitić", "Mateo Kovačić", "Luka Modrić", "Marcelo Brozović"], "answer": 2},
+    {"q": "Koja je hrvatska atletičarka na ovoj fotografiji?", "image": "photos/foto-02.webp", "choices": ["Blanka Vlašić", "Sara Kolak", "Sandra Perković", "Ana Šimić"], "answer": 0},
+    {"q": "Koja je hrvatska bacačica diska na ovoj fotografiji?", "image": "photos/foto-03.webp", "choices": ["Sandra Perković", "Sara Kolak", "Marija Tolj", "Blanka Vlašić"], "answer": 0},
+    {"q": "Koji je hrvatski tenisač na ovoj fotografiji?", "image": "photos/foto-04.webp", "choices": ["Ivo Karlović", "Borna Ćorić", "Marin Čilić", "Ivan Ljubičić"], "answer": 2},
+    {"q": "Koji je ovo stadion?", "image": "photos/foto-05.webp", "choices": ["Gradski vrt u Osijeku", "Maksimir u Zagrebu", "Poljud u Splitu", "Rujevica u Rijeci"], "answer": 2},
+    {"q": "Koja se viteška igra vidi na ovoj fotografiji?", "image": "photos/foto-06.webp", "choices": ["Moreška", "Kumpanija", "Trka na prstenac", "Sinjska alka"], "answer": 3},
+    {"q": "Kako se zove ovaj ukrašeni kolač iz sjeverne Hrvatske?", "image": "photos/foto-07.webp", "choices": ["Licitar", "Kroštula", "Bučnica", "Paprenjak"], "answer": 0},
+    {"q": "Koji se pokladni ophodnici vide na ovoj fotografiji?", "image": "photos/foto-08.webp", "choices": ["Krampusi", "Zvončari", "Bušari", "Kurenti"], "answer": 1}
   ]
 }

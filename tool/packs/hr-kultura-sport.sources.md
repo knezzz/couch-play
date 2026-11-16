@@ -8,6 +8,14 @@ Task 21 review of the 43: 42 kept, 1 fixed. Q13 used to ask the year Marulić wr
 hr-povijest; it now asks where Judita was first printed (Venice, 1521). Q5 is settled: UNESCO's Croatia page lists
 ojkanje (2010) as the only Croatian item on the urgent safeguarding list. Q18's hkv.hr source returned 403; the line
 is confirmed on matica.hr.
+115. https://hr.wikipedia.org/wiki/Luka_Modri%C4%87 (states: nogomet)
+116. https://hr.wikipedia.org/wiki/Blanka_Vla%C5%A1i%C4%87 (states: osaka07 d9a blanka vlašić.jpg)
+117. https://hr.wikipedia.org/wiki/Sandra_Perkovi%C4%87 (states: sandra perković doha 2015.jpg)
+118. https://hr.wikipedia.org/wiki/Marin_%C4%8Cili%C4%87 (states: cilic mcm22)
+119. https://hr.wikipedia.org/wiki/Stadion_Poljud (states: aerial view of poljud stadium in 2024.jpg, split)
+120. https://hr.wikipedia.org/wiki/Sinjska_alka (states: alkar 2 - cropped.jpg)
+121. https://hr.wikipedia.org/wiki/Licitar (states: licitari.jpg)
+122. https://hr.wikipedia.org/wiki/Zvon%C4%8Dari (states: zvoncari viskovo 2008 9.jpg)
 
 ## Dropped and why
 
@@ -152,3 +160,16 @@ is confirmed on matica.hr.
 112. 2 FIBA European Champions Cups (1985, 1986): https://en.wikipedia.org/wiki/KK_Cibona
 113. European Champions Cup three consecutive years 1989–1991: https://en.wikipedia.org/wiki/KK_Split
 114. Torino 2006: zlato u kombinaciji, srebro u superveleslalomu: https://hr.wikipedia.org/wiki/Janica_Kostelić
+
+## Photo questions (Task 28)
+
+Each image keeps its own licence (author, licence, file page). Changes: resized (at most 1280 px on the long side) and saved as WebP.
+
+115. photos/foto-01.webp: Luka Modrić (Commons file: Luka Modric Croatia v Portugal). Bryan Berlin, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Luka_Modric_Croatia_v_Portugal_2_July_2026-055.jpg (resized, WebP)
+116. photos/foto-02.webp: Blanka Vlašić. Eckhard Pecher (Arcimboldo), CC BY 2.5, https://commons.wikimedia.org/wiki/File:Osaka07_D9A_Blanka_Vla%C5%A1i%C4%87.jpg (resized, WebP)
+117. photos/foto-03.webp: Sandra Perković. Doha Stadium Plus Qatar from Doha, Qatar, CC BY 2.0, https://commons.wikimedia.org/wiki/File:Sandra_Perkovi%C4%87_Doha_2015.jpg (cropped to remove a name, resized, WebP)
+118. photos/foto-04.webp: Marin Čilić. si.robi, CC BY-SA 2.0, https://commons.wikimedia.org/wiki/File:Cilic_MCM22_(22)_(52036669749).jpg (resized, WebP)
+119. photos/foto-05.webp: Stadion Poljud. Quintin Soloviev, CC BY 4.0, https://commons.wikimedia.org/wiki/File:Aerial_view_of_Poljud_Stadium_in_2024.jpg (resized, WebP)
+120. photos/foto-06.webp: Sinjska alka. User:PJL, CC BY-SA 2.5, https://commons.wikimedia.org/wiki/File:Alkar_2_-_cropped.jpg (resized, WebP)
+121. photos/foto-07.webp: Licitar. SpeedyGonsales, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Licitari.jpg (resized, WebP)
+122. photos/foto-08.webp: Zvončari. Roberta F., CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Zvoncari_viskovo_2008_9.jpg (resized, WebP)
