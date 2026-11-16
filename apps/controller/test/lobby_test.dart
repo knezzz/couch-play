@@ -465,6 +465,49 @@ void settingsTests() {
       expect(find.text(Strings.seconds(25)), findsOneWidget);
     });
 
+    testWidgets('the host picks a Curve mode; the rest of the settings go along', (
+      t,
+    ) async {
+      const s = GameSettings(quizSeconds: 30, curveMode: CurveMode.peaceful);
+      final c = await open(t, s, 0);
+      for (final m in CurveMode.values) {
+        final b = find.text(Strings.curveMode(m));
+        await t.ensureVisible(b);
+        await t.tap(b);
+        final sent = (c.sent.last as SetSettings).settings;
+        expect(sent.curveMode, m);
+        expect(sent.quizSeconds, 30);
+      }
+    });
+
+    testWidgets('a stepper keeps the chosen Curve mode', (t) async {
+      final c = await open(t, const GameSettings(curveMode: CurveMode.chaos), 0);
+      await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
+      expect((c.sent.last as SetSettings).settings.curveMode, CurveMode.chaos);
+    });
+
+    testWidgets('a guest sees only the current mode, and cannot change it', (
+      t,
+    ) async {
+      final c = await open(t, const GameSettings(curveMode: CurveMode.onlyYou), 1);
+      expect(find.text(Strings.curveMode(CurveMode.onlyYou)), findsOneWidget);
+      expect(find.text(Strings.curveMode(CurveMode.chaos)), findsNothing);
+      expect(c.sent.whereType<SetSettings>(), isEmpty);
+    });
+
+    testWidgets('mode rows are 56 px high and fit at 360 px', (t) async {
+      t.view.physicalSize = const Size(360, 640);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      await open(t, const GameSettings(), 0);
+      for (final m in CurveMode.values) {
+        await t.ensureVisible(find.text(Strings.curveMode(m)));
+        final row = find.ancestor(of: find.text(Strings.curveMode(m)), matching: find.byType(InkWell)).first;
+        expect(t.getSize(row).height, greaterThanOrEqualTo(56));
+      }
+      expect(t.takeException(), isNull);
+    });
+
     testWidgets('steppers stop at min and max', (t) async {
       final lo = await open(t, const GameSettings(quizSeconds: 10, quizQuestions: 5, revealSeconds: 2, curveCountdown: 1), 0);
       for (final l in [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds, Strings.curveCountdown]) {

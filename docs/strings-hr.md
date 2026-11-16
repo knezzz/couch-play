@@ -102,6 +102,11 @@ Informal "ti". `{x}` is filled in by the app.
 | quizQuestions | Broj pitanja | Number of questions | Postavke, label of the stepper (5-30) |
 | revealSeconds | Pauza između pitanja | Pause between questions | Postavke, label of the stepper (2-15 s) |
 | curveCountdown | Pauza prije runde | Pause before the round | Postavke, label of the Curve stepper (1-10 s) |
+| curveModeLabel | Način igre | Game mode | Postavke, heading above the Curve modes |
+| curveMode(chaos) | Kaos | Chaos (lots of power-ups) | Postavke, Curve mode option |
+| curveMode(balanced) | Uravnoteženo | Balanced (the normal game, default) | Postavke, Curve mode option |
+| curveMode(peaceful) | Mirno | Peaceful (no power-ups) | Postavke, Curve mode option |
+| curveMode(onlyYou) | Samo za tebe | Only for you (power-ups only for you) | Postavke, Curve mode option |
 | seconds(n) | n s | n s | Postavke, the value next to a stepper |
 | lessOf(label) | Manje: label | Less: label | accessibility label of a − button in Postavke |
 | moreOf(label) | Više: label | More: label | accessibility label of a + button in Postavke |

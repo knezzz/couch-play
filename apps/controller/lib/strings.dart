@@ -1,3 +1,5 @@
+import 'package:core/core.dart';
+
 /// Every user-facing text on the phone, in Croatian (informal "ti").
 /// Texts the TV sends (ErrorMsg, Waiting) are shown as received.
 abstract final class Strings {
@@ -38,6 +40,13 @@ abstract final class Strings {
   static const quizQuestions = 'Broj pitanja';
   static const revealSeconds = 'Pauza između pitanja';
   static const curveCountdown = 'Pauza prije runde';
+  static const curveModeLabel = 'Način igre';
+  static String curveMode(CurveMode m) => switch (m) {
+    CurveMode.chaos => 'Kaos',
+    CurveMode.balanced => 'Uravnoteženo',
+    CurveMode.peaceful => 'Mirno',
+    CurveMode.onlyYou => 'Samo za tebe',
+  };
   static String seconds(int n) => '$n s';
   static String lessOf(String label) => 'Manje: $label';
   static String moreOf(String label) => 'Više: $label';

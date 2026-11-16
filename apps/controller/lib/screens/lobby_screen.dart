@@ -376,11 +376,12 @@ class _Settings extends StatelessWidget {
   final VoidCallback onToggle;
   final void Function(GameSettings) onChange;
 
-  GameSettings _with({int? sec, int? qs, int? rev, int? cd}) => GameSettings(
+  GameSettings _with({int? sec, int? qs, int? rev, int? cd, CurveMode? mode}) => GameSettings(
     quizSeconds: sec ?? s.quizSeconds,
     quizQuestions: qs ?? s.quizQuestions,
     revealSeconds: rev ?? s.revealSeconds,
     curveCountdown: cd ?? s.curveCountdown,
+    curveMode: mode ?? s.curveMode,
   );
 
   @override
@@ -425,9 +426,50 @@ class _Settings extends StatelessWidget {
                 _row(Strings.revealSeconds, s.revealSeconds, 2, 15, 1, (v) => _with(rev: v)),
                 _group(Strings.curve),
                 _row(Strings.curveCountdown, s.curveCountdown, 1, 10, 1, (v) => _with(cd: v)),
+                _modes(),
               ],
             ),
           ),
+      ],
+    ),
+  );
+
+  Widget _modes() => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(Strings.curveModeLabel, style: const TextStyle(fontSize: 18)),
+        const SizedBox(height: 4),
+        // A guest sees only the chosen mode.
+        for (final m in CurveMode.values)
+          if (editable || m == s.curveMode)
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: editable ? () => onChange(_with(mode: m)) : null,
+              child: SizedBox(
+                height: 56,
+                child: Row(
+                  children: [
+                    Icon(
+                      m == s.curveMode ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                      size: 28,
+                      color: m == s.curveMode ? accent : muted,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        Strings.curveMode(m),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: m == s.curveMode ? FontWeight.w700 : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
       ],
     ),
   );
