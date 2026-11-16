@@ -131,8 +131,7 @@ Each image keeps its own licence (author, licence and file page below; "Public d
 
 1. photos/foto-01.webp: The Night Watch. Rembrandt, Public domain, https://commons.wikimedia.org/wiki/File:La_ronda_de_noche,_por_Rembrandt_van_Rijn.jpg (resized, WebP)
 2. photos/foto-02.webp: Las Meninas. Diego Velázquez, Public domain, https://commons.wikimedia.org/wiki/File:Las_Meninas,_by_Diego_Vel%C3%A1zquez,_from_Prado_in_Google_Earth.jpg (resized, WebP)
-3. photos/foto-03.webp: The Third of May 1808. El_Tres_de_Mayo,_by_Francisco_de_Goya,_from_Prado_in_Google_Earth.jpg: Francisco de Goya
-derivative work: Papa Lima Whiskey 2, Public domain, https://commons.wikimedia.org/wiki/File:El_Tres_de_Mayo,_by_Francisco_de_Goya,_from_Prado_thin_black_margin.jpg (resized, WebP)
+3. photos/foto-03.webp: The Third of May 1808. El_Tres_de_Mayo,_by_Francisco_de_Goya,_from_Prado_in_Google_Earth.jpg: Francisco de Goya derivative work: Papa Lima Whiskey 2, Public domain, https://commons.wikimedia.org/wiki/File:El_Tres_de_Mayo,_by_Francisco_de_Goya,_from_Prado_thin_black_margin.jpg (resized, WebP)
 4. photos/foto-04.webp: Liberty Leading the People. Eugène Delacroix, Public domain, https://commons.wikimedia.org/wiki/File:La_Libert%C3%A9_guidant_le_peuple_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_129_-_apr%C3%A8s_restauration_2024.jpg (resized, WebP)
 5. photos/foto-05.webp: The Kiss (Klimt). Gustav Klimt, Public domain, https://commons.wikimedia.org/wiki/File:The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg (cropped to remove the signature, resized, WebP)
 6. photos/foto-06.webp: The Last Supper (Leonardo). Leonardo da Vinci, Public domain, https://commons.wikimedia.org/wiki/File:The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg (resized, WebP)
