@@ -11,7 +11,7 @@ void main() {
       const StartGame(GameKind.curve, null),
       const Kick(3),
       const SetBots(4),
-      const SetSettings(GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3)),
+      const SetSettings(GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3, curveMode: CurveMode.chaos)),
       const Ping(123),
       const Welcome(1, 2, 'tok'),
       const LobbyState(
@@ -66,6 +66,7 @@ void main() {
     test('defaults', () {
       const d = GameSettings();
       expect([d.quizSeconds, d.quizQuestions, d.revealSeconds, d.curveCountdown], [20, 10, 4, 2]);
+      expect(d.curveMode, CurveMode.balanced);
     });
 
     test('clamped_snaps_to_the_steps_and_the_range', () {
@@ -75,6 +76,29 @@ void main() {
       expect(g(999, 999, 999, 999), const GameSettings(quizSeconds: 60, quizQuestions: 30, revealSeconds: 15, curveCountdown: 10));
       expect(g(22, 12, 4, 2), const GameSettings(quizSeconds: 20, quizQuestions: 10, revealSeconds: 4, curveCountdown: 2));
       expect(g(23, 13, 4, 2), const GameSettings(quizSeconds: 25, quizQuestions: 15, revealSeconds: 4, curveCountdown: 2));
+    });
+
+    test('clamped_keeps_the_mode', () {
+      for (final m in CurveMode.values) {
+        expect(GameSettings(curveMode: m, quizSeconds: 999).clamped().curveMode, m);
+      }
+    });
+
+    test('every_mode_round_trips_and_a_missing_mode_is_balanced_and_an_unknown_one_is_null', () {
+      for (final m in CurveMode.values) {
+        final msg = SetSettings(GameSettings(curveMode: m));
+        expect(Message.decode(msg.encode()), msg);
+      }
+      expect(
+          (Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}')
+                  as SetSettings)
+              .settings
+              .curveMode,
+          CurveMode.balanced);
+      expect(
+          Message.decode(
+              '{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"curveMode":"wild"}'),
+          isNull);
     });
 
     test('a_lobby_without_settings_decodes_to_the_defaults', () {

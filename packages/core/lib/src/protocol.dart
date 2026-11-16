@@ -38,6 +38,11 @@ class PlayerInfo with _JsonEq {
       };
 }
 
+/// How power-ups behave in a Curve match (the TV turns it into CurveConfig
+/// values): chaos = many, balanced = today's, peaceful = none, onlyYou = only
+/// the green (helpful) kinds.
+enum CurveMode { chaos, balanced, peaceful, onlyYou }
+
 /// What the host can set in the lobby. Seconds, or a count of questions.
 class GameSettings with _JsonEq {
   /// Time to answer a question: 10-60 in steps of 5.
@@ -51,17 +56,24 @@ class GameSettings with _JsonEq {
 
   /// Curve pause before each round: 1-10.
   final int curveCountdown;
+
+  /// Curve power-up mode.
+  final CurveMode curveMode;
   const GameSettings({
     this.quizSeconds = 20,
     this.quizQuestions = 10,
     this.revealSeconds = 4,
     this.curveCountdown = 2,
+    this.curveMode = CurveMode.balanced,
   });
   factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
       quizSeconds: j['quizSeconds'] as int,
       quizQuestions: j['quizQuestions'] as int,
       revealSeconds: j['revealSeconds'] as int,
-      curveCountdown: j['curveCountdown'] as int);
+      curveCountdown: j['curveCountdown'] as int,
+      curveMode: j['curveMode'] == null
+          ? CurveMode.balanced
+          : CurveMode.values.byName(j['curveMode'] as String));
 
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
@@ -72,6 +84,7 @@ class GameSettings with _JsonEq {
       quizQuestions: snap(quizQuestions, 5, 30, 5),
       revealSeconds: snap(revealSeconds, 2, 15, 1),
       curveCountdown: snap(curveCountdown, 1, 10, 1),
+      curveMode: curveMode,
     );
   }
 
@@ -81,6 +94,7 @@ class GameSettings with _JsonEq {
         'quizQuestions': quizQuestions,
         'revealSeconds': revealSeconds,
         'curveCountdown': curveCountdown,
+        'curveMode': curveMode.name,
       };
 }
 
