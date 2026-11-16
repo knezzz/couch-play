@@ -109,16 +109,16 @@ Informal "ti". `{x}` is filled in by the app.
 | gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | game card and details, one-line description |
 | gameBlurb(curve) | Vozi svoju krivulju i ne udari u druge. | Steer your curve and do not hit the others. | game card and details, one-line description |
 | watching(host, game) | host gleda: game | host is looking at: game | guest lobby, while the host has a game's details open |
-| quizSeconds | Vrijeme za odgovor | Time to answer | Postavke, label of the stepper (10-60 s) |
-| quizQuestions | Broj pitanja | Number of questions | Postavke, label of the stepper (5-30) |
-| revealSeconds | Pauza između pitanja | Pause between questions | Postavke, label of the stepper (2-15 s) |
-| curveCountdown | Pauza prije runde | Pause before the round | Postavke, label of the Curve stepper (1-10 s) |
-| curveModeLabel | Način igre | Game mode | Postavke, heading above the Curve modes |
-| curveMode(chaos) | Kaos | Chaos (lots of power-ups) | Postavke, Curve mode option |
-| curveMode(balanced) | Uravnoteženo | Balanced (the normal game, default) | Postavke, Curve mode option |
-| curveMode(peaceful) | Mirno | Peaceful (no power-ups) | Postavke, Curve mode option |
-| curveMode(onlyYou) | Samo za tebe | Only for you (power-ups only for you) | Postavke, Curve mode option |
-| seconds(n) | n s | n s | Postavke, the value next to a stepper |
+| quizSeconds | Vrijeme za odgovor | Time to answer | game details, label of the stepper (10-60 s) |
+| quizQuestions | Broj pitanja | Number of questions | game details, label of the stepper (5-30) |
+| revealSeconds | Pauza između pitanja | Pause between questions | game details, label of the stepper (2-15 s) |
+| curveCountdown | Pauza prije runde | Pause before the round | game details, label of the Curve stepper (1-10 s) |
+| curveModeLabel | Način igre | Game mode | game details, heading above the Curve modes |
+| curveMode(chaos) | Kaos | Chaos (lots of power-ups) | game details, Curve mode option |
+| curveMode(balanced) | Uravnoteženo | Balanced (the normal game, default) | game details, Curve mode option |
+| curveMode(peaceful) | Mirno | Peaceful (no power-ups) | game details, Curve mode option |
+| curveMode(onlyYou) | Samo za tebe | Only for you (power-ups only for you) | game details, Curve mode option |
+| seconds(n) | n s | n s | game details, the value next to a stepper |
 | lessOf(label) | Manje: label | Less: label | accessibility label of a − button in Postavke |
 | moreOf(label) | Više: label | More: label | accessibility label of a + button in Postavke |
 | others | Ostali · {n} | Others · {n} | lobby list header |

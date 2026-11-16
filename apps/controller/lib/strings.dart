@@ -34,8 +34,21 @@ abstract final class Strings {
   static String removeBody(String name) =>
       '$name izlazi iz igre i može se ponovno pridružiti sa svog mobitela.';
 
-  // Settings (host sets, guests read)
-  static const settings = 'Postavke';
+  // Games (host's carousel and details)
+  static const back = 'Natrag';
+  static const play = 'Igraj';
+  static String gameName(GameKind k) => switch (k) {
+    GameKind.quiz => quiz,
+    GameKind.curve => curve,
+  };
+  static String gameBlurb(GameKind k) => switch (k) {
+    GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
+    GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
+  };
+  static String watching(String? host, String game) =>
+      '${host ?? 'Domaćin'} gleda: $game';
+
+  // Settings (inside a game's details)
   static const quizSeconds = 'Vrijeme za odgovor';
   static const quizQuestions = 'Broj pitanja';
   static const revealSeconds = 'Pauza između pitanja';

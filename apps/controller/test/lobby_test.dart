@@ -32,10 +32,41 @@ Future<FakeConnection> _pump(
   Future<String?> Function(String token)? addPack,
 }) async {
   final c = FakeConnection();
+  // Tall, so the details' Igraj button is built; 360 px tests set their own size.
+  if (t.view.physicalSize.width > 400) t.view.physicalSize = const Size(390, 1600);
+  t.view.devicePixelRatio = 1;
+  addTearDown(t.view.reset);
   await t.pumpWidget(
     MaterialApp(home: LobbyScreen(c, l, me, addPack: addPack)),
   );
   return c;
+}
+
+LobbyState _sel(LobbyState l, GameKind? k) => LobbyState(
+  players: l.players,
+  packs: l.packs,
+  hostId: l.hostId,
+  settings: l.settings,
+  selected: k,
+);
+
+/// Taps a game card, checks the phone only asked, then plays the TV's answer
+/// (a LobbyState with that game selected).
+Future<void> _openGame(
+  WidgetTester t,
+  FakeConnection c,
+  LobbyState l,
+  GameKind k, {
+  Future<String?> Function(String token)? addPack,
+}) async {
+  final card = find.text(Strings.gameName(k)).first;
+  await t.ensureVisible(card);
+  await t.pumpAndSettle();
+  await t.tap(card);
+  expect(c.sent.last, SelectGame(k));
+  await t.pumpWidget(
+    MaterialApp(home: LobbyScreen(c, _sel(l, k), 0, addPack: addPack)),
+  );
 }
 
 void main() {
@@ -84,10 +115,71 @@ void main() {
     expect(c.sent, isEmpty);
   });
 
-  testWidgets('Curve button sends StartGame(curve)', (t) async {
+  testWidgets('a card opens details; Igraj starts that game', (t) async {
     final c = await _pump(t, _lobby(), 0);
-    await t.tap(find.text(Strings.curve));
+    expect(find.text(Strings.play), findsNothing); // carousel: nothing to start
+    expect(find.text(Strings.back), findsNothing);
+    await _openGame(t, c, _lobby(), GameKind.curve);
+    expect(find.text(Strings.back), findsOneWidget);
+    expect(c.sent.whereType<StartGame>(), isEmpty);
+    await t.tap(find.text(Strings.play));
     expect(c.sent.last, const StartGame(GameKind.curve, null));
+  });
+
+  testWidgets('quiz pack: the pick goes in SetSettings; Igraj sends no pack', (
+    t,
+  ) async {
+    const packs = [PackInfo('a', 'Zastave', 40), PackInfo('b', 'Sport', 30)];
+    final l = LobbyState(
+      hostId: 0,
+      packs: packs,
+      settings: const GameSettings(quizSeconds: 30, quizPackId: 'a'),
+      players: _lobby().players,
+    );
+    final c = await _pump(t, l, 0);
+    await _openGame(t, c, l, GameKind.quiz);
+    await t.tap(find.byType(DropdownButton<String>));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Sport (30)').last);
+    await t.pumpAndSettle();
+    final sent = (c.sent.last as SetSettings).settings;
+    expect(sent.quizPackId, 'b');
+    expect(sent.quizSeconds, 30);
+    await t.tap(find.text(Strings.play));
+    expect(c.sent.last, const StartGame(GameKind.quiz, null));
+  });
+
+  testWidgets('Back returns to the carousel without starting anything', (
+    t,
+  ) async {
+    final c = await _pump(t, _lobby(), 0);
+    await _openGame(t, c, _lobby(), GameKind.quiz);
+    await t.tap(find.text(Strings.back));
+    expect(c.sent.last, const SelectGame(null));
+    expect(c.sent.whereType<StartGame>(), isEmpty);
+    // The phone does not switch by itself: the TV's LobbyState decides.
+    expect(find.text(Strings.back), findsOneWidget);
+    await t.pumpWidget(MaterialApp(home: LobbyScreen(c, _lobby(), 0)));
+    expect(find.text(Strings.play), findsNothing);
+    expect(find.byIcon(Icons.quiz), findsOneWidget);
+  });
+
+  testWidgets('a guest has no cards to open and cannot start a game', (
+    t,
+  ) async {
+    final c = await _pump(t, _lobby(), 1);
+    expect(find.byIcon(Icons.quiz), findsNothing);
+    expect(find.text(Strings.play), findsNothing);
+    expect(c.sent, isEmpty);
+  });
+
+  testWidgets('a guest sees "<host> gleda: Kviz" when the TV reports a selection', (
+    t,
+  ) async {
+    await t.pumpWidget(MaterialApp(
+      home: LobbyScreen(FakeConnection(), _sel(_lobby(), GameKind.quiz), 1),
+    ));
+    expect(find.text(Strings.watching('P0', Strings.quiz)), findsOneWidget);
   });
 
   testWidgets(
@@ -321,7 +413,9 @@ void main() {
 
   testWidgets('only the host gets Add quiz pack', (t) async {
     Future<String?> pick(String _) async => null;
-    await _pump(t, _lobby(), 0, addPack: pick);
+    final c = await _pump(t, _lobby(), 0, addPack: pick);
+    expect(find.text(Strings.addPack), findsNothing); // not on the carousel
+    await _openGame(t, c, _lobby(), GameKind.quiz, addPack: pick);
     expect(find.text(Strings.addPack), findsOneWidget);
     await _pump(t, _lobby(), 1, addPack: pick);
     expect(find.text(Strings.addPack), findsNothing);
@@ -331,15 +425,13 @@ void main() {
     t,
   ) async {
     String? token;
-    await _pump(
-      t,
-      _lobby(),
-      0,
-      addPack: (tok) async {
-        token = tok;
-        return 'Added World Flags (40 questions).';
-      },
-    );
+    Future<String?> add(String tok) async {
+      token = tok;
+      return 'Added World Flags (40 questions).';
+    }
+
+    final c = await _pump(t, _lobby(), 0, addPack: add);
+    await _openGame(t, c, _lobby(), GameKind.quiz, addPack: add);
     await t.tap(find.text(Strings.addPack));
     await t.pump();
     await t.pump();
@@ -352,7 +444,9 @@ void main() {
     (t) async {
       var reply = "The pack isn't valid JSON.";
       String? next() => reply.isEmpty ? null : reply;
-      await _pump(t, _lobby(), 0, addPack: (_) async => next());
+      Future<String?> add(String _) async => next();
+      final c = await _pump(t, _lobby(), 0, addPack: add);
+      await _openGame(t, c, _lobby(), GameKind.quiz, addPack: add);
       await t.tap(find.text(Strings.addPack));
       await t.pump();
       await t.pump();
@@ -421,125 +515,123 @@ LobbyState _withSettings(GameSettings s, {int host = 0}) => LobbyState(
 );
 
 void settingsTests() {
-  group('Postavke', () {
-    Future<FakeConnection> open(WidgetTester t, GameSettings s, int me) async {
+  group('game settings in the details', () {
+    final quizLabels = [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds];
+    Future<FakeConnection> open(WidgetTester t, GameSettings s, GameKind k) async {
       // Tall enough that nothing is scrolled off; the 360 px test overrides this.
       if (t.view.physicalSize.width > 400) t.view.physicalSize = const Size(390, 1600);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
-      final c = await _pump(t, _withSettings(s), me);
-      await t.ensureVisible(find.text(Strings.settings));
-      await t.tap(find.text(Strings.settings));
-      await t.pump();
+      final l = _withSettings(s);
+      final c = await _pump(t, l, 0);
+      await _openGame(t, c, l, k);
       return c;
     }
 
-    testWidgets('host: a tap sends the whole settings with one field changed', (
-      t,
-    ) async {
+    Future<void> tapTip(WidgetTester t, String tip) async {
+      final b = find.byTooltip(tip);
+      await t.ensureVisible(b);
+      await t.tap(b, warnIfMissed: false);
+    }
+
+    testWidgets('each game shows only its own settings', (t) async {
+      await open(t, const GameSettings(), GameKind.curve);
+      expect(find.byTooltip(Strings.moreOf(Strings.curveCountdown)), findsOneWidget);
+      expect(find.byTooltip(Strings.moreOf(Strings.quizSeconds)), findsNothing);
+      await t.pumpWidget(const SizedBox());
+      await open(t, const GameSettings(), GameKind.quiz);
+      expect(find.byTooltip(Strings.moreOf(Strings.quizSeconds)), findsOneWidget);
+      expect(find.text(Strings.curveCountdown), findsNothing);
+    });
+
+    testWidgets('a quiz tap sends the whole settings with one field changed', (t) async {
       const s = GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3);
-      final c = await open(t, s, 0);
+      final c = await open(t, s, GameKind.quiz);
       final taps = {
-        Strings.moreOf(Strings.quizSeconds): const GameSettings(quizSeconds: 35, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3),
-        Strings.lessOf(Strings.quizQuestions): const GameSettings(quizSeconds: 30, quizQuestions: 10, revealSeconds: 6, curveCountdown: 3),
-        Strings.moreOf(Strings.revealSeconds): const GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 7, curveCountdown: 3),
-        Strings.lessOf(Strings.curveCountdown): const GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 2),
+        Strings.moreOf(Strings.quizSeconds): 35,
+        Strings.lessOf(Strings.quizQuestions): 10,
+        Strings.moreOf(Strings.revealSeconds): 7,
       };
-      for (final e in taps.entries) {
-        final b = find.byTooltip(e.key);
-        await t.ensureVisible(b);
-        await t.tap(b);
-        expect((c.sent.last as SetSettings).settings.toJson(), e.value.toJson(), reason: e.key);
+      final want = [
+        const GameSettings(quizSeconds: 35, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3),
+        const GameSettings(quizSeconds: 30, quizQuestions: 10, revealSeconds: 6, curveCountdown: 3),
+        const GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 7, curveCountdown: 3),
+      ];
+      var i = 0;
+      for (final tip in taps.keys) {
+        await tapTip(t, tip);
+        expect((c.sent.last as SetSettings).settings.toJson(), want[i++].toJson(), reason: tip);
       }
     });
 
-    testWidgets('the shown values come from LobbyState, not a local copy', (
-      t,
-    ) async {
-      final c = await open(t, const GameSettings(), 0);
-      await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
-      await t.pump();
-      expect(find.text(Strings.seconds(20)), findsOneWidget); // unchanged until the TV answers
-      // The TV's answer: a new LobbyState with the kept values.
-      await t.pumpWidget(MaterialApp(home: LobbyScreen(c, _withSettings(const GameSettings(quizSeconds: 25)), 0)));
-      expect(find.text(Strings.seconds(25)), findsOneWidget);
+    testWidgets('a stepper keeps the chosen quiz pack', (t) async {
+      final c = await open(t, const GameSettings(quizPackId: 'b'), GameKind.quiz);
+      await tapTip(t, Strings.moreOf(Strings.quizSeconds));
+      expect((c.sent.last as SetSettings).settings.quizPackId, 'b');
     });
 
-    testWidgets('the host picks a Curve mode; the rest of the settings go along', (
-      t,
-    ) async {
-      const s = GameSettings(quizSeconds: 30, curveMode: CurveMode.peaceful);
-      final c = await open(t, s, 0);
+    testWidgets('the Curve pause sends; a mode pick sends the rest along', (t) async {
+      final c = await open(t, const GameSettings(quizSeconds: 30, curveMode: CurveMode.peaceful), GameKind.curve);
+      await tapTip(t, Strings.moreOf(Strings.curveCountdown));
+      var sent = (c.sent.last as SetSettings).settings;
+      expect(sent.curveCountdown, 3);
+      expect(sent.curveMode, CurveMode.peaceful);
       for (final m in CurveMode.values) {
         final b = find.text(Strings.curveMode(m));
         await t.ensureVisible(b);
         await t.tap(b);
-        final sent = (c.sent.last as SetSettings).settings;
+        sent = (c.sent.last as SetSettings).settings;
         expect(sent.curveMode, m);
         expect(sent.quizSeconds, 30);
       }
     });
 
-    testWidgets('a stepper keeps the chosen Curve mode', (t) async {
-      final c = await open(t, const GameSettings(curveMode: CurveMode.chaos), 0);
-      await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
-      expect((c.sent.last as SetSettings).settings.curveMode, CurveMode.chaos);
+    testWidgets('the shown values come from LobbyState, not a local copy', (t) async {
+      final c = await open(t, const GameSettings(), GameKind.quiz);
+      await tapTip(t, Strings.moreOf(Strings.quizSeconds));
+      expect(find.text(Strings.seconds(20)), findsOneWidget); // unchanged until the TV answers
+      await t.pumpWidget(MaterialApp(home: LobbyScreen(c, _sel(_withSettings(const GameSettings(quizSeconds: 25)), GameKind.quiz), 0)));
+      expect(find.text(Strings.seconds(25)), findsOneWidget);
     });
 
-    testWidgets('a guest sees only the current mode, and cannot change it', (
-      t,
-    ) async {
-      final c = await open(t, const GameSettings(curveMode: CurveMode.onlyYou), 1);
-      expect(find.text(Strings.curveMode(CurveMode.onlyYou)), findsOneWidget);
-      expect(find.text(Strings.curveMode(CurveMode.chaos)), findsNothing);
-      expect(c.sent.whereType<SetSettings>(), isEmpty);
+    testWidgets('steppers stop at min and max', (t) async {
+      final lo = await open(t, const GameSettings(quizSeconds: 10, quizQuestions: 5, revealSeconds: 2), GameKind.quiz);
+      for (final l in quizLabels) {
+        await tapTip(t, Strings.lessOf(l));
+      }
+      expect(lo.sent.whereType<SetSettings>(), isEmpty);
+      await t.pumpWidget(const SizedBox());
+      final hi = await open(t, const GameSettings(quizSeconds: 60, quizQuestions: 30, revealSeconds: 15), GameKind.quiz);
+      for (final l in quizLabels) {
+        await tapTip(t, Strings.moreOf(l));
+      }
+      expect(hi.sent.whereType<SetSettings>(), isEmpty);
+      await t.pumpWidget(const SizedBox());
+      final cl = await open(t, const GameSettings(curveCountdown: 1), GameKind.curve);
+      await tapTip(t, Strings.lessOf(Strings.curveCountdown));
+      expect(cl.sent.whereType<SetSettings>(), isEmpty);
+      await t.pumpWidget(const SizedBox());
+      final ch = await open(t, const GameSettings(curveCountdown: 10), GameKind.curve);
+      await tapTip(t, Strings.moreOf(Strings.curveCountdown));
+      expect(ch.sent.whereType<SetSettings>(), isEmpty);
     });
 
-    testWidgets('mode rows are 56 px high and fit at 360 px', (t) async {
+    testWidgets('steppers and mode rows are 56 px and fit at 360 px', (t) async {
       t.view.physicalSize = const Size(360, 640);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
-      await open(t, const GameSettings(), 0);
+      await open(t, const GameSettings(), GameKind.quiz);
+      for (final l in quizLabels) {
+        await t.ensureVisible(find.byTooltip(Strings.moreOf(l)));
+        expect(t.getSize(find.byTooltip(Strings.moreOf(l))), const Size(56, 56));
+      }
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+      await open(t, const GameSettings(), GameKind.curve);
       for (final m in CurveMode.values) {
         await t.ensureVisible(find.text(Strings.curveMode(m)));
         final row = find.ancestor(of: find.text(Strings.curveMode(m)), matching: find.byType(InkWell)).first;
         expect(t.getSize(row).height, greaterThanOrEqualTo(56));
-      }
-      expect(t.takeException(), isNull);
-    });
-
-    testWidgets('steppers stop at min and max', (t) async {
-      final lo = await open(t, const GameSettings(quizSeconds: 10, quizQuestions: 5, revealSeconds: 2, curveCountdown: 1), 0);
-      for (final l in [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds, Strings.curveCountdown]) {
-        await t.ensureVisible(find.byTooltip(Strings.lessOf(l)));
-        await t.tap(find.byTooltip(Strings.lessOf(l)), warnIfMissed: false);
-      }
-      expect(lo.sent.whereType<SetSettings>(), isEmpty);
-      await t.pumpWidget(const SizedBox());
-      final hi = await open(t, const GameSettings(quizSeconds: 60, quizQuestions: 30, revealSeconds: 15, curveCountdown: 10), 0);
-      for (final l in [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds, Strings.curveCountdown]) {
-        await t.ensureVisible(find.byTooltip(Strings.moreOf(l)));
-        await t.tap(find.byTooltip(Strings.moreOf(l)), warnIfMissed: false);
-      }
-      expect(hi.sent.whereType<SetSettings>(), isEmpty);
-    });
-
-    testWidgets('a guest sees the values but has no steppers', (t) async {
-      final c = await open(t, const GameSettings(quizSeconds: 45), 1);
-      expect(find.text(Strings.seconds(45)), findsOneWidget);
-      expect(find.byTooltip(Strings.moreOf(Strings.quizSeconds)), findsNothing);
-      expect(find.byTooltip(Strings.lessOf(Strings.quizSeconds)), findsNothing);
-      expect(c.sent.whereType<SetSettings>(), isEmpty);
-    });
-
-    testWidgets('steppers are 56 px and fit at 360 px', (t) async {
-      t.view.physicalSize = const Size(360, 640);
-      t.view.devicePixelRatio = 1;
-      addTearDown(t.view.reset);
-      await open(t, const GameSettings(), 0);
-      for (final l in [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds, Strings.curveCountdown]) {
-        await t.ensureVisible(find.byTooltip(Strings.moreOf(l)));
-        expect(t.getSize(find.byTooltip(Strings.moreOf(l))), const Size(56, 56));
       }
       expect(t.takeException(), isNull);
     });

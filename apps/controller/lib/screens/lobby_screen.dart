@@ -28,9 +28,9 @@ class LobbyScreen extends StatefulWidget {
 }
 
 class _LobbyScreenState extends State<LobbyScreen> {
-  String? _packId;
   String? _packMessage;
-  bool _settingsOpen = false;
+  /// The TV decides what is open: a tap only asks, LobbyState.selected answers.
+  void _select(GameKind? k) => widget.conn.send(SelectGame(k));
 
   Future<void> _addPack() async {
     final msg = await widget.addPack!(widget.conn.token);
@@ -113,68 +113,47 @@ class _LobbyScreenState extends State<LobbyScreen> {
     if (ok == true) widget.conn.send(Kick(p.id));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l = widget.lobby;
-    final players = l.players;
-    final me = players.where((p) => p.id == widget.myId).firstOrNull;
-    final isHost = l.hostId == widget.myId;
-    final bots = players.where((p) => p.bot).length;
-    final host = players.where((p) => p.id == l.hostId).firstOrNull;
-    final packId = l.packs.any((p) => p.id == _packId)
-        ? _packId
-        : l.packs.firstOrNull?.id;
+  GameSettings _withPack(GameSettings s, String? id) => GameSettings(
+    quizSeconds: s.quizSeconds,
+    quizQuestions: s.quizQuestions,
+    revealSeconds: s.revealSeconds,
+    curveCountdown: s.curveCountdown,
+    curveMode: s.curveMode,
+    quizPackId: id,
+  );
 
-    final others = [
-      for (final p in players)
-        if (p.id != widget.myId) p,
-    ];
-
+  Widget _details(GameKind kind, LobbyState l, String? packId) {
+    final s = l.settings;
+    void change(GameSettings n) => widget.conn.send(SetSettings(n));
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
           children: [
-            if (me != null) _MyChip(me, host: isHost),
-            if (!isHost) ...[
-              const SizedBox(height: 16),
-              Text(
-                Strings.waitingForHost(host?.name),
-                style: const TextStyle(fontSize: 20, color: muted),
-              ),
-            ],
-            if (isHost) ...[
-              const SizedBox(height: 24),
-              const Text(
-                Strings.pickGame,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: muted,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(0, 56),
+                  foregroundColor: accent,
+                  textStyle: const TextStyle(fontSize: 20),
                 ),
+                onPressed: () => _select(null),
+                icon: const Icon(Icons.arrow_back, size: 28),
+                label: const Text(Strings.back),
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () =>
-                          widget.conn.send(StartGame(GameKind.quiz, packId)),
-                      child: const Text(Strings.quiz),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: textColor),
-                      onPressed: () => widget.conn.send(
-                        const StartGame(GameKind.curve, null),
-                      ),
-                      child: const Text(Strings.curve),
-                    ),
-                  ),
-                ],
-              ),
+            ),
+            Text(
+              Strings.gameName(kind),
+              style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              Strings.gameBlurb(kind),
+              style: const TextStyle(fontSize: 20, color: muted, height: 1.4),
+            ),
+            const SizedBox(height: 16),
+            if (kind == GameKind.quiz) ...[
               if (l.packs.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 const Text(
@@ -205,7 +184,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                             ),
                           ),
                       ],
-                      onChanged: (v) => setState(() => _packId = v),
+                      onChanged: (v) => change(_withPack(s, v)),
                     ),
                   ),
                 ),
@@ -237,6 +216,68 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     ),
                   ),
               ],
+            ],
+            _GameSettings(kind, s, onChange: change),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () => widget.conn.send(StartGame(kind, null)),
+              child: const Text(Strings.play),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = widget.lobby;
+    final players = l.players;
+    final me = players.where((p) => p.id == widget.myId).firstOrNull;
+    final isHost = l.hostId == widget.myId;
+    final bots = players.where((p) => p.bot).length;
+    final host = players.where((p) => p.id == l.hostId).firstOrNull;
+    final packId = l.packs.any((p) => p.id == l.settings.quizPackId)
+        ? l.settings.quizPackId
+        : l.packs.firstOrNull?.id;
+
+    final others = [
+      for (final p in players)
+        if (p.id != widget.myId) p,
+    ];
+
+    final kind = l.selected;
+    if (isHost && kind != null) {
+      return _details(kind, l, packId);
+    }
+
+    return Scaffold(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          children: [
+            if (me != null) _MyChip(me, host: isHost),
+            if (!isHost) ...[
+              const SizedBox(height: 16),
+              Text(
+                l.selected == null
+                    ? Strings.waitingForHost(host?.name)
+                    : Strings.watching(host?.name, Strings.gameName(l.selected!)),
+                style: const TextStyle(fontSize: 20, color: muted),
+              ),
+            ],
+            if (isHost) ...[
+              const SizedBox(height: 24),
+              const Text(
+                Strings.pickGame,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: muted,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _Carousel(onPick: _select),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
@@ -284,14 +325,6 @@ class _LobbyScreenState extends State<LobbyScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: 16),
-            _Settings(
-              l.settings,
-              open: _settingsOpen,
-              editable: isHost,
-              onToggle: () => setState(() => _settingsOpen = !_settingsOpen),
-              onChange: (s) => widget.conn.send(SetSettings(s)),
-            ),
             const SizedBox(height: 20),
             Text(
               Strings.others(others.length),
@@ -361,31 +394,27 @@ class _LobbyScreenState extends State<LobbyScreen> {
   }
 }
 
-/// Collapsed by default so it does not crowd the host lobby. Shows what the TV
-/// last sent; a tap only sends, the next LobbyState changes the number.
-class _Settings extends StatelessWidget {
-  const _Settings(
-    this.s, {
-    required this.open,
-    required this.editable,
-    required this.onToggle,
-    required this.onChange,
-  });
+/// One game's settings, always shown. The host's tap only sends; the next
+/// LobbyState changes the number.
+class _GameSettings extends StatelessWidget {
+  const _GameSettings(this.kind, this.s, {required this.onChange});
+  final GameKind kind;
   final GameSettings s;
-  final bool open, editable;
-  final VoidCallback onToggle;
   final void Function(GameSettings) onChange;
 
-  GameSettings _with({int? sec, int? qs, int? rev, int? cd, CurveMode? mode}) => GameSettings(
-    quizSeconds: sec ?? s.quizSeconds,
-    quizQuestions: qs ?? s.quizQuestions,
-    revealSeconds: rev ?? s.revealSeconds,
-    curveCountdown: cd ?? s.curveCountdown,
-    curveMode: mode ?? s.curveMode,
-  );
+  GameSettings _with({int? sec, int? qs, int? rev, int? cd, CurveMode? mode}) =>
+      GameSettings(
+        quizSeconds: sec ?? s.quizSeconds,
+        quizQuestions: qs ?? s.quizQuestions,
+        revealSeconds: rev ?? s.revealSeconds,
+        curveCountdown: cd ?? s.curveCountdown,
+        curveMode: mode ?? s.curveMode,
+        quizPackId: s.quizPackId,
+      );
 
   @override
   Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
     decoration: BoxDecoration(
       color: surface,
       borderRadius: BorderRadius.circular(16),
@@ -393,43 +422,14 @@ class _Settings extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onToggle,
-          child: SizedBox(
-            height: 56,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      Strings.settings,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Icon(open ? Icons.expand_less : Icons.expand_more, size: 28),
-                ],
-              ),
-            ),
-          ),
-        ),
-        if (open)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _group(Strings.quiz),
-                _row(Strings.quizSeconds, s.quizSeconds, 10, 60, 5, (v) => _with(sec: v)),
-                _row(Strings.quizQuestions, s.quizQuestions, 5, 30, 5, (v) => _with(qs: v), unit: false),
-                _row(Strings.revealSeconds, s.revealSeconds, 2, 15, 1, (v) => _with(rev: v)),
-                _group(Strings.curve),
-                _row(Strings.curveCountdown, s.curveCountdown, 1, 10, 1, (v) => _with(cd: v)),
-                _modes(),
-              ],
-            ),
-          ),
+        if (kind == GameKind.quiz) ...[
+          _row(Strings.quizSeconds, s.quizSeconds, 10, 60, 5, (v) => _with(sec: v)),
+          _row(Strings.quizQuestions, s.quizQuestions, 5, 30, 5, (v) => _with(qs: v), unit: false),
+          _row(Strings.revealSeconds, s.revealSeconds, 2, 15, 1, (v) => _with(rev: v)),
+        ] else ...[
+          _row(Strings.curveCountdown, s.curveCountdown, 1, 10, 1, (v) => _with(cd: v)),
+          _modes(),
+        ],
       ],
     ),
   );
@@ -439,46 +439,36 @@ class _Settings extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(Strings.curveModeLabel, style: const TextStyle(fontSize: 18)),
+        const Text(Strings.curveModeLabel, style: TextStyle(fontSize: 18)),
         const SizedBox(height: 4),
-        // A guest sees only the chosen mode.
         for (final m in CurveMode.values)
-          if (editable || m == s.curveMode)
-            InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: editable ? () => onChange(_with(mode: m)) : null,
-              child: SizedBox(
-                height: 56,
-                child: Row(
-                  children: [
-                    Icon(
-                      m == s.curveMode ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                      size: 28,
-                      color: m == s.curveMode ? accent : muted,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        Strings.curveMode(m),
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: m == s.curveMode ? FontWeight.w700 : FontWeight.w400,
-                        ),
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => onChange(_with(mode: m)),
+            child: SizedBox(
+              height: 56,
+              child: Row(
+                children: [
+                  Icon(
+                    m == s.curveMode ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                    size: 28,
+                    color: m == s.curveMode ? accent : muted,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      Strings.curveMode(m),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: m == s.curveMode ? FontWeight.w700 : FontWeight.w400,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
       ],
-    ),
-  );
-
-  Widget _group(String t) => Padding(
-    padding: const EdgeInsets.only(top: 8, bottom: 4),
-    child: Text(
-      t,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: muted),
     ),
   );
 
@@ -499,27 +489,77 @@ class _Settings extends StatelessWidget {
         const SizedBox(height: 4),
         Row(
           children: [
-            if (editable)
-              _Stepper(
-                tooltip: Strings.lessOf(label),
-                icon: Icons.remove,
-                onPressed: value - step >= min ? () => onChange(make(value - step)) : null,
-              ),
+            _Stepper(
+              tooltip: Strings.lessOf(label),
+              icon: Icons.remove,
+              onPressed: value - step >= min ? () => onChange(make(value - step)) : null,
+            ),
             Expanded(
               child: Text(
                 unit ? Strings.seconds(value) : '$value',
-                textAlign: editable ? TextAlign.center : TextAlign.start,
+                textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
             ),
-            if (editable)
-              _Stepper(
-                tooltip: Strings.moreOf(label),
-                icon: Icons.add,
-                onPressed: value + step <= max ? () => onChange(make(value + step)) : null,
-              ),
+            _Stepper(
+              tooltip: Strings.moreOf(label),
+              icon: Icons.add,
+              onPressed: value + step <= max ? () => onChange(make(value + step)) : null,
+            ),
           ],
         ),
+      ],
+    ),
+  );
+}
+
+/// Swipeable big cards; a tap opens that game's details.
+class _Carousel extends StatelessWidget {
+  const _Carousel({required this.onPick});
+  final void Function(GameKind) onPick;
+
+  static const _icons = {GameKind.quiz: Icons.quiz, GameKind.curve: Icons.timeline};
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 220,
+    child: PageView(
+      padEnds: false,
+      controller: PageController(viewportFraction: 0.82),
+      children: [
+        for (final k in GameKind.values)
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Material(
+              color: surface,
+              borderRadius: BorderRadius.circular(24),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(24),
+                onTap: () => onPick(k),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(_icons[k], size: 56, color: accent),
+                      const Spacer(),
+                      Text(
+                        Strings.gameName(k),
+                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        Strings.gameBlurb(k),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 18, color: muted),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     ),
   );
