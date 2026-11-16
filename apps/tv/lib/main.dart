@@ -20,6 +20,7 @@ import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/quiz_screen.dart';
 import 'ui/tv_theme.dart';
+import 'sound/audio_sfx.dart';
 import 'strings.dart';
 
 const _perf = bool.fromEnvironment('PERF');
@@ -81,6 +82,7 @@ class _TvAppState extends State<TvApp> {
   }
 
   Future<void> _start() async {
+    AudioSfx.load().then((sfx) => _session.sfx = sfx); // never throws; silent if it fails
     try {
       final zip = await rootBundle.load('assets/controller.zip');
       final support = await getApplicationSupportDirectory();

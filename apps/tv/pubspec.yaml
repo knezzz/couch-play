@@ -42,6 +42,7 @@ dependencies:
   path_provider: ^2.1.6
   qr_flutter: ^4.1.0
   flutter_svg: ^2.4.0
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,7 @@ flutter:
   assets:
     - assets/controller.zip
     - assets/packs/
+    - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
