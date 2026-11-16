@@ -32,6 +32,16 @@ abstract final class Strings {
   static String removeBody(String name) =>
       '$name izlazi iz igre i može se ponovno pridružiti sa svog mobitela.';
 
+  // Settings (host sets, guests read)
+  static const settings = 'Postavke';
+  static const quizSeconds = 'Vrijeme za odgovor';
+  static const quizQuestions = 'Broj pitanja';
+  static const revealSeconds = 'Pauza između pitanja';
+  static const curveCountdown = 'Pauza prije runde';
+  static String seconds(int n) => '$n s';
+  static String lessOf(String label) => 'Manje: $label';
+  static String moreOf(String label) => 'Više: $label';
+
   // Pack upload
   static const tvProblem = 'TV ima problem. Pokušaj ponovno.';
   static const tvUnreachable =

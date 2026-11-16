@@ -97,6 +97,14 @@ Informal "ti". `{x}` is filled in by the app.
 | bots | Roboti | Bots | lobby, stepper label |
 | fewerBots | Manje robota | Fewer bots | accessibility label of the − button |
 | moreBots | Više robota | More bots | accessibility label of the + button |
+| settings | Postavke | Settings | lobby, collapsible section header (host and guests) |
+| quizSeconds | Vrijeme za odgovor | Time to answer | Postavke, label of the stepper (10-60 s) |
+| quizQuestions | Broj pitanja | Number of questions | Postavke, label of the stepper (5-30) |
+| revealSeconds | Pauza između pitanja | Pause between questions | Postavke, label of the stepper (2-15 s) |
+| curveCountdown | Pauza prije runde | Pause before the round | Postavke, label of the Curve stepper (1-10 s) |
+| seconds(n) | n s | n s | Postavke, the value next to a stepper |
+| lessOf(label) | Manje: label | Less: label | accessibility label of a − button in Postavke |
+| moreOf(label) | Više: label | More: label | accessibility label of a + button in Postavke |
 | others | Ostali · {n} | Others · {n} | lobby list header |
 | away | (nije tu) | (away) | after a name whose phone is disconnected |
 | botTag | ROBOT | BOT | tag on a bot row |

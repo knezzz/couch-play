@@ -30,6 +30,7 @@ class LobbyScreen extends StatefulWidget {
 class _LobbyScreenState extends State<LobbyScreen> {
   String? _packId;
   String? _packMessage;
+  bool _settingsOpen = false;
 
   Future<void> _addPack() async {
     final msg = await widget.addPack!(widget.conn.token);
@@ -283,6 +284,14 @@ class _LobbyScreenState extends State<LobbyScreen> {
                 ),
               ),
             ],
+            const SizedBox(height: 16),
+            _Settings(
+              l.settings,
+              open: _settingsOpen,
+              editable: isHost,
+              onToggle: () => setState(() => _settingsOpen = !_settingsOpen),
+              onChange: (s) => widget.conn.send(SetSettings(s)),
+            ),
             const SizedBox(height: 20),
             Text(
               Strings.others(others.length),
@@ -350,6 +359,128 @@ class _LobbyScreenState extends State<LobbyScreen> {
       ),
     );
   }
+}
+
+/// Collapsed by default so it does not crowd the host lobby. Shows what the TV
+/// last sent; a tap only sends, the next LobbyState changes the number.
+class _Settings extends StatelessWidget {
+  const _Settings(
+    this.s, {
+    required this.open,
+    required this.editable,
+    required this.onToggle,
+    required this.onChange,
+  });
+  final GameSettings s;
+  final bool open, editable;
+  final VoidCallback onToggle;
+  final void Function(GameSettings) onChange;
+
+  GameSettings _with({int? sec, int? qs, int? rev, int? cd}) => GameSettings(
+    quizSeconds: sec ?? s.quizSeconds,
+    quizQuestions: qs ?? s.quizQuestions,
+    revealSeconds: rev ?? s.revealSeconds,
+    curveCountdown: cd ?? s.curveCountdown,
+  );
+
+  @override
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      color: surface,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onToggle,
+          child: SizedBox(
+            height: 56,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      Strings.settings,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Icon(open ? Icons.expand_less : Icons.expand_more, size: 28),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (open)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _group(Strings.quiz),
+                _row(Strings.quizSeconds, s.quizSeconds, 10, 60, 5, (v) => _with(sec: v)),
+                _row(Strings.quizQuestions, s.quizQuestions, 5, 30, 5, (v) => _with(qs: v), unit: false),
+                _row(Strings.revealSeconds, s.revealSeconds, 2, 15, 1, (v) => _with(rev: v)),
+                _group(Strings.curve),
+                _row(Strings.curveCountdown, s.curveCountdown, 1, 10, 1, (v) => _with(cd: v)),
+              ],
+            ),
+          ),
+      ],
+    ),
+  );
+
+  Widget _group(String t) => Padding(
+    padding: const EdgeInsets.only(top: 8, bottom: 4),
+    child: Text(
+      t,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: muted),
+    ),
+  );
+
+  Widget _row(
+    String label,
+    int value,
+    int min,
+    int max,
+    int step,
+    GameSettings Function(int) make, {
+    bool unit = true,
+  }) => Padding(
+    padding: const EdgeInsets.only(top: 8),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 18)),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            if (editable)
+              _Stepper(
+                tooltip: Strings.lessOf(label),
+                icon: Icons.remove,
+                onPressed: value - step >= min ? () => onChange(make(value - step)) : null,
+              ),
+            Expanded(
+              child: Text(
+                unit ? Strings.seconds(value) : '$value',
+                textAlign: editable ? TextAlign.center : TextAlign.start,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+              ),
+            ),
+            if (editable)
+              _Stepper(
+                tooltip: Strings.moreOf(label),
+                icon: Icons.add,
+                onPressed: value + step <= max ? () => onChange(make(value + step)) : null,
+              ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
 
 class _Stepper extends StatelessWidget {

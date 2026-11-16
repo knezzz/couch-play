@@ -39,6 +39,7 @@ Future<FakeConnection> _pump(
 }
 
 void main() {
+  settingsTests();
   testWidgets('host sees game, bots and kick controls; others do not', (
     t,
   ) async {
@@ -407,4 +408,97 @@ void main() {
       await t.pump(const Duration(seconds: 3));
     },
   );
+}
+
+LobbyState _withSettings(GameSettings s, {int host = 0}) => LobbyState(
+  hostId: host,
+  packs: const [],
+  settings: s,
+  players: const [
+    PlayerInfo(0, 'P0', 0, true, 0),
+    PlayerInfo(1, 'P1', 1, true, 0),
+  ],
+);
+
+void settingsTests() {
+  group('Postavke', () {
+    Future<FakeConnection> open(WidgetTester t, GameSettings s, int me) async {
+      // Tall enough that nothing is scrolled off; the 360 px test overrides this.
+      if (t.view.physicalSize.width > 400) t.view.physicalSize = const Size(390, 1600);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      final c = await _pump(t, _withSettings(s), me);
+      await t.ensureVisible(find.text(Strings.settings));
+      await t.tap(find.text(Strings.settings));
+      await t.pump();
+      return c;
+    }
+
+    testWidgets('host: a tap sends the whole settings with one field changed', (
+      t,
+    ) async {
+      const s = GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3);
+      final c = await open(t, s, 0);
+      final taps = {
+        Strings.moreOf(Strings.quizSeconds): const GameSettings(quizSeconds: 35, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3),
+        Strings.lessOf(Strings.quizQuestions): const GameSettings(quizSeconds: 30, quizQuestions: 10, revealSeconds: 6, curveCountdown: 3),
+        Strings.moreOf(Strings.revealSeconds): const GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 7, curveCountdown: 3),
+        Strings.lessOf(Strings.curveCountdown): const GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 2),
+      };
+      for (final e in taps.entries) {
+        final b = find.byTooltip(e.key);
+        await t.ensureVisible(b);
+        await t.tap(b);
+        expect((c.sent.last as SetSettings).settings.toJson(), e.value.toJson(), reason: e.key);
+      }
+    });
+
+    testWidgets('the shown values come from LobbyState, not a local copy', (
+      t,
+    ) async {
+      final c = await open(t, const GameSettings(), 0);
+      await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
+      await t.pump();
+      expect(find.text(Strings.seconds(20)), findsOneWidget); // unchanged until the TV answers
+      // The TV's answer: a new LobbyState with the kept values.
+      await t.pumpWidget(MaterialApp(home: LobbyScreen(c, _withSettings(const GameSettings(quizSeconds: 25)), 0)));
+      expect(find.text(Strings.seconds(25)), findsOneWidget);
+    });
+
+    testWidgets('steppers stop at min and max', (t) async {
+      final lo = await open(t, const GameSettings(quizSeconds: 10, quizQuestions: 5, revealSeconds: 2, curveCountdown: 1), 0);
+      for (final l in [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds, Strings.curveCountdown]) {
+        await t.ensureVisible(find.byTooltip(Strings.lessOf(l)));
+        await t.tap(find.byTooltip(Strings.lessOf(l)), warnIfMissed: false);
+      }
+      expect(lo.sent.whereType<SetSettings>(), isEmpty);
+      await t.pumpWidget(const SizedBox());
+      final hi = await open(t, const GameSettings(quizSeconds: 60, quizQuestions: 30, revealSeconds: 15, curveCountdown: 10), 0);
+      for (final l in [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds, Strings.curveCountdown]) {
+        await t.ensureVisible(find.byTooltip(Strings.moreOf(l)));
+        await t.tap(find.byTooltip(Strings.moreOf(l)), warnIfMissed: false);
+      }
+      expect(hi.sent.whereType<SetSettings>(), isEmpty);
+    });
+
+    testWidgets('a guest sees the values but has no steppers', (t) async {
+      final c = await open(t, const GameSettings(quizSeconds: 45), 1);
+      expect(find.text(Strings.seconds(45)), findsOneWidget);
+      expect(find.byTooltip(Strings.moreOf(Strings.quizSeconds)), findsNothing);
+      expect(find.byTooltip(Strings.lessOf(Strings.quizSeconds)), findsNothing);
+      expect(c.sent.whereType<SetSettings>(), isEmpty);
+    });
+
+    testWidgets('steppers are 56 px and fit at 360 px', (t) async {
+      t.view.physicalSize = const Size(360, 640);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      await open(t, const GameSettings(), 0);
+      for (final l in [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds, Strings.curveCountdown]) {
+        await t.ensureVisible(find.byTooltip(Strings.moreOf(l)));
+        expect(t.getSize(find.byTooltip(Strings.moreOf(l))), const Size(56, 56));
+      }
+      expect(t.takeException(), isNull);
+    });
+  });
 }
