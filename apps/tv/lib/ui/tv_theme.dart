@@ -1,3 +1,4 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 // Tokens from docs/design/couchplay-screens/canvas.json.
@@ -20,15 +21,33 @@ String grouped(int n) {
   return n < 0 ? '-$digits' : digits;
 }
 
-/// A player-colour dot, as in the scoreboards.
+/// A player-colour dot, as in the scoreboards. With a [character] (a core
+/// character id) the player's animal takes the dot's place, same size; [ring]
+/// then puts it on a white disc so it never melts into a tile of its own colour.
 class PlayerDot extends StatelessWidget {
-  const PlayerDot(this.color, {this.size = 40, this.ring = false, super.key});
+  const PlayerDot(this.color, {this.size = 40, this.ring = false, this.character = '', super.key});
   final Color color;
   final double size;
   final bool ring;
+  final String character;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    if (character.isNotEmpty) {
+      if (!ring) return CharacterFace(character, size, color);
+      final pad = size * 0.1;
+      return Container(
+        width: size,
+        height: size,
+        padding: EdgeInsets.all(pad),
+        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        child: CharacterFace(character, size - 2 * pad, color),
+      );
+    }
+    return _dot();
+  }
+
+  Widget _dot() => Container(
         width: size,
         height: size,
         decoration: BoxDecoration(

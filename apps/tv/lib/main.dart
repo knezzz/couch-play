@@ -155,6 +155,7 @@ class _TvAppState extends State<TvApp> {
       _gameSim = sim;
       _gameRound = _session.curveRound;
       _game = CurveGame(sim, playerColors,
+          characters: {for (final p in _session.playerInfos) p.colorIndex: p.character},
           onBeforeTick: () {
             _session.beforeTick();
             _session.bots!.tick();

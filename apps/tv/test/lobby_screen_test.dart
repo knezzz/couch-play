@@ -40,7 +40,47 @@ Future<void> _pump(
 
 double _fs(WidgetTester t, Finder f) => t.widget<Text>(f).style!.fontSize!;
 
+Finder _face(String id) => find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);
+
 void main() {
+  group('characters', () {
+    final withChars = [
+      for (var i = 0; i < 3; i++) PlayerInfo(i, 'P$i', i, true, 5 - i, character: characterIds[i]),
+    ];
+
+    testWidgets('each chip and scoreboard row shows the player\'s character, in a ring on the chip', (t) async {
+      await _pump(t, players: withChars);
+      for (var i = 0; i < 3; i++) {
+        expect(_face(characterIds[i]), findsNWidgets(2), reason: 'chip + scoreboard row of P$i');
+      }
+      final chip = find.ancestor(of: find.text('P0'), matching: find.byType(Container)).first;
+      expect(find.descendant(of: chip, matching: _face(characterIds[0])), findsOneWidget);
+      expect(t.widget<CharacterFace>(find.descendant(of: chip, matching: _face(characterIds[0]))).size,
+          greaterThanOrEqualTo(48), reason: 'big enough from the couch');
+    });
+
+    testWidgets('a player without a character keeps the colour dot', (t) async {
+      await _pump(t, players: const [PlayerInfo(0, 'Ana', 0, true, 3), PlayerInfo(1, 'Luka', 1, true, 1)]);
+      expect(find.byType(CharacterFace), findsNothing);
+    });
+
+    testWidgets('8 players with 16-character names and characters still fit, every face on screen', (t) async {
+      final eight = [
+        for (var i = 0; i < 8; i++)
+          PlayerInfo(i, 'Abcdefghijklmnop', i, true, 9 - i, bot: i > 5, character: characterIds[i]),
+      ];
+      await _pump(t, players: eight);
+      expect(t.takeException(), isNull);
+      for (var i = 0; i < 8; i++) {
+        final f = _face(characterIds[i]);
+        expect(f, findsNWidgets(2));
+        final r = t.getRect(f.first);
+        expect(r.right, lessThanOrEqualTo(1920));
+        expect(r.bottom, lessThanOrEqualTo(1080));
+      }
+    });
+  });
+
   group('the host\'s game card', () {
     final card = find.byKey(const ValueKey('game-card'));
     String text(WidgetTester t) => t

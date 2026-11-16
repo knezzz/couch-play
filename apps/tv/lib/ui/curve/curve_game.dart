@@ -9,10 +9,14 @@ import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, Te
 /// Runs [sim] on a fixed 60 Hz accumulator and draws trails and heads.
 /// The arena is scaled to fit the screen, letterboxed.
 class CurveGame extends FlameGame {
-  CurveGame(this.sim, this.colors, {this.onBeforeTick, this.onEvents, this.holdWhen});
+  CurveGame(this.sim, this.colors,
+      {this.onBeforeTick, this.onEvents, this.holdWhen, this.characters = const {}});
 
   final CurveSim sim;
   final List<Color> colors;
+
+  /// Player id -> character id; the countdown label shows it before the name.
+  final Map<int, String> characters;
   /// Called before every sim tick, e.g. `bots.tick`.
   final void Function()? onBeforeTick;
   final void Function(List<CurveEvent>)? onEvents;
@@ -162,9 +166,19 @@ class CurveGame extends FlameGame {
       maxLines: 1,
       ellipsis: '…',
     )..layout(maxWidth: arenaW / 4); // keeps clamp() below valid for any name
-    tp.paint(canvas,
-        Offset((x - tp.width / 2).clamp(0.0, arenaW - tp.width),
-            nameTop(y, gap, tp.height, heading, arenaH)));
+    final face = characters[id] ?? '';
+    // The face (as tall as the text) goes before the name; the pair stays centred.
+    final lead = face.isEmpty ? 0.0 : tp.height + 8;
+    final left = (x - (lead + tp.width) / 2).clamp(0.0, arenaW - lead - tp.width);
+    final top = nameTop(y, gap, tp.height, heading, arenaH);
+    if (face.isNotEmpty) {
+      canvas
+        ..save()
+        ..translate(left, top);
+      CharacterFace.paintOn(canvas, Size.square(tp.height), face, _color(id));
+      canvas.restore();
+    }
+    tp.paint(canvas, Offset(left + lead, top));
   }
 
   static const _green = Color(0xFF3DDC84), _red = Color(0xFFFF4D4D), _blue = Color(0xFF4DA6FF);

@@ -33,7 +33,42 @@ const _fourPlaces = [
   Placement(3, 4, 2960, 1),
 ];
 
+Finder _face(String id) => find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);
+
 void main() {
+  testWidgets('the winner, the others and tonight show each player\'s character', (t) async {
+    bigScreen(t);
+    final players = [
+      for (var i = 0; i < 4; i++) PlayerInfo(i, _four[i].name, _four[i].colorIndex, true, _four[i].sessionScore, character: characterIds[i]),
+    ];
+    await t.pumpWidget(app(_fourPlaces, players));
+    expect(t.takeException(), isNull);
+    final winner = find.byKey(const ValueKey('place-0'));
+    expect(find.descendant(of: winner, matching: _face(characterIds[0])), findsOneWidget);
+    for (var i = 1; i < 4; i++) {
+      expect(find.descendant(of: find.byKey(ValueKey('place-$i')), matching: _face(characterIds[i])), findsOneWidget);
+    }
+    for (var i = 0; i < 4; i++) {
+      expect(find.descendant(of: find.byKey(const ValueKey('tonight')), matching: _face(characterIds[i])), findsOneWidget);
+    }
+    await t.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets('8 players with characters fit', (t) async {
+    bigScreen(t);
+    final players = [
+      for (var i = 0; i < 8; i++)
+        PlayerInfo(i, 'WWWWWWWWWWWWWWWW$i', i, true, 10 - i, bot: i > 5, character: characterIds[i]),
+    ];
+    final order = [5, 2, 7, 0, 3, 1, 6, 4];
+    await t.pumpWidget(app([for (var i = 0; i < 8; i++) Placement(order[i], i + 1, 80000 - i * 5, 8 - i)], players));
+    expect(t.takeException(), isNull);
+    for (var i = 0; i < 8; i++) {
+      expect(_face(characterIds[i]), findsWidgets);
+    }
+    await t.pump(const Duration(seconds: 3));
+  });
+
   testWidgets('headline names the winner; label beside it', (t) async {
     bigScreen(t);
     await t.pumpWidget(app(_fourPlaces, _four));

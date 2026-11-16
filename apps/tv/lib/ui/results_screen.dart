@@ -189,6 +189,11 @@ class _PlaceRow extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(width: 120, child: Text(Strings.place(pl.place), maxLines: 1, softWrap: false)),
+              if (p != null && p!.character.isNotEmpty) ...[
+                const SizedBox(width: 12),
+                PlayerDot(playerColors[p!.colorIndex % playerColors.length],
+                    size: dense ? 56 : 72, ring: true, character: p!.character),
+              ],
               const SizedBox(width: 28),
               name,
               const SizedBox(width: 28),
@@ -217,7 +222,7 @@ class _PlaceRow extends StatelessWidget {
               width: 120,
               child: Text(Strings.place(pl.place), maxLines: 1, softWrap: false, style: const TextStyle(color: tvMuted)),
             ),
-            PlayerDot(playerColors[(p?.colorIndex ?? 0) % playerColors.length]),
+            PlayerDot(playerColors[(p?.colorIndex ?? 0) % playerColors.length], character: p?.character ?? ''),
             const SizedBox(width: 28),
             name,
             const SizedBox(width: 28),
@@ -249,7 +254,7 @@ class _Tonight extends StatelessWidget {
               SizedBox(height: byScore.length > 5 ? 8 : 20),
               Row(
                 children: [
-                  PlayerDot(playerColors[p.colorIndex % playerColors.length]),
+                  PlayerDot(playerColors[p.colorIndex % playerColors.length], character: p.character),
                   const SizedBox(width: 20),
                   Expanded(
                     child: Text(p.name,

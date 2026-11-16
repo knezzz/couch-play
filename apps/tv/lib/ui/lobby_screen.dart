@@ -229,6 +229,12 @@ class _Chip extends StatelessWidget {
           ),
           child: Row(
             children: [
+              if (p.character.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(right: 16, left: 0),
+                  child: PlayerDot(playerColors[p.colorIndex % playerColors.length],
+                      size: tight ? 48 : 64, ring: true, character: p.character),
+                ),
               if (host) const Padding(padding: EdgeInsets.only(right: 12), child: Icon(Icons.star, size: 44, color: tvInk)),
               Expanded(child: _Ink(p.name, ellipsis: true)),
               if (p.bot) const _Badge(Strings.badgeBot),
@@ -413,7 +419,7 @@ class _ScoreRow extends StatelessWidget {
                 width: 56,
                 child: Text('$rank', style: const TextStyle(fontSize: 40, color: tvMuted)),
               ),
-              PlayerDot(playerColors[p.colorIndex % playerColors.length]),
+              PlayerDot(playerColors[p.colorIndex % playerColors.length], character: p.character),
               const SizedBox(width: 24),
               Expanded(
                 child: Text(

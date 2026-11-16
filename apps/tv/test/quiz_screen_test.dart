@@ -33,7 +33,7 @@ QuizScreen _quiz({int? correct, bool svg = true, Map<int, int>? picks, Map<int, 
       correctIndex: correct,
       picks: picks ?? (correct == null ? const {} : const {0: 1, 1: 2, 2: 2}),
       points: points ?? const {0: 0, 1: 960, 2: 771, 3: 0},
-      players: [for (var i = 0; i < 4; i++) PlayerInfo(i, 'Player number $i', i, true, 0)],
+      players: [for (var i = 0; i < 4; i++) PlayerInfo(i, 'Player number $i', i, true, 0, character: characterIds[i])],
       totals: const {0: 0, 1: 2710, 2: 12480, 3: 0},
     );
 
@@ -44,7 +44,23 @@ Future<void> _pump(WidgetTester t, QuizScreen s) {
 
 double _fs(WidgetTester t, Finder f) => t.widget<Text>(f).style!.fontSize!;
 
+Finder _face(String id) => find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);
+
 void main() {
+  testWidgets('scores panel and reveal voters show the players\' characters', (t) async {
+    await _pump(t, _quiz(correct: 1));
+    expect(t.takeException(), isNull);
+    // Everyone is in the Scores panel.
+    for (var i = 0; i < 4; i++) {
+      expect(_face(characterIds[i]), findsWidgets, reason: 'player $i');
+    }
+    // Player 1 voted for choice 2 (picks 0:1, 1:2, 2:2): their face is a voter mark on a tile.
+    final tile2 = find.byKey(const ValueKey('tile-2'));
+    expect(find.descendant(of: tile2, matching: _face(characterIds[1])), findsOneWidget);
+    expect(find.descendant(of: tile2, matching: _face(characterIds[2])), findsOneWidget);
+    expect(find.descendant(of: tile2, matching: _face(characterIds[0])), findsNothing);
+  });
+
   group('question', () {
     testWidgets('header row: question N of M, pack title, answered count', (t) async {
       await _pump(t, _quiz());
@@ -148,8 +164,9 @@ void main() {
       for (final e in find.byType(PlayerDot).evaluate().where((e) => (e.widget as PlayerDot).ring)) {
         final box = (find.descendant(of: find.byWidget(e.widget), matching: find.byType(Container)).evaluate().first.widget as Container)
             .decoration! as BoxDecoration;
-        expect(box.border!.top.color, Colors.white);
-        expect(box.color!.a, 1.0);
+        // A colour dot has a white border; a character sits on a white disc.
+        expect(box.border?.top.color ?? box.color, Colors.white);
+        expect(box.border != null ? box.color!.a : 1.0, 1.0);
       }
     });
 

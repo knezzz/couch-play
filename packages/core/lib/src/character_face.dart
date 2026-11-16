@@ -1,3 +1,5 @@
+import 'dart:ui' show Canvas, Size;
+
 import 'package:flutter/widgets.dart';
 
 /// A player's animal, drawn (like [ShapeMark]) rather than typed or loaded: it
@@ -18,6 +20,10 @@ class CharacterFace extends StatelessWidget {
   };
 
   static bool hasArt(String id) => artIds.contains(id);
+
+  /// Paints the face straight onto a canvas (the Flame arena has no widgets).
+  static void paintOn(Canvas canvas, Size size, String id, Color color) =>
+      _FacePainter(id, color).paint(canvas, size);
 
   @override
   Widget build(BuildContext context) => CustomPaint(

@@ -313,7 +313,7 @@ class QuizScreen extends StatelessWidget {
       for (final p in _voters(i))
         Padding(
           padding: const EdgeInsets.only(left: 12),
-          child: PlayerDot(_color(p), size: size, ring: true),
+          child: PlayerDot(_color(p), size: size, ring: true, character: p.character),
         ),
     ],
   );
@@ -477,7 +477,7 @@ class QuizScreen extends StatelessWidget {
         ShapeMark(i, 30, _tileColors[i]),
         const SizedBox(width: 16),
         Expanded(child: _wrongAnswer(choices[i])),
-        _Voters([for (final p in _voters(i)) _color(p)]),
+        _Voters([for (final p in _voters(i)) _color(p)], [for (final p in _voters(i)) p.character]),
       ],
     ),
   );
@@ -544,7 +544,7 @@ class QuizScreen extends StatelessWidget {
           for (final p in byTotal) ...[
             Row(
               children: [
-                PlayerDot(_color(p)),
+                PlayerDot(_color(p), character: p.character),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Text(
@@ -613,8 +613,9 @@ class _PictureGuardState extends State<_PictureGuard> {
 /// Voter dots on a wrong tile (about 280 px of room): overlapped, and past 3
 /// the last one becomes "+N", so the answer keeps its room.
 class _Voters extends StatelessWidget {
-  const _Voters(this.colors);
+  const _Voters(this.colors, this.characters);
   final List<Color> colors;
+  final List<String> characters;
 
   static const _dot = 44.0, _step = 24.0, _max = 3;
 
@@ -634,7 +635,7 @@ class _Voters extends StatelessWidget {
             for (var i = 0; i < shown; i++)
               Positioned(
                 left: i * _step,
-                child: PlayerDot(colors[i], size: _dot, ring: true),
+                child: PlayerDot(colors[i], size: _dot, ring: true, character: characters[i]),
               ),
             if (more)
               Positioned(
