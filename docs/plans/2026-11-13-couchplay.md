@@ -789,3 +789,28 @@ The person: "Can we have host set the quiz duration and wait times between the r
 - [ ] **Step 3: Implement** core (protocol, `QuizRound`/`CurveConfig` already take these values), TV session, phone lobby UI; add the strings to the strings files and `docs/strings-hr.md`.
 - [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + the release web controller: set each value to its min and max and see it in play; a non-host phone sees the values but can't change them; fit at 360–390 px.
 - [ ] **Step 5: Commit** by path.
+
+---
+
+### Task 24: Curve modes and power-up changes (added 2026-11-16, user request)
+
+The person: "For curve add more modes (Chaos where a lot of powerups spawn, balanced current one, and peaceful with no powerups, or some with just powerups for you, stuff like that). Also speed down should be you only powerup, and speed up should speed up everybody else. Make the thickness powerup last a little longer."
+
+Builds on Task 23's host settings (same lobby settings area, same session-only rules).
+
+**Interfaces:**
+- Power-ups: `speed` (on you, green) becomes **speed up everyone else** (red); `slowOthers` (red) becomes **slow down you** (green). Rename the enum values to match (e.g. `speedOthers`, `slow`). Icons and colors follow (green = you, red = others); the active-effect indicators from Task 17 follow too.
+- Thin and fat last a little longer than the other effects (about 1.5× `effectSeconds`; the builder picks the value).
+- Curve mode, picked by the host in the lobby, applies from the next match:
+  - **Kaos:** power-ups spawn much more often, and more on the board at once.
+  - **Uravnoteženo:** today's rate. Default.
+  - **Mirno:** no power-ups.
+  - **Samo za tebe:** only green power-ups (slow you, thin, ghost) spawn.
+  The mode is a set of `CurveConfig` values (spawn interval, max on board, allowed kinds); the builder tunes Kaos so it is fun, not unplayable. Bots keep working in every mode.
+- Croatian names as above (the person may rename them); strings in the strings files and `docs/strings-hr.md`.
+
+- [ ] **Step 1: Failing tests:** the swapped speed/slow effects hit the right players; thin/fat last longer than the rest; Mirno spawns nothing; Samo za tebe spawns only green kinds; Kaos spawns more than Uravnoteženo over the same seeded time; the session passes the host's mode to the match; a non-host can't change it.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** core (config, kinds), TV (icons, indicators, session), phone (mode picker in the host settings).
+- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: each mode played with bots; the new speed/slow seen working with their colors and indicators; thin/fat run longer; Kaos frame times still fine.
+- [ ] **Step 5: Commit** by path. Kaos gets its own frame-time check on the real TV at the next session.

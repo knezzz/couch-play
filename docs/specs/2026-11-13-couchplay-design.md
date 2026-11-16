@@ -128,12 +128,20 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 - Simulation runs on the TV at a fixed 60 Hz tick; collision against a trail occupancy grid.
 - **Power-ups (user request, 2026-11-14, replaces "no power-ups in v1"):** icons appear on the board from time to
   time; the first line to drive over one triggers it for a few seconds. Seven kinds:
-  - on you: speed up, thin line, ghost (pass through trails, not walls)
-  - on everyone else: slow down, fat line
+  - on you: slow down, thin line, ghost (pass through trails, not walls)
+  - on everyone else: speed up, fat line
+
+  (Changed 2026-11-16, user request: slow down is now yours and speed up hits everyone else; the thin and fat lines
+  last a little longer than the other effects.)
   - on everyone: clear all trails, wrap (go through walls and come out the opposite side)
 
   Effects stack by restarting their timer. Exact timings, spawn rate and icons are left to the builder. The TV
   draws them; phones need nothing new.
+- **Curve modes (user request, 2026-11-16):** the host picks a mode in the lobby settings:
+  - Kaos: power-ups spawn often, many on the board at once
+  - Uravnoteženo: today's rate (the default)
+  - Mirno: no power-ups
+  - Samo za tebe: only the power-ups that act on the picker (green)
 - **Active power-ups are obvious (user request, 2026-11-14):** while an effect runs, the TV shows who has it and how
   long it has left. Wrap: a white border runs around the arena and shrinks as wrap runs out; when the border is
   gone, the walls are back. Effects on players: the power-up's icon, in its green/red/blue color, next to each

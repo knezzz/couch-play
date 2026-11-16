@@ -31,6 +31,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 21 | Croatian packs only, all as big as verified questions allow; pub-quiz/Potjera as a guide (person, 2026-11-15) | done (59588ed … 0b07659): 10 packs, ~1,245 questions, all sourced; 52 new Međimurje ones wait on the person | lead + content |
 | 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | app done on macOS (89c05ab, 335c62b); 20 Commons photos so far (geografija 18, medimurje 2); 11 world cities in zemljopis-svijeta (31 photos) | lead + content |
 | 23 | Host game settings: quiz time per question, questions per game, time between questions; Curve pause between rounds (person, 2026-11-16) | queued to lead | lead |
+| 24 | Curve modes (Kaos, Uravnoteženo, Mirno, Samo za tebe); speed up hits others, slow down is yours; thin/fat last longer (person, 2026-11-16) | queued to lead, after Task 23 | lead |
 
 ## Open questions for the person
 
@@ -234,3 +235,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   style only, all wording ours. A duplicate test guards the packs. Not done: a native read of ~850 new questions.
 - 2026-11-16: Person asked for host settings. Chosen: time per question, questions per game, time between questions,
   and the Curve pause between rounds (not the results hold). PM: session-only, ranges in plan Task 23; routed to lead.
+- 2026-11-16: Person: Curve modes (chaos / balanced / peaceful / only your power-ups), speed up on others and slow
+  down on you, thickness lasts longer. PM: both thin and fat ~1.5x; mode in Task 23's host settings. Task 24.
