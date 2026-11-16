@@ -117,12 +117,12 @@ void main() {
     final bots = Bots(sim, [0], Random(1));
     sim.tick(); // picks the ghost up
     expect(sim.hasEffect(0, PowerUpKind.ghost), isTrue);
-    sim.placePowerUp(PowerUpKind.speed, 790, 450);
+    sim.placePowerUp(PowerUpKind.slow, 790, 450);
     var picked = false;
     var maxOff = 0.0;
     for (var i = 0; i < 120 && !picked; i++) {
       bots.tick();
-      picked = sim.tick().any((e) => e is PickedUp && e.kind == PowerUpKind.speed);
+      picked = sim.tick().any((e) => e is PickedUp && e.kind == PowerUpKind.slow);
       maxOff = max(maxOff, (_head(sim, 0).y - 450).abs());
     }
     expect(picked, isTrue);
@@ -136,7 +136,7 @@ void main() {
       sim.place(0, 800, 450, 0);
       sim.place(1, 100, 100, 0);
       sim.place(2, 100, 800, 0);
-      sim.placePowerUp(PowerUpKind.speed, 800, 600); // straight below
+      sim.placePowerUp(PowerUpKind.slow, 800, 600); // straight below
       final bots = Bots(sim, [0], Random(seed));
       var picked = false;
       for (var i = 0; i < 150 && !picked; i++) {
@@ -200,7 +200,7 @@ void main() {
       sim.place(0, 1000, 700, 0);
       sim.place(1, 100, 100, 0);
       sim.place(2, 100, 800, 0);
-      sim.placePowerUp(PowerUpKind.speed, 1300, 860);
+      sim.placePowerUp(PowerUpKind.slow, 1300, 860);
       final bots = Bots(sim, [0], Random(seed));
       var last = _head(sim, 0).heading;
       var turning = false;
@@ -237,7 +237,7 @@ void main() {
       sim.place(0, 600, 450, 0);
       sim.place(1, 100, 100, 0);
       sim.place(2, 100, 800, 0);
-      sim.placePowerUp(PowerUpKind.speed, 750, 700);
+      sim.placePowerUp(PowerUpKind.slow, 750, 700);
       final bots = Bots(sim, [0], Random(seed));
       var picked = false;
       for (var i = 0; i < 360 && !picked && _head(sim, 0).alive; i++) {

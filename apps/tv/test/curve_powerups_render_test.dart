@@ -117,13 +117,13 @@ void main() {
     await tester.runAsync(() async {
       final sim = _Fx();
       sim.place(0, 800, 450, 0); // heading 0: icons at y = 410, going left
-      sim.fx[PowerUpKind.speed] = 1;
+      sim.fx[PowerUpKind.slow] = 1;
       var d = await _render(sim);
       const ring = 18 * 1.35;
       expect(_near(_at(d, 800, 410 - ring), _green), isTrue, reason: 'ring top');
       expect(_near(_at(d, 800 - ring, 410), _green), isTrue, reason: 'ring left, full');
 
-      sim.fx[PowerUpKind.speed] = 0.5; // right half left
+      sim.fx[PowerUpKind.slow] = 0.5; // right half left
       d = await _render(sim);
       expect(_near(_at(d, 800 + ring, 410), _green), isTrue, reason: 'right half stays');
       expect(_near(_at(d, 800 - ring, 410), _bg), isTrue, reason: 'left half drained');

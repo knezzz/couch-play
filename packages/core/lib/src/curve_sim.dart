@@ -38,7 +38,9 @@ class CurveConfig {
   final int powerUpMax;
 }
 
-enum PowerUpKind { speed, thin, ghost, slowOthers, fatOthers, clear, wrap }
+/// Green ones act on the picker (slow, thin, ghost), red ones on everyone else
+/// (speedOthers, fatOthers), blue ones on the board (clear, wrap).
+enum PowerUpKind { slow, thin, ghost, speedOthers, fatOthers, clear, wrap }
 
 class CurvePowerUp {
   const CurvePowerUp(this.id, this.kind, this.x, this.y);
@@ -96,8 +98,8 @@ class _Head {
 
   bool has(PowerUpKind k) => fx[k.index] > 0;
   double get speedFactor =>
-      (has(PowerUpKind.speed) ? _speedUp : 1) *
-      (has(PowerUpKind.slowOthers) ? _slowDown : 1);
+      (has(PowerUpKind.speedOthers) ? _speedUp : 1) *
+      (has(PowerUpKind.slow) ? _slowDown : 1);
   double get widthFactor =>
       (has(PowerUpKind.thin) ? 0.5 : 1) * (has(PowerUpKind.fatOthers) ? 2 : 1);
 }
@@ -162,7 +164,13 @@ class CurveSim {
     return _heads[playerId]?.has(kind) ?? false;
   }
 
-  int get _effectTicks => (config.effectSeconds * config.tickHz).round();
+  /// Thin and fat last this much longer than the other effects.
+  static const _longFactor = 1.5;
+
+  int _ticksFor(PowerUpKind k) => (config.effectSeconds *
+          (k == PowerUpKind.thin || k == PowerUpKind.fatOthers ? _longFactor : 1) *
+          config.tickHz)
+      .round();
 
   /// Time left on [kind] for [playerId], 1 (just picked up) down to 0; 0 when
   /// it isn't running, the player is unknown, or the kind is [PowerUpKind.clear]
@@ -171,11 +179,11 @@ class CurveSim {
   double effectLeft(int playerId, PowerUpKind kind) {
     if (kind == PowerUpKind.wrap) return wrapLeft;
     final ticks = _heads[playerId]?.fx[kind.index] ?? 0;
-    return ticks <= 0 ? 0 : ticks / _effectTicks;
+    return ticks <= 0 ? 0 : ticks / _ticksFor(kind);
   }
 
   /// The wrap fraction left, 1 down to 0 (0 when wrap is off).
-  double get wrapLeft => _wrapLeft <= 0 ? 0 : _wrapLeft / _effectTicks;
+  double get wrapLeft => _wrapLeft <= 0 ? 0 : _wrapLeft / _ticksFor(PowerUpKind.wrap);
 
   /// True once after a "clear" pickup or a round start, then false. Call it
   /// before [takeNewSegments] in the same frame: segments dropped at the clear
@@ -394,13 +402,13 @@ class CurveSim {
   }
 
   void _apply(_Head picker, PowerUpKind kind) {
-    final ticks = (config.effectSeconds * config.tickHz).round();
+    final ticks = _ticksFor(kind);
     switch (kind) {
-      case PowerUpKind.speed:
+      case PowerUpKind.slow:
       case PowerUpKind.thin:
       case PowerUpKind.ghost:
         picker.fx[kind.index] = ticks;
-      case PowerUpKind.slowOthers:
+      case PowerUpKind.speedOthers:
       case PowerUpKind.fatOthers:
         for (final h in _heads.values) {
           if (h != picker) h.fx[kind.index] = ticks;

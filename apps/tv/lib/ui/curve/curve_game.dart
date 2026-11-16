@@ -172,8 +172,8 @@ class CurveGame extends FlameGame {
 
   // Unit-size glyphs (radius 1), built once.
   static final Map<PowerUpKind, Path> _glyphs = {
-    PowerUpKind.speed: _chevrons(1),
-    PowerUpKind.slowOthers: _chevrons(-1),
+    PowerUpKind.slow: _chevrons(-1),
+    PowerUpKind.speedOthers: _chevrons(1),
     PowerUpKind.thin: Path()..addRect(const Rect.fromLTWH(-0.6, -0.05, 1.2, 0.1)),
     PowerUpKind.fatOthers: Path()..addRect(const Rect.fromLTWH(-0.6, -0.3, 1.2, 0.6)),
     PowerUpKind.ghost: Path()
@@ -211,8 +211,8 @@ class CurveGame extends FlameGame {
     ..lineTo(0.05 * dir, 0.45);
 
   static Color _powerUpColor(PowerUpKind k) => switch (k) {
-        PowerUpKind.speed || PowerUpKind.thin || PowerUpKind.ghost => _green,
-        PowerUpKind.slowOthers || PowerUpKind.fatOthers => _red,
+        PowerUpKind.slow || PowerUpKind.thin || PowerUpKind.ghost => _green,
+        PowerUpKind.speedOthers || PowerUpKind.fatOthers => _red,
         PowerUpKind.clear || PowerUpKind.wrap => _blue,
       };
 
@@ -256,10 +256,10 @@ class CurveGame extends FlameGame {
   /// Effect icons in arena units: radius, and how far beside the line they sit.
   static const effectIconRadius = 18.0, _effectSide = 40.0, _effectStep = 50.0;
   static const _effectKinds = [
-    PowerUpKind.speed,
+    PowerUpKind.slow,
     PowerUpKind.thin,
     PowerUpKind.ghost,
-    PowerUpKind.slowOthers,
+    PowerUpKind.speedOthers,
     PowerUpKind.fatOthers,
   ];
 

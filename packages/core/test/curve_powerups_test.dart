@@ -42,38 +42,57 @@ void _pickUp(CurveSim s, PowerUpKind k) {
 }
 
 void main() {
-  test('speed_moves_faster_then_expires', () {
+  test('thin_and_fat_last_one_and_a_half_times_as_long', () {
+    // 1 s effects = 60 ticks; thin and fat get 90, the rest 60.
+    final s = _sim();
+    _pickUp(s, PowerUpKind.thin);
+    _pickUp(s, PowerUpKind.slow);
+    s.placePowerUp(PowerUpKind.fatOthers, _head(s, 0).x, _head(s, 0).y);
+    s.tick();
+    expect(s.effectLeft(0, PowerUpKind.thin), closeTo(1 - 2 / 90, 0.001));
+    expect(s.effectLeft(1, PowerUpKind.fatOthers), 1.0);
+    _ticks(s, 60);
+    expect(s.hasEffect(0, PowerUpKind.slow), isFalse);
+    expect(s.hasEffect(0, PowerUpKind.thin), isTrue);
+    expect(s.hasEffect(1, PowerUpKind.fatOthers), isTrue);
+    _ticks(s, 30);
+    expect(s.hasEffect(0, PowerUpKind.thin), isFalse);
+    expect(s.hasEffect(1, PowerUpKind.fatOthers), isFalse);
+  });
+
+  test('slow_slows_you_down_then_expires', () {
     final s = _sim();
     final base = _travel(s, 0, 10);
-    _pickUp(s, PowerUpKind.speed);
-    expect(s.hasEffect(0, PowerUpKind.speed), isTrue);
-    expect(_travel(s, 0, 10), greaterThan(base * 1.4));
+    _pickUp(s, PowerUpKind.slow);
+    expect(s.hasEffect(0, PowerUpKind.slow), isTrue);
+    expect(_travel(s, 0, 10), lessThan(base * 0.7));
+    expect(_travel(s, 1, 10), closeTo(base, 0.01), reason: 'others unaffected');
     _ticks(s, 60);
-    expect(s.hasEffect(0, PowerUpKind.speed), isFalse);
+    expect(s.hasEffect(0, PowerUpKind.slow), isFalse);
     expect(_travel(s, 0, 10), closeTo(base, 0.01));
   });
 
   test('pickup_emits_event_and_removes_the_item', () {
     final s = _sim();
-    s.placePowerUp(PowerUpKind.speed, 800, 450);
+    s.placePowerUp(PowerUpKind.slow, 800, 450);
     expect(s.powerUps.length, 1);
     final events = s.tick();
     final picked = events.whereType<PickedUp>().toList();
     expect(picked.length, 1);
     expect(picked.single.playerId, 0);
-    expect(picked.single.kind, PowerUpKind.speed);
+    expect(picked.single.kind, PowerUpKind.slow);
     expect(s.powerUps, isEmpty);
   });
 
   test('first_head_to_arrive_gets_it_and_only_one_pickup_happens', () {
     final s = _sim();
     s.place(1, 800, 450, 0); // same spot as the subject
-    s.placePowerUp(PowerUpKind.speed, 800, 450);
+    s.placePowerUp(PowerUpKind.slow, 800, 450);
     final picked = s.tick().whereType<PickedUp>().toList();
     expect(picked.length, 1);
     final winner = picked.single.playerId;
-    expect(s.hasEffect(winner, PowerUpKind.speed), isTrue);
-    expect(s.hasEffect(winner == 0 ? 1 : 0, PowerUpKind.speed), isFalse);
+    expect(s.hasEffect(winner, PowerUpKind.slow), isTrue);
+    expect(s.hasEffect(winner == 0 ? 1 : 0, PowerUpKind.slow), isFalse);
   });
 
   test('thin_halves_the_painted_width_then_expires', () {
@@ -83,22 +102,22 @@ void main() {
     s.tick();
     final thin = s.takeNewSegments().firstWhere((g) => g.id == 0);
     expect(thin.width, 3);
-    _ticks(s, 60);
+    _ticks(s, 90);
     s.takeNewSegments();
     s.tick();
     expect(s.takeNewSegments().firstWhere((g) => g.id == 0).width, 6);
   });
 
-  test('slow_others_slows_everyone_but_the_picker', () {
+  test('speed_others_speeds_everyone_but_the_picker', () {
     final s = _sim();
     final base = _travel(s, 1, 10);
-    _pickUp(s, PowerUpKind.slowOthers);
-    expect(s.hasEffect(1, PowerUpKind.slowOthers), isTrue);
-    expect(s.hasEffect(0, PowerUpKind.slowOthers), isFalse);
-    expect(_travel(s, 1, 10), lessThan(base * 0.7));
+    _pickUp(s, PowerUpKind.speedOthers);
+    expect(s.hasEffect(1, PowerUpKind.speedOthers), isTrue);
+    expect(s.hasEffect(0, PowerUpKind.speedOthers), isFalse);
+    expect(_travel(s, 1, 10), greaterThan(base * 1.4));
     expect(_travel(s, 0, 10), closeTo(base, 0.01));
     _ticks(s, 60);
-    expect(s.hasEffect(1, PowerUpKind.slowOthers), isFalse);
+    expect(s.hasEffect(1, PowerUpKind.speedOthers), isFalse);
   });
 
   test('fat_others_widens_and_collides_wider_but_not_for_the_picker', () {
@@ -245,22 +264,22 @@ void main() {
 
   test('second_pickup_restarts_the_timer', () {
     final s = _sim(effectSeconds: 1); // 60 ticks
-    _pickUp(s, PowerUpKind.speed);
+    _pickUp(s, PowerUpKind.slow);
     _ticks(s, 40);
-    _pickUp(s, PowerUpKind.speed);
+    _pickUp(s, PowerUpKind.slow);
     _ticks(s, 30); // 71 ticks after the first pickup
-    expect(s.hasEffect(0, PowerUpKind.speed), isTrue);
+    expect(s.hasEffect(0, PowerUpKind.slow), isTrue);
     _ticks(s, 40);
-    expect(s.hasEffect(0, PowerUpKind.speed), isFalse);
+    expect(s.hasEffect(0, PowerUpKind.slow), isFalse);
   });
 
   test('effects_and_items_end_with_the_round', () {
     final s = _sim(effectSeconds: 20);
-    _pickUp(s, PowerUpKind.speed);
+    _pickUp(s, PowerUpKind.slow);
     _pickUp(s, PowerUpKind.wrap);
     s.placePowerUp(PowerUpKind.thin, 1000, 100);
     s.startRound();
-    expect(s.hasEffect(0, PowerUpKind.speed), isFalse);
+    expect(s.hasEffect(0, PowerUpKind.slow), isFalse);
     expect(s.powerUps, isEmpty);
     s.place(0, 1595, 450, 0);
     _ticks(s, 5);
@@ -308,32 +327,32 @@ void main() {
 
   test('effect_time_left_drains_to_zero', () {
     final s = _sim(); // 1 s effects = 60 ticks
-    expect(s.effectLeft(0, PowerUpKind.speed), 0);
-    _pickUp(s, PowerUpKind.speed);
-    expect(s.effectLeft(0, PowerUpKind.speed), 1.0);
+    expect(s.effectLeft(0, PowerUpKind.slow), 0);
+    _pickUp(s, PowerUpKind.slow);
+    expect(s.effectLeft(0, PowerUpKind.slow), 1.0);
     _ticks(s, 30);
-    expect(s.effectLeft(0, PowerUpKind.speed), closeTo(0.5, 0.02));
+    expect(s.effectLeft(0, PowerUpKind.slow), closeTo(0.5, 0.02));
     _ticks(s, 30);
-    expect(s.effectLeft(0, PowerUpKind.speed), 0);
-    expect(s.effectLeft(1, PowerUpKind.speed), 0, reason: 'only the picker had it');
-    expect(s.effectLeft(99, PowerUpKind.speed), 0, reason: 'unknown player');
+    expect(s.effectLeft(0, PowerUpKind.slow), 0);
+    expect(s.effectLeft(1, PowerUpKind.slow), 0, reason: 'only the picker had it');
+    expect(s.effectLeft(99, PowerUpKind.slow), 0, reason: 'unknown player');
   });
 
   test('others_effects_report_for_the_others_only', () {
     final s = _sim();
-    _pickUp(s, PowerUpKind.slowOthers);
-    expect(s.effectLeft(0, PowerUpKind.slowOthers), 0);
-    expect(s.effectLeft(1, PowerUpKind.slowOthers), 1.0);
-    expect(s.effectLeft(2, PowerUpKind.slowOthers), 1.0);
+    _pickUp(s, PowerUpKind.speedOthers);
+    expect(s.effectLeft(0, PowerUpKind.speedOthers), 0);
+    expect(s.effectLeft(1, PowerUpKind.speedOthers), 1.0);
+    expect(s.effectLeft(2, PowerUpKind.speedOthers), 1.0);
   });
 
   test('second_pickup_restarts_time_left', () {
     final s = _sim();
-    _pickUp(s, PowerUpKind.speed);
+    _pickUp(s, PowerUpKind.slow);
     _ticks(s, 40);
-    expect(s.effectLeft(0, PowerUpKind.speed), lessThan(0.4));
-    _pickUp(s, PowerUpKind.speed);
-    expect(s.effectLeft(0, PowerUpKind.speed), 1.0);
+    expect(s.effectLeft(0, PowerUpKind.slow), lessThan(0.4));
+    _pickUp(s, PowerUpKind.slow);
+    expect(s.effectLeft(0, PowerUpKind.slow), 1.0);
   });
 
   test('wrap_reports_everyone', () {
