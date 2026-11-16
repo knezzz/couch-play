@@ -11,6 +11,10 @@ void main() {
       const StartGame(GameKind.curve, null),
       const Kick(3),
       const SetBots(4),
+      const SelectGame(null),
+      const SelectGame(GameKind.quiz),
+      const SelectGame(GameKind.curve),
+      const SetSettings(GameSettings(quizPackId: 'hr-povijest')),
       const SetSettings(GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3, curveMode: CurveMode.chaos)),
       const Ping(123),
       const Welcome(1, 2, 'tok'),
@@ -27,6 +31,13 @@ void main() {
         packs: [],
         hostId: 1,
         settings: GameSettings(quizSeconds: 45, quizQuestions: 5, revealSeconds: 2, curveCountdown: 10),
+      ),
+      const LobbyState(
+        players: [],
+        packs: [],
+        hostId: 1,
+        selected: GameKind.curve,
+        settings: GameSettings(quizPackId: 'flags'),
       ),
       const QuizQuestion(1, 10, ['a', 'b', 'c', 'd'], 20),
       const QuizReveal(2, 750, 1500),
@@ -99,6 +110,23 @@ void main() {
           Message.decode(
               '{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"curveMode":"wild"}'),
           isNull);
+    });
+
+    test('the_pack_is_part_of_the_settings_and_survives_clamping', () {
+      expect(const GameSettings().quizPackId, isNull);
+      expect(const GameSettings(quizPackId: 'x', quizSeconds: 999).clamped().quizPackId, 'x');
+      final m = Message.decode(const SetSettings(GameSettings(quizPackId: 'x')).encode());
+      expect((m as SetSettings).settings.quizPackId, 'x');
+      expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}'),
+          const SetSettings(GameSettings()));
+      expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"quizPackId":5}'), isNull);
+    });
+
+    test('selection_defaults_to_none_and_a_bad_game_name_is_null', () {
+      final m = Message.decode('{"type":"lobby","players":[],"packs":[],"hostId":1}');
+      expect((m as LobbyState).selected, isNull);
+      expect(Message.decode('{"type":"select","game":"chess"}'), isNull);
+      expect(Message.decode('{"type":"select"}'), const SelectGame(null));
     });
 
     test('a_lobby_without_settings_decodes_to_the_defaults', () {

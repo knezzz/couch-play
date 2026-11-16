@@ -59,12 +59,16 @@ class GameSettings with _JsonEq {
 
   /// Curve power-up mode.
   final CurveMode curveMode;
+
+  /// The quiz pack the host picked; null means the TV's default pack.
+  final String? quizPackId;
   const GameSettings({
     this.quizSeconds = 20,
     this.quizQuestions = 10,
     this.revealSeconds = 4,
     this.curveCountdown = 2,
     this.curveMode = CurveMode.balanced,
+    this.quizPackId,
   });
   factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
       quizSeconds: j['quizSeconds'] as int,
@@ -73,7 +77,8 @@ class GameSettings with _JsonEq {
       curveCountdown: j['curveCountdown'] as int,
       curveMode: j['curveMode'] == null
           ? CurveMode.balanced
-          : CurveMode.values.byName(j['curveMode'] as String));
+          : CurveMode.values.byName(j['curveMode'] as String),
+      quizPackId: j['quizPackId'] as String?);
 
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
@@ -85,6 +90,7 @@ class GameSettings with _JsonEq {
       revealSeconds: snap(revealSeconds, 2, 15, 1),
       curveCountdown: snap(curveCountdown, 1, 10, 1),
       curveMode: curveMode,
+      quizPackId: quizPackId,
     );
   }
 
@@ -95,6 +101,7 @@ class GameSettings with _JsonEq {
         'revealSeconds': revealSeconds,
         'curveCountdown': curveCountdown,
         'curveMode': curveMode.name,
+        'quizPackId': quizPackId,
       };
 }
 
@@ -152,6 +159,7 @@ sealed class Message with _JsonEq {
         'kick' => Kick(m['playerId'] as int),
         'bots' => SetBots(m['count'] as int),
         'settings' => SetSettings(GameSettings.fromJson(m)),
+        'select' => SelectGame(m['game'] == null ? null : GameKind.values.byName(m['game'] as String)),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
           Welcome(m['playerId'] as int, m['colorIndex'] as int, m['token'] as String),
@@ -159,6 +167,9 @@ sealed class Message with _JsonEq {
             players: list('players', PlayerInfo.fromJson),
             packs: list('packs', PackInfo.fromJson),
             hostId: m['hostId'] as int,
+            selected: m['selected'] == null
+                ? null
+                : GameKind.values.byName(m['selected'] as String),
             settings: m['settings'] == null
                 ? const GameSettings()
                 : GameSettings.fromJson(m['settings'] as Map<String, dynamic>)),
@@ -254,6 +265,17 @@ class SetSettings extends Message {
   Map<String, Object?> get fields => settings.toJson();
 }
 
+/// Host only, lobby only: the game whose details the host is looking at
+/// (null: the carousel). The TV shows it to everyone via [LobbyState.selected].
+class SelectGame extends Message {
+  final GameKind? game;
+  const SelectGame(this.game);
+  @override
+  String get type => 'select';
+  @override
+  Map<String, Object?> get fields => {'game': game?.name};
+}
+
 class Ping extends Message {
   final int t;
   const Ping(this.t);
@@ -281,10 +303,14 @@ class LobbyState extends Message {
   final List<PackInfo> packs;
   final int hostId;
   final GameSettings settings;
+
+  /// The game the host has open, or null.
+  final GameKind? selected;
   const LobbyState(
       {required this.players,
       required this.packs,
       required this.hostId,
+      this.selected,
       this.settings = const GameSettings()});
   @override
   String get type => 'lobby';
@@ -293,6 +319,7 @@ class LobbyState extends Message {
         'players': [for (final p in players) p.toJson()],
         'packs': [for (final p in packs) p.toJson()],
         'hostId': hostId,
+        'selected': selected?.name,
         'settings': settings.toJson(),
       };
 }
