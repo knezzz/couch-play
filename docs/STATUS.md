@@ -30,6 +30,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | done on macOS (696669b … 9d7e1bf); real phones + TV next session | lead |
 | 21 | Croatian packs only, all as big as verified questions allow; pub-quiz/Potjera as a guide (person, 2026-11-15) | done (59588ed … 0b07659): 10 packs, ~1,245 questions, all sourced; 52 new Međimurje ones wait on the person | lead + content |
 | 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | app done on macOS (89c05ab, 335c62b); 20 Commons photos so far (geografija 18, medimurje 2); 11 world cities in zemljopis-svijeta (31 photos) | lead + content |
+| 23 | Host game settings: quiz time per question, questions per game, time between questions; Curve pause between rounds (person, 2026-11-16) | queued to lead | lead |
 
 ## Open questions for the person
 
@@ -231,3 +232,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-15: Task 21 accepted (PM ran tv 218; sampled opće znanje). ~1,245 questions (opće znanje 401). No openly
   licensed Croatian pub-quiz/Potjera set exists (HKS: no commercial use; HRT etc. all rights reserved): used for
   style only, all wording ours. A duplicate test guards the packs. Not done: a native read of ~850 new questions.
+- 2026-11-16: Person asked for host settings. Chosen: time per question, questions per game, time between questions,
+  and the Curve pause between rounds (not the results hold). PM: session-only, ranges in plan Task 23; routed to lead.

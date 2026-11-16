@@ -16,7 +16,7 @@
 - The TV is authoritative. Phones send input only.
 - Maximum 8 players. Player colors are fixed, in this order: `#FF4D6D #FFB020 #2ECC71 #22B8F0 #9B5CFF #FF7AD9 #F5E94B #FF7A2F`.
 - Server port is 8080. If it is taken, try ports up to 8090.
-- Quiz: 4 choices, 20 s per question, 10 questions per round. A correct answer scores 500–1000 points, depending on speed. A wrong answer or no answer scores 0.
+- Quiz: 4 choices, 20 s per question, 10 questions per round (defaults; the host can change them, Task 23). A correct answer scores 500–1000 points, depending on speed. A wrong answer or no answer scores 0.
 - Curve: 60 Hz fixed tick, left/right steering, trails with random gaps, +1 point for each player you outlive. The match target is `10 × (players − 1)`, fixed when the match starts. You die on any trail, including your own older trail. Power-ups: see Task 5b.
 - Session scoreboard: placement points after each game (1st = N, …, last = 1, where N = players in that game). Scores last only for the session.
 - The D-pad only moves focus and backs out of a game. A phone host runs the session.
@@ -769,3 +769,23 @@ The person: "Also add some questions like what is this city and show an image. A
 - [x] **Step 3: Content.** Photo questions in the Croatian packs: "Koji je ovo grad?" (Croatian cities in `hr-geografija`, world cities in `hr-zemljopis-svijeta`), plus landmarks, places and other picture questions where they fit (Međimurje too; those join the person's review). Only freely licensed photos (Wikimedia Commons or similar); the `.sources.md` lists author, licence and URL per photo. Re-encode to a sensible size (e.g. 1280 px on the long side) so packs stay inside the limit. No photo that shows the answer as text (signs, captions). Packs with pictures become `.zip`.
 - [x] **Step 4: Check.** All tests pass; the bundled pack test loads every picture; QA sees several photo questions on the release build.
 - [x] **Step 5: Commit** by path.
+
+---
+
+### Task 23: Host game settings (added 2026-11-16, user request)
+
+The person: "Can we have host set the quiz duration and wait times between the rounds?" Chosen: time per question, questions per game, time between questions, and the pause between Curve rounds.
+
+**Interfaces:**
+- The phone host's lobby gets a small settings area (steppers, 56 px+ touch targets, Croatian, on the reference tokens):
+  - Quiz: time per question 10–60 s in 5 s steps (default 20); questions per game 5–30 in 5s (default 10; never more than the pack has); time between questions (the reveal) 2–15 s (default 4).
+  - Curve: pause before each round (the countdown with names and arrows) 1–10 s (default 2).
+- The TV is authoritative: the host sends the values, the TV clamps them, keeps them for the session and shows them to everyone in the lobby. Only the host can change them, and only in the lobby. They apply from the next game.
+- Speed scoring stays 500–1000, scaled to the chosen time per question.
+- Settings last for the session (they reset when the app restarts). Shortcut, upgrade if the person wants them remembered.
+
+- [ ] **Step 1: Failing tests:** protocol round-trip of the settings message; the session clamps out-of-range values and ignores a non-host; a quiz uses the set count, limit and reveal; speed points scale to the set limit; a Curve match uses the set countdown; changes mid-game apply only from the next game.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** core (protocol, `QuizRound`/`CurveConfig` already take these values), TV session, phone lobby UI; add the strings to the strings files and `docs/strings-hr.md`.
+- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + the release web controller: set each value to its min and max and see it in play; a non-host phone sees the values but can't change them; fit at 360–390 px.
+- [ ] **Step 5: Commit** by path.
