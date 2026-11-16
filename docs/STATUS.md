@@ -36,6 +36,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 26 | Sound effects on the TV (person, 2026-11-16) | queued to lead | lead |
 | 27 | Host picks a game from a carousel; details with settings, mirrored on the TV; Igraj starts it (person, 2026-11-16) | queued to lead | lead |
 | 28 | Six new packs (Umjetnost, Psihologija, Ljudsko tijelo, Memeovi, Fizika, Matematika) + more picture questions (person, 2026-11-16) | queued to lead | lead + content |
+| 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | queued to lead | lead |
 
 ## Open questions for the person
 
@@ -248,3 +249,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   (settings move from Task 23's area into each game's details).
 - 2026-11-16: Person: more picture questions; new packs umjetnost, psihologija, ljudsko tijelo, memes, fizika,
   matematika. PM: memes as text unless the image is freely licensed (public repo). Task 28.
+- 2026-11-16: Person: players choose a character, shown on the TV. Chosen: drawn animals, one per player. Task 29.

@@ -57,7 +57,12 @@ A party-games console for the living room. An Android TV shows the game; everyon
 2. TV shows a QR code for `http://<ip>:<port>/` and the URL in text.
 3. Phone loads the controller, enters a name, is assigned a color, connects to `ws://<ip>:<port>/ws`.
 4. The first player to join is the **host**: picks games, starts rounds, can kick players. If the host leaves, the next-oldest player becomes host. The game in progress keeps going: a host leaving never stops or ends it (user request, 2026-11-15).
-5. Reconnect: the controller keeps a random player token in `localStorage`; reconnecting with the same token restores the player (name, color, score) if within the session.
+5. **Characters (user request, 2026-11-16):** each player picks a character: one of about 16 simple, bold animal faces
+   drawn for CouchPlay (SVG), tinted in the player's color. One per player; taken ones are greyed out. Picked on the
+   join screen (a random free one is preselected) and changeable in the lobby. The TV shows the character next to the
+   player's name everywhere it shows players: lobby, quiz scores and reveal, results, session board, and the Curve
+   countdown. Bots get a free character too.
+6. Reconnect: the controller keeps a random player token in `localStorage`; reconnecting with the same token restores the player (name, color, score) if within the session.
 
 ### Session flow
 

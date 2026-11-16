@@ -880,3 +880,20 @@ The person: "Put more questions with images. Dodaj umjetnost, psihologija, ljuds
   - Psihologija: well-established findings and terms, not pop myths.
 - More picture questions in the existing packs where a picture makes a better question (Povijest: people, buildings; Kultura i sport: athletes, venues; Znanost: animals, plants; Film i glazba: only freely licensed images), with licences in the `.sources.md` as in Task 22. Keep every pack inside the 5 MB limit.
 - Check: bundled pack and duplicate tests pass; the new packs show in the pack list; pack sizes noted.
+
+---
+
+### Task 29: Player characters (added 2026-11-16, user request)
+
+The person: "Add a way for players to choose a character. Show characters on TV as well." Chosen: drawn animals; one per player.
+
+- About 16 original animal faces (fox, owl, frog, bear, …) drawn for CouchPlay as simple bold SVGs in `packages/core` (shared by TV and phone), tinted with the player's color, readable at small sizes. No copies of existing characters.
+- Join screen: a grid of characters, a random free one preselected; taken ones greyed out. In the lobby a player can change theirs. The TV is authoritative (a taken pick is refused, the phone shows why). Reconnect keeps it. Bots get a free one.
+- TV shows the character next to the name everywhere players appear: lobby chips, quiz header/scores/reveal voters, results, session board, Curve countdown (the dot stays the line head; the character goes with the name label).
+- Phone shows your own character in the header.
+
+- [ ] **Step 1: Failing tests:** protocol round-trip of the pick; the TV refuses a taken character; reconnect keeps it; bots get a free one; the lobby/results widgets show the character.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** core (SVGs + protocol), TV session + screens, phone join/lobby; strings into the strings files and `docs/strings-hr.md`.
+- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web: 8 players and bots, every screen with characters, fit at 360–390 px, characters readable on the TV.
+- [ ] **Step 5: Commit** by path.
