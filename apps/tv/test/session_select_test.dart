@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:core/core.dart';
@@ -101,6 +103,28 @@ void main() {
     await t.pump();
     a.say(const SelectGame(GameKind.quiz));
     expect(s.selectedGame, isNull);
+    s.dispose();
+  });
+
+  testWidgets('a_saved_pack_the_tv_no_longer_has_falls_back_to_the_default_at_load_and_at_igraj', (t) async {
+    final dir = Directory.systemTemp.createTempSync('sel');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final file = File('${dir.path}/settings.json')
+      ..writeAsStringSync(jsonEncode(const GameSettings(quizPackId: 'gone').toJson()));
+    setUpSession();
+    s.loadSettings(file);
+    expect(s.settings.quizPackId, isNull, reason: 'dropped at load');
+    // Removed after it was chosen: Igraj still starts the default.
+    var have = true;
+    final lookup = s.packLookup;
+    s.packLookup = (id) => id == 'tmp' ? (have ? pack('tmp', 'Privremeni') : null) : lookup(id);
+    a.say(const SetSettings(GameSettings(quizPackId: 'tmp')));
+    expect(s.settings.quizPackId, 'tmp');
+    have = false;
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    expect(s.phase, Phase.quiz);
+    expect(s.quizTitle, 'Zadani');
     s.dispose();
   });
 }

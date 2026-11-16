@@ -365,6 +365,7 @@ class Session {
     switch (game) {
       case GameKind.quiz:
         // The host's chosen pack; a pack named in StartGame still wins (old callers).
+        if (packId == null) _dropMissingPack(); // removed since it was saved
         final pack = packLookup(packId ?? _settings.quizPackId);
         if (pack == null || pack.questions.isEmpty) {
           peer.send(const ErrorMsg(Strings.packUnavailable));
@@ -464,6 +465,19 @@ class Session {
     } catch (_) {
       _settings = const GameSettings();
     }
+    _dropMissingPack();
+  }
+
+  /// A chosen pack the TV no longer has becomes the default pack.
+  void _dropMissingPack() {
+    final id = _settings.quizPackId;
+    if (id == null || packLookup(id) != null) return;
+    _settings = GameSettings(
+        quizSeconds: _settings.quizSeconds,
+        quizQuestions: _settings.quizQuestions,
+        revealSeconds: _settings.revealSeconds,
+        curveCountdown: _settings.curveCountdown,
+        curveMode: _settings.curveMode);
   }
 
   void _setSettings(PeerSocket peer, GameSettings wanted) {
@@ -474,15 +488,7 @@ class Session {
       return;
     }
     _settings = wanted.clamped();
-    final id = _settings.quizPackId;
-    if (id != null && packLookup(id) == null) {
-      _settings = GameSettings(
-          quizSeconds: _settings.quizSeconds,
-          quizQuestions: _settings.quizQuestions,
-          revealSeconds: _settings.revealSeconds,
-          curveCountdown: _settings.curveCountdown,
-          curveMode: _settings.curveMode); // a pack that is not there: the default
-    }
+    _dropMissingPack();
     try {
       _settingsFile?.writeAsStringSync(jsonEncode(_settings.toJson()));
     } catch (_) {} // not remembered, still set for this session
