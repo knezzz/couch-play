@@ -782,7 +782,7 @@ The person: "Can we have host set the quiz duration and wait times between the r
   - Curve: pause before each round (the countdown with names and arrows) 1–10 s (default 2).
 - The TV is authoritative: the host sends the values, the TV clamps them, keeps them for the session and shows them to everyone in the lobby. Only the host can change them, and only in the lobby. They apply from the next game.
 - Speed scoring stays 500–1000, scaled to the chosen time per question.
-- Settings last for the session (they reset when the app restarts). Shortcut, upgrade if the person wants them remembered.
+- The TV remembers the settings across app restarts (a small JSON file next to the user packs, read and clamped at start; person, 2026-11-16). The Curve mode from Task 24 is remembered the same way.
 
 - [ ] **Step 1: Failing tests:** protocol round-trip of the settings message; the session clamps out-of-range values and ignores a non-host; a quiz uses the set count, limit and reveal; speed points scale to the set limit; a Curve match uses the set countdown; changes mid-game apply only from the next game.
 - [ ] **Step 2: Run.** Expected: FAIL.

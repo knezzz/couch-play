@@ -78,7 +78,7 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 - Question on TV (text, optional picture); phone shows the answer buttons, color/shape-coded to match the TV. After a tap the phone hides the pick: it shows one neutral "Locked in" screen that looks the same whatever was chosen, so nobody nearby can copy it (user request, 2026-11-14).
 - 4 choices, 20 s timer (default; see host settings below). Points: correct answers score 500–1000, scaled by how fast; wrong or no answer = 0.
 - After each question: reveal the correct answer, show who picked what, update the scoreboard. Round = 10 questions from the chosen pack, shuffled.
-- **Host settings (user request, 2026-11-16):** in the lobby the host can set the time per question, the number of questions per game, the time between questions (the reveal), and the pause before each Curve round. The TV keeps them for the session and applies them from the next game.
+- **Host settings (user request, 2026-11-16):** in the lobby the host can set the time per question, the number of questions per game, the time between questions (the reveal), and the pause before each Curve round. The TV remembers them across restarts and applies them from the next game.
 - **Pack format:** one JSON file per pack:
   ```json
   {

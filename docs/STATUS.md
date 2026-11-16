@@ -237,3 +237,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   and the Curve pause between rounds (not the results hold). PM: session-only, ranges in plan Task 23; routed to lead.
 - 2026-11-16: Person: Curve modes (chaos / balanced / peaceful / only your power-ups), speed up on others and slow
   down on you, thickness lasts longer. PM: both thin and fat ~1.5x; mode in Task 23's host settings. Task 24.
+- 2026-11-16: Person: yes, remember the host settings (and the Curve mode) across restarts. Added to Tasks 23/24.
