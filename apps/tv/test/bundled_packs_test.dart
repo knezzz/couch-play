@@ -27,7 +27,8 @@ void main() {
       total += p.questions.length;
     }
     expect(ids, unorderedEquals(['hr-medimurje', 'hr-geografija', 'hr-povijest', 'hr-kultura-sport',
-        'hr-opce-znanje', 'hr-zemljopis-svijeta', 'hr-znanost', 'hr-film-glazba', 'hr-zastave', 'hr-oblici']));
+        'hr-opce-znanje', 'hr-zemljopis-svijeta', 'hr-znanost', 'hr-film-glazba', 'hr-zastave', 'hr-oblici',
+        'hr-psihologija']));
     expect(total, greaterThanOrEqualTo(300));
   });
 
@@ -35,7 +36,7 @@ void main() {
     final dir = Directory.systemTemp.createTempSync('packs');
     addTearDown(() => dir.deleteSync(recursive: true));
     final store = await PackStore.load(bundled: [for (final f in _files()) f.readAsBytesSync()], userDir: dir);
-    expect(store.infos.length, 10);
+    expect(store.infos.length, 11);
 
     final s = Session()..packStore = store;
     expect(s.packLookup(null)!.id, 'hr-opce-znanje');
