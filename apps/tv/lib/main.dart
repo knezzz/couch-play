@@ -201,7 +201,6 @@ class _TvAppState extends State<TvApp> {
     final quiz = _session.phase == Phase.quiz ? _session.quiz : null;
     return MaterialApp(
       title: 'Couchplay',
-      showPerformanceOverlay: _perf,
       navigatorKey: _nav,
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
