@@ -57,19 +57,83 @@ bulb picture is correct but easy to misread.
 43. Ørsted 1820 electric current deflects compass needle: https://en.wikipedia.org/wiki/Hans_Christian_%C3%98rsted
 44. In 1780, using a frog, he discovered that the muscles of dead frogs legs twitched when struck by an electrical spark: https://en.wikipedia.org/wiki/Luigi_Galvani
 45. voltaic pile, invented by Volta, first electrical battery that could continuously provide current: https://en.wikipedia.org/wiki/Voltaic_pile
-46. izračun; series resistances add: https://en.wikipedia.org/wiki/Series_and_parallel_circuits
-47. izračun; parallel: reciprocals add: https://en.wikipedia.org/wiki/Series_and_parallel_circuits
-48. izračun; Ohm I = U/R, series add: https://en.wikipedia.org/wiki/Ohm%27s_law
-49. open switch breaks only its own parallel branch: https://en.wikipedia.org/wiki/Series_and_parallel_circuits
-50. short circuit: connection forcing two nodes to the same voltage, no voltage across B: https://en.wikipedia.org/wiki/Short_circuit
-51. izračun; a = Δv/Δt = 12 m/s / 4 s
-52. izračun; on B the position s stays 10 m from t=2 s to t=4 s, so v = 0
-53. izračun; speed = slope of s–t graph
-54. izračun; distance = area under v–t graph
-55. izračun; balance of moments about the fulcrum: https://en.wikipedia.org/wiki/Lever
-56. odbijanje istoimenih polova i privlačenje raznoimenih (S faces S only in B): https://hr.wikipedia.org/wiki/Magnet
-57. broken bar magnet gives two bar magnets, each with both a north and south pole: https://en.wikipedia.org/wiki/Magnet
-58. first ray parallelly incident on the lens and refracted toward the second focal point: https://en.wikipedia.org/wiki/Lens
-59. izračun; reflected ray at the same angle to the surface normal as the incident ray: https://en.wikipedia.org/wiki/Specular_reflection
-60. izračun; mechanical advantage of an inclined plane = length of slope / height: https://en.wikipedia.org/wiki/Inclined_plane
-61. izračun; a single movable pulley has a mechanical advantage of two: https://en.wikipedia.org/wiki/Pulley
+46. superconductivity, zero resistance, discovered 1911 by Kamerlingh Onnes: https://en.wikipedia.org/wiki/Superconductivity
+47. Faraday cage blocks electric fields: https://en.wikipedia.org/wiki/Faraday_cage
+48. Maxwell's equations, classical electromagnetism, light: https://en.wikipedia.org/wiki/Maxwell%27s_equations
+49. step-up or step-down type to increase or decrease voltage level; AC electric power: https://en.wikipedia.org/wiki/Transformer
+50. oil drop experiment Millikan elementary charge: https://en.wikipedia.org/wiki/Oil_drop_experiment
+51. Coulomb's law, force between two charges: https://en.wikipedia.org/wiki/Coulomb%27s_law
+52. thermal radiation travels through vacuum, Sun: https://en.wikipedia.org/wiki/Thermal_radiation
+53. density rises to a peak at 3.98 °C, often 4 °C: https://en.wikipedia.org/wiki/Properties_of_water
+54. sublimation solid to gas directly: https://en.wikipedia.org/wiki/Sublimation_(phase_transition)
+55. second law: entropy of an isolated system cannot decrease with time: https://en.wikipedia.org/wiki/Entropy
+56. specific heat capacity of 4184 J/(kg·K) at 20 °C: https://en.wikipedia.org/wiki/Properties_of_water
+57. Fahrenheit is also credited with producing the first successful mercury-in-glass thermometers: https://en.wikipedia.org/wiki/Daniel_Gabriel_Fahrenheit
+58. railways and bridges need expansion joints to avoid sun kink: https://en.wikipedia.org/wiki/Thermal_expansion
+59. boiling point falls with lower pressure at altitude: https://en.wikipedia.org/wiki/Boiling_point
+60. neutron discovered by James Chadwick in 1932: https://en.wikipedia.org/wiki/Neutron
+61. Discovered: J. J. Thomson (1897): https://en.wikipedia.org/wiki/Electron
+62. half-life: time required for a quantity to reduce to half, radioactive decay: https://en.wikipedia.org/wiki/Half-life
+63. alpha particle identical to helium-4 nucleus: https://en.wikipedia.org/wiki/Alpha_particle
+64. Sun generates energy by nuclear fusion: https://en.wikipedia.org/wiki/Sun
+65. nuclear fission discovered by Otto Hahn and Fritz Strassmann 1938: https://en.wikipedia.org/wiki/Nuclear_fission
+66. Chicago Pile-1, 1942, Fermi: https://en.wikipedia.org/wiki/Chicago_Pile-1
+67. composition 2 up quarks, 1 down quark: https://en.wikipedia.org/wiki/Proton
+68. discovered in 2012 by ATLAS and CMS at the LHC at CERN: https://en.wikipedia.org/wiki/Higgs_boson
+69. E = mc², c is the speed of light: https://en.wikipedia.org/wiki/Mass%E2%80%93energy_equivalence
+70. Geiger counter detects ionizing radiation: https://en.wikipedia.org/wiki/Geiger_counter
+71. Max Planck 1900 quantum hypothesis: https://en.wikipedia.org/wiki/Max_Planck
+72. uncertainty principle introduced by Heisenberg in 1927: https://en.wikipedia.org/wiki/Uncertainty_principle
+73. Dirac predicted antimatter / positron: https://en.wikipedia.org/wiki/Paul_Dirac
+74. event horizon, boundary beyond which light cannot escape: https://en.wikipedia.org/wiki/Event_horizon
+75. Hubble's law 1929: https://en.wikipedia.org/wiki/Hubble%27s_law
+76. accidental discovery of the CMB in 1964 by Penzias and Wilson: https://en.wikipedia.org/wiki/Cosmic_microwave_background
+77. first observation of gravitational waves, LIGO 2015: https://en.wikipedia.org/wiki/First_observation_of_gravitational_waves
+78. astronomical unit = 149 597 870 700 m: https://en.wikipedia.org/wiki/Astronomical_unit
+79. on Earth a speed of 11.2 km/s: https://en.wikipedia.org/wiki/Escape_velocity
+80. Its surface gravity is about one-sixth of Earth's: https://en.wikipedia.org/wiki/Moon
+81. in 1967 discovered the first known pulsar: https://en.wikipedia.org/wiki/Jocelyn_Bell_Burnell
+82. In 1950 he advocated for the construction of the Ruđer Bošković Institute in Zagreb and became one of its founders: https://en.wikipedia.org/wiki/Ivan_Supek
+83. radiation released outside a black hole event horizon, model developed by Stephen Hawking in 1974: https://en.wikipedia.org/wiki/Hawking_radiation
+84. Feynman diagram: pictorial representation of interaction of subatomic particles: https://en.wikipedia.org/wiki/Feynman_diagram
+85. meitnerium Z=109 named after Lise Meitner; Meitner and Frisch explained fission theoretically (Nuclear_fission): https://en.wikipedia.org/wiki/Meitnerium
+86. served as the director of the Manhattan Project's Los Alamos Laboratory: https://en.wikipedia.org/wiki/J._Robert_Oppenheimer
+87. annus mirabilis papers 1905, special relativity: https://en.wikipedia.org/wiki/Annus_mirabilis_papers
+88. Torricelli invented the mercury barometer 1643: https://en.wikipedia.org/wiki/Evangelista_Torricelli
+89. invented the pendulum clock, the most accurate timekeeper for almost 300 years: https://en.wikipedia.org/wiki/Christiaan_Huygens
+90. candela, SI base unit of luminous intensity: https://en.wikipedia.org/wiki/Candela
+91. kilogram defined 2019 via the Planck constant: https://en.wikipedia.org/wiki/Kilogram
+92. izračun: 1 kWh = 1000 W · 3600 s
+93. izračun
+94. izračun (Ohmov zakon I = U/R)
+95. izračun (U = R·I)
+96. izračun (F = m·a)
+97. izračun (ρ = m/V)
+98. izračun (P = U·I)
+99. izračun (W = F·s)
+100. izračun (Ep = m·g·h)
+101. izračun (s = v·t)
+102. izračun (f = 1/T)
+103. izračun (λ = v/f)
+104. izračun (j = 1/f)
+105. izračun (p = F/S)
+106. izračun (E = P·t)
+107. izračun (a = Δv/t)
+108. izračun (v = g·t)
+109. izračun (72 000 m / 3600 s)
+110. izračun; series resistances add: https://en.wikipedia.org/wiki/Series_and_parallel_circuits
+111. izračun; parallel: reciprocals add: https://en.wikipedia.org/wiki/Series_and_parallel_circuits
+112. izračun; Ohm I = U/R, series add: https://en.wikipedia.org/wiki/Ohm%27s_law
+113. open switch breaks only its own parallel branch: https://en.wikipedia.org/wiki/Series_and_parallel_circuits
+114. short circuit: connection forcing two nodes to the same voltage, no voltage across B: https://en.wikipedia.org/wiki/Short_circuit
+115. izračun; a = Δv/Δt = 12 m/s / 4 s
+116. izračun; on B the position s stays 10 m from t=2 s to t=4 s, so v = 0
+117. izračun; speed = slope of s–t graph
+118. izračun; distance = area under v–t graph
+119. izračun; balance of moments about the fulcrum: https://en.wikipedia.org/wiki/Lever
+120. odbijanje istoimenih polova i privlačenje raznoimenih (S faces S only in B): https://hr.wikipedia.org/wiki/Magnet
+121. broken bar magnet gives two bar magnets, each with both a north and south pole: https://en.wikipedia.org/wiki/Magnet
+122. first ray parallelly incident on the lens and refracted toward the second focal point: https://en.wikipedia.org/wiki/Lens
+123. izračun; reflected ray at the same angle to the surface normal as the incident ray: https://en.wikipedia.org/wiki/Specular_reflection
+124. izračun; mechanical advantage of an inclined plane = length of slope / height: https://en.wikipedia.org/wiki/Inclined_plane
+125. izračun; a single movable pulley has a mechanical advantage of two: https://en.wikipedia.org/wiki/Pulley
