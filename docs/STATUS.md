@@ -32,6 +32,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | app done on macOS (89c05ab, 335c62b); 20 Commons photos so far (geografija 18, medimurje 2); 11 world cities in zemljopis-svijeta (31 photos) | lead + content |
 | 23 | Host game settings: quiz time per question, questions per game, time between questions; Curve pause between rounds (person, 2026-11-16) | queued to lead | lead |
 | 24 | Curve modes (Kaos, Uravnoteženo, Mirno, Samo za tebe); speed up hits others, slow down is yours; thin/fat last longer (person, 2026-11-16) | queued to lead, after Task 23 | lead |
+| 25 | Fat stacks, ghost leaves no line, thin removed, reverse-others added (person, 2026-11-16) | queued to lead | lead |
+| 26 | Sound effects on the TV (person, 2026-11-16) | queued to lead | lead |
 
 ## Open questions for the person
 
@@ -238,3 +240,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-16: Person: Curve modes (chaos / balanced / peaceful / only your power-ups), speed up on others and slow
   down on you, thickness lasts longer. PM: both thin and fat ~1.5x; mode in Task 23's host settings. Task 24.
 - 2026-11-16: Person: yes, remember the host settings (and the Curve mode) across restarts. Added to Tasks 23/24.
+- 2026-11-16: TV session: 49e10cd installed on the BRAVIA (person asked). Person: fat should stack, ghost leaves no
+  line, drop thin and add reverse-others; add sound effects (TV only). Tasks 25, 26.

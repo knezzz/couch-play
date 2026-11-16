@@ -128,11 +128,12 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 - Simulation runs on the TV at a fixed 60 Hz tick; collision against a trail occupancy grid.
 - **Power-ups (user request, 2026-11-14, replaces "no power-ups in v1"):** icons appear on the board from time to
   time; the first line to drive over one triggers it for a few seconds. Seven kinds:
-  - on you: slow down, thin line, ghost (pass through trails, not walls)
-  - on everyone else: speed up, fat line
+  - on you: slow down, ghost (pass through trails, not walls; leaves no line while it lasts)
+  - on everyone else: speed up, fat line (stacks: each pickup makes the lines fatter), reversed steering (left and right
+    swap)
 
-  (Changed 2026-11-16, user request: slow down is now yours and speed up hits everyone else; the thin and fat lines
-  last a little longer than the other effects.)
+  (Changed 2026-11-16, user request: slow down is now yours and speed up hits everyone else; the fat line lasts a
+  little longer than the other effects and stacks; ghost leaves no line; thin line removed, reversed steering added.)
   - on everyone: clear all trails, wrap (go through walls and come out the opposite side)
 
   Effects stack by restarting their timer. Exact timings, spawn rate and icons are left to the builder. The TV
@@ -147,6 +148,12 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
   gone, the walls are back. Effects on players: the power-up's icon, in its green/red/blue color, next to each
   affected line's head, with a ring that drains as the time runs out. Clear is instant and needs no timer. The Curve
   screen uses the reference-screen tokens below.
+
+### Sound (user request, 2026-11-16)
+
+The TV plays short sound effects from its speakers: Curve countdown, power-up pickup, crash, round and match win;
+quiz question start, last seconds, reveal (right/wrong), winner. Phones stay silent. Sounds are freely licensed (CC0)
+or made for the project, small, and mixed so they don't drown out talking.
 
 ### Shared effects
 

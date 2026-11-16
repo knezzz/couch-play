@@ -814,3 +814,34 @@ Builds on Task 23's host settings (same lobby settings area, same session-only r
 - [ ] **Step 3: Implement** core (config, kinds), TV (icons, indicators, session), phone (mode picker in the host settings).
 - [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web controller: each mode played with bots; the new speed/slow seen working with their colors and indicators; thin/fat run longer; Kaos frame times still fine.
 - [ ] **Step 5: Commit** by path. Kaos gets its own frame-time check on the real TV at the next session.
+
+---
+
+### Task 25: Power-up changes from the TV session (added 2026-11-16, user request)
+
+The person, after playing on the TV: "thick powerups should stack; when you are a ghost you don't leave a line; remove thin powerup, add something else." Replacement chosen: reversed steering for everyone else.
+
+- Fat stacks: each fat pickup makes the others' lines fatter again (with a sensible cap, e.g. 3 stacks); each stack keeps the longer fat duration. The Task 17 indicator shows the stack count.
+- Ghost leaves no line while it lasts (a gap in your trail, nothing painted, nothing in the grid); it still can't pass walls.
+- Thin is removed (enum, icon, bots, modes, tests).
+- New: **reverse others** (red): everyone else's left and right swap for `effectSeconds`; stacks by restarting its timer. Icon and indicator like the others. Bots handle it (their steering is reversed too). Samo za tebe keeps only green kinds (slow, ghost).
+
+- [ ] **Step 1: Failing tests:** fat twice is fatter than once (and capped); ghost paints nothing and leaves no grid cells; no thin kind spawns; reverse others swaps left/right for the others only, then expires.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** core, TV icons/indicators, bots.
+- [ ] **Step 4: Run.** Expected: PASS in every member. QA on macOS release: each change seen.
+- [ ] **Step 5: Commit** by path.
+
+---
+
+### Task 26: Sound effects on the TV (added 2026-11-16, user request)
+
+The person: "Add sound effects." TV only (person's choice); phones stay silent.
+
+- Sounds: Curve countdown beeps, power-up pickup, crash, round win, match win; quiz question start, last-5-seconds tick, reveal right/wrong, winner fanfare; lobby join blip.
+- Freely licensed (CC0) or made for the project; list each file's source and licence in `apps/tv/assets/sounds/SOURCES.md`. Small files (short OGG/WAV).
+- Use an existing small audio package only if Flutter has none built in; low latency on Android TV; sounds must never stall the 60 Hz game loop. Preload at start.
+- [ ] **Step 1:** pick and add the sounds; a failing test that the session triggers the right sound for each event (through a fake player).
+- [ ] **Step 2:** implement; tests pass.
+- [ ] **Step 3:** QA on macOS release (hear each one; nothing too loud); then on the real TV with the person (latency, volume, frame times).
+- [ ] **Step 4: Commit** by path.
