@@ -7,5 +7,6 @@ export 'src/effects.dart';
 export 'src/names.dart';
 export 'src/palette.dart';
 export 'src/shape_mark.dart';
+export 'src/character_face.dart';
 export 'strings.dart';
 export 'src/characters.dart';
