@@ -210,6 +210,8 @@ class Session {
         _kick(peer, playerId);
       case SetBots(:final count):
         _setBots(peer, count);
+      case SelectGame(:final game):
+        _selectGame(peer, game);
       case SetSettings(:final settings):
         _setSettings(peer, settings);
       case Answer(:final index):
@@ -310,10 +312,12 @@ class Session {
   }
 
   void _broadcastLobby() {
+    if (_selectedBy != hostId) _selected = null; // a new host starts clean
     final lobby = LobbyState(
         players: playerInfos,
         packs: packStore?.infos ?? const [],
         hostId: hostId ?? -1,
+        selected: _selected,
         settings: _settings);
     for (final p in _players) {
       p.socket?.send(lobby);
@@ -360,7 +364,8 @@ class Session {
     }
     switch (game) {
       case GameKind.quiz:
-        final pack = packLookup(packId);
+        // The host's chosen pack; a pack named in StartGame still wins (old callers).
+        final pack = packLookup(packId ?? _settings.quizPackId);
         if (pack == null || pack.questions.isEmpty) {
           peer.send(const ErrorMsg(Strings.packUnavailable));
           return;
@@ -421,6 +426,28 @@ class Session {
   /// What the host set for this session (no persistence). A game takes the
   /// values it starts with; changes only count from the next game.
   GameSettings get settings => _settings;
+
+  /// The game whose details the host has open; null while they browse. It goes
+  /// when a game starts or ends and when the host changes.
+  GameKind? get selectedGame => _selected;
+  GameKind? _selected;
+  int? _selectedBy; // the host who chose it
+
+  /// The title of the pack Igraj would start: the chosen one or the default.
+  String? get selectedPackTitle => packLookup(_settings.quizPackId)?.title;
+
+  void _selectGame(PeerSocket peer, GameKind? game) {
+    final from = _playerOf(peer);
+    if (from == null || _phase != Phase.lobby) return;
+    if (from.id != hostId) {
+      peer.send(_onlyHost);
+      return;
+    }
+    _selected = game;
+    _selectedBy = from.id;
+    _broadcastLobby();
+    _notify();
+  }
   GameSettings _settings = const GameSettings();
 
   /// Sound effects; silent until the TV hands in a real player.
@@ -447,6 +474,15 @@ class Session {
       return;
     }
     _settings = wanted.clamped();
+    final id = _settings.quizPackId;
+    if (id != null && packLookup(id) == null) {
+      _settings = GameSettings(
+          quizSeconds: _settings.quizSeconds,
+          quizQuestions: _settings.quizQuestions,
+          revealSeconds: _settings.revealSeconds,
+          curveCountdown: _settings.curveCountdown,
+          curveMode: _settings.curveMode); // a pack that is not there: the default
+    }
     try {
       _settingsFile?.writeAsStringSync(jsonEncode(_settings.toJson()));
     } catch (_) {} // not remembered, still set for this session
@@ -495,6 +531,7 @@ class Session {
   int get curveRound => _curveRound;
 
   void _startCurve(List<Player> parts) {
+    _selected = null;
     _simIdOf
       ..clear()
       ..addEntries(parts.map((p) => MapEntry(p.id, p.colorIndex)));
@@ -585,6 +622,7 @@ class Session {
   Duration? _quizPausedAt; // _clock() when the pause began
 
   void _startQuiz(QuizPack pack, List<Player> parts) {
+    _selected = null; // Igraj: the details are done with
     _quizPack = pack;
     _quizIds
       ..clear()
@@ -950,6 +988,7 @@ class Session {
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
   void returnToLobby() {
     _phase = Phase.lobby;
+    _selected = null;
     _gameHost = null;
     _stopWait();
     _placements = [];
