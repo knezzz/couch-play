@@ -129,3 +129,36 @@ converted to Croatian notation.
 114. nastup na Euroviziji 1968 u Londonu s pjesmom 'Jedan dan': https://hr.wikipedia.org/wiki/Dubrovački_trubaduri
 115. Povisilicama se povisuje izvođeni ton za jedan kromatski polustepen: https://www.enciklopedija.hr/clanak/predznaci ; https://en.wikipedia.org/wiki/Sharp_(music)
 116. G-clef ... treble clef placing G4 (g1) on the second line of the staff: https://en.wikipedia.org/wiki/Clef
+117. https://en.wikipedia.org/wiki/Ludwig_van_Beethoven (states: beethoven mit dem manuskript der missa solemnis)
+118. https://en.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart (states: the mozart family - wolfgang amadeus mozart headshot.jpg)
+119. https://en.wikipedia.org/wiki/Antonio_Vivaldi (states: vivaldi.jpg)
+120. https://en.wikipedia.org/wiki/Fr%C3%A9d%C3%A9ric_Chopin (states: frederic chopin photo.jpeg)
+121. https://en.wikipedia.org/wiki/Louis_Armstrong (states: louis armstrong in color (restored).jpg)
+122. https://en.wikipedia.org/wiki/Elvis_Presley (states: elvis presley promoting jailhouse rock.jpg)
+123. https://en.wikipedia.org/wiki/Charlie_Chaplin (states: charlie chaplin portrait)
+124. https://en.wikipedia.org/wiki/Audrey_Hepburn (states: audreykhepburn.jpg)
+125. https://en.wikipedia.org/wiki/Alfred_Hitchcock (states: hitchcock, alfred 02.jpg)
+126. https://hr.wikipedia.org/wiki/Dora_Peja%C4%8Devi%C4%87 (states: dora pejačević (soa praha) cr.jpg)
+127. https://hr.wikipedia.org/wiki/Vatroslav_Lisinski (states: vatroslav_lisinski.jpg)
+128. https://hr.wikipedia.org/wiki/Ivan_Zajc (states: ivan pl. zajc 1907 mosinger.png)
+129. https://hr.wikipedia.org/wiki/Lijerica (states: gudač)
+130. https://hr.wikipedia.org/wiki/Tamburica (states: prim_tambura.png)
+
+## Photo questions (Task 28)
+
+Each image keeps its own licence (author, licence, file page). Changes: resized (at most 1280 px on the long side) and saved as WebP.
+
+117. photos/foto-01.webp: Ludwig van Beethoven. Joseph Karl Stieler, Public domain, https://commons.wikimedia.org/wiki/File:Joseph_Karl_Stieler%27s_Beethoven_mit_dem_Manuskript_der_Missa_solemnis.jpg (resized, WebP)
+118. photos/foto-02.webp: Wolfgang Amadeus Mozart. Johann Nepomuk della Croce, Public domain, https://commons.wikimedia.org/wiki/File:The_Mozart_Family_-_Wolfgang_Amadeus_Mozart_headshot.jpg (resized, WebP)
+119. photos/foto-03.webp: Antonio Vivaldi. Unidentified painter, Public domain, https://commons.wikimedia.org/wiki/File:Vivaldi.jpg (resized, WebP)
+120. photos/foto-04.webp: Frédéric Chopin. Louis-Auguste Bisson, Public domain, https://commons.wikimedia.org/wiki/File:Frederic_Chopin_photo.jpeg (resized, WebP)
+121. photos/foto-05.webp: Louis Armstrong. Harry Warnecke / Gus Schoenbaechler, Public domain, https://commons.wikimedia.org/wiki/File:Louis_Armstrong_in_Color_(restored).jpg (resized, WebP)
+122. photos/foto-06.webp: Elvis Presley. Metro-Goldwyn-Mayer, Inc. Reproduction Number: LC-USZ6-2067 Location: NYWTS -- BIOG, Public domain, https://commons.wikimedia.org/wiki/File:Elvis_Presley_promoting_Jailhouse_Rock.jpg (resized, WebP)
+123. photos/foto-07.webp: Charlie Chaplin. Strauss-Peyton Studio, Public domain, https://commons.wikimedia.org/wiki/File:Charlie_Chaplin_portrait_Getty_1739411952.jpg (resized, WebP)
+124. photos/foto-08.webp: Audrey Hepburn. Bud Fraker (1916-2002) [1], Public domain, https://commons.wikimedia.org/wiki/File:AudreyKHepburn.jpg (resized, WebP)
+125. photos/foto-09.webp: Alfred Hitchcock. Ante Brkan, Public domain, https://commons.wikimedia.org/wiki/File:Hitchcock,_Alfred_02.jpg (resized, WebP)
+126. photos/foto-10.webp: Dora Pejačević. AnonymousUnknown author, Public domain, https://commons.wikimedia.org/wiki/File:Dora_Peja%C4%8Devi%C4%87_(SOA_Praha)_cr.jpg (resized, WebP)
+127. photos/foto-11.webp: Vatroslav Lisinski. unknow, picture taken around 1850., Public domain, https://commons.wikimedia.org/wiki/File:Vatroslav_Lisinski.jpg (resized, WebP)
+128. photos/foto-12.webp: Ivan Zajc. Rudolf Mosinger, Public domain, https://commons.wikimedia.org/wiki/File:Ivan_pl._Zajc_1907_Mosinger.png (resized, WebP)
+129. photos/foto-13.webp: Lijerica. unknown, CC0, https://commons.wikimedia.org/wiki/File:Lijerica_MET_206967.jpg (resized, WebP)
+130. photos/foto-14.webp: Tamburica. Outesticide, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Prim_tambura.png (resized, WebP)

@@ -118,6 +118,20 @@
     {"q": "Koje je godine klapsko pjevanje upisano na UNESCO-ov popis nematerijalne baštine?", "choices": ["2008.", "2010.", "2012.", "2014."], "answer": 2},
     {"q": "Koji je sastav 1968. na Euroviziji nastupio s pjesmom 'Jedan dan'?", "choices": ["Novi fosili", "Grupa 220", "Dubrovački trubaduri", "Indexi"], "answer": 2},
     {"q": "Koji znak u notnom pismu povisuje ton za polustepen?", "choices": ["Snizilica", "Razrješilica", "Korona", "Povisilica"], "answer": 3},
-    {"q": "Koji ton violinski ključ smješta na drugu crtu crtovlja?", "choices": ["g1", "e1", "c1", "a1"], "answer": 0}
+    {"q": "Koji ton violinski ključ smješta na drugu crtu crtovlja?", "choices": ["g1", "e1", "c1", "a1"], "answer": 0},
+    {"q": "Koji je skladatelj na ovom portretu?", "image": "photos/foto-01.webp", "choices": ["Franz Liszt", "Franz Schubert", "Joseph Haydn", "Ludwig van Beethoven"], "answer": 3},
+    {"q": "Koji je skladatelj na ovom portretu?", "image": "photos/foto-02.webp", "choices": ["Christoph Willibald Gluck", "Joseph Haydn", "Wolfgang Amadeus Mozart", "Antonio Salieri"], "answer": 2},
+    {"q": "Koji je skladatelj na ovom portretu?", "image": "photos/foto-03.webp", "choices": ["Johann Sebastian Bach", "Georg Friedrich Händel", "Antonio Vivaldi", "Arcangelo Corelli"], "answer": 2},
+    {"q": "Koji je skladatelj i pijanist na ovoj fotografiji?", "image": "photos/foto-04.webp", "choices": ["Robert Schumann", "Franz Liszt", "Frédéric Chopin", "Felix Mendelssohn"], "answer": 2},
+    {"q": "Koji je jazz-glazbenik na ovoj fotografiji?", "image": "photos/foto-05.webp", "choices": ["Dizzy Gillespie", "Miles Davis", "Duke Ellington", "Louis Armstrong"], "answer": 3},
+    {"q": "Koji je pjevač na ovoj promotivnoj fotografiji?", "image": "photos/foto-06.webp", "choices": ["Jerry Lee Lewis", "Buddy Holly", "Elvis Presley", "Johnny Cash"], "answer": 2},
+    {"q": "Koji je glumac i redatelj nijemog filma na ovoj fotografiji?", "image": "photos/foto-07.webp", "choices": ["Charlie Chaplin", "Harold Lloyd", "Buster Keaton", "Rudolph Valentino"], "answer": 0},
+    {"q": "Koja je glumica na ovoj fotografiji?", "image": "photos/foto-08.webp", "choices": ["Audrey Hepburn", "Elizabeth Taylor", "Grace Kelly", "Vivien Leigh"], "answer": 0},
+    {"q": "Koji je filmski redatelj na ovoj fotografiji?", "image": "photos/foto-09.webp", "choices": ["Orson Welles", "Billy Wilder", "John Ford", "Alfred Hitchcock"], "answer": 3},
+    {"q": "Koja je hrvatska skladateljica na ovoj fotografiji?", "image": "photos/foto-10.webp", "choices": ["Milka Trnina", "Zinka Kunc", "Ivana Lang", "Dora Pejačević"], "answer": 3},
+    {"q": "Koji je hrvatski skladatelj na ovom portretu?", "image": "photos/foto-11.webp", "choices": ["Franjo Kuhač", "Ivan Zajc", "Vatroslav Lisinski", "Jakov Gotovac"], "answer": 2},
+    {"q": "Koji je hrvatski skladatelj na ovom portretu?", "image": "photos/foto-12.webp", "choices": ["Ivan Zajc", "Vatroslav Lisinski", "Franjo Kuhač", "Blagoje Bersa"], "answer": 0},
+    {"q": "Kako se zove ovo gudačko tradicijsko glazbalo?", "image": "photos/foto-13.webp", "choices": ["Lijerica", "Gusle", "Tamburica", "Sopile"], "answer": 0},
+    {"q": "Koje je ovo tradicijsko glazbalo?", "image": "photos/foto-14.webp", "choices": ["Tambura (prim)", "Balalajka", "Buzuki", "Mandolina"], "answer": 0}
   ]
 }
