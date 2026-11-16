@@ -123,6 +123,15 @@
     {"q": "Po kome je nazvana promjena frekvencije zvuka koji dolazi od izvora u gibanju?", "choices": ["Po Ernstu Machu", "Po Christianu Doppleru", "Po Ludwigu Boltzmannu", "Po Heinrichu Hertzu"], "answer": 1},
     {"q": "Po kojem je gradu nazvan kemijski element hafnij?", "choices": ["Po Kopenhagenu", "Po Helsinkiju", "Po Stockholmu", "Po Hamburgu"], "answer": 0},
     {"q": "Koji je kemijski element nazvan po Mjesecu?", "choices": ["Telurij", "Helij", "Cerij", "Selenij"], "answer": 3},
-    {"q": "Kolika je otprilike udaljenost od Zemlje do Mjeseca?", "choices": ["Oko 38.000 km", "Oko 3,8 milijuna km", "Oko 380.000 km", "Oko 150 milijuna km"], "answer": 2}
+    {"q": "Kolika je otprilike udaljenost od Zemlje do Mjeseca?", "choices": ["Oko 38.000 km", "Oko 3,8 milijuna km", "Oko 380.000 km", "Oko 150 milijuna km"], "answer": 2},
+    {"q": "Koja je ova rijetka biljka, prikazana na kovanici od 50 lipa?", "image": "photos/foto-01.webp", "choices": ["Hrvatska sibireja", "Velebitska degenija", "Runolist", "Planinski božur"], "answer": 1},
+    {"q": "Koja je ova ptica, kojoj je na Cresu otvoreno oporavilište?", "image": "photos/foto-02.webp", "choices": ["Suri orao", "Crni sup", "Bjeloglavi sup", "Bradan"], "answer": 2},
+    {"q": "Koja je ova vrsta dupina, koja živi i u Jadranu?", "image": "photos/foto-03.webp", "choices": ["Orka", "Prugasti dupin", "Glavati dupin", "Dobri dupin"], "answer": 3},
+    {"q": "Koja je ova životinja, najveća mačka u Europi?", "image": "photos/foto-04.webp", "choices": ["Divlja mačka", "Euroazijski ris", "Snježni leopard", "Iberijski ris"], "answer": 1},
+    {"q": "Koja je ova morska kornjača, najbrojnija u Jadranu?", "image": "photos/foto-05.webp", "choices": ["Zelena želva", "Glavata želva", "Sedmopruga usminjača", "Karetna želva"], "answer": 1},
+    {"q": "Koja je ova životinja, čiji je posljednji primjerak u hrvatskom dijelu Jadrana ubijen 1964.?", "image": "photos/foto-06.webp", "choices": ["Kalifornijski morski lav", "Obični tuljan", "Sredozemna medvjedica", "Sivi tuljan"], "answer": 2},
+    {"q": "Koja je ova sredozemna biljka s jestivim crvenim plodovima?", "image": "photos/foto-07.webp", "choices": ["Tršlja", "Planika", "Lovor", "Mirta"], "answer": 1},
+    {"q": "Koja je ova planinska biljka?", "image": "photos/foto-08.webp", "choices": ["Planinski božur", "Velebitska degenija", "Runolist", "Kockavica"], "answer": 2},
+    {"q": "Koja je ova životinja?", "image": "photos/foto-09.webp", "choices": ["Sivi vuk", "Crvena lisica", "Čagalj", "Dingo"], "answer": 0}
   ]
 }

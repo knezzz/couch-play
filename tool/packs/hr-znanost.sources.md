@@ -132,3 +132,26 @@ Least sure: Halley's period "76" (sources: 74–80 years); Earth–Moon "oko 380
 119. named after Hafnia, the Latin name for Copenhagen: https://en.wikipedia.org/wiki/Hafnium
 120. tellurium named for the Earth, Berzelius named the new element after the Moon: https://en.wikipedia.org/wiki/Selenium
 121. averaging around 378,000 km; semi-major axis 384,399 km: https://en.wikipedia.org/wiki/Moon
+122. https://hr.wikipedia.org/wiki/Velebitska_degenija (states: na naličju kovanice od 50 lipa)
+123. https://hr.wikipedia.org/wiki/Bjeloglavi_sup (states: oporavilište za bjeloglave supove)
+124. https://hr.wikipedia.org/wiki/Dobri_dupin (states: vrsta je dupina koja živi i u jadranu)
+125. https://hr.wikipedia.org/wiki/Euroazijski_ris (states: najveća mačka u europi)
+126. https://hr.wikipedia.org/wiki/Glavata_%C5%BEelva (states: najbrojnija je vrsta morske kornjače u jadranu)
+127. https://hr.wikipedia.org/wiki/Sredozemna_medvjedica (states: 1964. ubijen zadnji primjerak sredozemne medvjedice)
+128. https://hr.wikipedia.org/wiki/Planika (states: obična planika ima jestive plodove)
+129. https://hr.wikipedia.org/wiki/Runolist (states: alpen edelweiß, leontopodium alpinum 2.jpg)
+130. https://hr.wikipedia.org/wiki/Sivi_vuk (states: sivi vuk)
+
+## Photo questions (Task 28)
+
+Each image keeps its own licence (author, licence, file page). Changes: resized (at most 1280 px on the long side) and saved as WebP.
+
+122. photos/foto-01.webp: Velebitska degenija. Roberta F., CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Velebitska_degenija_kamenjar_080509.jpg (resized, WebP)
+123. photos/foto-02.webp: Bjeloglavi sup. Thermos, CC BY-SA 2.5, https://commons.wikimedia.org/wiki/File:Vulture_beak_sideview_A.jpg (resized, WebP)
+124. photos/foto-03.webp: Dobri dupin. NASA, Public domain, https://commons.wikimedia.org/wiki/File:Tursiops_truncatus_01-cropped.jpg (resized, WebP)
+125. photos/foto-04.webp: Euroazijski ris. mpiet (http://www.mindbox.at/gallery/), CC BY-SA 2.0 de, https://commons.wikimedia.org/wiki/File:Lynx_lynx2.jpg (resized, WebP)
+126. photos/foto-05.webp: Glavata želva. ukanda, CC BY 2.0, https://commons.wikimedia.org/wiki/File:Loggerhead_sea_turtle.jpg (resized, WebP)
+127. photos/foto-06.webp: Sredozemna medvjedica. Atsoukali, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Billy_monk_seal_2.jpg (resized, WebP)
+128. photos/foto-07.webp: Planika. unknown, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Arbustus_unedo.jpg (resized, WebP)
+129. photos/foto-08.webp: Runolist. Böhringer Friedrich, CC BY-SA 2.5, https://commons.wikimedia.org/wiki/File:Alpen_Edelwei%C3%9F,_Leontopodium_alpinum_2.JPG (resized, WebP)
+130. photos/foto-09.webp: Sivi vuk. Gunnar Ries Amphibol, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Grauwolf_P1130280.jpg (resized, WebP)
