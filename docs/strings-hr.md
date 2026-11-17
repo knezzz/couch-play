@@ -216,6 +216,20 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
 
+### Blef (phone)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| blefHint | Tvoj odgovor | Your answer | the text field's hint |
+| blefWriteTitle | Smisli lažan odgovor | Make up a false answer | above the field |
+| blefSentFake | Tvoj odgovor je poslan. | Your answer is sent. | after the TV accepted the fake |
+| blefPickTitle | Koji je odgovor točan? | Which answer is correct? | the list |
+| blefPicked | Odabir je poslan. Gledaj TV. | Your pick is sent. Watch the TV. | after the pick |
+| truthFound / truthMissed | Točan odgovor: pronađen / promašen | Correct answer: found / missed | result |
+| fooledN(n) | Prevarenih: {n} | Fooled: {n} | result |
+| (TV's refusal) | To je točan odgovor! Smisli laž. | That is the correct answer! Make up a lie. | under the field, shown as received |
+| blefSpikeTitle / blefSpikeTry | Blef: probno tipkanje / Upiši riječi sa č ć š ž đ … | Blef: typing test | /?spike=blef only |
+
 ### Koliko? (phone)
 
 | key | Croatian | English | where it shows |

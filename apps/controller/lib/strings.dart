@@ -89,6 +89,15 @@ abstract final class Strings {
   static String totalScore(int n) => 'Ukupno: $n';
   static const del = 'Obriši';
 
+  // Blef
+  static const blefWriteTitle = 'Smisli lažan odgovor';
+  static const blefPickTitle = 'Koji je odgovor točan?';
+  static const blefSentFake = 'Tvoj odgovor je poslan.';
+  static const blefPicked = 'Odabir je poslan. Gledaj TV.';
+  static const truthFound = 'Točan odgovor: pronađen';
+  static const truthMissed = 'Točan odgovor: promašen';
+  static String fooledN(int n) => 'Prevarenih: $n';
+
   static const send = 'Pošalji';
   static const blefHint = 'Tvoj odgovor';
   static const blefSpikeTitle = 'Blef: probno tipkanje';
@@ -159,6 +168,7 @@ abstract final class Strings {
     List<PackInfo> uljezPacks, [
     List<PackInfo> objasniPacks = const [],
     List<PackInfo> kolikoPacks = const [],
+    List<PackInfo> blefPacks = const [],
   ]) {
     String pack(List<PackInfo> l, String? id) =>
         (l.where((p) => p.id == id).firstOrNull ?? l.firstOrNull)?.title ?? '';
@@ -171,6 +181,8 @@ abstract final class Strings {
         '$possibleRoles: ${s.wolfRoles.length} · $discussion: ${minutes(s.wolfDiscussion)}',
       GameKind.uljez =>
         '${pack(uljezPacks, s.uljezPackId)} · $discussion: ${minutes(s.uljezDiscussion)} · ${impostors(s.uljezImpostors)}',
+      GameKind.blef =>
+        '${pack(blefPacks, s.blefPackId)} · ${questions(s.blefQuestions)}',
       GameKind.koliko =>
         '${pack(kolikoPacks, s.kolikoPackId)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
       GameKind.objasni =>

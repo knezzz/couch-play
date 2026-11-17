@@ -6,6 +6,7 @@ import '../connection.dart';
 import '../theme.dart';
 import '../strings.dart';
 import 'game_cards.dart';
+import 'blef_screens.dart';
 import 'koliko_screens.dart';
 import 'objasni_screens.dart';
 import 'pack_grid.dart';
@@ -261,6 +262,17 @@ class _LobbyScreenState extends State<LobbyScreen> {
     ),
   );
 
+  Widget _blefSettings(LobbyState l, void Function(GameSettings) change) {
+    final s = l.settings;
+    return BlefSettingsView(
+      questions: s.blefQuestions,
+      packs: [for (final p in l.blefPacks) (p.id, p.title)],
+      packId: s.blefPackId ?? l.blefPacks.firstOrNull?.id,
+      onQuestions: (v) => change(copySettings(s, blefQuestions: v)),
+      onPack: (id) => change(copySettings(s, blefPackId: id)),
+    );
+  }
+
   Widget _kolikoSettings(LobbyState l, void Function(GameSettings) change) {
     final s = l.settings;
     return KolikoSettingsView(
@@ -435,6 +447,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     _objasniSettings(l, change)
                   else if (kind == GameKind.koliko)
                     _kolikoSettings(l, change)
+                  else if (kind == GameKind.blef)
+                    _blefSettings(l, change)
                   else if (kind == GameKind.quiz || kind == GameKind.curve)
                     _GameSettings(kind, s, onChange: change),
                   if (kind == GameKind.curve) ...[
@@ -606,6 +620,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     l.uljezPacks,
                     l.objasniPacks,
                     l.kolikoPacks,
+                    l.blefPacks,
                   ),
                 ),
               if (l.selected == GameKind.vukodlak)

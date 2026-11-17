@@ -11,6 +11,7 @@ import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
+import 'screens/blef_flow.dart';
 import 'screens/koliko_flow.dart';
 import 'screens/objasni_flow.dart';
 import 'screens/uljez_flow.dart';
@@ -28,6 +29,7 @@ enum _Screen {
   uljez,
   objasni,
   koliko,
+  blef,
   kicked,
 }
 
@@ -76,6 +78,7 @@ class _AppState extends State<App> {
   final _uljez = UljezInbox();
   final _objasni = ObjasniInbox();
   final _koliko = KolikoInbox();
+  final _blef = BlefInbox();
   // Vukodlak and Uljez share VotePrompt; the game that started last owns it.
   bool _uljezOn = false;
   StreamSubscription<Message>? _sub;
@@ -157,6 +160,10 @@ class _AppState extends State<App> {
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
+        case BlefWrite() || BlefList() || BlefResult():
+          if (m is BlefWrite) _error = null;
+          _blef.on(m);
+          _screen = _Screen.blef;
         case KolikoAsk() || KolikoResult():
           _koliko.on(m);
           _screen = _Screen.koliko;
@@ -234,6 +241,12 @@ class _AppState extends State<App> {
       key: ValueKey(_question?.number),
     ),
     _Screen.results => ResultsScreen(_placements, _myId),
+    _Screen.blef => BlefFlow(
+      widget.conn,
+      _blef,
+      error: _error,
+      onSend: () => setState(() => _error = null),
+    ),
     _Screen.koliko => KolikoFlow(widget.conn, _koliko),
     _Screen.objasni =>
       _lobby == null
@@ -261,7 +274,9 @@ class _AppState extends State<App> {
     // The join screen shows its own errors.
     home: Column(
       children: [
-        if (_error != null && _screen != _Screen.join)
+        if (_error != null &&
+            _screen != _Screen.join &&
+            _screen != _Screen.blef)
           Material(
             color: Colors.red.shade900,
             child: SafeArea(

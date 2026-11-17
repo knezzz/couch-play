@@ -139,6 +139,7 @@ const supportedGames = [
   GameKind.uljez,
   GameKind.objasni,
   GameKind.koliko,
+  GameKind.blef,
 ];
 
 /// The host's game picker: one card per game and page dots.
@@ -259,6 +260,7 @@ class _GameCarouselState extends State<GameCarousel> {
                   l.uljezPacks,
                   l.objasniPacks,
                   l.kolikoPacks,
+                  l.blefPacks,
                 ),
                 key: ValueKey('line-${k.name}'),
                 maxLines: 2,

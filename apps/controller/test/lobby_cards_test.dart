@@ -119,7 +119,8 @@ void main() {
       );
       expect(dots, findsNWidgets(supportedGames.length));
       expect(supportedGames, contains(GameKind.objasni));
-      expect(supportedGames, isNot(contains(GameKind.blef)));
+      expect(supportedGames, contains(GameKind.blef));
+      expect(supportedGames, isNot(contains(GameKind.tkobi)));
       double w(int i) => t.getSize(dots.at(i)).width;
       expect(w(0), 32); // 24 + the 4 px margins
       expect(w(1), 16);
