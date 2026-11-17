@@ -134,6 +134,8 @@ void main() {
     final end = r.to(2).whereType<UljezEnd>().single;
     expect(end.villageWord, r.match.game.villageWord);
     expect(end.impostors, [r.impostor]);
+    expect(r.scores, isNull, reason: 'the end screen is up first');
+    await r.wait(t, 10);
     expect(r.scores![r.impostor], 0);
     expect(r.scores!.values.where((v) => v == 1).length, 4);
     r.match.dispose();
@@ -148,6 +150,7 @@ void main() {
     r.match.onVote(r.impostor, const Vote(null));
     r.match.onGuess(r.impostor, Guess(r.match.game.rightGuess));
     expect(r.match.winner, UljezWinner.impostors);
+    await r.wait(t, 10);
     expect(r.scores![r.impostor], 1);
     r.match.dispose();
   });
@@ -273,6 +276,7 @@ void main() {
     for (final id in r.match.ids) {
       expect(r.to(id).last, isA<UljezEnd>());
     }
+    await r.wait(t, 10);
     expect(r.scores![r.impostor], 0);
     r.match.dispose();
   });
@@ -349,6 +353,22 @@ void main() {
     expect(r.match.winner, isNull);
     r.match.onGuess(imps[0], Guess(r.match.game.rightGuess));
     expect(r.match.winner, UljezWinner.impostors);
+    r.match.dispose();
+  });
+
+  testWidgets('the end screen with both words stays up for 10 s before the results; a rejoin in it gets the end', (t) async {
+    final r = Rig();
+    r.match.expel(r.impostor); // the village wins at once
+    expect(r.match.phase, UljezPhase.over);
+    expect(r.match.villageWord, isNotNull);
+    expect(r.match.impostors, [r.impostor]);
+    await r.wait(t, 9);
+    expect(r.scores, isNull, reason: 'results only after the hold');
+    final v = r.match.ids.firstWhere((i) => i != r.impostor);
+    r.match.rejoin(v);
+    expect(r.to(v).last, isA<UljezEnd>());
+    await r.wait(t, 1);
+    expect(r.scores, isNotNull);
     r.match.dispose();
   });
 }

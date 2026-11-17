@@ -111,6 +111,13 @@ void main() {
     await t.pump(const Duration(seconds: 20 * 8 + 90));
     expect(u.phase, UljezPhase.vote);
     await t.pump(const Duration(seconds: 30));
+    expect(s.phase, Phase.uljez, reason: 'the end screen with both words first');
+    expect(u.phase, UljezPhase.over);
+    expect(ps[1].sent.whereType<UljezEnd>(), isNotEmpty);
+    expect(ps[1].sent.whereType<Results>(), isEmpty);
+    await t.pump(const Duration(seconds: 9));
+    expect(s.phase, Phase.uljez);
+    await t.pump(const Duration(seconds: 1));
     expect(s.phase, Phase.results);
     expect(s.placements.length, 4);
     expect(s.lastGameLabel, UljezText.name);

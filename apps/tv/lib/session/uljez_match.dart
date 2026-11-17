@@ -43,6 +43,10 @@ class UljezMatch {
   static const voteTime = Duration(seconds: 30);
   static const guessTime = Duration(seconds: 15);
 
+  /// The end screen (both words, who the impostors were) stays up this long
+  /// before the results take over, like Vukodlak's end.
+  static const endHold = Duration(seconds: 10);
+
   late UljezGame game;
   Timer? _timer;
   Duration _stageEnd = Duration.zero;
@@ -232,7 +236,9 @@ class UljezMatch {
       send(id, end);
     }
     notify?.call();
-    onOver?.call(game.scores);
+    _timer?.cancel();
+    _stageEnd = clock() + endHold;
+    _timer = Timer(endHold, () => onOver?.call(game.scores));
   }
 
   // ---- reconnect: own state only ----
