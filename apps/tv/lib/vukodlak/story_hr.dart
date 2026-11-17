@@ -1,18 +1,15 @@
 /// Vukodlak: the story the TV tells in the village square, in Croatian.
 ///
-/// Each event has several lines; the TV picks one at random so a game doesn't
-/// repeat itself. Placeholders: {name} and {name2} are player names, {role} a
+/// One list of lines per story event; the TV picks one at random so a game
+/// doesn't repeat itself. Keys match the core engine's events (93f1bd6) and the
+/// session's (marked "session"). An event that may carry a role has two keys:
+/// `xxx` without it and `xxxRole` with `{role}`; the engine sends the role only
+/// when roles are shown. Placeholders: {name}, {name2} player names, {role} a
 /// role name, {count} a number. Every placeholder stands where the nominative
-/// fits, so any name works unchanged, and no line puts a past-tense verb on a
-/// player, so it reads right for anyone. Review table: docs/strings-hr.md.
-///
-/// Hidden roles ("Skrivene uloge", on by default): lines in [storyNamesRole]
-/// name a role or show one by what they say; the TV uses them only when that
-/// role is shown anyway (hidden roles off, or the role is public by its own
-/// rule: the hunter's shot, the fool, the mayor, the tramp's win, the lone
-/// wolf's win). Every other key is role-free.
+/// fits and no line puts a past-tense verb on a player, so any name reads right.
+/// Review table: docs/strings-hr.md.
 const Map<String, List<String>> storyHr = {
-  // --- Night ---
+  // --- Night (session) ---
   'firstNight': [
     'Prva noć u selu. Nitko još ne zna tko je tko.',
     'Selo prvi put tone u san. Nitko još ne zna kome vjerovati.',
@@ -35,15 +32,16 @@ const Map<String, List<String>> storyHr = {
     'Svijeće trepere. Odluke se donose u tami.',
   ],
 
-  // --- Morning ---
-  'morningNoneOut': [
+  // --- Morning (engine) ---
+  // A quiet night and a stopped attack look the same: no line hints at an attack.
+  'morningNobody': [
     'Svanulo je. Na trgu su svi, živi i zdravi.',
     'Pijetao kukuriče, a selo broji glave: nitko ne fali!',
-    'Jutro je mirno. Noćas vukodlaci nisu imali sreće.',
+    'Mirno jutro. Dim se diže iz svih dimnjaka.',
     'Sunce izlazi nad selom koje je noć prebrodilo bez gubitka.',
     'Seljani otvaraju vrata i odahnu: svi su na broju.',
   ],
-  'morningOneOut': [
+  'morningDied': [
     'Jutro je. Seljani nalaze zatvorena vrata: {name} više nije s nama.',
     'Pijetao kukuriče, ali jedna kuća šuti. Iz nje ne izlazi {name}.',
     'Svanulo je, ali ne za sve. Noć je odnijela: {name}.',
@@ -51,26 +49,25 @@ const Map<String, List<String>> storyHr = {
     'Gavran sjeda na krov. {name} odlazi iz igre.',
     'Selo se budi tužno: {name} ispada iz igre.',
   ],
-  'morningTwoOut': [
-    'Teško jutro: iz igre ispadaju {name} i {name2}.',
-    'Dvije kuće ostaju zatvorene: {name} i {name2} ispadaju.',
-    'Noć je bila gladna. Odlaze {name} i {name2}.',
-    'Na dva krova sjede gavrani: {name} i {name2} više nisu s nama.',
+  'morningDiedRole': [
+    'Jutro je, a {name} više nije s nama. Uloga: {role}.',
+    'Noć je odnijela: {name}. Bila je to uloga: {role}.',
+    'Gavran sjeda na krov. {name} odlazi, a uloga je bila: {role}.',
+    'Selo se budi tužno: {name} ispada. Uloga: {role}.',
   ],
-  'someoneProtected': [
-    'Vukodlaci su noćas pokucali, ali vrata su izdržala.',
-    'U blatu tragovi šapa, a nitko nije stradao. Netko je bdio.',
-    'Napad je bio, žrtve nema. Selo ima tajnog čuvara.',
-    'Vukovi su otišli praznih šapa. Netko je čuvao pravu kuću.',
+  'loverDied': [
+    'Slomljeno srce ne kuca dugo. {name} odlazi za svojom ljubavi.',
+    'Zaljubljeni ne mogu jedno bez drugoga. Odlazi i {name}.',
+    'Od tuge za svojom ljubavi iz igre ispada i {name}.',
+    'Dvije kuće, jedno srce. Odlazi i {name}.',
   ],
-  'attackSurvived': [
-    'Vukodlaci su ugrizli, ali žrtva je bila tvrđa od njih.',
-    'Netko je noćas odolio vukodlaku. Selo ne zna tko.',
-    'Napad u mraku, a ujutro nitko ne fali. Čudna noć!',
-    'Vuk je zagrizao u tvrdu koru. Svi su ujutro na nogama.',
+  'loverDiedRole': [
+    'Slomljeno srce ne kuca dugo. Odlazi i {name}. Uloga: {role}.',
+    'Zaljubljeni ne mogu jedno bez drugoga. Odlazi {name}, uloga: {role}.',
+    'Od tuge ispada i {name}. Bila je to uloga: {role}.',
   ],
 
-  // --- Day ---
+  // --- Day (session) ---
   'dayStarts': [
     'Seljani se okupljaju na trgu. Vrijeme je za razgovor.',
     'Sjednite oko zdenca i recite što ste vidjeli.',
@@ -85,6 +82,8 @@ const Map<String, List<String>> storyHr = {
     'Kucnuo je čas. Tko odlazi iz sela?',
     'Glasanje počinje. Neka odluči većina.',
   ],
+
+  // --- Vote (engine) ---
   'voteOut': [
     'Selo je odlučilo: {name} napušta selo.',
     'Većina je rekla svoje. {name} odlazi s trga.',
@@ -92,26 +91,26 @@ const Map<String, List<String>> storyHr = {
     'Odluka je pala: {name} mora otići.',
     'Selo zatvara jedna vrata. {name} više ne glasa s nama.',
   ],
-  'voteNone': [
-    'Glasovi su se podijelili. Danas nitko ne odlazi.',
-    'Selo se nije složilo. Svi ostaju, barem do noći.',
-    'Nema većine, nema odluke. Noć dolazi brzo.',
-    'Svađa bez kraja: danas nitko ne ispada.',
-    'Selo okleva, a vukodlaci se smiju u bradu.',
+  'voteOutRole': [
+    'Selo je odlučilo: {name} odlazi. Uloga: {role}.',
+    'Odluka je pala: {name} mora otići. Bila je to uloga: {role}.',
+    'Većina je rekla svoje. {name} odlazi, a uloga je bila: {role}.',
+    'Selo zatvara jedna vrata: {name}. Uloga: {role}.',
+  ],
+  'voteTie': [
+    'Glasovi su se podijelili napola. Danas nitko ne odlazi.',
+    'Izjednačeno! Selo se ne može odlučiti, pa svi ostaju.',
+    'Vaga stoji na sredini. Nitko ne ispada, barem do noći.',
+    'Neriješeno. Vukodlaci se smiju u bradu.',
+  ],
+  'voteNobody': [
+    'Nitko ne diže ruku. Danas nitko ne odlazi.',
+    'Selo šuti i ne odlučuje. Svi ostaju do noći.',
+    'Glasova je premalo. Danas nitko ne ispada.',
+    'Seljani preskaču glasanje. Noć dolazi brzo.',
   ],
 
-  // --- Lines that name a role (see [storyNamesRole]) ---
-  'outRevealRole': [
-    'Pokazalo se: {name} je {role}.',
-    'Kad su se vrata zatvorila, saznalo se: {name} je {role}.',
-    'Tajna je otkrivena. {name} je {role}.',
-    'Selo sada zna: {name} je {role}.',
-  ],
-  'wolvesLeft': [
-    'Vukodlaka u selu još ima: {count}.',
-    'Broj vukodlaka koji se još skrivaju: {count}.',
-    'U selu se još skriva vukodlaka: {count}.',
-  ],
+  // --- Events that show a role by their nature (see [storyNamesRole]) ---
   'hunterAims': [
     'Lovac {name} podiže pušku. Koga će povući sa sobom?',
     'Lovac {name} odlazi, ali prije toga nišani.',
@@ -123,16 +122,10 @@ const Map<String, List<String>> storyHr = {
     'Lovac {name} ispada, ali stigne opaliti. Pogodak: {name2}.',
     'Zadnji hitac s lovačke puške. Odlazi i {name2}.',
   ],
-  'loverFollows': [
-    'Slomljeno srce ne kuca dugo. {name} odlazi za svojom ljubavi.',
-    'Zaljubljeni ne mogu jedno bez drugoga. Odlazi i {name}.',
-    'Od tuge za svojom ljubavi iz igre ispada i {name}.',
-    'Provodadžija ih je spojio, a sudbina rastavila. Odlazi {name}.',
-  ],
-  'mayorDouble': [
-    'Načelnik {name} ima dvostruki glas.',
-    'Glas načelnika broji se dvaput. Tako je od davnina.',
-    'Načelnik {name} glasa, a selo broji dvaput.',
+  'hunterShotRole': [
+    'Pucanj odjekne selom! Lovac {name} pogađa: {name2}. Uloga: {role}.',
+    'Metak lovca pogađa: {name2}. Bila je to uloga: {role}.',
+    'Lovac {name} stigne opaliti. Pogodak: {name2}, uloga: {role}.',
   ],
   'mayorBreaksTie': [
     'Izjednačeno! Odlučuje načelnik {name}.',
@@ -145,33 +138,48 @@ const Map<String, List<String>> storyHr = {
     'Smijeh na trgu: {name} je seoska budala. Ostaje, ali više ne glasa.',
     'Budalu se ne tjera iz sela. {name} ostaje, bez glasa.',
   ],
+  'trampWins': [
+    'Selo je izbacilo lutalicu! {name} odlazi pjevajući.',
+    'Lutalica {name} dobiva baš ono što želi.',
+    'Pogrešna kuća! {name} je lutalica.',
+    'Lutalica {name} maše selu s ceste.',
+  ],
+  'wolvesLeft': [
+    'Vukodlaka u selu još ima: {count}.',
+    'Broj vukodlaka koji se još skrivaju: {count}.',
+    'U selu se još skriva vukodlaka: {count}.',
+  ],
 
-  // --- Wins ---
-  'winVillage': [
+  // --- Game over (engine: gameOver{winner}) ---
+  'gameOverVillage': [
     'Posljednji vukodlak je otkriven. Selo slavi uz harmoniku!',
     'Nema više vukova! Seljani zvone zvonom i pale krijes.',
     'Selo je pobijedilo. Večeras se pleše kolo na trgu.',
     'Mir se vraća u selo. Pobjeda pripada seljanima!',
     'Šuma je opet tiha. Seljani su pobijedili.',
   ],
-  'winWolves': [
+  'gameOverWolves': [
     'Vukodlaka je sada koliko i seljana. Selo pripada čoporu!',
     'Zavijanje odjekuje trgom. Pobijedili su vukodlaci.',
     'Selo je palo pod šape. Vukodlaci slave pod punim mjesecom.',
     'Prekasno je za seljane. Čopor je pobijedio.',
     'Vukovi su nadmudrili selo. Pobjeda je njihova!',
   ],
-  'winLoneWolf': [
-    'Na trgu ostaje samo vuk samotnjak {name}. Pobjeda!',
-    'Vuk samotnjak {name} nadmudruje i selo i čopor. Pobjeda!',
-    'Posljednji na nogama je vuk samotnjak: {name}.',
-    'Čopora više nema, a vuk samotnjak {name} slavi bez društva.',
+  'gameOverLone': [
+    'Na trgu ostaje samo vuk samotnjak. Pobjeda je samo njegova.',
+    'Vuk samotnjak nadmudrio je i selo i čopor!',
+    'Čopora više nema. Vuk samotnjak slavi sam.',
+    'Posljednji je ostao vuk samotnjak. Pobjeda!',
   ],
-  'winTramp': [
-    'Selo je izbacilo lutalicu! {name} odlazi pjevajući i pobjeđuje.',
-    'Lutalica {name} dobiva što želi: put pod noge i pobjedu.',
-    'Izbacili ste lutalicu. Pobjeđuje {name}!',
-    'Pobjeda pripada lutalici: {name}.',
+  'gameOverTramp': [
+    'Lutalica je dobila što je htjela: put pod noge i pobjedu.',
+    'Selo je izbacilo lutalicu, a lutalica pobjeđuje!',
+    'Pobjeda pripada lutalici. Selo je nasjelo.',
+  ],
+  'gameOverNobody': [
+    'U selu nema više nikoga. Ova priča nema pobjednika.',
+    'Prazan trg i tihe kuće. Nitko ne slavi.',
+    'Ni seljana ni vukova. Samo gavrani ostaju na krovovima.',
   ],
   'endReveal': [
     'Igra je gotova. Evo tko se krio iza koje uloge!',
@@ -181,17 +189,21 @@ const Map<String, List<String>> storyHr = {
   ],
 };
 
-/// Keys whose lines name a role or give one away. Never use them for a player
-/// whose role is still hidden.
+/// Keys whose lines name a role. `xxxRole` keys are used only when roles are
+/// shown; the others belong to events that show the role by their nature (the
+/// hunter shoots, the fool stays, the mayor decides, the tramp or lone wolf
+/// wins) or, for wolvesLeft, only when roles are shown.
 const Set<String> storyNamesRole = {
-  'outRevealRole',
-  'wolvesLeft',
+  'morningDiedRole',
+  'loverDiedRole',
+  'voteOutRole',
+  'hunterShotRole',
   'hunterAims',
   'hunterShot',
-  'loverFollows',
-  'mayorDouble',
   'mayorBreaksTie',
   'foolSpared',
-  'winLoneWolf',
-  'winTramp',
+  'trampWins',
+  'wolvesLeft',
+  'gameOverLone',
+  'gameOverTramp',
 };
