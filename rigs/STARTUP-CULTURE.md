@@ -33,6 +33,8 @@ plan disagree, say so to your lead instead of quietly picking one.
 ## This machine
 
 - Intel Mac (x86_64). Xcode, Android Studio and Flutter 3.47.7 (through fvm) are installed.
+- Test locally only (this Mac, the TV, the person's phones). No GitHub Actions or other CI: don't add workflows or
+  trigger runs (person, 2026-11-17).
 - Check `df -h` before emulator or release builds. A nearly full disk makes installs hang without an error.
 - Run Gradle as `./gradlew --no-daemon` if you run it directly.
 - The Pixel 6a (adb device `28051JEGR09026`) is the person's own phone. Since 2026-11-17 the person allows it for
