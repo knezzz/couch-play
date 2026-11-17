@@ -12,7 +12,36 @@ class PerfLog {
   static final _build = <int>[], _raster = <int>[], _total = <int>[];
   static final _sw = Stopwatch()..start();
 
+  /// The name of the screen on show (home, quiz, curve, ...), set by the app so each PERF
+  /// line says where its frames were drawn.
+  static String Function()? screen;
+
+  static final _screens = <String, int>{};
+  static var _tickSamples = 0, _tickActive = 0, _tickMax = 0;
+
   static void start() => SchedulerBinding.instance.addTimingsCallback(_onTimings);
+
+  /// Records [frames] drawn on [screen] while [tickers] tickers/animations were running.
+  static void note({required int frames, required String screen, required int tickers}) {
+    _screens[screen] = (_screens[screen] ?? 0) + frames;
+    _tickSamples++;
+    if (tickers > 0) _tickActive++;
+    if (tickers > _tickMax) _tickMax = tickers;
+  }
+
+  static void reset() {
+    _screens.clear();
+    _tickSamples = _tickActive = _tickMax = 0;
+  }
+
+  /// 'screens=home:3500,curve:130 tickers_active=1/4 tickers_max=2': frames per screen, and
+  /// in how many samples a Ticker (an AnimationController, a Flame loop) was running: a ticker
+  /// is what asks for a frame every vsync.
+  static String context() {
+    final by = _screens.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final screens = by.isEmpty ? '-' : by.map((e) => '${e.key}:${e.value}').join(',');
+    return 'screens=$screens tickers_active=$_tickActive/$_tickSamples tickers_max=$_tickMax';
+  }
 
   static void _onTimings(List<FrameTiming> ts) {
     for (final t in ts) {
@@ -20,9 +49,15 @@ class PerfLog {
       _raster.add(t.rasterDuration.inMicroseconds);
       _total.add(t.totalSpan.inMicroseconds);
     }
+    note(
+      frames: ts.length,
+      screen: screen?.call() ?? '?',
+      tickers: SchedulerBinding.instance.transientCallbackCount,
+    );
     if (_sw.elapsed.inSeconds < 60) return;
     // ignore: avoid_print
-    print(line(_build, _raster, _total));
+    print('${line(_build, _raster, _total)} ${context()}');
+    reset();
     _build.clear();
     _raster.clear();
     _total.clear();

@@ -76,6 +76,10 @@ class _TvAppState extends State<TvApp> {
   @override
   void initState() {
     super.initState();
+    PerfLog.screen = () => switch (_session.phase) {
+          Phase.lobby => 'home',
+          final p => p.name,
+        };
     _session.changes.addListener(_onSession);
     _purge = Timer.periodic(const Duration(minutes: 1), (_) => _session.purgeStale());
     if (widget.serve) _start();
