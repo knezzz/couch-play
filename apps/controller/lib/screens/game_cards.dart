@@ -61,6 +61,15 @@ class GameLook {
       null,
     ),
     GameKind.uljez => const GameLook(_uljezAmber, ink, ink, null),
+    GameKind.objasni => const GameLook(Color(0xFFFF8A4D), ink, ink, null),
+    GameKind.koliko => const GameLook(Color(0xFF3DDCC4), ink, ink, null),
+    GameKind.blef => const GameLook(_pink, ink, ink, null),
+    GameKind.tkobi => const GameLook(
+      Color(0xFF9B5CFF),
+      textColor,
+      Color(0xFFE6DAFF),
+      null,
+    ),
   };
 }
 
@@ -92,6 +101,18 @@ Widget _art(GameKind k) => switch (k) {
     size: 96,
     color: Color(0xFFFFE08A),
   ),
+  GameKind.objasni => const Icon(Icons.record_voice_over, size: 96, color: ink),
+  GameKind.koliko => const Text(
+    '123',
+    style: TextStyle(
+      fontSize: 80,
+      fontWeight: FontWeight.w900,
+      height: 1,
+      color: ink,
+    ),
+  ),
+  GameKind.blef => const Icon(Icons.theater_comedy, size: 96, color: ink),
+  GameKind.tkobi => const Icon(Icons.how_to_vote, size: 96, color: textColor),
   GameKind.uljez => const Text(
     '?',
     style: TextStyle(
@@ -108,6 +129,15 @@ Widget _tile(Color bg, Color fg, IconData icon) => Container(
   alignment: Alignment.center,
   child: Icon(icon, size: 28, color: fg),
 );
+
+/// The games this phone can play. Objasni, Koliko?, Blef and Tko bi? join the
+/// list as their screens land (core already knows them).
+const supportedGames = [
+  GameKind.quiz,
+  GameKind.curve,
+  GameKind.vukodlak,
+  GameKind.uljez,
+];
 
 /// The host's game picker: one card per game and page dots.
 class GameCarousel extends StatefulWidget {
@@ -141,7 +171,7 @@ class _GameCarouselState extends State<GameCarousel> {
             controller: _controller,
             onPageChanged: (i) => setState(() => _page = i),
             children: [
-              for (final k in GameKind.values)
+              for (final k in supportedGames)
                 Padding(
                   padding: const EdgeInsets.only(right: 14),
                   child: _card(k, l),
@@ -154,7 +184,7 @@ class _GameCarouselState extends State<GameCarousel> {
           key: const ValueKey('dots'),
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (var i = 0; i < GameKind.values.length; i++)
+            for (var i = 0; i < supportedGames.length; i++)
               AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
                 margin: const EdgeInsets.symmetric(horizontal: 4),

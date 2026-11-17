@@ -30,6 +30,16 @@ GameSettings copySettings(
   String? uljezPackId,
   int? uljezDiscussion,
   int? uljezImpostors,
+  int? objasniSeconds,
+  int? objasniTarget,
+  String? objasniPackId,
+  int? kolikoSeconds,
+  int? kolikoQuestions,
+  String? kolikoPackId,
+  int? blefQuestions,
+  String? blefPackId,
+  int? tkobiPrompts,
+  String? tkobiPackId,
 }) => GameSettings(
   quizSeconds: quizSeconds ?? s.quizSeconds,
   quizQuestions: quizQuestions ?? s.quizQuestions,
@@ -43,6 +53,16 @@ GameSettings copySettings(
   uljezPackId: uljezPackId ?? s.uljezPackId,
   uljezDiscussion: uljezDiscussion ?? s.uljezDiscussion,
   uljezImpostors: uljezImpostors ?? s.uljezImpostors,
+  objasniSeconds: objasniSeconds ?? s.objasniSeconds,
+  objasniTarget: objasniTarget ?? s.objasniTarget,
+  objasniPackId: objasniPackId ?? s.objasniPackId,
+  kolikoSeconds: kolikoSeconds ?? s.kolikoSeconds,
+  kolikoQuestions: kolikoQuestions ?? s.kolikoQuestions,
+  kolikoPackId: kolikoPackId ?? s.kolikoPackId,
+  blefQuestions: blefQuestions ?? s.blefQuestions,
+  blefPackId: blefPackId ?? s.blefPackId,
+  tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
+  tkobiPackId: tkobiPackId ?? s.tkobiPackId,
 );
 
 class LobbyScreen extends StatefulWidget {
@@ -372,7 +392,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     _wolfSettings(l, change)
                   else if (kind == GameKind.uljez)
                     _uljezSettings(l, change)
-                  else
+                  else if (kind == GameKind.quiz || kind == GameKind.curve)
                     _GameSettings(kind, s, onChange: change),
                   if (kind == GameKind.quiz || kind == GameKind.curve) ...[
                     const SizedBox(height: 14),

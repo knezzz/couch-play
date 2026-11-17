@@ -76,12 +76,20 @@ abstract final class Strings {
     GameKind.curve => curve,
     GameKind.vukodlak => wolfName,
     GameKind.uljez => uljezName,
+    GameKind.objasni => 'Objasni',
+    GameKind.koliko => 'Koliko?',
+    GameKind.blef => 'Blef',
+    GameKind.tkobi => 'Tko bi?',
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
     GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
     GameKind.vukodlak => 'Selo i vukodlaci. Uloga je tajna.',
     GameKind.uljez => 'Svi imaju istu riječ, osim uljeza. Nađi ga.',
+    GameKind.objasni => 'Dva tima. Objasni riječ, ali je ne izgovori.',
+    GameKind.koliko => 'Pogodi broj. Tko je najbliže?',
+    GameKind.blef => 'Smisli lažni odgovor. Nađi pravi.',
+    GameKind.tkobi => 'Glasaj za nekoga u sobi.',
   };
   static String watchingLabel(String? host) => '${host ?? 'Domaćin'} gleda:';
   static String startsWhen(String? host) =>
@@ -115,6 +123,7 @@ abstract final class Strings {
         '$possibleRoles: ${s.wolfRoles.length} · $discussion: ${minutes(s.wolfDiscussion)}',
       GameKind.uljez =>
         '${pack(uljezPacks, s.uljezPackId)} · $discussion: ${minutes(s.uljezDiscussion)} · ${impostors(s.uljezImpostors)}',
+      _ => '',
     };
   }
 

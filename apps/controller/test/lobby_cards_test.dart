@@ -117,7 +117,8 @@ void main() {
         of: find.byKey(const ValueKey('dots')),
         matching: find.byType(AnimatedContainer),
       );
-      expect(dots, findsNWidgets(GameKind.values.length));
+      expect(dots, findsNWidgets(supportedGames.length));
+      expect(supportedGames, isNot(contains(GameKind.objasni)));
       double w(int i) => t.getSize(dots.at(i)).width;
       expect(w(0), 32); // 24 + the 4 px margins
       expect(w(1), 16);
