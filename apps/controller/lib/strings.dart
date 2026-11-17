@@ -23,7 +23,13 @@ abstract final class Strings {
   static const quiz = 'Kviz';
   static const curve = 'Curve';
   static const quizPack = 'Paket pitanja';
-  static const addPack = 'Dodaj paket pitanja…';
+  static const addPack = 'Dodaj svoj paket…';
+
+  /// 1 pitanje, 21 pitanje, 2 pitanja, 94 pitanja, 401 pitanje.
+  static String questions(int n) =>
+      '$n ${n % 10 == 1 && n % 100 != 11 ? 'pitanje' : 'pitanja'}';
+  static const settingsNote =
+      'Postavke se vide na TV-u i vrijede od sljedeće igre. TV ih pamti.';
   static const bots = 'Roboti';
   static const fewerBots = 'Manje robota';
   static const moreBots = 'Više robota';

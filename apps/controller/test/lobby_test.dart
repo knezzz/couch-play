@@ -139,10 +139,11 @@ void main() {
     );
     final c = await _pump(t, l, 0);
     await _openGame(t, c, l, GameKind.quiz);
-    await t.tap(find.byType(DropdownButton<String>));
+    await t.tap(find.byKey(const ValueKey('open-packs')));
     await t.pumpAndSettle();
-    await t.tap(find.text('Sport (30)').last);
+    await t.tap(find.byKey(const ValueKey('pack-b')));
     await t.pumpAndSettle();
+    expect(find.text(Strings.back), findsOneWidget, reason: 'back on the details');
     final sent = (c.sent.last as SetSettings).settings;
     expect(sent.quizPackId, 'b');
     expect(sent.quizSeconds, 30);
@@ -417,7 +418,11 @@ void main() {
     final c = await _pump(t, _lobby(), 0, addPack: pick);
     expect(find.text(Strings.addPack), findsNothing); // not on the carousel
     await _openGame(t, c, _lobby(), GameKind.quiz, addPack: pick);
+    expect(find.text(Strings.addPack), findsNothing); // it lives in the grid
+    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.pumpAndSettle();
     expect(find.text(Strings.addPack), findsOneWidget);
+    await t.pumpWidget(const SizedBox()); // drops the pushed grid
     await _pump(t, _lobby(), 1, addPack: pick);
     expect(find.text(Strings.addPack), findsNothing);
   });
@@ -433,6 +438,8 @@ void main() {
 
     final c = await _pump(t, _lobby(), 0, addPack: add);
     await _openGame(t, c, _lobby(), GameKind.quiz, addPack: add);
+    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.pumpAndSettle();
     await t.tap(find.text(Strings.addPack));
     await t.pump();
     await t.pump();
@@ -448,6 +455,8 @@ void main() {
       Future<String?> add(String _) async => next();
       final c = await _pump(t, _lobby(), 0, addPack: add);
       await _openGame(t, c, _lobby(), GameKind.quiz, addPack: add);
+      await t.tap(find.byKey(const ValueKey('open-packs')));
+      await t.pumpAndSettle();
       await t.tap(find.text(Strings.addPack));
       await t.pump();
       await t.pump();

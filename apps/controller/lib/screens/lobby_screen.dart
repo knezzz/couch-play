@@ -5,6 +5,7 @@ import '../character_grid.dart';
 import '../connection.dart';
 import '../theme.dart';
 import '../strings.dart';
+import 'pack_grid.dart';
 import 'uljez_screens.dart';
 import 'wolf_screens.dart';
 
@@ -64,15 +65,8 @@ class LobbyScreen extends StatefulWidget {
 }
 
 class _LobbyScreenState extends State<LobbyScreen> {
-  String? _packMessage;
-
   /// The TV decides what is open: a tap only asks, LobbyState.selected answers.
   void _select(GameKind? k) => widget.conn.send(SelectGame(k));
-
-  Future<void> _addPack() async {
-    final msg = await widget.addPack!(widget.conn.token);
-    if (mounted) setState(() => _packMessage = msg);
-  }
 
   /// A tap only asks. The TV answers with a LobbyState (changed) or an
   /// ErrorMsg (refused: the banner shows its reason, the old one stays).
@@ -270,6 +264,63 @@ class _LobbyScreenState extends State<LobbyScreen> {
     );
   }
 
+  /// The chosen pack; opens the grid of all packs.
+  Widget _packRow(LobbyState l, String? packId) {
+    final p = l.packs.where((p) => p.id == packId).firstOrNull;
+    return Material(
+      color: surface,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        key: const ValueKey('open-packs'),
+        borderRadius: BorderRadius.circular(16),
+        onTap: _openPacks,
+        child: Container(
+          height: 64,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  p?.title ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              if (p != null)
+                Text(
+                  Strings.questions(p.questionCount),
+                  style: const TextStyle(fontSize: 18, color: muted),
+                ),
+              const SizedBox(width: 12),
+              const Text('›', style: TextStyle(fontSize: 22, color: accent)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openPacks() => _pushLive((l) {
+    final id = l.packs.any((p) => p.id == l.settings.quizPackId)
+        ? l.settings.quizPackId
+        : l.packs.firstOrNull?.id;
+    return PackGridScreen(
+      packs: l.packs,
+      selected: id,
+      addPack: widget.addPack == null
+          ? null
+          : () => widget.addPack!(widget.conn.token),
+      onPick: (pick) {
+        widget.conn.send(SetSettings(_withPack(l.settings, pick)));
+        Navigator.of(context).pop();
+      },
+      onBack: () => Navigator.of(context).pop(),
+    );
+  });
+
   Widget _details(GameKind kind, LobbyState l, String? packId) {
     final s = l.settings;
     void change(GameSettings n) => widget.conn.send(SetSettings(n));
@@ -301,69 +352,15 @@ class _LobbyScreenState extends State<LobbyScreen> {
               style: const TextStyle(fontSize: 20, color: muted, height: 1.4),
             ),
             const SizedBox(height: 16),
-            if (kind == GameKind.quiz) ...[
-              if (l.packs.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                const Text(
-                  Strings.quizPack,
-                  style: TextStyle(fontSize: 16, color: muted),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  height: 56,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: packId,
-                      dropdownColor: surface,
-                      style: const TextStyle(fontSize: 20, color: textColor),
-                      items: [
-                        for (final p in l.packs)
-                          DropdownMenuItem(
-                            value: p.id,
-                            child: Text(
-                              '${p.title} (${p.questionCount})',
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                      ],
-                      onChanged: (v) => change(_withPack(s, v)),
-                    ),
-                  ),
-                ),
-              ],
-              if (widget.addPack != null) ...[
-                const SizedBox(height: 16),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(48),
-                    foregroundColor: accent,
-                    side: const BorderSide(color: raised, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  onPressed: _addPack,
-                  child: const Text(Strings.addPack),
-                ),
-                if (_packMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      _packMessage!,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ),
-              ],
+            if (kind == GameKind.quiz &&
+                (l.packs.isNotEmpty || widget.addPack != null)) ...[
+              const Text(
+                Strings.quizPack,
+                style: TextStyle(fontSize: 16, color: muted),
+              ),
+              const SizedBox(height: 8),
+              _packRow(l, packId),
+              const SizedBox(height: 14),
             ],
             if (kind == GameKind.vukodlak)
               _wolfSettings(l, change)
@@ -371,6 +368,13 @@ class _LobbyScreenState extends State<LobbyScreen> {
               _uljezSettings(l, change)
             else
               _GameSettings(kind, s, onChange: change),
+            if (kind == GameKind.quiz || kind == GameKind.curve) ...[
+              const SizedBox(height: 14),
+              const Text(
+                Strings.settingsNote,
+                style: TextStyle(fontSize: 18, color: muted, height: 1.4),
+              ),
+            ],
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () => widget.conn.send(StartGame(kind, null)),
