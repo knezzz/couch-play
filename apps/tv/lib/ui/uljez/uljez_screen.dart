@@ -40,7 +40,7 @@ List<Offset> uljezSpots(int n) => [
       for (var i = 0; i < n; i++)
         Offset(
           (960 + 560 * cos(-pi / 2 + i * 2 * pi / n)).roundToDouble(),
-          (590 + 290 * sin(-pi / 2 + i * 2 * pi / n)).roundToDouble(),
+          (565 + 270 * sin(-pi / 2 + i * 2 * pi / n)).roundToDouble(),
         ),
     ];
 
@@ -149,7 +149,7 @@ class _UljezScreenState extends State<UljezScreen> with SingleTickerProviderStat
               for (var i = 0; i < widget.seats.length; i++) _seat(widget.seats[i], spots[i]),
               Positioned(
                 left: 610,
-                top: 540,
+                top: 515,
                 width: 700,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -191,8 +191,8 @@ class _UljezScreenState extends State<UljezScreen> with SingleTickerProviderStat
 
   Widget _seat(UljezSeat s, Offset at) {
     final color = s.out ? const Color(0xFF6E6E7A) : playerColors[s.colorIndex % playerColors.length];
-    // Eight round the table with votes under them need the room: smaller rings.
-    final big = widget.seats.length <= 6;
+    // From four players up, the votes under a seat need the room (and TVs crop the edges): smaller rings.
+    final big = widget.seats.length <= 3;
     final ringColor = s.impostor ? const Color(0xFFFF4D6D) : (s.turn ? const Color(0xFFFFE27A) : Colors.transparent);
     Widget ring = Container(
       key: s.impostor ? const ValueKey('impostor-ring') : (s.turn ? const ValueKey('turn-ring') : null),
@@ -280,8 +280,8 @@ class _TablePainter extends CustomPainter {
     canvas.save();
     canvas.scale(size.width / 1920, size.height / 1080);
     final p = Paint()..color = const Color(0xFF3A2A55);
-    canvas.drawOval(Rect.fromCenter(center: const Offset(960, 610), width: 840, height: 460), p);
-    canvas.drawOval(Rect.fromCenter(center: const Offset(960, 600), width: 800, height: 428), p..color = const Color(0xFF4A3670));
+    canvas.drawOval(Rect.fromCenter(center: const Offset(960, 585), width: 840, height: 440), p);
+    canvas.drawOval(Rect.fromCenter(center: const Offset(960, 575), width: 800, height: 410), p..color = const Color(0xFF4A3670));
     canvas.restore();
   }
 

@@ -149,20 +149,30 @@ void main() {
     expect(t.binding.transientCallbackCount, 0);
   });
 
-  testWidgets('8 players with all the votes and the words: nothing overflows, nothing off screen', (t) async {
-    await _pump(
-      t,
-      _seats(8, impostors: {3}, voters: {3: [1, 2, 4, 5, 6, 7, 8]}),
-      showVotes: true,
-      villageWord: 'Spužva Bob i drugovi',
-      impostorWord: 'Pikachu iz Pokemona',
-      headline: Strings.uljezCaught('Ime3'),
-    );
-    expect(t.takeException(), isNull);
-    for (var i = 1; i <= 8; i++) {
-      final r = t.getRect(find.byKey(ValueKey('seat-$i')));
-      expect(r.bottom, lessThanOrEqualTo(1060), reason: 'seat $i: the votes under the bottom seat stay on screen');
-      expect(r.right, lessThanOrEqualTo(1920));
+  for (final n in [3, 4, 6, 8]) {
+    testWidgets('$n players with the votes and the words: nothing below 1030 px (TVs crop the edge) and nothing overflows', (t) async {
+      await _pump(
+        t,
+        _seats(n, impostors: {3}, voters: {3: [for (var i = 1; i <= n; i++) if (i != 3) i]}),
+        showVotes: true,
+        villageWord: 'Spužva Bob i drugovi',
+        impostorWord: 'Pikachu iz Pokemona',
+        headline: Strings.uljezCaught('Ime3'),
+      );
+      expect(t.takeException(), isNull);
+      for (var i = 1; i <= n; i++) {
+        final r = t.getRect(find.byKey(ValueKey('seat-$i')));
+        expect(r.bottom, lessThanOrEqualTo(1030), reason: 'seat $i, including the voters under it');
+        expect(r.right, lessThanOrEqualTo(1920));
+        expect(r.top, greaterThanOrEqualTo(180), reason: 'clear of the header');
+      }
+    });
+  }
+
+  test('no gendered past forms in the Uljez TV words: a note under a player must read for anyone', () {
+    for (final s in [Strings.uljezSaidClue, Strings.uljezNow, Strings.uljezTag]) {
+      expect(s, isNot(matches(RegExp(r'(ao|la|lo)$'))), reason: s);
     }
+    expect(Strings.uljezImpostorWins, isNot(contains('pobijedio')));
   });
 }

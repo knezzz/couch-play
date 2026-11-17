@@ -98,7 +98,7 @@ abstract final class Strings {
   static const uljezClueClock = 'Za trag';
   static const uljezClueHint = 'Svatko kaže jedan trag o svojoj riječi.\nNe reci riječ!';
   static const uljezNow = 'Sad ti!';
-  static const uljezSaidClue = 'rekao trag';
+  static const uljezSaidClue = 'trag dan';
   static const uljezDiscussKicker = 'RAZGOVOR';
   static const uljezWho = 'Tko je uljez?';
   static const uljezDiscussClock = 'Do glasanja';
@@ -112,7 +112,7 @@ abstract final class Strings {
   static const uljezRoundOver = 'KRAJ RUNDE';
   static const uljezEndKicker = 'KRAJ IGRE';
   static const uljezVillageWins = 'Selo je pobijedilo!';
-  static const uljezImpostorWins = 'Uljez je pobijedio!';
+  static const uljezImpostorWins = 'Pobjeda uljeza!';
   static const uljezVillageWord = 'Riječ sela';
   static const uljezImpostorWord = 'Uljezova riječ';
   static const uljezTag = 'Uljez';
