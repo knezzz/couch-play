@@ -43,11 +43,13 @@ abstract final class Strings {
     GameKind.quiz => quiz,
     GameKind.curve => curve,
     GameKind.vukodlak => wolfName,
+    GameKind.uljez => uljezName,
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
     GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
     GameKind.vukodlak => 'Selo i vukodlaci. Uloga je tajna.',
+    GameKind.uljez => 'Svi imaju istu riječ, osim uljeza. Nađi ga.',
   };
   static String watching(String? host, String game) =>
       '${host ?? 'Domaćin'} gleda: $game';
@@ -209,6 +211,22 @@ abstract final class Strings {
     ),
     ('tramp', 'Lutalica', 'Pobjeđuje sam ako ga selo izglasa van.', 2, false),
   ];
+
+  // Uljez
+  static const uljezName = 'Uljez';
+  static String uljezRound(int n) => 'ULJEZ · RUNDA $n';
+  static const yourWord = 'TVOJA RIJEČ';
+  static const wordHint = 'Tvoja riječ se vidi samo dok držiš.';
+  static const wordNote = 'Netko možda ima drugu riječ. Možda i ti.';
+  static const uljezVoteHeader = 'GLASANJE';
+  static const whoIsImpostor = 'Tko je uljez?';
+  static const caught = 'Uhvatili su te!';
+  static const guessHeader = 'POGAĐANJE';
+  static String caughtHint(String word) =>
+      'Tvoja riječ je bila $word. Pogodi riječ sela i ipak pobjeđuješ.';
+  static const wordPack = 'Paket riječi';
+  static const impostorCount = 'Broj uljeza';
+  static String impostors(int n) => n == 1 ? '1 uljez' : '$n uljeza';
 
   // Pack upload
   static const tvProblem = 'TV ima problem. Pokušaj ponovno.';
