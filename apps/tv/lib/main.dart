@@ -22,6 +22,7 @@ import 'ui/home_screen.dart';
 import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
+import 'ui/blef/blef_view.dart';
 import 'ui/koliko/koliko_view.dart';
 import 'ui/objasni/objasni_view.dart';
 import 'ui/uljez/uljez_view.dart';
@@ -251,7 +252,7 @@ class _TvAppState extends State<TvApp> {
       navigatorKey: _nav,
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
-        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko,
+        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef,
         changes: _session.changes,
         onEnd: _session.endGame,
         // Back on the results screen moves on at once instead of waiting out the hold.
@@ -307,6 +308,8 @@ class _TvAppState extends State<TvApp> {
               ? ObjasniView(match: _session.objasni!, players: _session.playerInfos)
               : _session.phase == Phase.koliko && _session.koliko != null
               ? KolikoView(match: _session.koliko!, players: _session.playerInfos)
+              : _session.phase == Phase.blef && _session.blef != null
+              ? BlefView(match: _session.blef!, players: _session.playerInfos)
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,

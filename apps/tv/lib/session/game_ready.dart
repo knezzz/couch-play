@@ -5,5 +5,5 @@ const kWolfTvReady = true;
 const kUljezTvReady = true;
 const kObjasniTvReady = true;
 const kKolikoTvReady = true;
-const kBlefTvReady = false;
+const kBlefTvReady = true;
 const kTkobiTvReady = false;

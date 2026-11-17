@@ -97,6 +97,14 @@ abstract final class Strings {
   static String kolikoAnswered(int n, int total) => 'Odgovorilo: $n od $total';
   static String kolikoCorrect(String number, String unit) => unit.isEmpty ? 'Točno: $number' : 'Točno: $number $unit';
   static const kolikoNoAnswer = 'bez odgovora';
+  static String blefQuestionOf(int n, int total) => 'Pitanje $n od $total';
+  static const blefWriteHint = 'Smisli lažan odgovor koji zvuči istinito.';
+  static String blefSent(int n, int total) => 'Poslano: $n od $total';
+  static String blefPicked(int n, int total) => 'Odabrano: $n od $total';
+  static const blefTruth = 'Točan odgovor';
+  static String blefAuthor(String names) => 'Lažni odgovor, autor: $names';
+  static const blefChoice = 'Izbor';
+  static const blefNobody = 'nitko';
   static const legendTitle = 'Pojačanja';
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';
