@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -67,41 +68,6 @@ void main() {
     expect(CurveGame.borderLines(pts, 1600, 900, 0.1), 4); // still on the top edge
   });
 
-  test('effect icons sit beside or behind the head, never ahead, side by side', () {
-    final o = Float64List(2);
-    Offset pos(double x, double y, double hd, int i) {
-      CurveGame.effectIconPos(x, y, hd, i, 1600, 900, o);
-      return Offset(o[0], o[1]);
-    }
-
-    for (final heading in [0.0, 1.0, 2.5, -2.0, 4.0]) {
-      final ps = [for (var i = 0; i < 3; i++) pos(800, 450, heading, i)];
-      final dx = Offset.fromDirection(heading).dx, dy = Offset.fromDirection(heading).dy;
-      for (final p in ps) {
-        expect((p.dx - 800) * dx + (p.dy - 450) * dy, lessThanOrEqualTo(0.001));
-      }
-      expect((ps[0] - ps[1]).distance, greaterThan(CurveGame.effectIconRadius * 2));
-    }
-    // Near a wall they stay inside the arena.
-    final p = pos(2, 2, -1.57, 0);
-    expect(p.dx, inInclusiveRange(0, 1600));
-    expect(p.dy, inInclusiveRange(0, 900));
-  });
-
-  test('a head running along a wall keeps its icon clear of it, at any distance', () {
-    final o = Float64List(2);
-    const clear = CurveGame.effectIconRadius * 1.35 + 6; // ring + line width
-    for (var x = 6.0; x <= 120; x += 1) {
-      for (final (wx, hd) in [(x, -1.5708), (1600 - x, 1.5708)]) {
-        for (var i = 0; i < 3; i++) {
-          CurveGame.effectIconPos(wx, 450, hd, i, 1600, 900, o);
-          // The line runs along y; the icon must not touch it.
-          expect((o[0] - wx).abs(), greaterThanOrEqualTo(clear - 8), reason: 'x=$wx i=$i');
-        }
-      }
-    }
-  });
-
   testWidgets('wrap border is drawn white and shrinks with the time left', (tester) async {
     await tester.runAsync(() async {
       final sim = _Fx();
@@ -124,55 +90,136 @@ void main() {
     });
   });
 
-  testWidgets('effect icon has a ring that drains and shows two effects side by side', (tester) async {
-    await tester.runAsync(() async {
-      final sim = _Fx();
-      sim.place(0, 800, 450, 0); // heading 0: icons at y = 410, going left
-      sim.fx[PowerUpKind.slow] = 1;
-      var d = await _render(sim);
-      const ring = 18 * 1.35;
-      expect(_near(_at(d, 800, 410 - ring), _green), isTrue, reason: 'ring top');
-      expect(_near(_at(d, 800 - ring, 410), _green), isTrue, reason: 'ring left, full');
+  // Effects are rings centred on the head: the shortest-lived innermost.
+  const red = Color(0xFFFF4D4D), r0 = CurveGame.ringBase, r1 = CurveGame.ringBase + CurveGame.ringStep;
 
-      sim.fx[PowerUpKind.slow] = 0.5; // right half left
-      d = await _render(sim);
-      expect(_near(_at(d, 800 + ring, 410), _green), isTrue, reason: 'right half stays');
-      expect(_near(_at(d, 800 - ring, 410), _bg), isTrue, reason: 'left half drained');
-
-      sim.fx[PowerUpKind.ghost] = 1; // second icon, one step further back
-      d = await _render(sim);
-      expect(_near(_at(d, 750, 410 - ring), _green), isTrue);
-      expect(_near(_at(d, 800, 410 - ring), _green), isTrue);
-
-      sim.fx
-        ..clear()
-        ..[PowerUpKind.fatOthers] = 1;
-      d = await _render(sim);
-      expect(_near(_at(d, 800, 410 - ring), const Color(0xFFFF4D4D)), isTrue, reason: 'red = others');
-    });
-  });
-
-  testWidgets('reverse others is a red icon; fat shows one dark dot per stack', (tester) async {
+  testWidgets('an active effect is a ring centred on the head, with no icon beside it', (tester) async {
     await tester.runAsync(() async {
       final sim = _Fx();
       sim.place(0, 800, 450, 0);
-      const red = Color(0xFFFF4D4D), ring = 18 * 1.35;
-      sim.fx[PowerUpKind.reverseOthers] = 1;
-      var d = await _render(sim);
-      expect(_near(_at(d, 800, 410 - ring), red), isTrue, reason: 'red = others');
-      expect(_near(_at(d, 800, 410 - 12), red), isTrue, reason: 'disc, above the arrows');
+      sim.fx[PowerUpKind.slow] = 1;
+      final d = await _render(sim);
+      expect(_near(_at(d, 800, 450 - r0), _green), isTrue, reason: 'ring top');
+      expect(_near(_at(d, 800 + r0, 450), _green), isTrue, reason: 'ring right');
+      expect(_near(_at(d, 800, 450 + r0), _green), isTrue, reason: 'ring bottom');
+      expect(_near(_at(d, 800 - r0, 450), _green), isTrue, reason: 'ring left');
+      expect(_near(_at(d, 800, 450), _white), isTrue, reason: 'the head, in the middle');
+      // Where the old icon sat (40 beside the line) there is nothing but background.
+      for (final p in [const Offset(800, 410), const Offset(800, 490), const Offset(750, 410)]) {
+        expect(_near(_at(d, p.dx, p.dy), _bg), isTrue, reason: 'nothing at $p');
+      }
+    });
+  });
 
+  testWidgets('the ring drains clockwise from the top as the time runs out', (tester) async {
+    await tester.runAsync(() async {
+      final sim = _Fx();
+      sim.place(0, 800, 450, 0);
+      sim.fx[PowerUpKind.slow] = 0.5; // top and right half stay
+      var d = await _render(sim);
+      expect(_near(_at(d, 800 + r0, 450), _green), isTrue, reason: 'right half stays');
+      expect(_near(_at(d, 800 - r0, 450), _green), isFalse, reason: 'left half drained');
+      sim.fx[PowerUpKind.slow] = 0.1; // only a little past the top
+      d = await _render(sim);
+      expect(_near(_at(d, 800, 450 - r0), _green), isTrue);
+      expect(_near(_at(d, 800 + r0, 450), _green), isFalse);
+    });
+  });
+
+  testWidgets('several effects are concentric: the one with the most time left is outermost', (tester) async {
+    await tester.runAsync(() async {
+      final sim = _Fx();
+      sim.place(0, 800, 450, 0);
       sim.fx
-        ..clear()
-        ..[PowerUpKind.fatOthers] = 1;
+        ..[PowerUpKind.slow] = 0.9 // green, long
+        ..[PowerUpKind.speedOthers] = 0.3; // red, short
+      var d = await _render(sim);
+      expect(_near(_at(d, 800, 450 - r0), red), isTrue, reason: 'short-lived red inside');
+      expect(_near(_at(d, 800, 450 - r1), _green), isTrue, reason: 'long-lived green outside');
+      sim.fx
+        ..[PowerUpKind.slow] = 0.3
+        ..[PowerUpKind.speedOthers] = 0.9;
+      d = await _render(sim);
+      expect(_near(_at(d, 800, 450 - r0), _green), isTrue, reason: 'now green is the short one');
+      expect(_near(_at(d, 800, 450 - r1), red), isTrue);
+    });
+  });
+
+  testWidgets('green rings are on you, red are from others, in the power-up colours', (tester) async {
+    await tester.runAsync(() async {
+      for (final (kind, color) in [
+        (PowerUpKind.slow, _green),
+        (PowerUpKind.ghost, _green),
+        (PowerUpKind.speedOthers, red),
+        (PowerUpKind.fatOthers, red),
+        (PowerUpKind.reverseOthers, red),
+      ]) {
+        final sim = _Fx();
+        sim.place(0, 800, 450, 0);
+        sim.fx[kind] = 1;
+        final d = await _render(sim);
+        expect(_near(_at(d, 800, 450 - r0), color), isTrue, reason: '$kind');
+      }
+    });
+  });
+
+  testWidgets('fat shows one white dot per stack on its ring', (tester) async {
+    await tester.runAsync(() async {
+      final sim = _Fx();
+      sim.place(0, 800, 450, 0);
+      sim.fx[PowerUpKind.fatOthers] = 0.2; // the bottom of the ring has drained
       for (final n in [0, 1, 2, 3]) {
         sim.stacks = n;
-        d = await _render(sim);
-        // Dot centres at x = 800 + (i - (n-1)/2) * 0.32 * 18, y = 410 + 0.62 * 18.
-        final dots = [for (var i = 0; i < n; i++) 800 + (i - (n - 1) / 2) * 0.32 * 18];
-        for (final x in [800 - 5.76, 800.0, 800 + 5.76]) {
-          final dark = dots.any((c) => (c - x).abs() < 0.5);
-          expect(_near(_at(d, x, 410 + 11.2), _bg), dark, reason: '$n stacks, x=$x');
+        final d = await _render(sim);
+        final dots = [
+          for (var i = 0; i < n; i++)
+            Offset.fromDirection(pi / 2 + (i - (n - 1) / 2) * CurveGame.stackStep, r0) + const Offset(800, 450),
+        ];
+        for (final p in dots) {
+          expect(_near(_at(d, p.dx, p.dy), _white), isTrue, reason: '$n stacks: dot at $p');
+        }
+        // Walk the bottom of the ring: as many separate white runs as stacks.
+        var runs = 0, inRun = false;
+        for (var a = pi / 2 - 0.9; a <= pi / 2 + 0.9; a += 0.02) {
+          final p = Offset.fromDirection(a, r0) + const Offset(800, 450);
+          final white = _near(_at(d, p.dx, p.dy), _white);
+          if (white && !inRun) runs++;
+          inRun = white;
+        }
+        expect(runs, n, reason: '$n stacks');
+      }
+    });
+  });
+
+  testWidgets('the seven pickup icons are drawn on the power-up colour disc, each its own picture', (tester) async {
+    await tester.runAsync(() async {
+      final pics = <PowerUpKind, List<bool>>{};
+      for (final kind in PowerUpKind.values) {
+        final sim = _Fx();
+        sim.place(0, 100, 100, 0); // out of the way
+        sim.placePowerUp(kind, 800, 450);
+        final d = await _render(sim);
+        final disc = switch (kind) {
+          PowerUpKind.slow || PowerUpKind.ghost => _green,
+          PowerUpKind.speedOthers || PowerUpKind.fatOthers || PowerUpKind.reverseOthers => red,
+          _ => const Color(0xFF4DA6FF),
+        };
+        expect(_near(_at(d, 800, 430), disc), isTrue, reason: '$kind disc');
+        // The glyph's shape only (ink or not), so a disc colour cannot tell two icons apart.
+        pics[kind] = [
+          for (var y = 426; y < 474; y += 2)
+            for (var x = 776; x < 824; x += 2) _near(_at(d, x, y), _bg),
+        ];
+        expect(pics[kind]!.where((ink) => ink).length, greaterThan(40), reason: '$kind has a drawn glyph');
+      }
+      for (final a in PowerUpKind.values) {
+        for (final b in PowerUpKind.values) {
+          if (a.index >= b.index) continue;
+          var diff = 0;
+          for (var i = 0; i < pics[a]!.length; i++) {
+            if (pics[a]![i] != pics[b]![i]) diff++;
+          }
+          expect(diff, greaterThan(30), reason: '$a and $b look alike');
         }
       }
     });

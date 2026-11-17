@@ -6,6 +6,13 @@ import 'package:core/core.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, TextDirection, FontWeight;
 
+class _Icon {
+  const _Icon({this.fill, this.line, this.lineW = 8, this.thin, this.holes = const []});
+  final Path? fill, line, thin;
+  final double lineW;
+  final List<Offset> holes;
+}
+
 /// Runs [sim] on a fixed 60 Hz accumulator and draws trails and heads.
 /// The arena is scaled to fit the screen, letterboxed.
 class CurveGame extends FlameGame {
@@ -117,7 +124,7 @@ class CurveGame extends FlameGame {
           _head..color = counting ? _color(hd.id) : const Color(0xFFFFFFFF));
       if (counting) _drawArrow(canvas, hd.x, hd.y, hd.heading, base * 8, _color(hd.id));
       if (counting) _drawName(canvas, hd.id, hd.x, hd.y, hd.heading, base * 2, w, h);
-      if (!counting) _drawEffects(canvas, hd, w, h);
+      if (!counting) _drawEffects(canvas, hd);
     }
     canvas.restore();
     super.render(canvas);
@@ -183,56 +190,85 @@ class CurveGame extends FlameGame {
 
   static const _green = Color(0xFF3DDC84), _red = Color(0xFFFF4D4D), _blue = Color(0xFF4DA6FF);
 
-  // Unit-size glyphs (radius 1), built once.
-  static final Map<PowerUpKind, Path> _glyphs = {
-    PowerUpKind.slow: _chevrons(-1),
-    PowerUpKind.speedOthers: _chevrons(1),
-    PowerUpKind.fatOthers: Path()..addRect(const Rect.fromLTWH(-0.6, -0.3, 1.2, 0.6)),
-    PowerUpKind.ghost: Path()
-      ..moveTo(-0.45, 0.5)
-      ..lineTo(-0.45, -0.1)
-      ..arcToPoint(const Offset(0.45, -0.1), radius: const Radius.circular(0.45))
-      ..lineTo(0.45, 0.5)
-      ..lineTo(0.15, 0.3)
-      ..lineTo(-0.15, 0.5)
-      ..close(),
-    // Two arrows the opposite way round: left and right swap.
-    PowerUpKind.reverseOthers: Path()
-      ..moveTo(-0.55, -0.25)
-      ..lineTo(0.55, -0.25)
-      ..moveTo(0.25, -0.5)
-      ..lineTo(0.55, -0.25)
-      ..lineTo(0.25, 0)
-      ..moveTo(0.55, 0.25)
-      ..lineTo(-0.55, 0.25)
-      ..moveTo(-0.25, 0)
-      ..lineTo(-0.55, 0.25)
-      ..lineTo(-0.25, 0.5),
-    PowerUpKind.clear: Path()
-      ..moveTo(-0.5, -0.5)
-      ..lineTo(0.5, 0.5)
-      ..moveTo(0.5, -0.5)
-      ..lineTo(-0.5, 0.5),
-    PowerUpKind.wrap: Path()
-      ..moveTo(-0.6, 0)
-      ..lineTo(0.6, 0)
-      ..moveTo(-0.6, 0)
-      ..relativeLineTo(0.3, -0.3)
-      ..moveTo(-0.6, 0)
-      ..relativeLineTo(0.3, 0.3)
-      ..moveTo(0.6, 0)
-      ..relativeLineTo(-0.3, -0.3)
-      ..moveTo(0.6, 0)
-      ..relativeLineTo(-0.3, 0.3),
-  };
+  // Pickup icons (PuIcons, version A: things), drawn on a 100 x 100 grid with the
+  // disc at (50, 50) r 47. Built once. Ink on the power-up colour.
+  static Path _poly(List<double> v) {
+    final p = Path()..moveTo(v[0], v[1]);
+    for (var i = 2; i < v.length; i += 2) {
+      p.lineTo(v[i], v[i + 1]);
+    }
+    return p..close();
+  }
 
-  static Path _chevrons(int dir) => Path()
-    ..moveTo(-0.5 * dir, -0.45)
-    ..lineTo(0, 0)
-    ..lineTo(-0.5 * dir, 0.45)
-    ..moveTo(0.05 * dir, -0.45)
-    ..lineTo(0.55 * dir, 0)
-    ..lineTo(0.05 * dir, 0.45);
+  /// Open strokes: each list is one polyline.
+  static Path _strokes(List<List<double>> lines) {
+    final p = Path();
+    for (final v in lines) {
+      p.moveTo(v[0], v[1]);
+      for (var i = 2; i < v.length; i += 2) {
+        p.lineTo(v[i], v[i + 1]);
+      }
+    }
+    return p;
+  }
+
+  static final Map<PowerUpKind, _Icon> _icons = {
+    // Snail: shell on a body, feelers.
+    PowerUpKind.slow: _Icon(
+      fill: _poly([12, 78, 14, 66, 28, 62, 76, 62, 90, 68, 90, 78])..addOval(Rect.fromCircle(center: const Offset(86, 54), radius: 8)),
+      line: Path()
+        ..addOval(Rect.fromCircle(center: const Offset(46, 42), radius: 19))
+        ..addOval(Rect.fromCircle(center: const Offset(46, 42), radius: 6))
+        ..addPath(_strokes([[86, 50, 82, 30], [86, 50, 96, 34]]), Offset.zero),
+      lineW: 7,
+    ),
+    // Ghost: a sheet with a wavy hem; the eyes are holes.
+    PowerUpKind.ghost: _Icon(
+      fill: Path()
+        ..moveTo(26, 84)
+        ..lineTo(26, 46)
+        ..arcToPoint(const Offset(74, 46), radius: const Radius.circular(24))
+        ..lineTo(74, 84)
+        ..lineTo(65, 74)
+        ..lineTo(57, 84)
+        ..lineTo(50, 74)
+        ..lineTo(43, 84)
+        ..lineTo(35, 74)
+        ..close(),
+      holes: const [Offset(40, 46), Offset(60, 46)],
+    ),
+    // Lightning bolt.
+    PowerUpKind.speedOthers: _Icon(fill: _poly([60, 10, 26, 56, 47, 56, 38, 90, 74, 42, 53, 42])),
+    // A thin line over a thick bar.
+    PowerUpKind.fatOthers: _Icon(
+      fill: _poly([16, 50, 84, 50, 84, 82, 16, 82]),
+      line: _strokes([[16, 28, 84, 28]]),
+      lineW: 7,
+    ),
+    // Two arrows the opposite way round.
+    PowerUpKind.reverseOthers: _Icon(
+      line: _strokes([
+        [20, 34, 76, 34], [64, 22, 78, 34, 64, 46],
+        [80, 66, 24, 66], [36, 54, 22, 66, 36, 78],
+      ]),
+      lineW: 8,
+    ),
+    // Broom: handle and bristles.
+    PowerUpKind.clear: _Icon(
+      fill: _poly([28, 52, 52, 66, 42, 88, 14, 80]),
+      line: _strokes([[74, 14, 40, 58]]),
+      lineW: 8,
+    ),
+    // An arrow through the edge: dashed walls either side of it.
+    PowerUpKind.wrap: _Icon(
+      line: _strokes([[8, 50, 88, 50], [74, 38, 88, 50, 74, 62]]),
+      lineW: 8,
+      thin: _strokes([
+        for (final x in [22.0, 78.0])
+          for (final y in [18.0, 38.0, 58.0, 78.0]) [x, y, x, y + 12],
+      ]),
+    ),
+  };
 
   static Color _powerUpColor(PowerUpKind k) => switch (k) {
         PowerUpKind.slow || PowerUpKind.ghost => _green,
@@ -240,52 +276,52 @@ class CurveGame extends FlameGame {
         PowerUpKind.clear || PowerUpKind.wrap => _blue,
       };
 
-    /// Draws kind's icon at (x, y); with [left] (0..1; -1 = none) a ring around it drains.
-  void _drawPowerUp(Canvas canvas, double x, double y, PowerUpKind kind, double r,
-      [double left = -1, int stacks = 0]) {
+  static const _ink = Color(0xFF14141E);
+
+  /// A pickup on the board: [kind]'s icon, ink on the colour disc, radius [r].
+  void _drawPowerUp(Canvas canvas, double x, double y, PowerUpKind kind, double r) {
+    final disc = _powerUpColor(kind), ic = _icons[kind]!;
     canvas
       ..save()
       ..translate(x, y)
-      ..scale(r);
+      ..scale(r / 47)
+      ..translate(-50, -50);
     _icon
       ..style = PaintingStyle.fill
-      ..color = _powerUpColor(kind);
-    canvas.drawCircle(Offset.zero, 1, _icon);
+      ..color = disc;
+    canvas.drawCircle(const Offset(50, 50), 47, _icon);
+    _icon.color = _ink;
+    if (ic.fill != null) canvas.drawPath(ic.fill!, _icon);
     _icon
-      ..color = const Color(0xFF14141E)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.16
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
-    final g = _glyphs[kind]!;
-    // Solid shapes are filled, line glyphs stroked.
-    if (kind == PowerUpKind.fatOthers || kind == PowerUpKind.ghost) {
-      _icon.style = PaintingStyle.fill;
+    if (ic.line != null) {
+      _icon.strokeWidth = ic.lineW;
+      canvas.drawPath(ic.line!, _icon);
     }
-    canvas.drawPath(g, _icon);
-    // Fat stacks: one dark dot per stack under the bar.
-    if (stacks > 0) {
-      _icon.style = PaintingStyle.fill;
-      for (var i = 0; i < stacks; i++) {
-        canvas.drawCircle(Offset((i - (stacks - 1) / 2) * 0.32, 0.62), 0.11, _icon);
-      }
+    if (ic.thin != null) {
+      _icon.strokeWidth = 5;
+      canvas.drawPath(ic.thin!, _icon);
     }
-    if (left >= 0) {
-      // Ring drains clockwise from the top.
+    if (ic.holes.isNotEmpty) {
       _icon
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.28
-        ..strokeCap = StrokeCap.butt
-        ..color = _powerUpColor(kind);
-      canvas.drawArc(_ringRect, -pi / 2, 2 * pi * left, false, _icon);
+        ..style = PaintingStyle.fill
+        ..color = disc;
+      for (final h in ic.holes) {
+        canvas.drawCircle(h, 5.5, _icon);
+      }
     }
     canvas.restore();
   }
 
-  static const _ringRect = Rect.fromLTRB(-1.35, -1.35, 1.35, 1.35);
+  // Active effects (PuActive, option 1): a ring per effect centred on the head,
+  // draining clockwise from the top. In arena units; the first ring clears a
+  // x4 fat trail. Several are concentric, the one with most time left outermost.
+  static const ringBase = 26.0, ringStep = 9.0, ringWidth = 5.0;
 
-  /// Effect icons in arena units: radius, and how far beside the line they sit.
-  static const effectIconRadius = 18.0, _effectSide = 40.0, _effectStep = 50.0;
+  /// Angle between the dots that count fat stacks, on the ring's bottom.
+  static const stackStep = 0.42;
   static const _effectKinds = [
     PowerUpKind.slow,
     PowerUpKind.ghost,
@@ -293,33 +329,46 @@ class CurveGame extends FlameGame {
     PowerUpKind.fatOthers,
     PowerUpKind.reverseOthers,
   ];
+  final _ringKind = List<PowerUpKind>.filled(5, PowerUpKind.slow);
+  final _ringLeft = Float64List(5);
 
-  final _iconPos = Float64List(2);
-
-  /// Writes into [out] where the [i]th effect icon of a head sits: beside the
-  /// line (never ahead), icons in a row going back along it. The icon (with
-  /// its ring) stays inside the arena: the side with room wins; if neither has
-  /// room it is clamped.
-  static void effectIconPos(
-      double x, double y, double heading, int i, double w, double h, Float64List out) {
-    const m = effectIconRadius * 1.35;
-    final dx = cos(heading), dy = sin(heading);
-    final nx = dy, ny = -dx;
-    var s = _effectSide;
-    final cx = x + nx * s, cy = y + ny * s;
-    if (cx < m || cx > w - m || cy < m || cy > h - m) s = -s;
-    out[0] = (x + nx * s - dx * _effectStep * i).clamp(m, w - m);
-    out[1] = (y + ny * s - dy * _effectStep * i).clamp(m, h - m);
-  }
-
-  void _drawEffects(Canvas canvas, CurveHead hd, double w, double h) {
-    var i = 0;
+  void _drawEffects(Canvas canvas, CurveHead hd) {
+    var n = 0;
     for (final kind in _effectKinds) {
       final left = sim.effectLeft(hd.id, kind);
       if (left <= 0) continue;
-      effectIconPos(hd.x, hd.y, hd.heading, i++, w, h, _iconPos);
-      _drawPowerUp(canvas, _iconPos[0], _iconPos[1], kind, effectIconRadius, left,
-          sim.effectStacks(hd.id, kind));
+      // Insertion sort, shortest first: at most 5, no allocation.
+      var i = n++;
+      while (i > 0 && _ringLeft[i - 1] > left) {
+        _ringLeft[i] = _ringLeft[i - 1];
+        _ringKind[i] = _ringKind[i - 1];
+        i--;
+      }
+      _ringLeft[i] = left;
+      _ringKind[i] = kind;
+    }
+    final c = Offset(hd.x, hd.y);
+    for (var i = 0; i < n; i++) {
+      final kind = _ringKind[i], radius = ringBase + i * ringStep;
+      final color = _powerUpColor(kind);
+      final rect = Rect.fromCircle(center: c, radius: radius);
+      _icon
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = ringWidth
+        ..strokeCap = StrokeCap.butt
+        ..color = color.withValues(alpha: 0.25);
+      canvas.drawCircle(c, radius, _icon);
+      _icon.color = color;
+      canvas.drawArc(rect, -pi / 2, 2 * pi * _ringLeft[i], false, _icon);
+      if (kind == PowerUpKind.fatOthers) {
+        final stacks = sim.effectStacks(hd.id, kind);
+        _icon
+          ..style = PaintingStyle.fill
+          ..color = const Color(0xFFFFFFFF);
+        for (var s = 0; s < stacks; s++) {
+          canvas.drawCircle(c + Offset.fromDirection(pi / 2 + (s - (stacks - 1) / 2) * stackStep, radius), 4.2, _icon);
+        }
+      }
     }
   }
 
