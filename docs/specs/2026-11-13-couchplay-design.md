@@ -177,7 +177,8 @@ Reference: the design canvas, page "Konzola i Vukodlak" (copy in `docs/design/co
   players' characters top right. The remote and the host's phone drive the same choice. Replaces the lobby layout.
 - **Games full screen:** no frame or side panels; the quiz uses the whole screen.
 - **Quiz ticker:** a 20-segment bar along the top edge loses one segment per second (red for the last 5), and the TV
-  ticks for the whole question, faster at the end. Only the bar: no ring countdown (user choice, 2026-11-17).
+  ticks for the whole question; in the last 5 s the ticking speeds up clearly (about twice as fast, then faster) and
+  gets more intense (louder, higher, a heartbeat-like accent), ending on the time-up sound (user request, 2026-11-17). Only the bar: no ring countdown (user choice, 2026-11-17).
 
 ### Vukodlak (user request, 2026-11-17)
 
