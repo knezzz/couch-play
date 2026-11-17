@@ -19,3 +19,5 @@ Future<List<T>> _load<T>(AssetBundle bundle, String dir, T Function(Map<String, 
 }
 
 Future<List<ObjasniPack>> loadObjasniPacks(AssetBundle bundle) => _load(bundle, 'objasni', ObjasniPack.fromJson);
+
+Future<List<KolikoPack>> loadKolikoPacks(AssetBundle bundle) => _load(bundle, 'koliko', KolikoPack.fromJson);

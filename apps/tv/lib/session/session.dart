@@ -12,6 +12,7 @@ import '../server/game_server.dart';
 import '../sound/sfx.dart';
 import 'bots.dart';
 import 'game_ready.dart';
+import 'koliko_match.dart';
 import 'objasni_match.dart';
 import 'party_text.dart';
 import 'uljez_match.dart';
@@ -20,7 +21,7 @@ import 'wolf_match.dart';
 import 'wolf_text.dart';
 import '../strings.dart';
 
-enum Phase { lobby, quiz, curve, wolf, uljez, objasni, results }
+enum Phase { lobby, quiz, curve, wolf, uljez, objasni, koliko, results }
 
 const maxPlayers = 8;
 const _staleAfter = Duration(minutes: 10);
@@ -132,6 +133,7 @@ class Session {
     _wolfEndTimer?.cancel();
     _uljez?.dispose();
     _objasni?.dispose();
+    _koliko?.dispose();
     _roundBreakTimer?.cancel();
     _changes.dispose();
   }
@@ -249,6 +251,9 @@ class Session {
       case Guess():
         final p = _playerOf(peer);
         if (p != null) _uljez?.onGuess(p.id, m);
+      case NumberAnswer():
+        final p = _playerOf(peer);
+        if (p != null) _koliko?.onNumber(p.id, m);
       case Reshuffle():
         final p = _playerOf(peer);
         if (p != null) _objasni?.onReshuffle(p.id);
@@ -318,7 +323,7 @@ class Session {
     if (old != null && old != peer) old.close();
     peer.send(Welcome(p.id, p.colorIndex, p.token, character: p.character));
     // The (public) lobby too: a reloaded phone needs the names and colours.
-    if (_phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni) peer.send(_lobbyMsg());
+    if (_phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko) peer.send(_lobbyMsg());
     switch (_phase) {
       case Phase.lobby:
         _broadcastLobby();
@@ -357,6 +362,13 @@ class Session {
         } else {
           peer.send(_waiting);
         }
+      case Phase.koliko:
+        if (_koliko?.ids.contains(p.id) == true) {
+          _koliko!.setAway(p.id, false);
+          _koliko!.rejoin(p.id);
+        } else {
+          peer.send(_waiting);
+        }
       case Phase.results:
         peer.send(_waiting);
     }
@@ -371,6 +383,7 @@ class Session {
     p.disconnectedAt = _now();
     _dropFromGame(p, returnable: true);
     _objasni?.setAway(p.id, true);
+    _koliko?.setAway(p.id, true);
     _keepGameHost();
     if (_phase == Phase.lobby) _broadcastLobby();
     _notify();
@@ -394,6 +407,7 @@ class Session {
         selected: _selected,
         uljezPacks: [for (final p in uljezPacks) PackInfo(p.id, p.title, p.pairs.length)],
         objasniPacks: [for (final p in objasniPacks) PackInfo(p.id, p.title, p.words.length)],
+        kolikoPacks: [for (final p in kolikoPacks) PackInfo(p.id, p.title, p.questions.length, pictures: p.questions.any((q) => q.image != null))],
         settings: _settings);
   }
 
@@ -500,7 +514,12 @@ class Session {
         _startObjasni(parts, pack);
       case GameKind.koliko:
         if (!kolikoTvReady) return PartyText.soon;
-        return PartyText.soon;
+        if (_players.any((p) => p.bot)) return PartyText.noBots;
+        final parts = participants(GameKind.koliko);
+        if (parts.length < 2 || parts.length > 8) return PartyText.kolikoNeedPlayers;
+        final pack = kolikoPack(_settings.kolikoPackId);
+        if (pack == null) return Strings.packUnavailable;
+        _startKoliko(parts, pack);
       case GameKind.blef:
         if (!blefTvReady) return PartyText.soon;
         return PartyText.soon;
@@ -532,6 +551,7 @@ class Session {
     _wolf?.expel(target.id); // out of a running Vukodlak now
     _uljez?.expel(target.id); // and of a running Uljez
     _objasni?.setAway(target.id, true); // and Objasni counts it as gone
+    _koliko?.setAway(target.id, true);
     _remove(target); // bots can be kicked too
     socket?.send(const Kicked());
     socket?.close();
@@ -606,7 +626,9 @@ class Session {
     final uljezGone = uid != null && uljezPack(uid) == null && uljezPacks.isNotEmpty;
     final oid = _settings.objasniPackId;
     final objasniGone = oid != null && objasniPack(oid) == null && objasniPacks.isNotEmpty;
-    if (!quizGone && !uljezGone && !objasniGone) return;
+    final kid = _settings.kolikoPackId;
+    final kolikoGone = kid != null && kolikoPack(kid) == null && kolikoPacks.isNotEmpty;
+    if (!quizGone && !uljezGone && !objasniGone && !kolikoGone) return;
     final o = _settings;
     _settings = GameSettings(
         quizSeconds: o.quizSeconds,
@@ -626,7 +648,7 @@ class Session {
         objasniPackId: objasniGone ? null : o.objasniPackId,
         kolikoSeconds: o.kolikoSeconds,
         kolikoQuestions: o.kolikoQuestions,
-        kolikoPackId: o.kolikoPackId,
+        kolikoPackId: kolikoGone ? null : o.kolikoPackId,
         blefQuestions: o.blefQuestions,
         blefPackId: o.blefPackId,
         tkobiPrompts: o.tkobiPrompts,
@@ -709,6 +731,36 @@ class Session {
 
   /// Bumped for every round of a match; the TV makes a fresh `CurveGame` each time.
   int get curveRound => _curveRound;
+
+  // --- Koliko? ---
+
+  List<KolikoPack> kolikoPacks = [];
+  KolikoMatch? _koliko;
+  KolikoMatch? get koliko => _koliko;
+
+  KolikoPack? kolikoPack(String? id) {
+    if (id == null) return kolikoPacks.firstOrNull;
+    return kolikoPacks.where((p) => p.id == id).firstOrNull;
+  }
+
+  void _startKoliko(List<Player> parts, KolikoPack pack) {
+    _koliko?.dispose();
+    _gameHost = hostId;
+    _selected = null;
+    _phase = Phase.koliko;
+    _koliko = KolikoMatch(
+      ids: [for (final p in parts) p.id],
+      pack: pack,
+      settings: _settings,
+      send: (id, m) => _byId(id)?.socket?.send(m),
+      clock: _clock,
+      random: _random,
+      sfx: sfx,
+      notify: _notify,
+      onOver: (scores) => finishGame(scores, game: PartyText.kolikoName),
+    )..start();
+    _notify();
+  }
 
   // --- Objasni ---
 
@@ -1362,7 +1414,7 @@ class Session {
   /// The host's Back + Yes: abandons a running quiz or Curve match. No
   /// placement points, scores stay as they were; phones go back to the lobby.
   void endGame() {
-    if (_phase == Phase.quiz || _phase == Phase.curve || _phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni) returnToLobby();
+    if (_phase == Phase.quiz || _phase == Phase.curve || _phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko) returnToLobby();
   }
 
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
@@ -1380,6 +1432,8 @@ class Session {
     _uljez = null;
     _objasni?.dispose();
     _objasni = null;
+    _koliko?.dispose();
+    _koliko = null;
     _endRoundBreak();
     _sim = null;
     _bots = null;

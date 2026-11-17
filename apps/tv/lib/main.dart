@@ -111,6 +111,7 @@ class _TvAppState extends State<TvApp> {
           bundled: await loadBundledPacks(rootBundle), userDir: Directory('${support.path}/packs'));
       _session.uljezPacks = await loadUljezPacks(rootBundle);
       _session.objasniPacks = await loadObjasniPacks(rootBundle);
+      _session.kolikoPacks = await loadKolikoPacks(rootBundle);
       _session.loadSettings(File('${support.path}/settings.json'));
       final server = await GameServer.start(
         webRoot: web,
