@@ -999,3 +999,8 @@ Spec: `docs/specs/2026-11-17-party-games-design.md` (all rules there). Each game
 - [ ] **Task 41: Blef** (3–8, typed fake answers). **First:** prove typing works in Flutter Web on a real iPhone Safari and Android Chrome (keyboard, č ć š ž đ, autocorrect) before building the screens. Packs: strange but true facts with short answers and sources.
 - [ ] **Task 42: Tko bi?** (3–8, vote for someone in the room; counts on the session board). Packs: "Blago" and "Ljuto", ≥ 30 prompts each, kind (no looks, weight, health, money, relationships).
 
+### Task 43: Kao svi, match the herd (added 2026-11-17, person: build straight away)
+
+Spec: `2026-11-17-party-games-design.md` §5. Reuse Blef's text field and the party-game pieces.
+- [ ] Core rules (grouping with normalisation, host merges, scoring incl. ties and the lone-answer −1, end), protocol + session, TV (answered faces, group stacks), phones (answer, host merge screen), packs (5 themes, ≥ 60 questions), home card. Tests first; QA with 3–8 phones; review of privacy (no answer on the TV before the reveal).
+

@@ -154,6 +154,27 @@ Questions whose answer is a number. The closest guess wins. Like the number roun
   questions with four choices. Those can be converted: the content seat checks each one against its source again.
   Nobody has counted yet how many such questions there are.
 
+## 5. Kao svi (match the herd) (added 2026-11-17, person approved)
+
+Everyone answers the same open question; the goal is to give the SAME answer as most of the room. Our own name and
+questions (no cow, no names or tokens from any existing game).
+
+- **Players:** 3–8, no bots.
+- **A question:** the TV shows an open question ("Navedi voće.", "Najbolji film svih vremena?", "Koliko jaja u
+  omletu?"). Each phone has the Blef text field (≤ 30 characters) and **Pošalji**, 30 s. The TV shows who has
+  answered, never the answers.
+- **Grouping:** answers are grouped when they match after lower-casing, trimming and removing Croatian diacritics
+  ("Jabuka" = "jabuka" = "JABUKA "). The host's phone then shows the groups for 15 s and may merge obvious synonyms
+  or plurals by tapping two groups ("jabuka" + "jabuke"); everyone sees the merged result on the TV.
+- **Reveal:** the TV shows the groups as stacks of player characters, largest first, with the answer text.
+- **Points:** every player in the single largest group scores 1. If two or more groups tie for largest, nobody
+  scores. If exactly one player is alone with a unique answer while everyone else is in groups of two or more, that
+  player loses 1 point (not below 0).
+- **Game:** first to 8 points, or 12 questions (host setting 8 / 12 / 16 questions; target 5 / 8 / 10); then
+  placement points.
+- **Content:** packs of open questions in Croatian with many plausible answers (`{"id","title","questions":[...]}`,
+  ≥ 60 each): Općenito, Hrana, Hrvatska, Međimurje, Pop kultura.
+
 ---
 
 ## Questions for the person (answered 2026-11-17)

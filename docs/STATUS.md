@@ -47,6 +47,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 37 | Design-audit decisions: scores between Curve rounds, Večeras strip, power-up legend, fat icon, night switch (person, 2026-11-17) | in progress; audit fixes (pack grid f1d37a9, Curve art de932f6) | lead |
 | 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | done; on the TV (682e883) | lead + content |
 | 39–42 | Party games: Objasni, Koliko?, Blef, Tko bi?, with new packs (person, 2026-11-17) | queued to lead | lead + content |
+| 43 | Kao svi: match the herd (person, 2026-11-17) | queued to lead | lead + content |
 
 ## Open questions for the person
 
