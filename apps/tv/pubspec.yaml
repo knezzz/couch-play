@@ -71,6 +71,8 @@ flutter:
     - assets/packs/
     - assets/sounds/
     - assets/uljez/
+    - assets/objasni/
+    - assets/tkobi/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
