@@ -13,37 +13,48 @@
 body{margin:0}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 20px 32px; background: linear-gradient(180deg, #05060F 0%, #0C1430 100%); color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 14px">
-  <div style="font-size: 16px; color: #8FA0D8; letter-spacing: 3px; font-weight: 700">NOĆ 2 · VUKODLACI</div>
-  <div style="font-size: 30px; font-weight: 900; line-height: 1.15">Koga ćete noćas posjetiti?</div>
-  <div style="font-size: 16px; color: #C3CBEA">Luka je odabrao: <b>Ivana</b>. Morate se složiti.</div>
-  <div role="radiogroup" aria-label="Žrtva" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 20px 32px; background: #101014; color: #E8E8EE; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 14px">
+  <div style="font-size: 15px; color: #8A8A96; letter-spacing: 3px; font-weight: 700">NOĆ 2</div>
+  <div style="font-size: 30px; font-weight: 900">Noćna odluka</div>
+  <div style="font-size: 16px; color: #8A8A96; line-height: 1.4; min-height: 46px">{{hint}}</div>
+  <div role="radiogroup" aria-label="Odabir" style="display: flex; flex-direction: column; gap: 8px">
     <sc-for list="{{targets}}" as="t" hint-placeholder-count="5">
       <button role="radio" aria-checked="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">
-        <dc-import name="Face" animal="{{t.animal}}" color="{{t.color}}" size="{{s56}}" hint-size="56px,56px"></dc-import>
-        <span style="font-size: 20px; font-weight: 700">{{t.name}}</span>
+        <span style="filter: grayscale(1); opacity: 0.7; display: flex"><dc-import name="Face" animal="{{t.animal}}" color="#9A9AA6" size="{{s44}}" hint-size="44px,44px"></dc-import></span>
+        <span style="font-size: 21px; font-weight: 700; flex-grow: 1; text-align: left">{{t.name}}</span>
+        <span style="font-size: 18px">{{t.mark}}</span>
       </button>
     </sc-for>
   </div>
-  <button style="font: inherit; font-size: 22px; font-weight: 900; color: #14141E; background: #FF4D6D; border: 0; border-radius: 16px; height: 64px; margin-top: auto">Potvrdi</button>
-  <div style="font-size: 14px; color: #8FA0D8; text-align: center; line-height: 1.4">Seljani u isto vrijeme biraju koga sumnjiče, pa svi mobiteli izgledaju zauzeto.</div>
+  <button style="font: inherit; font-size: 21px; font-weight: 700; color: #E8E8EE; background: #26262E; border: 0; border-radius: 16px; height: 60px; margin-top: auto">Potvrdi</button>
+  <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #6E6E7A">Pregled uloge:
+    <select onChange="{{setRole}}" style="font: inherit; font-size: 14px; color: #E8E8EE; background: #18181E; border: 1px solid #26262E; border-radius: 8px; height: 34px">
+      <option value="wolf">Vukodlak</option><option value="seer">Vidovnjakinja</option><option value="doc">Ljekarnik</option><option value="vil">Seljanin</option>
+    </select>
+  </label>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(p) { super(p); this.state = { pick: 'Ivana' }; }
+  constructor(p) { super(p); this.state = { pick: 'Ivana', role: 'wolf' }; }
   renderVals() {
-    const list = [['Ana', 'owl', '#FFB020'], ['Ivana', 'rabbit', '#22B8F0'], ['Josip', 'bear', '#FF7AD9'], ['Maja', 'mouse', '#F5E94B'], ['Marko', 'frog', '#2ECC71']];
-    const targets = list.map(([name, animal, color]) => {
+    const H = {
+      wolf: 'Koga posjećujete? Luka je odabrao Ivanu.',
+      seer: 'Čiju ulogu želiš vidjeti?',
+      doc: 'Koga štitiš noćas?',
+      vil: 'Tko ti je sumnjiv? (samo za tebe)'
+    };
+    const list = [['Ana', 'owl'], ['Ivana', 'rabbit'], ['Josip', 'bear'], ['Luka', 'fox'], ['Maja', 'mouse']];
+    const targets = list.map(([name, animal]) => {
       const on = this.state.pick === name;
       return {
-        name, animal, color, on: on ? 'true' : 'false',
+        name, animal, on: on ? 'true' : 'false', mark: on ? '●' : '',
         pick: () => this.setState({ pick: name }),
-        style: 'font: inherit; color: #F4F4F8; height: 76px; border-radius: 16px; display: flex; align-items: center; gap: 10px; padding: 0 10px; cursor: pointer; ' +
-          (on ? 'background: rgba(255,77,109,0.22); border: 3px solid #FF4D6D;' : 'background: #1A1F3A; border: 3px solid transparent;')
+        style: 'font: inherit; color: #E8E8EE; height: 64px; border-radius: 14px; display: flex; align-items: center; gap: 12px; padding: 0 14px; cursor: pointer; background: #18181E; ' +
+          (on ? 'border: 2px solid #B8B8C2;' : 'border: 2px solid #18181E;')
       };
     });
-    return { targets, s56: 56 };
+    return { targets, s44: 44, hint: H[this.state.role], setRole: (e) => this.setState({ role: e.target.value }) };
   }
 }
 </script>
