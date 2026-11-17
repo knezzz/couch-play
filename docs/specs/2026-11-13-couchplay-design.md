@@ -66,7 +66,7 @@ A party-games console for the living room. An Android TV shows the game; everyon
 
 ### Session flow
 
-Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game → results screen → back to lobby with the scoreboard updated.
+Home (one game full screen, QR, players, the "Večeras" strip) → host picks a game (Quiz, Curve, Vukodlak, Uljez) → game → results screen → back to the home with the evening's totals updated.
 
 **Picking a game (user request, 2026-11-16):** the host's phone shows the games as a swipeable carousel of cards. Tapping a card opens its details: a short description and that game's settings (Quiz: pack, time per question, questions per game, time between questions; Curve: mode, pause before each round). While the host is on the details, the TV lobby shows the same game and its settings, so the room sees what's coming. A "Igraj" button on the details starts the game; Back returns to the carousel and the TV goes back to the plain lobby. Other phones see which game the host is looking at. Scores persist for the session only.
 
@@ -134,13 +134,13 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
   (User request, 2026-11-14.)
 - **Bots (user request, 2026-11-14):** the phone host can add and remove bots in the lobby, so a small group gets a
   fuller board. Bots play Curve only, count toward the 8-player limit, get the next free color and a name like
-  "Bot 1", and score like players: they take part in placement points and appear on the session scoreboard. Bot
+  "Robot 1", and score like players: they take part in placement points and appear on the session scoreboard. Bot
   skill: look ahead and steer away from trails and walls, and sometimes go for a nearby power-up. They must stay
   cheap enough to run 7 of them at 60 Hz on the TV.
 - Last one alive scores; every other surviving-longer player also gets points (points = number of players you outlived). First to `10 × (players − 1)` wins, as in Curve Fever.
 - Simulation runs on the TV at a fixed 60 Hz tick; collision against a trail occupancy grid.
 - **Power-ups (user request, 2026-11-14, replaces "no power-ups in v1"):** icons appear on the board from time to
-  time; the first line to drive over one triggers it for a few seconds. Seven kinds:
+  time; the first line to drive over one triggers it for a few seconds. Kinds (the list below is current):
   - on you: speed up, slow down, ghost (pass through trails, not walls; leaves no line while it lasts), cheese (your
     line gets many holes)
   - on everyone else: speed up, slow down, fat line (stacks: each pickup makes the lines fatter), reversed steering (left and right
