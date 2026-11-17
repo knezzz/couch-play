@@ -8,6 +8,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../strings.dart';
 import 'tv_theme.dart';
 
+/// The games on the home, in the order of the design.
+const homeGames = [GameKind.curve, GameKind.quiz, GameKind.vukodlak, GameKind.uljez];
+
 /// The console home (docs/design/couchplay-screens/V2Home.dc.html), on a 1920x1080
 /// canvas scaled to fit: one game fills the screen with its own background, its
 /// name big in the middle with a line about it and its settings; the games
@@ -27,7 +30,7 @@ class HomeScreen extends StatefulWidget {
     this.selected,
     this.packTitle,
     this.notice,
-    this.games = const [GameKind.curve, GameKind.quiz],
+    this.games = homeGames,
     super.key,
   });
 
