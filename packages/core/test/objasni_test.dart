@@ -225,6 +225,55 @@ void main() {
     });
   });
 
+  group('word numbers: racing presses hit the word they were about', () {
+    test('a double Točno scores once', () {
+      final g = game(4);
+      go(g);
+      final n = g.wordNo;
+      expect(g.correct(g.explainer!, word: n), isTrue);
+      expect(g.correct(g.explainer!, word: n), isFalse);
+      expect(g.score(g.turnTeam), 1);
+    });
+
+    test('two watchers calling the same word cost one point and burn one word', () {
+      final g = game(6);
+      go(g);
+      final n = g.wordNo;
+      final w = g.teamMembers(1 - g.turnTeam);
+      expect(g.foul(w[0], word: n), isTrue);
+      expect(g.foul(w[1], word: n), isFalse);
+      expect(g.score(g.turnTeam), -1);
+      expect(g.turnWords.length, 1);
+    });
+
+    test('a stale press after the next word does nothing; the new word can still be pressed', () {
+      final g = game(4);
+      go(g);
+      final old = g.wordNo;
+      g.correct(g.explainer!, word: old);
+      expect(g.wordNo, isNot(old));
+      expect(g.skip(g.explainer!, word: old), isFalse);
+      expect(g.score(g.turnTeam), 1);
+      expect(g.skip(g.explainer!, word: g.wordNo), isTrue);
+    });
+
+    test('a press without a number (an older phone) is not checked', () {
+      final g = game(4);
+      go(g);
+      expect(g.correct(g.explainer!), isTrue);
+    });
+
+    test('the number keeps counting across turns', () {
+      final g = game(4, target: 100);
+      go(g);
+      final first = g.wordNo;
+      g.endTurn();
+      g.nextTurn();
+      g.startTurn();
+      expect(g.wordNo, greaterThan(first));
+    });
+  });
+
   group('the end', () {
     test('the game ends when a team has the target at the end of a FULL round', () {
       final g = game(4, target: 3);

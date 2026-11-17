@@ -120,6 +120,7 @@ class ObjasniMatch {
       explainer: game.explainer ?? -1,
       // never to the explainer's own team
       word: st == ObjasniStageTv.play && role != ObjasniRole.guess ? game.word : null,
+      wordNo: game.wordNo,
       seconds: st == ObjasniStageTv.play ? _left : (st == ObjasniStageTv.summary ? remaining.inSeconds : 0),
       scores: scores,
     );
@@ -151,6 +152,11 @@ class ObjasniMatch {
   void onGo(int id) {
     if (paused) return;
     if (stage == ObjasniStageTv.setup && id == hostId()) {
+      // A team with nobody connected cannot play: do not start.
+      if (game.teamNeedsPause) {
+        send(id, const ErrorMsg(ObjasniText.teamEmpty));
+        return;
+      }
       game.begin();
       _toReady();
     } else if (stage == ObjasniStageTv.ready && (id == game.explainer || id == hostId())) {
@@ -162,9 +168,9 @@ class ObjasniMatch {
   void onAction(int id, ObjasniAction m) {
     if (stage != ObjasniStageTv.play || paused) return;
     final ok = switch (m.act) {
-      ObjasniAct.correct => game.correct(id),
-      ObjasniAct.skip => game.skip(id),
-      ObjasniAct.foul => game.foul(id),
+      ObjasniAct.correct => game.correct(id, word: m.wordNo),
+      ObjasniAct.skip => game.skip(id, word: m.wordNo),
+      ObjasniAct.foul => game.foul(id, word: m.wordNo),
     };
     if (!ok) return;
     sfx.play(m.act == ObjasniAct.correct ? Sound.right : Sound.wrong);
@@ -256,6 +262,7 @@ class ObjasniMatch {
   }
 
   void _checkPause() {
+    if (stage == ObjasniStageTv.setup) return; // setup waits for the host; no pause
     if (game.teamNeedsPause) {
       if (!paused) _startPause();
     } else if (paused) {
@@ -296,4 +303,8 @@ class ObjasniMatch {
     if (stage == ObjasniStageTv.setup || stage == ObjasniStageTv.over) return;
     send(id, _turnMsg(id, stage));
   }
+}
+
+class ObjasniText {
+  static const teamEmpty = 'Jedan tim nema nikoga spojenog. Pričekaj ili promiješaj.';
 }

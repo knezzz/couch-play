@@ -91,6 +91,49 @@ void main() {
     r.match.dispose();
   });
 
+  testWidgets('racing presses: a double Točno is +1, two watchers on the same word are -1, a stale press does nothing', (t) async {
+    final r = Rig();
+    r.begin();
+    final n = r.turns(r.ex).last.wordNo;
+    r.match.onAction(r.ex, ObjasniAction(ObjasniAct.correct, wordNo: n));
+    r.match.onAction(r.ex, ObjasniAction(ObjasniAct.correct, wordNo: n));
+    expect(r.match.scores[r.match.turnTeam], 1);
+    final n2 = r.turns(r.ex).last.wordNo;
+    expect(n2, isNot(n), reason: 'the explainer was sent the new number');
+    final w = r.others;
+    r.match.onAction(w[0], ObjasniAction(ObjasniAct.foul, wordNo: n2));
+    r.match.onAction(w[1], ObjasniAction(ObjasniAct.foul, wordNo: n2));
+    expect(r.match.scores[r.match.turnTeam], 0, reason: '+1 -1, not -2');
+    r.match.onAction(r.ex, ObjasniAction(ObjasniAct.skip, wordNo: n2));
+    expect(r.match.scores[r.match.turnTeam], 0, reason: 'a skip for a word that is gone');
+    expect(r.match.turnWords.length, 2);
+    r.match.dispose();
+  });
+
+  testWidgets('every phone is sent the same word number as the word it sees', (t) async {
+    final r = Rig();
+    r.begin();
+    r.match.onAction(r.ex, ObjasniAction(ObjasniAct.correct, wordNo: r.turns(r.ex).last.wordNo));
+    final a = r.turns(r.ex).last, b = r.turns(r.others.first).last;
+    expect([a.wordNo, a.word], [b.wordNo, b.word]);
+    r.match.dispose();
+  });
+
+  testWidgets('the host cannot start while a team has nobody connected, and no pause runs in the setup', (t) async {
+    final r = Rig();
+    for (final id in r.match.teamMembers(1)) {
+      r.match.setAway(id, true);
+    }
+    expect(r.match.paused, isFalse);
+    r.match.onGo(1);
+    expect(r.match.stage, ObjasniStageTv.setup);
+    expect(r.sent[1]!.whereType<ErrorMsg>().single.message, ObjasniText.teamEmpty);
+    r.match.setAway(r.match.teamMembers(1).first, false);
+    r.match.onGo(1);
+    expect(r.match.stage, ObjasniStageTv.ready);
+    r.match.dispose();
+  });
+
   testWidgets('the host\'s phone can press Kreni for the explainer', (t) async {
     final r = Rig();
     r.match.onGo(1);

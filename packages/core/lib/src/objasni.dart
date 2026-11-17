@@ -79,6 +79,9 @@ class ObjasniGame {
   ObjasniPhase phase = ObjasniPhase.setup;
   int? explainer;
   String? word;
+
+  /// Counts the words shown in the game; a press names the word it is about.
+  int wordNo = 0;
   int? winnerTeam;
   final List<ObjasniMarked> turnWords = [];
 
@@ -145,6 +148,7 @@ class ObjasniGame {
   }
 
   String _nextWord() {
+    wordNo++;
     if (_deckAt >= _deck.length) {
       _deck = [..._pack.words]..shuffle(_random);
       _deckAt = 0;
@@ -168,18 +172,25 @@ class ObjasniGame {
     return true;
   }
 
-  /// Točno: only the explainer.
-  bool correct(int id) => phase == ObjasniPhase.turn && id == explainer && _mark(ObjasniMark.correct, 1);
+  bool _current(int? n) => n == null || n == wordNo;
+
+  /// Točno: only the explainer. [word] is the word number the press is about;
+  /// a stale one (the word is gone) does nothing, so a double tap scores once.
+  bool correct(int id, {int? word}) =>
+      phase == ObjasniPhase.turn && id == explainer && _current(word) && _mark(ObjasniMark.correct, 1);
 
   /// Preskoči: only the explainer.
-  bool skip(int id) => phase == ObjasniPhase.turn && id == explainer && _mark(ObjasniMark.skip, -1);
+  bool skip(int id, {int? word}) =>
+      phase == ObjasniPhase.turn && id == explainer && _current(word) && _mark(ObjasniMark.skip, -1);
 
-  /// Prekršaj: only a (connected) player of the other team.
-  bool foul(int id) =>
+  /// Prekršaj: only a (connected) player of the other team; two watchers
+  /// calling the same word cost one point, not two.
+  bool foul(int id, {int? word}) =>
       phase == ObjasniPhase.turn &&
       ids.contains(id) &&
       teamOf(id) != turnTeam &&
       !_away.contains(id) &&
+      _current(word) &&
       _mark(ObjasniMark.foul, -1);
 
   /// Time is up (or the explainer left): the word on screen is lost.
