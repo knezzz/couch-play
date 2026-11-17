@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:core/core.dart';
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -53,17 +55,16 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> {
   late int _i = max(
     0,
     widget.games.indexOf(widget.selected ?? widget.games.first),
   );
   var _settingsOpen = false;
-  late final AnimationController _drift = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 24),
-  );
+  // The background drifts 0..1 over 24 s, in steps of 8 a second: slow enough that
+  // nobody sees the steps, and the screen is only redrawn 8 times a second, not 60.
+  final _drift = ValueNotifier<double>(0);
+  Timer? _driftTimer;
   bool? _reduced;
 
   GameKind get _game => widget.games[_i];
@@ -74,11 +75,10 @@ class _HomeScreenState extends State<HomeScreen>
     final reduced = MediaQuery.disableAnimationsOf(context);
     if (reduced == _reduced) return;
     _reduced = reduced;
-    if (reduced) {
-      _drift.stop();
-    } else {
-      _drift.repeat();
-    }
+    _driftTimer?.cancel();
+    _driftTimer = reduced
+        ? null
+        : Timer.periodic(const Duration(milliseconds: 125), (_) => _drift.value = (_drift.value + 0.125 / 24) % 1);
   }
 
   @override
@@ -92,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
+    _driftTimer?.cancel();
     _drift.dispose();
     super.dispose();
   }
@@ -530,7 +531,18 @@ class _SettingsPanel extends StatelessWidget {
           (Strings.settingCountdown, '${settings.curveCountdown} s'),
         ],
       ],
-      GameKind.vukodlak || GameKind.uljez => <List<(String, String)>>[],
+      GameKind.vukodlak => [
+          [
+            (Strings.settingDiscussion, '${settings.wolfDiscussion} s'),
+            (Strings.settingHideRoles, settings.wolfHideRoles ? Strings.yes : Strings.no),
+          ],
+        ],
+      GameKind.uljez => [
+          [
+            (Strings.settingDiscussion, '${settings.uljezDiscussion} s'),
+            (Strings.settingImpostors, '${settings.uljezImpostors}'),
+          ],
+        ],
     };
     Widget item((String, String) it) => Text.rich(
       TextSpan(
@@ -586,7 +598,7 @@ class _SettingsPanel extends StatelessWidget {
 class _Backdrop extends StatelessWidget {
   const _Backdrop(this.kind, this.drift, {super.key});
   final GameKind kind;
-  final Animation<double> drift;
+  final ValueListenable<double> drift;
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -602,14 +614,23 @@ class _Backdrop extends StatelessWidget {
         },
       ),
     ),
-    child: CustomPaint(painter: _ArtPainter(kind, drift), size: Size.infinite),
+    // Two layers: the moving shapes (redrawn with the drift) and the vignette, which never
+    // changes, so the engine keeps it as a picture instead of drawing a full-screen
+    // gradient 8 times a second.
+    child: Stack(
+      fit: StackFit.expand,
+      children: [
+        RepaintBoundary(child: CustomPaint(painter: _ArtPainter(kind, drift), size: Size.infinite)),
+        const RepaintBoundary(child: CustomPaint(painter: _Vignette(), isComplex: true, size: Size.infinite)),
+      ],
+    ),
   );
 }
 
 class _ArtPainter extends CustomPainter {
   _ArtPainter(this.kind, this.drift) : super(repaint: drift);
   final GameKind kind;
-  final Animation<double> drift;
+  final ValueListenable<double> drift;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -686,11 +707,42 @@ class _ArtPainter extends CustomPainter {
         tile(1380, 80, 10, const Color(0xFF22B8F0), 0.45, -2 * b);
         tile(1360, 620, -8, const Color(0xFF2ECC71), 0.4, 2 * b);
         tile(140, 620, 14, const Color(0xFFFFB020), 0.4, -2 * a);
-      case GameKind.vukodlak || GameKind.uljez:
-        break; // Tasks 33 and 35
+      case GameKind.vukodlak:
+        // A big moon over a dark ridge; the stars twinkle.
+        canvas.drawCircle(const Offset(1460, 300), 220, Paint()..color = const Color(0xD9F2E9C9));
+        for (var i = 0; i < 18; i++) {
+          final tw = 0.25 + 0.75 * (0.5 + 0.5 * sin(drift.value * 2 * pi * 6 + i));
+          canvas.drawCircle(Offset(80.0 + (i * 211) % 1300, 60.0 + (i * 97) % 380), 1.5 + i % 3, Paint()..color = Color.fromRGBO(255, 255, 255, tw));
+        }
+        const xs = <double>[160, 260, 380, 520, 680, 820, 980, 1140, 1300, 1460, 1620, 1780, 1920];
+        const ys = <double>[720, 780, 680, 770, 700, 790, 690, 780, 700, 790, 720, 780, 720];
+        final ridge = Path()..moveTo(0, 820);
+        for (var i = 0; i < xs.length; i++) {
+          ridge.lineTo(xs[i], ys[i]);
+        }
+        canvas.drawPath(ridge..lineTo(1920, 1080)..lineTo(0, 1080)..close(), Paint()..color = const Color(0xFF05060F));
+      case GameKind.uljez:
+        // A purple table with the players' seats round it, swaying a little.
+        canvas.drawOval(Rect.fromCenter(center: const Offset(960, 650), width: 1100, height: 520), Paint()..color = const Color(0x8C3A2A55));
+        canvas.drawOval(Rect.fromCenter(center: const Offset(960, 640), width: 1040, height: 490), Paint()..color = const Color(0x8C4A3670));
+        for (var i = 0; i < 6; i++) {
+          final a = -pi / 2 + i * 2 * pi / 6 + 0.04 * sin(drift.value * 2 * pi);
+          canvas.drawCircle(Offset(960 + 700 * cos(a), 640 + 360 * sin(a)), 64, Paint()..color = playerColors[i].withValues(alpha: 0.45));
+        }
     }
     canvas.restore();
-    // A shade that pulls the eye to the middle.
+  }
+
+  @override
+  bool shouldRepaint(_ArtPainter old) => old.kind != kind;
+}
+
+/// A shade that pulls the eye to the middle. Never changes.
+class _Vignette extends CustomPainter {
+  const _Vignette();
+
+  @override
+  void paint(Canvas canvas, Size size) {
     canvas.drawRect(
       Offset.zero & size,
       Paint()
@@ -702,5 +754,5 @@ class _ArtPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_ArtPainter old) => old.kind != kind;
+  bool shouldRepaint(_Vignette old) => false;
 }

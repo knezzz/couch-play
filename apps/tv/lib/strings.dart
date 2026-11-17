@@ -49,6 +49,9 @@ abstract final class Strings {
   static const settingReveal = 'Pauza između pitanja';
   static const settingMode = 'Način igre';
   static const settingCountdown = 'Pauza prije runde';
+  static const settingDiscussion = 'Vrijeme razgovora';
+  static const settingHideRoles = 'Skrivene uloge';
+  static const settingImpostors = 'Broj uljeza';
   static String settingsLine(GameSettings s) =>
       'Kviz: ${s.quizQuestions} pitanja · odgovor ${s.quizSeconds} s · pauza ${s.revealSeconds} s'
       '     Curve: ${curveModeName(s.curveMode)} · pauza prije runde ${s.curveCountdown} s';
@@ -87,6 +90,33 @@ abstract final class Strings {
   static const wolfTeamVillage = 'Selo';
   static const wolfTeamWolves = 'Vukodlaci';
   static const wolfTeamSolo = 'Sam';
+
+  // --- Uljez (the table on the TV) ---
+
+  static String uljezRoundClues(int n) => 'RUNDA $n · TRAGOVI';
+  static String uljezClueFor(String name) => '$name, reci trag.';
+  static const uljezClueClock = 'Za trag';
+  static const uljezClueHint = 'Svatko kaže jedan trag o svojoj riječi.\nNe reci riječ!';
+  static const uljezNow = 'Sad ti!';
+  static const uljezSaidClue = 'rekao trag';
+  static const uljezDiscussKicker = 'RAZGOVOR';
+  static const uljezWho = 'Tko je uljez?';
+  static const uljezDiscussClock = 'Do glasanja';
+  static const uljezDiscussHint = 'Raspravite i potražite uljeza.';
+  static const uljezVoteKicker = 'GLASANJE';
+  static String uljezVoted(int x, int y) => 'Glasalo $x od $y';
+  static String uljezCaught(String name) => 'Uhvatili ste uljeza: $name!';
+  static String uljezGuesses(String name) => '$name pogađa vašu riječ';
+  static String uljezNotImpostor(String name) => '$name ispada, ali nije uljez.';
+  static const uljezNobodyOut = 'Nitko ne ispada.';
+  static const uljezRoundOver = 'KRAJ RUNDE';
+  static const uljezEndKicker = 'KRAJ IGRE';
+  static const uljezVillageWins = 'Selo je pobijedilo!';
+  static const uljezImpostorWins = 'Uljez je pobijedio!';
+  static const uljezVillageWord = 'Riječ sela';
+  static const uljezImpostorWord = 'Uljezova riječ';
+  static const uljezTag = 'Uljez';
+  static String uljezVotes(int n) => n == 1 ? '1 glas' : (n <= 4 ? '$n glasa' : '$n glasova');
 
   /// Bots are named "Robot 1", "Robot 2", ...
   static String botName(int n) => 'Robot $n';

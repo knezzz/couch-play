@@ -82,6 +82,13 @@ Choices that were put to the person:
 | wolfVoteHeader / wolfVoteQuestion | DAN 3 · GLASANJE / Koga selo izbacuje? | DAY 3 · VOTE / Whom does the village throw out? | Vukodlak vote screen |
 | wolfVoted | Glasalo 4 od 5 | 4 of 5 have voted | Vukodlak vote screen, top right (the only count shown) |
 | wolfEndHeader / wolfTeam* | KRAJ IGRE / Selo / Vukodlaci / Sam | GAME OVER / Village / Werewolves / Alone | Vukodlak end screen (all roles shown) |
+| uljezRoundClues / uljezClueFor / uljezClueClock / uljezClueHint | RUNDA 2 · TRAGOVI / Marko, reci trag. / Za trag / Svatko kaže jedan trag o svojoj riječi. Ne reci riječ! | ROUND 2 · CLUES / Marko, give a clue. / For the clue / Everyone gives one clue about their word. Don't say the word! | Uljez TV, clue turns |
+| uljezNow / uljezSaidClue | Sad ti! / rekao trag | Your turn! / gave a clue | Uljez TV, seat notes |
+| uljezDiscussKicker / uljezWho / uljezDiscussClock / uljezDiscussHint | RAZGOVOR / Tko je uljez? / Do glasanja / Raspravite i potražite uljeza. | DISCUSSION / Who is the impostor? / Until the vote / Discuss and look for the impostor. | Uljez TV, free discussion |
+| uljezVoteKicker / uljezVoted | GLASANJE / Glasalo 4 od 6 | VOTE / 4 of 6 have voted | Uljez TV, vote |
+| uljezCaught / uljezGuesses / uljezNotImpostor / uljezNobodyOut | Uhvatili ste uljeza: Petra! / Petra pogađa vašu riječ / Petra ispada, ali nije uljez. / Nitko ne ispada. | You caught the impostor: Petra! / Petra guesses your word / Petra is out but was not the impostor. / Nobody is out. | Uljez TV, vote result |
+| uljezEndKicker / uljezVillageWins / uljezImpostorWins / uljezVillageWord / uljezImpostorWord / uljezTag | KRAJ IGRE / Selo je pobijedilo! / Uljez je pobijedio! / Riječ sela / Uljezova riječ / Uljez | GAME OVER / The village won! / The impostor won! / The village's word / The impostor's word / Impostor | Uljez TV, end |
+| uljezVotes | 1 glas / 2 glasa / 5 glasova | 1 vote / 2 votes / 5 votes | Uljez TV, tally under a seat (allowed here, unlike Vukodlak) |
 | curveNeedsTwo | Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja. | Curve needs at least 2 players. Add a bot or invite a friend. | Error on the phone |
 | noSuchPlayer | Tog igrača nema. | That player is not here. | Error on the phone (kick) |
 | cannotKickSelf | Ne možeš izbaciti sebe. | You can't kick yourself. | Error on the phone (kick) |

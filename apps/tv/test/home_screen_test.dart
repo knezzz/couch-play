@@ -1,5 +1,6 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -349,15 +350,51 @@ void main() {
     }
   });
 
-  testWidgets('light animation in the background, off with reduced motion', (
-    t,
-  ) async {
+  testWidgets('light animation in the background (a few steps a second, not every frame), off with reduced motion', (t) async {
+    final key = GlobalKey();
+    Future<List<int>> picture(bool reduce, {int afterSeconds = 0}) async {
+      t.view
+        ..physicalSize = const Size(1920, 1080)
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      t.platformDispatcher.accessibilityFeaturesTestValue = FakeAccessibilityFeatures(disableAnimations: reduce);
+      addTearDown(t.platformDispatcher.clearAccessibilityFeaturesTestValue);
+      await t.pumpWidget(RepaintBoundary(
+        key: key,
+        child: MaterialApp(
+          theme: tvTheme(),
+          home: HomeScreen(joinUrl: null, players: const [], settings: const GameSettings(), selected: GameKind.curve, onSelect: (_) {}, onPlay: (_) {}),
+        ),
+      ));
+      await t.pump(const Duration(milliseconds: 300));
+      await t.pump(Duration(seconds: afterSeconds));
+      final d = await t.runAsync(() async {
+        final img = await (key.currentContext!.findRenderObject()! as RenderRepaintBoundary).toImage();
+        return (await img.toByteData())!;
+      });
+      return [for (var i = 0; i < d!.lengthInBytes; i += 97) d.getUint8(i)];
+    }
+
+    int diff(List<int> a, List<int> b) {
+      var n = 0;
+      for (var i = 0; i < a.length; i++) {
+        if (a[i] != b[i]) n++;
+      }
+      return n;
+    }
+
+    final moving = await picture(false);
+    final later = await picture(false, afterSeconds: 6);
+    expect(diff(moving, later), greaterThan(50), reason: 'the ribbons have drifted');
+    final still = await picture(true);
+    final stillLater = await picture(true, afterSeconds: 6);
+    expect(diff(still, stillLater), 0, reason: 'reduced motion keeps it still');
+  });
+
+  testWidgets('the background is not redrawn every frame: no per-frame animation is running', (t) async {
     await _pump(t);
     await t.pump(const Duration(milliseconds: 100));
-    expect(t.binding.transientCallbackCount, greaterThan(0));
-    await _pump(t, reduceMotion: true);
-    await t.pump(const Duration(milliseconds: 100));
-    expect(t.binding.transientCallbackCount, 0);
+    expect(t.binding.transientCallbackCount, 0, reason: 'a 60 fps ticker is what made the idle home cost 17 ms of raster a frame');
   });
 
   testWidgets('every text is 28 px or more', (t) async {
@@ -374,5 +411,82 @@ void main() {
         expect(size, greaterThanOrEqualTo(28), reason: r.text.toPlainText());
       }
     }
+  });
+
+  testWidgets('Vukodlak and Uljez have settings rows too, not an empty panel', (t) async {
+    await _pump(t, selected: GameKind.vukodlak, games: homeGames, settings: const GameSettings(wolfDiscussion: 90, wolfHideRoles: true));
+    await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await t.pump();
+    final card = find.byKey(const ValueKey('game-card'));
+    expect(find.descendant(of: card, matching: find.textContaining('90 s')), findsOneWidget);
+    expect(find.descendant(of: card, matching: find.textContaining(Strings.settingHideRoles)), findsOneWidget);
+    await _pump(t, selected: GameKind.uljez, games: homeGames, settings: const GameSettings(uljezDiscussion: 45, uljezImpostors: 2));
+    await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await t.pump();
+    expect(find.descendant(of: card, matching: find.textContaining('45 s')), findsOneWidget);
+    expect(find.descendant(of: card, matching: find.textContaining(Strings.settingImpostors)), findsOneWidget);
+  });
+
+  group('each game has its own background art', () {
+    final key = GlobalKey();
+    Future<ByteData> shot(WidgetTester t, GameKind g) async {
+      t.view
+        ..physicalSize = const Size(1920, 1080)
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      t.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(t.platformDispatcher.clearAccessibilityFeaturesTestValue);
+      await t.pumpWidget(RepaintBoundary(
+        key: key,
+        child: MaterialApp(
+          theme: tvTheme(),
+          home: HomeScreen(joinUrl: null, players: const [], settings: const GameSettings(), selected: g, onSelect: (_) {}, onPlay: (_) {}),
+        ),
+      ));
+      await t.pump(const Duration(milliseconds: 400));
+      return (await t.runAsync(() async {
+        final img = await (key.currentContext!.findRenderObject()! as RenderRepaintBoundary).toImage();
+        return (await img.toByteData())!;
+      }))!;
+    }
+
+    Color at(ByteData d, int x, int y) {
+      final i = (y * 1920 + x) * 4;
+      return Color.fromARGB(d.getUint8(i + 3), d.getUint8(i), d.getUint8(i + 1), d.getUint8(i + 2));
+    }
+
+    double lum(Color c) => c.computeLuminance();
+
+    testWidgets('Vukodlak: a pale moon on the right and a dark ridge along the bottom', (t) async {
+      final d = await shot(t, GameKind.vukodlak);
+      expect(lum(at(d, 1460, 250)), greaterThan(0.05), reason: 'moon (under the vignette)');
+      expect(lum(at(d, 300, 1000)), lessThan(0.02), reason: 'ridge');
+      expect(lum(at(d, 100, 700)), lessThan(0.05), reason: 'night sky left of the moon');
+    });
+
+    testWidgets('Uljez: a purple table in the middle, lighter than the backdrop', (t) async {
+      final d = await shot(t, GameKind.uljez);
+      final table = at(d, 700, 620);
+      expect(table.b, greaterThan(table.g), reason: 'purple');
+      expect(lum(table), greaterThan(lum(at(d, 40, 1040))), reason: 'table against the dark corner');
+    });
+
+    testWidgets('the four backgrounds differ', (t) async {
+      final px = <GameKind, List<Color>>{};
+      for (final g in GameKind.values) {
+        final d = await shot(t, g);
+        px[g] = [for (final p in const [(300, 300), (960, 700), (1460, 250), (300, 1000), (1600, 900)]) at(d, p.$1, p.$2)];
+      }
+      for (final a in GameKind.values) {
+        for (final b in GameKind.values) {
+          if (a.index >= b.index) continue;
+          var diff = 0;
+          for (var i = 0; i < 5; i++) {
+            if ((px[a]![i].r - px[b]![i].r).abs() + (px[a]![i].g - px[b]![i].g).abs() + (px[a]![i].b - px[b]![i].b).abs() > 0.05) diff++;
+          }
+          expect(diff, greaterThan(0), reason: '$a and $b look the same');
+        }
+      }
+    });
   });
 }
