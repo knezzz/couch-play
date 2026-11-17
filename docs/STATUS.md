@@ -287,3 +287,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   QA'd with 5-8 phones). Task 34 accepted (review clean, QA pass).
 - 2026-11-17: Task 30 accepted (idle home p95 ~7 ms on the Mac after the fix; hatched text gone; the session scoreboard
   is no longer on the home). If hatched text returns, Skia is the fallback and needs the person's yes.
+- 2026-11-17: TV ran at ~half speed on fd838d6 (person: "a bit" choppy, on the home screen); Curve end-of-game crash.
+  Both with builder-2. Person: Vukodlak night screens stay as they are (no hold-to-see for the task); TV A/B later.
