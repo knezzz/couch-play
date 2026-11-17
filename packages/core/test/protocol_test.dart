@@ -382,4 +382,28 @@ void main() {
     expect((Message.decode(const CurveStatus(alive: true, score: 1, target: 10, round: 2).encode()) as CurveStatus).round, 2);
     expect(Message.decode('{"type":"curve","alive":true,"score":3,"target":10,"round":"2"}'), isNull);
   });
+
+  group('party games: blef', () {
+    test('messages round trip', () {
+      final ms = <Message>[
+        const BlefFake('Tri sata'),
+        const BlefPick(2),
+        const BlefWrite(number: 1, total: 7, seconds: 60, q: 'Koliko dugo?', sent: null),
+        const BlefWrite(number: 2, total: 7, seconds: 40, q: 'x', sent: 'Moja laž'),
+        const BlefList(seconds: 20, options: ['a', 'b', 'c'], ids: [0, 2, 3], picked: 2),
+        const BlefList(seconds: 20, options: ['a'], ids: [1]),
+        const BlefResult(points: 1500, total: 2500, foundTruth: true, fooled: 1),
+        const BlefResult(points: 0, total: 0, foundTruth: false, fooled: 0),
+      ];
+      for (final m in ms) {
+        expect(Message.decode(m.encode()), m, reason: m.encode());
+      }
+    });
+
+    test('wrong types are null', () {
+      expect(Message.decode('{"type":"blefFake","text":5}'), isNull);
+      expect(Message.decode('{"type":"blefPick","index":"2"}'), isNull);
+      expect(Message.decode('{"type":"blefList","seconds":1,"options":["a"],"ids":["x"],"picked":null}'), isNull);
+    });
+  });
 }

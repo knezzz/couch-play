@@ -290,6 +290,8 @@ sealed class Message with _JsonEq {
         'vote' => Vote(m['target'] as int?),
         'guess' => Guess(m['index'] as int),
         'number' => NumberAnswer((m['value'] as num).toDouble()),
+        'blefFake' => BlefFake(m['text'] as String),
+        'blefPick' => BlefPick(m['index'] as int),
         'reshuffle' => const Reshuffle(),
         'go' => const Go(),
         'objasniAction' => ObjasniAction(ObjasniAct.values.byName(m['act'] as String)),
@@ -362,6 +364,22 @@ sealed class Message with _JsonEq {
             seconds: m['seconds'] as int, options: [for (final e in m['options'] as List) e as String]),
         'uljezEnd' => UljezEnd(UljezWinner.values.byName(m['winner'] as String), m['village'] as String,
             m['impostor'] as String, [for (final e in m['impostors'] as List) e as int]),
+        'blefWrite' => BlefWrite(
+            number: m['number'] as int,
+            total: m['total'] as int,
+            seconds: m['seconds'] as int,
+            q: m['q'] as String,
+            sent: m['sent'] as String?),
+        'blefList' => BlefList(
+            seconds: m['seconds'] as int,
+            options: [for (final e in m['options'] as List) e as String],
+            ids: [for (final e in m['ids'] as List) e as int],
+            picked: m['picked'] as int?),
+        'blefResult' => BlefResult(
+            points: m['points'] as int,
+            total: m['total'] as int,
+            foundTruth: m['foundTruth'] as bool,
+            fooled: m['fooled'] as int),
         'kolikoAsk' => KolikoAsk(
             number: m['number'] as int,
             total: m['total'] as int,
@@ -1018,4 +1036,67 @@ class KolikoResult extends Message {
   @override
   Map<String, Object?> get fields =>
       {'answer': answer, 'value': value, 'rank': rank, 'points': points, 'total': total};
+}
+
+// Blef (bluff trivia). Nobody sees another player's fake before the list.
+
+/// Phone -> TV: a fake answer (at most 40 characters; the TV checks it).
+class BlefFake extends Message {
+  final String text;
+  const BlefFake(this.text);
+  @override
+  String get type => 'blefFake';
+  @override
+  Map<String, Object?> get fields => {'text': text};
+}
+
+/// Phone -> TV: the entry (an id from [BlefList.ids]) the player believes.
+class BlefPick extends Message {
+  final int index;
+  const BlefPick(this.index);
+  @override
+  String get type => 'blefPick';
+  @override
+  Map<String, Object?> get fields => {'index': index};
+}
+
+/// TV -> every phone: a question to write a fake for. [sent] is this phone's
+/// own accepted fake (also the ack, and the restore after a reload).
+class BlefWrite extends Message {
+  final int number, total, seconds;
+  final String q;
+  final String? sent;
+  const BlefWrite({required this.number, required this.total, required this.seconds, required this.q, required this.sent});
+  @override
+  String get type => 'blefWrite';
+  @override
+  Map<String, Object?> get fields =>
+      {'number': number, 'total': total, 'seconds': seconds, 'q': q, 'sent': sent};
+}
+
+/// TV -> one phone: the entries to pick from WITHOUT this player's own fake.
+/// [ids] are what [BlefPick] sends back. No writers, no marks: nothing says
+/// which entry is the true one. [picked] restores a reload.
+class BlefList extends Message {
+  final int seconds;
+  final List<String> options;
+  final List<int> ids;
+  final int? picked;
+  const BlefList({required this.seconds, required this.options, required this.ids, this.picked});
+  @override
+  String get type => 'blefList';
+  @override
+  Map<String, Object?> get fields => {'seconds': seconds, 'options': options, 'ids': ids, 'picked': picked};
+}
+
+/// TV -> one phone after the reveal: its own points for the question.
+class BlefResult extends Message {
+  final int points, total, fooled;
+  final bool foundTruth;
+  const BlefResult({required this.points, required this.total, required this.foundTruth, required this.fooled});
+  @override
+  String get type => 'blefResult';
+  @override
+  Map<String, Object?> get fields =>
+      {'points': points, 'total': total, 'foundTruth': foundTruth, 'fooled': fooled};
 }
