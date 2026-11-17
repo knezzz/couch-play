@@ -5,6 +5,7 @@ import '../character_grid.dart';
 import '../connection.dart';
 import '../theme.dart';
 import '../strings.dart';
+import 'wolf_screens.dart';
 
 const _seats = 8;
 
@@ -30,6 +31,7 @@ class LobbyScreen extends StatefulWidget {
 
 class _LobbyScreenState extends State<LobbyScreen> {
   String? _packMessage;
+
   /// The TV decides what is open: a tap only asks, LobbyState.selected answers.
   void _select(GameKind? k) => widget.conn.send(SelectGame(k));
 
@@ -164,7 +166,75 @@ class _LobbyScreenState extends State<LobbyScreen> {
     curveCountdown: s.curveCountdown,
     curveMode: s.curveMode,
     quizPackId: id,
+    wolfRoles: s.wolfRoles,
+    wolfHideRoles: s.wolfHideRoles,
+    wolfDiscussion: s.wolfDiscussion,
   );
+
+  GameSettings _wolf(
+    GameSettings s, {
+    Set<WolfRole>? roles,
+    bool? hide,
+    int? discuss,
+  }) => GameSettings(
+    quizSeconds: s.quizSeconds,
+    quizQuestions: s.quizQuestions,
+    revealSeconds: s.revealSeconds,
+    curveCountdown: s.curveCountdown,
+    curveMode: s.curveMode,
+    quizPackId: s.quizPackId,
+    wolfRoles: roles ?? s.wolfRoles,
+    wolfHideRoles: hide ?? s.wolfHideRoles,
+    wolfDiscussion: discuss ?? s.wolfDiscussion,
+  );
+
+  /// Pushes a screen that follows the TV's latest LobbyState.
+  void _pushLive(Widget Function(LobbyState l) build) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => StreamBuilder<LobbyState>(
+          initialData: widget.lobby,
+          stream: widget.conn.messages.where((m) => m is LobbyState).cast(),
+          builder: (c, snap) => build(snap.data!),
+        ),
+      ),
+    );
+  }
+
+  void _showRoles() => _pushLive(
+    (l) => WolfRolesInfoScreen(
+      enabled: {for (final r in l.settings.wolfRoles) r.name},
+      onBack: () => Navigator.of(context).pop(),
+    ),
+  );
+
+  void _pickRoles() => _pushLive(
+    (l) => WolfRolesPickScreen(
+      players: l.players.length,
+      enabled: {for (final r in l.settings.wolfRoles) r.name},
+      onToggle: (id) {
+        final r = WolfRole.values.byName(id);
+        final on = {...l.settings.wolfRoles};
+        if (!on.remove(r)) on.add(r);
+        widget.conn.send(SetSettings(_wolf(l.settings, roles: on)));
+      },
+      onBack: () => Navigator.of(context).pop(),
+    ),
+  );
+
+  Widget _wolfSettings(LobbyState l, void Function(GameSettings) change) {
+    final s = l.settings;
+    return WolfSettingsView(
+      players: l.players.length,
+      enabled: {for (final r in s.wolfRoles) r.name},
+      hidden: s.wolfHideRoles,
+      discussSeconds: s.wolfDiscussion,
+      onHidden: (v) => change(_wolf(s, hide: v)),
+      onDiscuss: (v) => change(_wolf(s, discuss: v)),
+      onPickRoles: _pickRoles,
+      onShowRoles: _showRoles,
+    );
+  }
 
   Widget _details(GameKind kind, LobbyState l, String? packId) {
     final s = l.settings;
@@ -261,7 +331,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
                   ),
               ],
             ],
-            _GameSettings(kind, s, onChange: change),
+            if (kind == GameKind.vukodlak)
+              _wolfSettings(l, change)
+            else
+              _GameSettings(kind, s, onChange: change),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () => widget.conn.send(StartGame(kind, null)),
@@ -320,9 +393,22 @@ class _LobbyScreenState extends State<LobbyScreen> {
               Text(
                 l.selected == null
                     ? Strings.waitingForHost(host?.name)
-                    : Strings.watching(host?.name, Strings.gameName(l.selected!)),
+                    : Strings.watching(
+                        host?.name,
+                        Strings.gameName(l.selected!),
+                      ),
                 style: const TextStyle(fontSize: 20, color: muted),
               ),
+              if (l.selected == GameKind.vukodlak)
+                TextButton(
+                  key: const ValueKey('guest-roles'),
+                  onPressed: _showRoles,
+                  style: TextButton.styleFrom(minimumSize: const Size(56, 56)),
+                  child: const Text(
+                    Strings.rolesInThisGame,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
             ],
             if (isHost) ...[
               const SizedBox(height: 24),
@@ -468,6 +554,9 @@ class _GameSettings extends StatelessWidget {
         curveCountdown: cd ?? s.curveCountdown,
         curveMode: mode ?? s.curveMode,
         quizPackId: s.quizPackId,
+        wolfRoles: s.wolfRoles,
+        wolfHideRoles: s.wolfHideRoles,
+        wolfDiscussion: s.wolfDiscussion,
       );
 
   @override
@@ -481,11 +570,40 @@ class _GameSettings extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (kind == GameKind.quiz) ...[
-          _row(Strings.quizSeconds, s.quizSeconds, 10, 60, 5, (v) => _with(sec: v)),
-          _row(Strings.quizQuestions, s.quizQuestions, 5, 30, 5, (v) => _with(qs: v), unit: false),
-          _row(Strings.revealSeconds, s.revealSeconds, 2, 15, 1, (v) => _with(rev: v)),
+          _row(
+            Strings.quizSeconds,
+            s.quizSeconds,
+            10,
+            60,
+            5,
+            (v) => _with(sec: v),
+          ),
+          _row(
+            Strings.quizQuestions,
+            s.quizQuestions,
+            5,
+            30,
+            5,
+            (v) => _with(qs: v),
+            unit: false,
+          ),
+          _row(
+            Strings.revealSeconds,
+            s.revealSeconds,
+            2,
+            15,
+            1,
+            (v) => _with(rev: v),
+          ),
         ] else ...[
-          _row(Strings.curveCountdown, s.curveCountdown, 1, 10, 1, (v) => _with(cd: v)),
+          _row(
+            Strings.curveCountdown,
+            s.curveCountdown,
+            1,
+            10,
+            1,
+            (v) => _with(cd: v),
+          ),
           _modes(),
         ],
       ],
@@ -508,7 +626,9 @@ class _GameSettings extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    m == s.curveMode ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                    m == s.curveMode
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
                     size: 28,
                     color: m == s.curveMode ? accent : muted,
                   ),
@@ -518,7 +638,9 @@ class _GameSettings extends StatelessWidget {
                       Strings.curveMode(m),
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: m == s.curveMode ? FontWeight.w700 : FontWeight.w400,
+                        fontWeight: m == s.curveMode
+                            ? FontWeight.w700
+                            : FontWeight.w400,
                       ),
                     ),
                   ),
@@ -550,19 +672,26 @@ class _GameSettings extends StatelessWidget {
             _Stepper(
               tooltip: Strings.lessOf(label),
               icon: Icons.remove,
-              onPressed: value - step >= min ? () => onChange(make(value - step)) : null,
+              onPressed: value - step >= min
+                  ? () => onChange(make(value - step))
+                  : null,
             ),
             Expanded(
               child: Text(
                 unit ? Strings.seconds(value) : '$value',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             _Stepper(
               tooltip: Strings.moreOf(label),
               icon: Icons.add,
-              onPressed: value + step <= max ? () => onChange(make(value + step)) : null,
+              onPressed: value + step <= max
+                  ? () => onChange(make(value + step))
+                  : null,
             ),
           ],
         ),
@@ -576,11 +705,15 @@ class _Carousel extends StatelessWidget {
   const _Carousel({required this.onPick});
   final void Function(GameKind) onPick;
 
-  static const _icons = {GameKind.quiz: Icons.quiz, GameKind.curve: Icons.timeline};
+  static const _icons = {
+    GameKind.quiz: Icons.quiz,
+    GameKind.curve: Icons.timeline,
+    GameKind.vukodlak: Icons.nights_stay,
+  };
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 220,
+    height: 250,
     child: PageView(
       padEnds: false,
       controller: PageController(viewportFraction: 0.82),
@@ -603,7 +736,10 @@ class _Carousel extends StatelessWidget {
                       const Spacer(),
                       Text(
                         Strings.gameName(k),
-                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -674,7 +810,10 @@ class _MyChip extends StatelessWidget {
               width: 48,
               height: 48,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(color: ink, shape: BoxShape.circle),
+              decoration: const BoxDecoration(
+                color: ink,
+                shape: BoxShape.circle,
+              ),
               child: CharacterFace(
                 p.character,
                 40,

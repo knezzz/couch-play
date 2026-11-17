@@ -11,9 +11,10 @@ import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
+import 'screens/wolf_flow.dart';
 import 'strings.dart';
 
-enum _Screen { join, lobby, wait, curve, quiz, results, kicked }
+enum _Screen { join, lobby, wait, curve, quiz, results, wolf, kicked }
 
 /// Routes the TV's messages to a screen. No web imports, so it runs in tests.
 class App extends StatefulWidget {
@@ -40,6 +41,7 @@ class _AppState extends State<App> {
   QuizReveal? _reveal;
   int _quizTotal = 0; // running total, from the last reveal
   List<Placement> _placements = const [];
+  final _wolf = WolfInbox();
   StreamSubscription<Message>? _sub;
 
   @override
@@ -101,6 +103,14 @@ class _AppState extends State<App> {
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
+        case RoleMsg() ||
+            NightPrompt() ||
+            Morning() ||
+            VotePrompt() ||
+            Farewell() ||
+            WolfEnd():
+          _wolf.on(m);
+          _screen = _Screen.wolf;
         case Kicked():
           _screen = _Screen.kicked;
         case ErrorMsg():
@@ -127,6 +137,10 @@ class _AppState extends State<App> {
       key: ValueKey(_question?.number),
     ),
     _Screen.results => ResultsScreen(_placements, _myId),
+    _Screen.wolf =>
+      _lobby == null
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          : WolfFlow(widget.conn, _lobby!, _myId, _wolf),
     _Screen.kicked => _Kicked(
       onJoinAgain: () => setState(() => _screen = _Screen.join),
     ),
