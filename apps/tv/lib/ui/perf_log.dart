@@ -119,8 +119,8 @@ mixin PerfStarts on SchedulerBinding {
 
 class PerfBinding extends BindingBase with GestureBinding, SchedulerBinding, ServicesBinding, PaintingBinding, SemanticsBinding, RendererBinding, WidgetsBinding, PerfStarts {
   static WidgetsBinding ensureInitialized() {
-    // ignore: prefer_conditional_assignment
-    if (WidgetsBinding.instance is! PerfBinding) PerfBinding();
+    // BindingBase's constructor sets the instance and throws if there already is one; main calls this first.
+    PerfBinding();
     return WidgetsBinding.instance;
   }
 }
