@@ -276,6 +276,50 @@ void main() {
       },
     );
 
+    testWidgets(
+      'a reload into the reveal still shows the unit (it comes with the result)',
+      (t) async {
+        final c = await app(t);
+        await send(
+          t,
+          c,
+          const KolikoResult(
+            answer: 330,
+            value: 320,
+            rank: 1,
+            points: 1000,
+            total: 1000,
+            unit: 'm',
+          ),
+        );
+        expect(find.text('330 m'), findsOneWidget);
+        expect(find.text('320 m'), findsOneWidget);
+      },
+    );
+
+    testWidgets('an older TV sends no unit: the question\'s is used', (
+      t,
+    ) async {
+      final c = await app(t);
+      await send(
+        t,
+        c,
+        const KolikoAsk(number: 1, total: 10, seconds: 30, q: 'Q', unit: 'kg'),
+      );
+      await send(
+        t,
+        c,
+        const KolikoResult(
+          answer: 5,
+          value: 5,
+          rank: 1,
+          points: 1500,
+          total: 1500,
+        ),
+      );
+      expect(find.text('5 kg'), findsNWidgets(2)); // the answer and your number
+    });
+
     testWidgets('a question that follows a question gets a fresh pad', (
       t,
     ) async {

@@ -39,7 +39,9 @@ class KolikoFlow extends StatelessWidget {
         rank: r.rank,
         points: r.points,
         total: r.total,
-        unit: a?.unit ?? '',
+        // The result carries its own unit (also after a reload); an older TV
+        // sends none, then the question's will do.
+        unit: r.unit.isNotEmpty ? r.unit : (a?.unit ?? ''),
       );
     }
     if (a == null) {
