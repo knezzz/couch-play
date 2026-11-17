@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'packs/pack_store.dart';
+import 'packs/party_packs.dart';
 import 'packs/uljez_packs.dart';
 import 'server/controller_files.dart';
 import 'server/game_server.dart';
@@ -109,6 +110,7 @@ class _TvAppState extends State<TvApp> {
       _session.packStore = await PackStore.load(
           bundled: await loadBundledPacks(rootBundle), userDir: Directory('${support.path}/packs'));
       _session.uljezPacks = await loadUljezPacks(rootBundle);
+      _session.objasniPacks = await loadObjasniPacks(rootBundle);
       _session.loadSettings(File('${support.path}/settings.json'));
       final server = await GameServer.start(
         webRoot: web,
