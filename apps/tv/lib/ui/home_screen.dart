@@ -9,7 +9,16 @@ import '../strings.dart';
 import 'tv_theme.dart';
 
 /// The games on the home, in the order of the design.
-const homeGames = [GameKind.curve, GameKind.quiz, GameKind.vukodlak, GameKind.uljez];
+const homeGames = [
+  GameKind.curve,
+  GameKind.quiz,
+  GameKind.vukodlak,
+  GameKind.uljez,
+  GameKind.objasni,
+  GameKind.koliko,
+  GameKind.blef,
+  GameKind.tkobi,
+];
 
 /// The console home (docs/design/couchplay-screens/V2Home.dc.html), on a 1920x1080
 /// canvas scaled to fit: one game fills the screen with its own background, its
@@ -527,6 +536,8 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingImpostors, '${settings.uljezImpostors}'),
           ],
         ],
+      // The four party games have no settings on the TV yet.
+      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String)>>[],
     };
     Widget item((String, String) it) => Text.rich(
       TextSpan(
@@ -641,6 +652,10 @@ class _Backdrop extends StatelessWidget {
           GameKind.quiz => const [Color(0xFF0E1A2E), Color(0xFF132744)],
           GameKind.vukodlak => const [Color(0xFF05060F), Color(0xFF101A3A)],
               GameKind.uljez => const [Color(0xFF1A0E2E), Color(0xFF2A1646)],
+          GameKind.objasni => const [Color(0xFF2A1410), Color(0xFF14283A)],
+          GameKind.koliko => const [Color(0xFF0B1F1A), Color(0xFF12304A)],
+          GameKind.blef => const [Color(0xFF2A0F1F), Color(0xFF241446)],
+          GameKind.tkobi => const [Color(0xFF2A1030), Color(0xFF3A1430)],
         },
       ),
     ),
@@ -731,6 +746,36 @@ class _ArtPainter extends CustomPainter {
         for (var i = 0; i < 6; i++) {
           final a = -pi / 2 + i * 2 * pi / 6;
           canvas.drawCircle(Offset(960 + 700 * cos(a), 640 + 360 * sin(a)), 64, Paint()..color = playerColors[i].withValues(alpha: 0.45));
+        }
+      case GameKind.objasni:
+        // Two teams, one on each side, and a speech bubble between them.
+        canvas.drawCircle(const Offset(300, 640), 330, Paint()..color = const Color(0x40FF4D6D));
+        canvas.drawCircle(const Offset(1620, 640), 330, Paint()..color = const Color(0x4022B8F0));
+        canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(700, 760, 520, 190), const Radius.circular(70)), Paint()..color = const Color(0x24FFFFFF));
+      case GameKind.koliko:
+        // A number line with its ticks and a marker on it.
+        final line = Paint()..color = const Color(0x55FFFFFF)..strokeWidth = 8..strokeCap = StrokeCap.round;
+        canvas.drawLine(const Offset(160, 800), const Offset(1760, 800), line);
+        for (var i = 0; i <= 10; i++) {
+          canvas.drawLine(Offset(160 + i * 160.0, 770), Offset(160 + i * 160.0, 830), line);
+        }
+        canvas.drawCircle(const Offset(1020, 800), 38, Paint()..color = const Color(0xAA2ECC71));
+      case GameKind.blef:
+        // Three cards, one of them is not what it says.
+        for (var i = 0; i < 3; i++) {
+          canvas.save();
+          canvas.translate(560.0 + i * 400, 720);
+          canvas.rotate((i - 1) * 0.18);
+          canvas.drawRRect(
+              RRect.fromRectAndRadius(const Rect.fromLTWH(-150, -190, 300, 380), const Radius.circular(36)),
+              Paint()..color = [const Color(0x38FF4D6D), const Color(0x38F5E94B), const Color(0x389B5CFF)][i]);
+          canvas.restore();
+        }
+      case GameKind.tkobi:
+        // Everybody in the room, round a ring.
+        for (var i = 0; i < 8; i++) {
+          final a = -pi / 2 + i * 2 * pi / 8;
+          canvas.drawCircle(Offset(960 + 760 * cos(a), 640 + 380 * sin(a)), 56, Paint()..color = playerColors[i].withValues(alpha: 0.4));
         }
     }
     canvas.restore();
