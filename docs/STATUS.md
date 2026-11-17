@@ -43,6 +43,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | queued to lead | lead + content |
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | queued to lead | lead + content |
+| 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | queued to lead | lead |
 
 ## Open questions for the person
 

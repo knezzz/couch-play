@@ -140,11 +140,13 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 - Simulation runs on the TV at a fixed 60 Hz tick; collision against a trail occupancy grid.
 - **Power-ups (user request, 2026-11-14, replaces "no power-ups in v1"):** icons appear on the board from time to
   time; the first line to drive over one triggers it for a few seconds. Seven kinds:
-  - on you: slow down, ghost (pass through trails, not walls; leaves no line while it lasts)
-  - on everyone else: speed up, fat line (stacks: each pickup makes the lines fatter), reversed steering (left and right
-    swap)
+  - on you: speed up, ghost (pass through trails, not walls; leaves no line while it lasts), cheese (your line gets
+    many holes)
+  - on everyone else: slow down, fat line (stacks: each pickup makes the lines fatter), reversed steering (left and right
+    swap), square turns (they can only turn in 90° steps)
 
-  (Changed 2026-11-16, user request: slow down is now yours and speed up hits everyone else; the fat line lasts a
+  (Changed 2026-11-17, user request: speed up is yours again and slow down hits everyone else; cheese and square turns
+  added. Earlier, 2026-11-16: slow down was yours and speed up hit everyone else; the fat line lasts a
   little longer than the other effects and stacks; ghost leaves no line; thin line removed, reversed steering added.)
   - on everyone: clear all trails, wrap (go through walls and come out the opposite side)
 
@@ -159,7 +161,7 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
   - Kaos: power-ups spawn often, many on the board at once
   - Uravnoteženo: today's rate (the default)
   - Mirno: no power-ups
-  - Samo za tebe: only the power-ups that act on the picker (green)
+  - Samo za tebe: only the power-ups that act on the picker (green: speed up, ghost, cheese)
 - **Active power-ups are obvious (user request, 2026-11-14):** while an effect runs, the TV shows who has it and how
   long it has left. Wrap: a white border runs around the arena and shrinks as wrap runs out; when the border is
   gone, the walls are back. Effects on players: the power-up's icon, in its green/red/blue color, next to each
