@@ -6,4 +6,4 @@ const kUljezTvReady = true;
 const kObjasniTvReady = true;
 const kKolikoTvReady = true;
 const kBlefTvReady = true;
-const kTkobiTvReady = false;
+const kTkobiTvReady = true;

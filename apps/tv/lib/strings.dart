@@ -105,6 +105,8 @@ abstract final class Strings {
   static String blefAuthor(String names) => 'Lažni odgovor, autor: $names';
   static const blefChoice = 'Izbor';
   static const blefNobody = 'nitko';
+  static String tkobiQuestionOf(int n, int total) => 'Pitanje $n od $total';
+  static String tkobiVoted(int n, int total) => 'Glasalo: $n od $total';
   static const legendTitle = 'Pojačanja';
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';
