@@ -389,38 +389,55 @@ class Session {
       peer.send(const ErrorMsg(Strings.gameRunning));
       return;
     }
+    final error = _launch(game, packId);
+    if (error != null) peer.send(ErrorMsg(error));
+  }
+
+  /// The remote picked a game on the TV home: the same selection the host's
+  /// phone makes (every phone is told), with the TV's own click.
+  void selectFromTv(GameKind game) {
+    if (_phase != Phase.lobby || hostId == null) return;
+    _selected = game;
+    _selectedBy = hostId;
+    sfx.play(Sound.menuMove);
+    _broadcastLobby();
+    _notify();
+  }
+
+  /// OK on the TV home: Igraj for the host, with the same checks. Null when the
+  /// game started, else why not (the home shows it).
+  String? startFromTv(GameKind game) {
+    if (hostId == null) return Strings.homeNeedPlayers;
+    if (_phase != Phase.lobby) return Strings.gameRunning;
+    final error = _launch(game, null);
+    if (error == null) sfx.play(Sound.menuConfirm);
+    return error;
+  }
+
+  /// Starts [game] from the lobby, or says why not. [packId] only from an old
+  /// StartGame; the host's chosen pack is used otherwise.
+  String? _launch(GameKind game, String? packId) {
     switch (game) {
       case GameKind.quiz:
         // The host's chosen pack; a pack named in StartGame still wins (old callers).
         if (packId == null) _dropMissingPack(); // removed since it was saved
         final pack = packLookup(packId ?? _settings.quizPackId);
-        if (pack == null || pack.questions.isEmpty) {
-          peer.send(const ErrorMsg(Strings.packUnavailable));
-          return;
-        }
+        if (pack == null || pack.questions.isEmpty) return Strings.packUnavailable;
         _startQuiz(pack, participants(GameKind.quiz));
-        onStart?.call(game, packId);
       case GameKind.curve:
         final parts = participants(GameKind.curve);
-        if (parts.length < 2) {
-          peer.send(const ErrorMsg(Strings.curveNeedsTwo));
-          return;
-        }
+        if (parts.length < 2) return Strings.curveNeedsTwo;
         _startCurve(parts);
-        onStart?.call(game, packId);
       case GameKind.vukodlak:
-        if (_players.any((p) => p.bot)) {
-          peer.send(const ErrorMsg(WolfText.noBots));
-          return;
-        }
+        if (_players.any((p) => p.bot)) return WolfText.noBots;
         final parts = participants(GameKind.vukodlak);
-        if (parts.length < 5 || parts.length > 8) {
-          peer.send(const ErrorMsg(WolfText.needPlayers));
-          return;
-        }
+        if (parts.length < 5 || parts.length > 8) return WolfText.needPlayers;
         _startWolf(parts);
-        onStart?.call(game, packId);
+      case GameKind.uljez:
+        return Strings.uljezSoon; // Task 35 builds it
     }
+    onStart?.call(game, packId);
+    return null;
   }
 
   void _kick(PeerSocket peer, int playerId) {

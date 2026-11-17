@@ -7,7 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/session/session.dart';
 import 'package:tv/strings.dart';
 
+import 'session_sound_test.dart' show FakeSfx;
 import 'session_test.dart' show FakePeer, join;
+import 'package:tv/sound/sfx.dart';
 
 /// Task 27: the host's game selection.
 void main() {
@@ -126,5 +128,79 @@ void main() {
     expect(s.phase, Phase.quiz);
     expect(s.quizTitle, 'Zadani');
     s.dispose();
+  });
+
+  group('the_tv_remote_drives_the_home', () {
+    late FakeSfx sfx;
+    void setUpWithSound() {
+      setUpSession();
+      sfx = FakeSfx();
+      s.sfx = sfx;
+      sfx.played.clear();
+    }
+
+    test('selectFromTv_selects_tells_every_phone_and_clicks', () {
+      setUpWithSound();
+      s.selectFromTv(GameKind.quiz);
+      expect(s.selectedGame, GameKind.quiz);
+      expect(a.last<LobbyState>()!.selected, GameKind.quiz);
+      expect(b.last<LobbyState>()!.selected, GameKind.quiz);
+      expect(sfx.played, [Sound.menuMove]);
+      s.dispose();
+    });
+
+    test('selectFromTv_with_nobody_in_the_room_does_nothing', () {
+      s = Session(random: Random(1));
+      s.selectFromTv(GameKind.quiz);
+      expect(s.selectedGame, isNull);
+      s.dispose();
+    });
+
+    testWidgets('startFromTv_starts_the_quiz_with_the_hosts_settings_and_confirms', (t) async {
+      setUpWithSound();
+      a.say(const SetSettings(GameSettings(quizQuestions: 5, quizSeconds: 15)));
+      expect(s.startFromTv(GameKind.quiz), isNull);
+      await t.pump();
+      expect(s.phase, Phase.quiz);
+      expect(s.quizTitle, 'Zadani');
+      expect(sfx.played, contains(Sound.menuConfirm));
+      s.dispose();
+    });
+
+    testWidgets('startFromTv_starts_curve_for_two_players', (t) async {
+      setUpWithSound();
+      expect(s.startFromTv(GameKind.curve), isNull);
+      await t.pump();
+      expect(s.phase, Phase.curve);
+      s.dispose();
+    });
+
+    test('startFromTv_says_why_it_cannot_and_stays_quiet', () {
+      s = Session(random: Random(1));
+      s.sfx = FakeSfx();
+      expect(s.startFromTv(GameKind.quiz), Strings.homeNeedPlayers, reason: 'nobody has joined');
+      a = join(s, 'Ana', token: 'ta');
+      expect(s.startFromTv(GameKind.curve), Strings.curveNeedsTwo);
+      expect(s.phase, Phase.lobby);
+      expect((s.sfx as FakeSfx).played.where((x) => x == Sound.menuConfirm), isEmpty);
+      s.dispose();
+    });
+
+    testWidgets('startFromTv_during_a_game_is_refused', (t) async {
+      setUpWithSound();
+      s.startFromTv(GameKind.curve);
+      await t.pump();
+      expect(s.startFromTv(GameKind.quiz), Strings.gameRunning);
+      s.dispose();
+    });
+
+    testWidgets('a_game_started_from_the_tv_clears_the_selection_like_igraj_does', (t) async {
+      setUpWithSound();
+      s.selectFromTv(GameKind.curve);
+      s.startFromTv(GameKind.curve);
+      await t.pump();
+      expect(s.selectedGame, isNull);
+      s.dispose();
+    });
   });
 }

@@ -15,7 +15,7 @@ import 'server/lan_address.dart';
 import 'session/session.dart';
 import 'ui/back_guard.dart';
 import 'ui/curve/curve_game.dart';
-import 'ui/lobby_screen.dart';
+import 'ui/home_screen.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/quiz_screen.dart';
@@ -63,6 +63,13 @@ class _TvAppState extends State<TvApp> {
   int _gameRound = -1;
   var _botsSeeded = false;
 
+  // The game the home shows. The session forgets its selection when a game
+  // starts; the home comes back to the same game.
+  GameKind? _homeGame;
+  // Why OK did nothing (e.g. nobody has joined), shown a few seconds.
+  String? _notice;
+  Timer? _noticeTimer;
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +82,7 @@ class _TvAppState extends State<TvApp> {
   void dispose() {
     _purge?.cancel();
     _resultsTimer?.cancel();
+    _noticeTimer?.cancel();
     _session.changes.removeListener(_onSession);
     _server?.close();
     if (widget.session == null) _session.dispose();
@@ -107,6 +115,7 @@ class _TvAppState extends State<TvApp> {
 
   void _onSession() {
     if (!mounted) return;
+    _homeGame = _session.selectedGame ?? _homeGame;
     if (!_botsSeeded && _botCount > 0 && _session.players.any((p) => !p.bot)) {
       _botsSeeded = true;
       _session.setBotCount(_botCount); // notifies again; the next pass does the rest
@@ -138,6 +147,16 @@ class _TvAppState extends State<TvApp> {
     } else {
       setState(() {}); // lobby content changed
     }
+  }
+
+  void _play(GameKind game) {
+    final why = _session.startFromTv(game);
+    if (why == null) return;
+    _noticeTimer?.cancel();
+    setState(() => _notice = why);
+    _noticeTimer = Timer(const Duration(seconds: 4), () {
+      if (mounted) setState(() => _notice = null);
+    });
   }
 
   void _newGame(CurveSim sim) {
@@ -249,14 +268,18 @@ class _TvAppState extends State<TvApp> {
                   placements: _session.placements,
                   players: _session.playerInfos,
                   label: _session.lastGameLabel)
-              : LobbyScreen(
+              : HomeScreen(
                   joinUrl: _session.joinUrl,
                   players: _session.playerInfos,
-                  hostId: _session.hostId,
                   settings: _session.settings,
-                  selected: _session.selectedGame,
+                  selected: _session.selectedGame ?? _homeGame,
                   packTitle: _session.selectedPackTitle,
-                  onQuit: SystemNavigator.pop),
+                  notice: _notice,
+                  onSelect: (k) {
+                    _homeGame = k;
+                    _session.selectFromTv(k);
+                  },
+                  onPlay: _play),
     );
   }
 }

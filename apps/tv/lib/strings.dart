@@ -34,11 +34,12 @@ abstract final class Strings {
         CurveMode.onlyYou => 'Samo za tebe',
       };
   /// The host's game card on the lobby, same words as the phone's game details.
-  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak' };
+  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez' };
   static String gameBlurb(GameKind k) => switch (k) {
         GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
         GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
         GameKind.vukodlak => 'Netko u selu nije ono što se čini.',
+        GameKind.uljez => 'Svi imaju istu riječ, osim uljeza. Nađi ga.',
       };
   /// Bottom of the lobby while the host has a game's card open (the phones say the same).
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
@@ -51,6 +52,28 @@ abstract final class Strings {
   static String settingsLine(GameSettings s) =>
       'Kviz: ${s.quizQuestions} pitanja · odgovor ${s.quizSeconds} s · pauza ${s.revealSeconds} s'
       '     Curve: ${curveModeName(s.curveMode)} · pauza prije runde ${s.curveCountdown} s';
+
+  // --- Console home ---
+
+  static const homeJoin = 'Skeniraj i pridruži se';
+  static const homeJoinOr = 'ili otvori u pregledniku:';
+  static String playerCount(int n) => n == 1 ? '1 igrač' : '$n igrača';
+  static const homeNoPlayers = 'Čekamo igrače';
+  static const homeNeedPlayers = 'Prvo se netko mora pridružiti mobitelom.';
+  static const homeKeyOk = 'OK';
+  static const homeKeyBack = 'Natrag';
+  static const homeHelpMove = 'igra';
+  static const homeHelpPlay = 'igraj';
+  static const homeHelpSettings = 'postavke';
+  static const homeHelpBack = 'izlaz';
+
+  /// The line under the description: who can play and what is set.
+  static String homeMeta(GameKind k, GameSettings s, String? pack) => switch (k) {
+        GameKind.curve => '2–8 igrača · ${curveModeName(s.curveMode)} · pauza ${s.curveCountdown} s',
+        GameKind.quiz => '1–8 igrača · ${pack ?? '–'} · ${s.quizQuestions} pitanja · ${s.quizSeconds} s',
+        GameKind.vukodlak => '5–8 igrača · bez robota',
+        GameKind.uljez => '3–8 igrača · bez robota',
+      };
 
   /// Bots are named "Robot 1", "Robot 2", ...
   static String botName(int n) => 'Robot $n';
@@ -94,6 +117,7 @@ abstract final class Strings {
   static const gameRunning = 'Igra je već u tijeku.';
   static const packUnavailable = 'Taj paket nije dostupan.';
   static const vukodlakSoon = 'Vukodlak još nije spreman na ovom televizoru.';
+  static const uljezSoon = 'Uljez još nije spreman na ovom televizoru.';
   static const curveNeedsTwo = 'Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja.';
   static const noSuchPlayer = 'Tog igrača nema.';
   static const cannotKickSelf = 'Ne možeš izbaciti sebe.';

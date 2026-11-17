@@ -67,6 +67,17 @@ Choices that were put to the person:
 | gameRunning | Igra je već u tijeku. | A game is already running. | Error on the phone |
 | packUnavailable | Taj paket nije dostupan. | That pack is not available. | Error on the phone (quiz pack missing) |
 | vukodlakSoon | Vukodlak još nije spreman na ovom televizoru. | Vukodlak is not ready on this TV yet. | Error on the phone until Task 33 |
+| homeJoin | Skeniraj i pridruži se | Scan and join | TV home, next to the QR code |
+| homeJoinOr | ili otvori u pregledniku: | or open in the browser: | TV home, above the address |
+| playerCount | 1 igrač / N igrača | 1 player / N players | TV home, top right |
+| homeNoPlayers | Čekamo igrače | Waiting for players | TV home, top right with nobody in |
+| homeNeedPlayers | Prvo se netko mora pridružiti mobitelom. | Somebody has to join with a phone first. | TV home, when OK is pressed with nobody in |
+| homeKeyOk / homeHelpPlay | OK igraj | OK play | TV home help line |
+| homeHelpMove | igra | game (with the left/right arrows) | TV home help line |
+| homeHelpSettings | postavke | settings (with the down arrow) | TV home help line |
+| homeKeyBack / homeHelpBack | Natrag izlaz | Back exit | TV home help line |
+| homeMeta | 2–8 igrača · Uravnoteženo · pauza 2 s | players · mode · pause | TV home, the line under the description |
+| uljezSoon | Uljez još nije spreman na ovom televizoru. | Uljez is not ready on this TV yet. | Error on the phone until Task 35 |
 | curveNeedsTwo | Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja. | Curve needs at least 2 players. Add a bot or invite a friend. | Error on the phone |
 | noSuchPlayer | Tog igrača nema. | That player is not here. | Error on the phone (kick) |
 | cannotKickSelf | Ne možeš izbaciti sebe. | You can't kick yourself. | Error on the phone (kick) |
