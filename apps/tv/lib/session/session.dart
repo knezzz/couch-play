@@ -11,11 +11,13 @@ import '../packs/test_pack.dart';
 import '../server/game_server.dart';
 import '../sound/sfx.dart';
 import 'bots.dart';
+import 'uljez_match.dart';
+import 'uljez_text.dart';
 import 'wolf_match.dart';
 import 'wolf_text.dart';
 import '../strings.dart';
 
-enum Phase { lobby, quiz, curve, wolf, results }
+enum Phase { lobby, quiz, curve, wolf, uljez, results }
 
 const maxPlayers = 8;
 const _staleAfter = Duration(minutes: 10);
@@ -123,6 +125,7 @@ class Session {
     _waitTimer?.cancel();
     _wolf?.dispose();
     _wolfEndTimer?.cancel();
+    _uljez?.dispose();
     _changes.dispose();
   }
 
@@ -233,7 +236,12 @@ class Session {
         if (p != null) _wolf?.onNightPick(p.id, m);
       case Vote():
         final p = _playerOf(peer);
-        if (p != null) _wolf?.onVote(p.id, m);
+        if (p == null) break;
+        _wolf?.onVote(p.id, m);
+        _uljez?.onVote(p.id, m);
+      case Guess():
+        final p = _playerOf(peer);
+        if (p != null) _uljez?.onGuess(p.id, m);
       case Shoot():
         final p = _playerOf(peer);
         if (p != null) _wolf?.onShoot(p.id, m);
@@ -318,6 +326,12 @@ class Session {
         } else {
           peer.send(_waiting);
         }
+      case Phase.uljez:
+        if (_uljez?.ids.contains(p.id) == true) {
+          _uljez!.rejoin(p.id);
+        } else {
+          peer.send(_waiting);
+        }
       case Phase.results:
         peer.send(_waiting);
     }
@@ -345,6 +359,7 @@ class Session {
         packs: packStore?.infos ?? const [],
         hostId: hostId ?? -1,
         selected: _selected,
+        uljezPacks: [for (final p in uljezPacks) PackInfo(p.id, p.title, p.pairs.length)],
         settings: _settings);
     for (final p in _players) {
       p.socket?.send(lobby);
@@ -434,7 +449,12 @@ class Session {
         if (parts.length < 5 || parts.length > 8) return WolfText.needPlayers;
         _startWolf(parts);
       case GameKind.uljez:
-        return Strings.uljezSoon; // Task 35 builds it
+        if (_players.any((p) => p.bot)) return UljezText.noBots;
+        final parts = participants(GameKind.uljez);
+        if (parts.length < 3 || parts.length > 8) return UljezText.needPlayers;
+        final pack = uljezPack(_settings.uljezPackId);
+        if (pack == null) return Strings.packUnavailable;
+        _startUljez(parts, pack);
     }
     onStart?.call(game, packId);
     return null;
@@ -526,14 +546,24 @@ class Session {
 
   /// A chosen pack the TV no longer has becomes the default pack.
   void _dropMissingPack() {
-    final id = _settings.quizPackId;
-    if (id == null || packLookup(id) != null) return;
+    final id = _settings.quizPackId, uid = _settings.uljezPackId;
+    final quizGone = id != null && packLookup(id) == null;
+    final uljezGone = uid != null && uljezPack(uid) == null && uljezPacks.isNotEmpty;
+    if (!quizGone && !uljezGone) return;
+    final o = _settings;
     _settings = GameSettings(
-        quizSeconds: _settings.quizSeconds,
-        quizQuestions: _settings.quizQuestions,
-        revealSeconds: _settings.revealSeconds,
-        curveCountdown: _settings.curveCountdown,
-        curveMode: _settings.curveMode);
+        quizSeconds: o.quizSeconds,
+        quizQuestions: o.quizQuestions,
+        revealSeconds: o.revealSeconds,
+        curveCountdown: o.curveCountdown,
+        curveMode: o.curveMode,
+        quizPackId: quizGone ? null : o.quizPackId,
+        wolfRoles: o.wolfRoles,
+        wolfHideRoles: o.wolfHideRoles,
+        wolfDiscussion: o.wolfDiscussion,
+        uljezPackId: uljezGone ? null : o.uljezPackId,
+        uljezDiscussion: o.uljezDiscussion,
+        uljezImpostors: o.uljezImpostors);
   }
 
   /// [want] if it is a character and nobody has it, else a random free one.
@@ -612,6 +642,38 @@ class Session {
 
   /// Bumped for every round of a match; the TV makes a fresh `CurveGame` each time.
   int get curveRound => _curveRound;
+
+  // --- Uljez ---
+
+  /// The word packs, loaded from the bundled assets by main.dart. Empty until then.
+  List<UljezPack> uljezPacks = [];
+  UljezMatch? _uljez;
+  UljezMatch? get uljez => _uljez;
+
+  /// The pack with [id], or the first one for null; null if there is none.
+  UljezPack? uljezPack(String? id) {
+    if (id == null) return uljezPacks.firstOrNull;
+    return uljezPacks.where((p) => p.id == id).firstOrNull;
+  }
+
+  void _startUljez(List<Player> parts, UljezPack pack) {
+    _uljez?.dispose();
+    _gameHost = hostId;
+    _selected = null;
+    _phase = Phase.uljez;
+    _uljez = UljezMatch(
+      ids: [for (final p in parts) p.id],
+      pack: pack,
+      settings: _settings,
+      send: (id, m) => _byId(id)?.socket?.send(m),
+      clock: _clock,
+      random: _random,
+      sfx: sfx,
+      notify: _notify,
+      onOver: (scores) => finishGame(scores, game: UljezText.name),
+    )..start();
+    _notify();
+  }
 
   // --- Vukodlak: the match holds the rules and every private message ---
 
@@ -1070,8 +1132,8 @@ class Session {
   /// Ends the running game: adds placement points to [sessionScores], sends
   /// Results, and moves to the results phase. [gameScores] is keyed by player
   /// id. Quiz calls this too (Task 11).
-  void finishGame(Map<int, int> gameScores) {
-    _lastGame = _quizPack == null ? Strings.gameCurve : Strings.gameQuiz(_quizPack!.title);
+  void finishGame(Map<int, int> gameScores, {String? game}) {
+    _lastGame = game ?? (_quizPack == null ? Strings.gameCurve : Strings.gameQuiz(_quizPack!.title));
     // Someone kicked mid-game is no longer a player and gets no place.
     final placements = placementPoints({
       for (final e in gameScores.entries)
@@ -1099,7 +1161,7 @@ class Session {
   /// The host's Back + Yes: abandons a running quiz or Curve match. No
   /// placement points, scores stay as they were; phones go back to the lobby.
   void endGame() {
-    if (_phase == Phase.quiz || _phase == Phase.curve || _phase == Phase.wolf) returnToLobby();
+    if (_phase == Phase.quiz || _phase == Phase.curve || _phase == Phase.wolf || _phase == Phase.uljez) returnToLobby();
   }
 
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
@@ -1113,6 +1175,8 @@ class Session {
     _wolf?.dispose();
     _wolf = null;
     _wolfEndTimer?.cancel();
+    _uljez?.dispose();
+    _uljez = null;
     _sim = null;
     _bots = null;
     _simIdOf.clear();
