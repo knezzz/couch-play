@@ -60,7 +60,9 @@ class Player {
 ///
 /// Curve: [onStart] fires after Session has built [sim] and [bots] from the
 /// connected humans and the bots. The TV builds a `CurveGame` from them, passes
-/// [curveEvents] as its `onEvents`, and calls [nextRound] 2 s after a RoundOver.
+/// [curveEvents] as its `onEvents`. After a RoundOver the session itself waits
+/// [roundBreakTime] (the TV shows the scores while [roundBreak] is on) and then
+/// starts the next round.
 /// The sim's player ids are the players' color indexes (unique, 0..7), so the
 /// renderer's color list lines up with [playerColors].
 class Session {
@@ -127,6 +129,7 @@ class Session {
     _wolf?.dispose();
     _wolfEndTimer?.cancel();
     _uljez?.dispose();
+    _roundBreakTimer?.cancel();
     _changes.dispose();
   }
 
@@ -1089,6 +1092,7 @@ class Session {
       return;
     }
     _stopWait();
+    _endRoundBreak();
     for (final e in _simIdOf.entries) {
       // A button held through the wait must not turn the new round's head.
       sim.setInput(e.value, left: false, right: false);
@@ -1174,14 +1178,57 @@ class Session {
       sfx.play(Sound.roundWin);
     }
     if (roundOver) _sendStatuses();
-    if (matchOver) finishGame(_gameScores());
+    if (matchOver) {
+      finishGame(_gameScores());
+    } else if (roundOver) {
+      _startRoundBreak();
+    }
   }
 
-  /// Starts the next round of the match. The TV calls it 2 s after RoundOver.
+  // --- between rounds (Task 37) ---
+
+  /// How long the scores show between two rounds.
+  static const roundBreakTime = Duration(seconds: 4);
+  Timer? _roundBreakTimer;
+  Duration? _roundBreakEnd;
+
+  /// True from a round's end until the next round starts: the TV shows the
+  /// scores (sim.scores, sim.target, the players' faces) instead of the field.
+  bool get roundBreak => _roundBreakEnd != null;
+
+  /// Time left of the break; zero when there is none.
+  Duration get roundBreakRemaining {
+    final end = _roundBreakEnd;
+    if (end == null) return Duration.zero;
+    final left = end - _clock();
+    return left.isNegative ? Duration.zero : left > roundBreakTime ? roundBreakTime : left;
+  }
+
+  void _startRoundBreak() {
+    _roundBreakTimer?.cancel();
+    _roundBreakEnd = _clock() + roundBreakTime;
+    _roundBreakTimer = Timer(roundBreakTime, () {
+      _roundBreakEnd = null;
+      _roundBreakTimer = null;
+      nextRound();
+      _notify();
+    });
+    _notify();
+  }
+
+  void _endRoundBreak() {
+    _roundBreakTimer?.cancel();
+    _roundBreakTimer = null;
+    _roundBreakEnd = null;
+  }
+
+  /// Starts the next round of the match. [curveEvents] schedules it itself
+  /// [roundBreakTime] after a RoundOver; calling it by hand ends the break now.
   void nextRound() {
     final sim = _sim;
     if (_phase != Phase.curve || sim == null || !sim.roundOver || sim.matchOver) return;
     if (_paused) return; // paused: the return starts the next round
+    _endRoundBreak();
     sim.startRound();
     _curveRound++;
     _sendStatuses();
@@ -1243,6 +1290,7 @@ class Session {
     _wolfEndTimer?.cancel();
     _uljez?.dispose();
     _uljez = null;
+    _endRoundBreak();
     _sim = null;
     _bots = null;
     _simIdOf.clear();

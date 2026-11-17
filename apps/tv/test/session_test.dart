@@ -727,7 +727,7 @@ void main() {
       final r = await s.onPackUpload('ta', bytes());
       expect(r.ok, isTrue);
       expect(r.message, Strings.packAdded('World Flags', 40));
-      const want = [PackInfo('world-flags', 'World Flags', 40)];
+      const want = [PackInfo('world-flags', 'World Flags', 40, isNew: true)]; // uploaded now
       expect(a.last<LobbyState>()!.packs, want);
       expect(b.last<LobbyState>()!.packs, want);
     });
