@@ -988,3 +988,14 @@ The person: "Cheese, one where you are getting a lot of holes. 90 deg, where oth
 - [ ] **Back on the results screen:** closes the results and moves on (next round/game, or the home screen when the game is over). A remote test.
 - [ ] **hr-medimurje (Task 13 review):** approved. Dialect-word questions no longer name the village ("u selu X"), and the easy words go: keep only words a local would have to think about. Mark the easy ones in the sources file and drop or replace them; the pack stays ≥ 30 questions and the tests pass.
 
+---
+
+### Tasks 39–42: Four party games (added 2026-11-17, person approved)
+
+Spec: `docs/specs/2026-11-17-party-games-design.md` (all rules there). Each game: core rules + pack parser (tests first), protocol + session, TV screens on the console look, phone screens, content packs, sounds from the existing set, a card on the home. QA with real phone counts; review of private messages.
+
+- [ ] **Task 39: Objasni** (4–8, two teams; −1 skip; the other team sees the word with Prekršaj). Packs: several themes, ≥ 100 words each, Croatian, incl. Međimurje.
+- [ ] **Task 40: Koliko?** (2–8, number pad, number line reveal). Packs: verified number questions with sources; convert suitable quiz questions after re-checking each.
+- [ ] **Task 41: Blef** (3–8, typed fake answers). **First:** prove typing works in Flutter Web on a real iPhone Safari and Android Chrome (keyboard, č ć š ž đ, autocorrect) before building the screens. Packs: strange but true facts with short answers and sources.
+- [ ] **Task 42: Tko bi?** (3–8, vote for someone in the room; counts on the session board). Packs: "Blago" and "Ljuto", ≥ 30 prompts each, kind (no looks, weight, health, money, relationships).
+

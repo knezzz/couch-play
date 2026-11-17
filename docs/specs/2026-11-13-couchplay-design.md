@@ -8,7 +8,7 @@ A party-games console for the living room. An Android TV shows the game; everyon
 
 ## Goals (v1)
 
-- Android TV app that hosts a lobby and three games: **Quiz**, **Curve** (Tron / Curve Fever style) **Vukodlak** (a werewolf-style social deduction game, added 2026-11-17) and **Uljez** (a hidden-word game, added 2026-11-17).
+- Android TV app that hosts a lobby and three games: **Quiz**, **Curve** (Tron / Curve Fever style) **Vukodlak** (a werewolf-style social deduction game, added 2026-11-17) and **Uljez** (a hidden-word game, added 2026-11-17); plus **Objasni**, **Koliko?**, **Blef** and **Tko bi?**, specified in `2026-11-17-party-games-design.md` (approved 2026-11-17).
 - Phones join by scanning a QR code on the TV and get a browser controller (Flutter Web) served by the TV itself.
 - One Dart codebase: TV app, controller, and a shared package for protocol, theme, and visual effects, so the same effects (particles, color flashes, animations) can play on TV and phone.
 - Quiz question packs in a simple, documented file format; ships with packs written by Claude, some with simple vector pictures (flags, shapes).
@@ -18,7 +18,7 @@ A party-games console for the living room. An Android TV shows the game; everyon
 - Remote / internet play. Tailcat was evaluated and rejected: Go-only with no mobile story, no API stability, rate-limited free relays with no SLA. Later option: remote players watch via Discord/FaceTime screen share. Nothing in v1 should block that, but nothing is built for it.
 - Tilt / motion controls. Browsers only expose motion sensors on HTTPS, and the controller is served over plain HTTP from the LAN. Later: an optional native app build of the same controller code (Flutter iOS/Android) for tilt; browser players get a touch fallback.
 - Haptics (not available in iOS Safari).
-- Accounts, saved stats, store publishing, AI-generated content, other mini-games.
+- Accounts, saved stats, store publishing, AI-generated content, other mini-games beyond those listed in Goals.
 
 ## Anti-goals
 
