@@ -1,13 +1,19 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/ui/quiz_screen.dart';
 import 'package:tv/ui/tv_theme.dart';
 
+const _svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="red"/></svg>';
 const _amber = Color(0xFFFFB020);
 const _red = Color(0xFFFF4D6D);
 
-QuizScreen _screen({required double remaining, int limit = 20, int? correct}) => QuizScreen(
+QuizScreen _screen({required double remaining, int limit = 20, int? correct, bool picture = false}) => QuizScreen(
+      picture: picture ? Uint8List.fromList(utf8.encode(_svg)) : null,
+      pictureName: 'p.svg',
       question: 'Koliko je godina trajao Stogodišnji rat?',
       packTitle: 'Opće znanje',
       choices: const ['99', '116', '100', '124'],
@@ -92,29 +98,27 @@ void main() {
     expect(_bar(t).colors, {_red});
   });
 
-  testWidgets('the ring shows the whole seconds left', (t) async {
-    await _pump(t, _screen(remaining: 0.5, limit: 40));
-    expect(find.descendant(of: find.byKey(const ValueKey('ring')), matching: find.text('20')), findsOneWidget);
-    await _pump(t, _screen(remaining: 13.2 / 20));
-    expect(find.descendant(of: find.byKey(const ValueKey('ring')), matching: find.text('14')), findsOneWidget);
-    final ring = t.widget<CircularProgressIndicator>(find.descendant(of: find.byKey(const ValueKey('ring')), matching: find.byType(CircularProgressIndicator)));
-    expect(ring.value, closeTo(13.2 / 20, 1e-9));
+  testWidgets('the top bar is the only countdown: no ring, no second timer, in either layout', (t) async {
+    await _pump(t, _screen(remaining: 0.5));
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byKey(const ValueKey('ring')), findsNothing);
+    expect(find.text('10'), findsNothing, reason: 'no seconds number');
   });
 
-  testWidgets('exactly 7 s of 25 shows 7, not 8 (7/25*25 is 7.000000000000001)', (t) async {
-    await _pump(t, _screen(remaining: 7 / 25, limit: 25));
-    expect(find.descendant(of: find.byKey(const ValueKey('ring')), matching: find.text('7')), findsOneWidget);
+  testWidgets('a picture question has no ring in its header either, and keeps the bar', (t) async {
+    await _pump(t, _screen(remaining: 0.5, picture: true));
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(_bar(t).lit, 10);
   });
 
-  testWidgets('the ring turns red with the bar', (t) async {
-    await _pump(t, _screen(remaining: 4 / 20));
-    final ring = t.widget<CircularProgressIndicator>(find.descendant(of: find.byKey(const ValueKey('ring')), matching: find.byType(CircularProgressIndicator)));
-    expect(ring.color, _red);
+  testWidgets('the question has the whole width back (no ring beside it)', (t) async {
+    await _pump(t, _screen(remaining: 0.5));
+    final q = t.getRect(find.textContaining('Koliko je godina'));
+    expect(q.right, greaterThan(1800), reason: 'the text may run to the right margin');
   });
 
   testWidgets('no ticker in the reveal', (t) async {
     await _pump(t, _screen(remaining: 0, correct: 1));
     expect(find.byKey(const ValueKey('tick-0')), findsNothing);
-    expect(find.byKey(const ValueKey('ring')), findsNothing);
   });
 }

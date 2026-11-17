@@ -100,7 +100,7 @@ class QuizScreen extends StatelessWidget {
     return asking ? _askingPicture(onBroken) : _revealPicture(onBroken);
   }
 
-  // --- the ticker: 20 segments along the top edge and a ring ---
+  // --- the ticker: 20 segments along the top edge, the one countdown ---
 
   /// Whole seconds left. The small tolerance keeps 14.000000000000002 from
   /// counting as 15.
@@ -138,33 +138,10 @@ class QuizScreen extends StatelessWidget {
     );
   }
 
-  /// The seconds left, in a ring that drains.
-  Widget _ring(double size) => SizedBox(
-        key: const ValueKey('ring'),
-        width: size,
-        height: size,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox.expand(
-              child: CircularProgressIndicator(
-                value: remaining.clamp(0.0, 1.0),
-                strokeWidth: size * 0.08,
-                strokeCap: StrokeCap.round,
-                color: _tickColor,
-                backgroundColor: const Color(0x1AFFFFFF),
-              ),
-            ),
-            Text('$_secondsLeft',
-                style: TextStyle(fontSize: size * 0.46, fontWeight: FontWeight.w900, height: 1, color: tvText)),
-          ],
-        ),
-      );
-
   // --- the question ---
 
   /// Header row and timer bar, with [gap] around the bar.
-  List<Widget> _header(double gap, {double ring = 0}) => [
+  List<Widget> _header(double gap) => [
     Row(
       children: [
         Text(
@@ -189,7 +166,6 @@ class QuizScreen extends StatelessWidget {
           Strings.answered(answered, expected),
           style: const TextStyle(fontSize: 40, color: tvMuted),
         ),
-        if (ring > 0) ...[const SizedBox(width: 32), _ring(ring)],
       ],
     ),
     SizedBox(height: gap),
@@ -215,8 +191,6 @@ class QuizScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 48),
-            Align(alignment: Alignment.topCenter, child: _ring(240)),
           ],
         ),
       ),
@@ -279,7 +253,7 @@ class QuizScreen extends StatelessWidget {
 
   Widget _askingPicture(VoidCallback onBroken) => Column(
     children: [
-      ..._header(28, ring: 96),
+      ..._header(28),
       Expanded(
         child: Row(
           // Stretch: the frame fills the room, whatever the photo's shape.
