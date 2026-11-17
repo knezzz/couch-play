@@ -3,7 +3,7 @@
 /// true in the same commit as that game's TV screens.
 const kWolfTvReady = true;
 const kUljezTvReady = true;
-const kObjasniTvReady = false;
+const kObjasniTvReady = true;
 const kKolikoTvReady = false;
 const kBlefTvReady = false;
 const kTkobiTvReady = false;
