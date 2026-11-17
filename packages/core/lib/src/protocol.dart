@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-enum GameKind { quiz, curve }
+import 'wolf.dart';
+
+enum GameKind { quiz, curve, vukodlak }
 
 /// Value equality from the JSON form, so every wire type compares by content.
 mixin _JsonEq {
@@ -67,6 +69,21 @@ class GameSettings with _JsonEq {
 
   /// The quiz pack the host picked; null means the TV's default pack.
   final String? quizPackId;
+
+  /// Vukodlak: the roles that may be drawn (Vukodlak and Seljanin are always
+  /// in), whether a player who is out stays unrevealed until the end, and the
+  /// day discussion in seconds (30-300 in steps of 30).
+  final Set<WolfRole> wolfRoles;
+  final bool wolfHideRoles;
+  final int wolfDiscussion;
+  static const defaultWolfRoles = {
+    WolfRole.wolf,
+    WolfRole.villager,
+    WolfRole.seer,
+    WolfRole.doc,
+    WolfRole.hunter,
+    WolfRole.herb,
+  };
   const GameSettings({
     this.quizSeconds = 20,
     this.quizQuestions = 10,
@@ -74,6 +91,9 @@ class GameSettings with _JsonEq {
     this.curveCountdown = 2,
     this.curveMode = CurveMode.balanced,
     this.quizPackId,
+    this.wolfRoles = defaultWolfRoles,
+    this.wolfHideRoles = true,
+    this.wolfDiscussion = 120,
   });
   factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
       quizSeconds: j['quizSeconds'] as int,
@@ -83,7 +103,12 @@ class GameSettings with _JsonEq {
       curveMode: j['curveMode'] == null
           ? CurveMode.balanced
           : CurveMode.values.byName(j['curveMode'] as String),
-      quizPackId: j['quizPackId'] as String?);
+      quizPackId: j['quizPackId'] as String?,
+      wolfRoles: j['wolfRoles'] == null
+          ? defaultWolfRoles
+          : {for (final n in j['wolfRoles'] as List) WolfRole.values.byName(n as String)},
+      wolfHideRoles: (j['wolfHideRoles'] as bool?) ?? true,
+      wolfDiscussion: (j['wolfDiscussion'] as int?) ?? 120);
 
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
@@ -96,6 +121,9 @@ class GameSettings with _JsonEq {
       curveCountdown: snap(curveCountdown, 1, 10, 1),
       curveMode: curveMode,
       quizPackId: quizPackId,
+      wolfRoles: {...wolfRoles, ...wolfAlwaysOn},
+      wolfHideRoles: wolfHideRoles,
+      wolfDiscussion: snap(wolfDiscussion, 30, 300, 30),
     );
   }
 
@@ -107,6 +135,9 @@ class GameSettings with _JsonEq {
         'curveCountdown': curveCountdown,
         'curveMode': curveMode.name,
         'quizPackId': quizPackId,
+        'wolfRoles': [for (final r in WolfRole.values) if (wolfRoles.contains(r)) r.name],
+        'wolfHideRoles': wolfHideRoles,
+        'wolfDiscussion': wolfDiscussion,
       };
 }
 
@@ -167,6 +198,9 @@ sealed class Message with _JsonEq {
         'bots' => SetBots(m['count'] as int),
         'settings' => SetSettings(GameSettings.fromJson(m)),
         'select' => SelectGame(m['game'] == null ? null : GameKind.values.byName(m['game'] as String)),
+        'nightPick' => NightPick(m['target'] as int?, special: m['special'] as bool),
+        'vote' => Vote(m['target'] as int?),
+        'shoot' => Shoot(m['target'] as int?),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
           Welcome(m['playerId'] as int, m['colorIndex'] as int, m['token'] as String,
@@ -191,6 +225,30 @@ sealed class Message with _JsonEq {
             target: m['target'] as int),
         'results' => Results(list('placements', Placement.fromJson)),
         'effect' => Effect(m['name'] as String),
+        'role' => RoleMsg(WolfRole.values.byName(m['role'] as String),
+            [for (final e in m['mates'] as List) e as int],
+            [for (final e in m['possible'] as List) WolfRole.values.byName(e as String)],
+            hide: m['hide'] as bool),
+        'night' => NightPrompt(
+            night: m['night'] as int,
+            text: m['text'] as String,
+            choices: [for (final e in m['choices'] as List) e as String],
+            ids: [for (final e in m['ids'] as List) e as int],
+            picked: m['picked'] as int?,
+            special: m['special'] as bool),
+        'morning' => Morning(m['day'] as int, m['text'] as String),
+        'votePrompt' => VotePrompt(
+            day: m['day'] as int,
+            seconds: m['seconds'] as int,
+            ids: [for (final e in m['ids'] as List) e as int],
+            canVote: m['canVote'] as bool,
+            picked: m['picked'] as int?),
+        'farewell' => Farewell(
+            seconds: m['seconds'] as int, ids: [for (final e in m['ids'] as List) e as int]),
+        'wolfEnd' => WolfEnd(WolfWinner.values.byName(m['winner'] as String), {
+            for (final e in (m['roles'] as Map<String, dynamic>).entries)
+              int.parse(e.key): WolfRole.values.byName(e.value as String)
+          }),
         'pong' => Pong(m['t'] as int),
         'waiting' => Waiting(m['reason'] as String),
         'error' => ErrorMsg(m['message'] as String),
@@ -439,4 +497,155 @@ class Kicked extends Message {
   const Kicked();
   @override
   String get type => 'kicked';
+}
+
+// Vukodlak. Privacy rule: every alive phone gets the SAME message types at the
+// same moments; only short text and the choice list differ. Private messages
+// go to one phone only and never inside a broadcast.
+
+/// Fixed width of the free-text field in [NightPrompt] and [Morning]: the
+/// session pads to it so a message's length does not tell the role.
+const wolfTextWidth = 120;
+
+/// Phone -> TV, night: [target] is the id picked (null: skipped, or a sum
+/// answer: the TV does not look). [special] is the extra switch every phone
+/// carries; only some roles read it.
+class NightPick extends Message {
+  final int? target;
+  final bool special;
+  const NightPick(this.target, {this.special = false});
+  @override
+  String get type => 'nightPick';
+  @override
+  Map<String, Object?> get fields => {'target': target, 'special': special};
+}
+
+/// Phone -> TV, day vote: [target] null = skip.
+class Vote extends Message {
+  final int? target;
+  const Vote(this.target);
+  @override
+  String get type => 'vote';
+  @override
+  Map<String, Object?> get fields => {'target': target};
+}
+
+/// Phone -> TV: the farewell pick of a player who just went out (only a
+/// hunter's counts; everyone gets the same window).
+class Shoot extends Message {
+  final int? target;
+  const Shoot(this.target);
+  @override
+  String get type => 'shoot';
+  @override
+  Map<String, Object?> get fields => {'target': target};
+}
+
+/// TV -> one phone: your role, your packmates' ids (wolves only), the roles
+/// that are in this game's mix, and whether roles stay hidden. Resent to
+/// every alive phone each morning and on reconnect.
+class RoleMsg extends Message {
+  final WolfRole role;
+  final List<int> mates;
+  final List<WolfRole> possible;
+  final bool hide;
+  const RoleMsg(this.role, this.mates, this.possible, {required this.hide});
+  @override
+  String get type => 'role';
+  @override
+  Map<String, Object?> get fields => {
+        'role': role.name,
+        'mates': mates,
+        'possible': [for (final r in possible) r.name],
+        'hide': hide,
+      };
+}
+
+/// TV -> one phone, night: the hint [text] (padded), and the list to choose
+/// from: [choices] are the labels, [ids] what a pick sends back. For a role
+/// with a night action the labels are the alive players; otherwise they are
+/// the five answers of a sum. [picked] and [special] restore the screen.
+class NightPrompt extends Message {
+  final int night;
+  final String text;
+  final List<String> choices;
+  final List<int> ids;
+  final int? picked;
+  final bool special;
+  const NightPrompt(
+      {required this.night,
+      required this.text,
+      required this.choices,
+      required this.ids,
+      this.picked,
+      this.special = false});
+  @override
+  String get type => 'night';
+  @override
+  Map<String, Object?> get fields => {
+        'night': night,
+        'text': text,
+        'choices': choices,
+        'ids': ids,
+        'picked': picked,
+        'special': special,
+      };
+}
+
+/// TV -> one phone, morning: a short private result (padded); the same text
+/// for a player with nothing to learn.
+class Morning extends Message {
+  final int day;
+  final String text;
+  const Morning(this.day, this.text);
+  @override
+  String get type => 'morning';
+  @override
+  Map<String, Object?> get fields => {'day': day, 'text': text};
+}
+
+/// TV -> every alive phone: the day vote opens. [canVote] is false for a
+/// spared fool; [ids] are the players that can be voted for.
+class VotePrompt extends Message {
+  final int day;
+  final int seconds;
+  final List<int> ids;
+  final bool canVote;
+  final int? picked;
+  const VotePrompt(
+      {required this.day,
+      required this.seconds,
+      required this.ids,
+      this.canVote = true,
+      this.picked});
+  @override
+  String get type => 'votePrompt';
+  @override
+  Map<String, Object?> get fields =>
+      {'day': day, 'seconds': seconds, 'ids': ids, 'canVote': canVote, 'picked': picked};
+}
+
+/// TV -> a phone whose player just went out: the same window for every one.
+class Farewell extends Message {
+  final int seconds;
+  final List<int> ids;
+  const Farewell({required this.seconds, required this.ids});
+  @override
+  String get type => 'farewell';
+  @override
+  Map<String, Object?> get fields => {'seconds': seconds, 'ids': ids};
+}
+
+/// TV -> everyone, at the end: who won and everybody's role.
+class WolfEnd extends Message {
+  final WolfWinner winner;
+  final Map<int, WolfRole> roles;
+  const WolfEnd(this.winner, this.roles);
+  @override
+  String get type => 'wolfEnd';
+  @override
+  Map<String, Object?> get fields => {
+        'winner': winner.name,
+        'roles': {for (final e in roles.entries) '${e.key}': e.value.name},
+      };
 }

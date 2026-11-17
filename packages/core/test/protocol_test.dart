@@ -172,4 +172,57 @@ void main() {
       expect(Message.decode('{"type":"settings"}'), isNull);
     });
   });
+
+  group('vukodlak', () {
+    test('every new message round trips', () {
+      final ms = <Message>[
+        const StartGame(GameKind.vukodlak, null),
+        const SelectGame(GameKind.vukodlak),
+        const NightPick(3, special: true),
+        const NightPick(null),
+        const Vote(2),
+        const Vote(null),
+        const Shoot(4),
+        const RoleMsg(WolfRole.wolf, [2], [WolfRole.wolf, WolfRole.villager, WolfRole.seer], hide: true),
+        const NightPrompt(night: 2, text: 'x', choices: ['Ana', 'Ivo'], ids: [1, 2], picked: 2, special: true),
+        const NightPrompt(night: 1, text: '', choices: ['12', '40'], ids: [0, 1]),
+        const Morning(2, 'Vidjela si'),
+        const VotePrompt(day: 1, seconds: 120, ids: [1, 2, 3], canVote: false, picked: 3),
+        const Farewell(seconds: 15, ids: [1, 2]),
+        const WolfEnd(WolfWinner.lone, {1: WolfRole.lone, 2: WolfRole.seer}),
+        const SetSettings(GameSettings(wolfRoles: {WolfRole.wolf, WolfRole.villager, WolfRole.cupid}, wolfHideRoles: false, wolfDiscussion: 60)),
+      ];
+      for (final m in ms) {
+        expect(Message.decode(m.encode()), m, reason: m.encode());
+      }
+    });
+
+    test('wolf settings: defaults, an old settings message, and clamping', () {
+      const d = GameSettings();
+      expect(d.wolfRoles, GameSettings.defaultWolfRoles);
+      expect(d.wolfHideRoles, isTrue);
+      expect(d.wolfDiscussion, 120);
+      final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
+      expect((old as SetSettings).settings, const GameSettings());
+      final c = const GameSettings(wolfRoles: {WolfRole.seer}, wolfDiscussion: 1000).clamped();
+      expect(c.wolfRoles, {WolfRole.seer, WolfRole.wolf, WolfRole.villager}, reason: 'wolf and villager are always on');
+      expect(c.wolfDiscussion, 300);
+      expect(const GameSettings(wolfDiscussion: 10).clamped().wolfDiscussion, 30);
+      expect(const GameSettings(wolfDiscussion: 100).clamped().wolfDiscussion, 90);
+    });
+
+    test('the roles come out in the canvas order whatever the set order', () {
+      final j = const GameSettings(wolfRoles: {WolfRole.tramp, WolfRole.wolf, WolfRole.seer}).toJson();
+      expect(j['wolfRoles'], ['wolf', 'seer', 'tramp']);
+    });
+
+    test('wrong types and unknown roles are null', () {
+      expect(Message.decode('{"type":"nightPick","target":"3","special":false}'), isNull);
+      expect(Message.decode('{"type":"nightPick","target":3}'), isNull);
+      expect(Message.decode('{"type":"vote","target":"x"}'), isNull);
+      expect(Message.decode('{"type":"role","role":"dragon","mates":[],"possible":[],"hide":true}'), isNull);
+      expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"wolfRoles":["dragon"]}'), isNull);
+      expect(Message.decode('{"type":"start","game":"chess","packId":null}'), isNull);
+    });
+  });
 }
