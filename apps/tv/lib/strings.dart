@@ -92,6 +92,11 @@ abstract final class Strings {
   static String objasniNextIn(int s) => 'Sljedeći krug za $s s';
   static String objasniWins(int t) => 'Pobjeđuje ${objasniTeam(t)}!';
   static const objasniFoul = 'prekršaj';
+  static String kolikoQuestionOf(int n, int total) => 'Pitanje $n od $total';
+  static String kolikoUnit(String unit) => 'Odgovor u: $unit';
+  static String kolikoAnswered(int n, int total) => 'Odgovorilo: $n od $total';
+  static String kolikoCorrect(String number, String unit) => unit.isEmpty ? 'Točno: $number' : 'Točno: $number $unit';
+  static const kolikoNoAnswer = 'bez odgovora';
   static const legendTitle = 'Pojačanja';
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';
