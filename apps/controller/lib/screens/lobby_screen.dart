@@ -281,7 +281,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
             children: [
               Expanded(
                 child: Text(
-                  p?.title ?? '',
+                  p?.title ?? Strings.pickPack,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 20,

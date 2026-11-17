@@ -23,6 +23,7 @@ abstract final class Strings {
   static const quiz = 'Kviz';
   static const curve = 'Curve';
   static const quizPack = 'Paket pitanja';
+  static const pickPack = 'Odaberi paket';
   static const addPack = 'Dodaj svoj paket…';
 
   /// 1 pitanje, 21 pitanje, 2 pitanja, 94 pitanja, 401 pitanje.

@@ -101,6 +101,7 @@ class _AppState extends State<App> {
 
   void _onMessage(Message m) {
     if (m is Effect) return _playEffect(m);
+    final before = _screen;
     setState(() {
       switch (m) {
         case Welcome():
@@ -171,6 +172,13 @@ class _AppState extends State<App> {
           break;
       }
     });
+    // A grid, a roles list or a sheet the host left open must not stay on top
+    // of a game the TV just started.
+    if (before == _Screen.lobby && _screen != _Screen.lobby) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _nav.currentState?.popUntil((r) => r.isFirst),
+      );
+    }
   }
 
   Widget _body() => switch (_screen) {

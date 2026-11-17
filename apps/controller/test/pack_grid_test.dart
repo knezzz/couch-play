@@ -1,3 +1,4 @@
+import 'package:controller/app.dart';
 import 'package:controller/screens/lobby_screen.dart';
 import 'package:controller/strings.dart';
 import 'package:controller/theme.dart';
@@ -135,5 +136,88 @@ void main() {
     await t.tap(find.byKey(const ValueKey('open-packs')));
     await t.pumpAndSettle();
     expect(t.takeException(), isNull);
+  });
+  group('a game starting from the TV while a screen is open', () {
+    Future<FakeConnection> app(WidgetTester t) async {
+      t.view.physicalSize = const Size(390, 1600);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      final c = FakeConnection();
+      await t.pumpWidget(App(c));
+      for (final m in [const Welcome(0, 0, 'test'), _lobby()]) {
+        c.inbox.add(m);
+        await t.pump();
+        await t.pump();
+      }
+      return c;
+    }
+
+    Future<void> send(WidgetTester t, FakeConnection c, Message m) async {
+      c.inbox.add(m);
+      await t.pump();
+      await t.pump();
+      await t.pumpAndSettle();
+    }
+
+    testWidgets('the open pack grid is closed and the answers can be tapped', (
+      t,
+    ) async {
+      final c = await app(t);
+      await t.tap(find.byKey(const ValueKey('open-packs')));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('pack-a')), findsOneWidget);
+      await send(
+        t,
+        c,
+        const QuizQuestion(1, 10, ['Ana', 'Ivo', 'Eva', 'Tin'], 20),
+      );
+      expect(find.byKey(const ValueKey('pack-a')), findsNothing);
+      await t.tap(find.text('Ivo'));
+      expect(c.sent.last, const Answer(1));
+    });
+
+    testWidgets('the roles list and the character sheet are closed too', (
+      t,
+    ) async {
+      final c = await app(t);
+      await send(
+        t,
+        c,
+        LobbyState(
+          hostId: 0,
+          packs: _packs,
+          selected: GameKind.vukodlak,
+          players: _lobby().players,
+        ),
+      );
+      await t.tap(find.byKey(const ValueKey('open-roles-info')));
+      await t.pumpAndSettle();
+      expect(find.text(Strings.rolesInThisGame), findsWidgets);
+      await send(t, c, const CurveStatus(alive: true, score: 0, target: 30));
+      expect(find.text(Strings.rolesInThisGame), findsNothing);
+    });
+  });
+
+  testWidgets('with no packs the details row asks to pick one', (t) async {
+    t.view.physicalSize = const Size(390, 1600);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    final l = LobbyState(
+      hostId: 0,
+      packs: const [],
+      selected: GameKind.quiz,
+      players: _lobby().players,
+    );
+    await t.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: LobbyScreen(FakeConnection(), l, 0, addPack: (_) async => null),
+      ),
+    );
+    final row = find.byKey(const ValueKey('open-packs'));
+    expect(
+      find.descendant(of: row, matching: find.text(Strings.pickPack)),
+      findsOneWidget,
+    );
   });
 }
