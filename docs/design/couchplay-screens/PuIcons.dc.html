@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Power-up icon versions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; padding: 48px 72px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 18px">
+  <div style="display: flex; align-items: baseline; gap: 28px">
+    <div style="font-size: 52px; font-weight: 900">Ikone pojačanja: 3 verzije</div>
+    <div style="font-size: 28px; color: #A9A9BC">Boja kruga i dalje kaže na koga djeluje: zeleno ti, crveno ostali, plavo svi.</div>
+  </div>
+  <div style="display: grid; grid-template-columns: 220px repeat(7, minmax(0, 1fr)); gap: 12px; align-items: center">
+    <span></span>
+    <sc-for list="{{names}}" as="n" hint-placeholder-count="7"><span style="font-size: 26px; font-weight: 700; text-align: center">{{n}}</span></sc-for>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 40px; font-weight: 900">{{r.tag}}</span>
+        <span style="font-size: 22px; color: #A9A9BC; line-height: 1.3">{{r.about}}</span>
+      </div>
+      <sc-for list="{{r.items}}" as="k" hint-placeholder-count="7">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; background: #1B1B26; border-radius: 20px; padding: 14px 4px">
+          <svg viewBox="0 0 100 100" width="150" height="150" role="img" aria-label="{{k.name}}">
+            <circle cx="50" cy="50" r="47" fill="{{k.color}}"></circle>
+            <circle cx="50" cy="50" r="47" fill="none" stroke="#14141E" stroke-opacity="0.25" stroke-width="2"></circle>
+            <path d="{{k.fillD}}" fill="#14141E"></path>
+            <path d="{{k.lineD}}" fill="none" stroke="#14141E" stroke-width="{{k.sw}}" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="{{k.thinD}}" fill="none" stroke="#14141E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{{k.dash}}"></path>
+            <text x="50" y="{{k.ty}}" text-anchor="middle" font-family="Roboto, sans-serif" font-weight="900" font-size="{{k.ts}}" fill="#14141E">{{k.txt}}</text>
+          </svg>
+          <sc-if value="{{r.label}}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 24px; font-weight: 900; letter-spacing: 1px; background: {{k.color}}; color: #14141E; border-radius: 8px; padding: 2px 10px">{{k.word}}</span>
+          </sc-if>
+        </div>
+      </sc-for>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const G = '#3DDC84', R = '#FF4D4D', B = '#4DA6FF';
+    const k = (color, o) => ({ color, fillD: '', lineD: '', thinD: '', dash: '', sw: 7, txt: '', ty: 60, ts: 30, ...o });
+    // A: pictures of things
+    const A = [
+      k(G, { fillD: 'M16 74 Q18 64 30 64 L74 64 Q84 64 86 74 Z M74 64 Q84 50 80 40 L86 30 M80 40 L90 36', lineD: 'M56 62 A20 20 0 1 1 57 61 M56 50 A8 8 0 1 0 64 46 M80 40 L84 28 M80 40 L90 34', sw: 5 }),
+      k(G, { fillD: 'M28 82 L28 46 A22 22 0 0 1 72 46 L72 82 L64 74 L57 82 L50 74 L43 82 L36 74 Z', lineD: '' , thinD: 'M41 46 L41 50 M59 46 L59 50', dash: '' }),
+      k(R, { fillD: 'M58 12 L28 54 L47 54 L38 88 L72 42 L53 42 Z' }),
+      k(R, { lineD: 'M18 30 L82 30', sw: 4, fillD: 'M18 48 L82 48 L82 76 L18 76 Z' }),
+      k(R, { lineD: 'M22 36 L74 36 M64 26 L76 36 L64 46 M78 64 L26 64 M36 54 L24 64 L36 74', sw: 7 }),
+      k(B, { lineD: 'M70 18 L40 58', sw: 7, fillD: 'M28 52 L50 66 L40 86 L16 80 Z' }),
+      k(B, { thinD: 'M22 24 L22 76 M78 24 L78 76', dash: '6 6', lineD: 'M40 50 L86 50 M74 40 L86 50 L74 60 M8 50 L22 50', sw: 6 })
+    ];
+    // B: what happens to the line
+    const Bv = [
+      k(G, { lineD: 'M14 64 C30 64 40 40 56 40', sw: 6, fillD: 'M60 32 a8 8 0 1 0 0.1 0 Z', thinD: 'M70 40 L76 40 M70 30 L74 26 M70 50 L74 54', dash: '' , txt: '', }),
+      k(G, { lineD: 'M50 14 L50 86', sw: 8, thinD: 'M12 60 C30 60 40 40 88 40', dash: '6 7' }),
+      k(R, { lineD: 'M10 62 L40 62 M20 50 L46 50 M10 38 L36 38', sw: 5, fillD: 'M66 50 m-12 0 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0' }),
+      k(R, { lineD: 'M12 70 C36 70 44 30 88 30', sw: 18 }),
+      k(R, { txt: 'D  L', ty: 46, ts: 26, lineD: 'M28 62 L72 62 M62 54 L72 62 L62 70 M72 74 L28 74 M38 66 L28 74 L38 82', sw: 5 }),
+      k(B, { thinD: 'M12 30 L88 30 M12 50 L88 50 M12 70 L88 70', dash: '3 9', lineD: 'M20 76 L80 24', sw: 6 }),
+      k(B, { lineD: 'M22 22 L78 22 L78 78 L22 78 Z', sw: 4, thinD: 'M60 50 L92 50 M8 50 L40 50 M32 44 L40 50 L32 56', dash: '' })
+    ];
+    // C: A + a word under the icon
+    const C = A.map((x, i) => ({ ...x, word: ['SPORO', 'DUH', 'BRZO', 'DEBELO', 'OBRNUTO', 'BRIŠI', 'ZID'][i] }));
+    return {
+      names: ['Usporavanje', 'Duh', 'Ubrzanje', 'Debela linija', 'Obrnuto', 'Čišćenje', 'Kroz zid'],
+      rows: [
+        { tag: 'A', about: 'Predmeti: puž, duh, munja, debeli kist, zamjena, metla, prolaz.', items: A, label: false },
+        { tag: 'B', about: 'Što se dogodi liniji: tragovi, prolaz, debljina, smjer, brisanje, rub.', items: Bv, label: false },
+        { tag: 'C', about: 'Kao A, plus jedna riječ ispod ikone na ploči.', items: C, label: true }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

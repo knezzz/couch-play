@@ -271,3 +271,6 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   yet; waiting for the person's comments.
 - 2026-11-17: Person approved the design page "Konzola i Vukodlak" ("odlično", QR moved top left). Spec + plan Tasks
   30-33; routed to lead.
+- 2026-11-17: Person: power-up icons are not obvious; asked for several versions to choose from, and active power-ups
+  shown as a ring around the player without the icon. Canvas page "Curve pojačanja": icons A/B/C, indicators 1/2/3.
+  Waiting for the choice; nothing routed.

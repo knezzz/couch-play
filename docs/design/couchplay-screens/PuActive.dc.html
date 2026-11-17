@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Active power-ups on a player</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes pspin{to{transform:rotate(360deg)}}
+.p-spin{animation:pspin 3s linear infinite;transform-box:view-box;transform-origin:150px 150px}
+@media (prefers-reduced-motion: reduce){.p-spin{animation:none}}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; padding: 48px 72px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; align-items: baseline; gap: 28px">
+    <div style="font-size: 52px; font-weight: 900">Aktivna pojačanja na igraču: bez ikone</div>
+    <div style="font-size: 28px; color: #A9A9BC">Primjer: Ana je usporena (60 % vremena ostalo) i ima debelu liniju ×2 (30 % ostalo).</div>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; flex-grow: 1">
+    <sc-for list="{{opts}}" as="o" hint-placeholder-count="3">
+      <div style="background: #1B1B26; border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+        <div style="font-size: 44px; font-weight: 900">{{o.tag}}</div>
+        <svg viewBox="0 0 300 300" width="100%" height="420" aria-hidden="true" style="background: #101018; border-radius: 20px">
+          <path d="M-10 250 C60 240 90 170 150 150" fill="none" stroke="#FFB020" stroke-width="{{o.trail}}" stroke-linecap="round"></path>
+          <sc-if value="{{o.a}}" hint-placeholder-val="{{ true }}">
+            <circle cx="150" cy="150" r="30" fill="none" stroke="#2A2A3A" stroke-width="7"></circle>
+            <circle cx="150" cy="150" r="30" fill="none" stroke="#3DDC84" stroke-width="7" stroke-dasharray="188.5" stroke-dashoffset="75" transform="rotate(-90 150 150)" stroke-linecap="round"></circle>
+            <circle cx="150" cy="150" r="44" fill="none" stroke="#2A2A3A" stroke-width="7"></circle>
+            <circle cx="150" cy="150" r="44" fill="none" stroke="#FF4D4D" stroke-width="7" stroke-dasharray="276.5" stroke-dashoffset="194" transform="rotate(-90 150 150)" stroke-linecap="round"></circle>
+          </sc-if>
+          <sc-if value="{{o.b}}" hint-placeholder-val="{{ false }}">
+            <circle cx="150" cy="150" r="30" fill="none" stroke="#3DDC84" stroke-width="5" stroke-dasharray="4 6" opacity="0.35"></circle>
+            <circle cx="150" cy="150" r="30" fill="none" stroke="#3DDC84" stroke-width="5" stroke-dasharray="113 300" transform="rotate(-90 150 150)"></circle>
+            <circle cx="150" cy="150" r="46" fill="none" stroke="#2A2A3A" stroke-width="14"></circle>
+            <circle cx="150" cy="150" r="46" fill="none" stroke="#FF4D4D" stroke-width="14" stroke-dasharray="289" stroke-dashoffset="202" transform="rotate(-90 150 150)"></circle>
+            <circle cx="138" cy="208" r="5" fill="#FF4D4D"></circle><circle cx="162" cy="208" r="5" fill="#FF4D4D"></circle>
+          </sc-if>
+          <sc-if value="{{o.c}}" hint-placeholder-val="{{ false }}">
+            <circle cx="150" cy="150" r="40" fill="url(#pglow)"></circle>
+            <defs><radialGradient id="pglow"><stop offset="40%" stop-color="#FF4D4D" stop-opacity="0.45"></stop><stop offset="100%" stop-color="#FF4D4D" stop-opacity="0"></stop></radialGradient></defs>
+            <g class="p-spin"><circle cx="150" cy="150" r="34" fill="none" stroke="#3DDC84" stroke-width="6" stroke-dasharray="14 10" stroke-linecap="round" opacity="0.9"></circle></g>
+            <circle cx="150" cy="150" r="48" fill="none" stroke="#FF4D4D" stroke-width="6" stroke-dasharray="301.6" stroke-dashoffset="211" transform="rotate(-90 150 150)" stroke-linecap="round"></circle>
+          </sc-if>
+          <circle cx="150" cy="150" r="9" fill="#FFFFFF"></circle>
+        </svg>
+        <div style="font-size: 26px; line-height: 1.4; color: #C9C9D8">{{o.about}}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="font-size: 26px; color: #A9A9BC">Duh: glava i nova linija prozirne. Obrnuto: prsten se polako vrti unatrag. Kroz zid: bijeli rub oko cijele ploče (kao sada).</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      opts: [
+        { tag: '1 · Prsteni', a: true, b: false, c: false, trail: 10, about: 'Jedan prsten po pojačanju, u boji pojačanja (zeleno za tebe, crveno od drugih). Prsten se prazni dok vrijeme ističe. Najjednostavnije.' },
+        { tag: '2 · Prsten po vrsti', a: false, b: true, c: false, trail: 20, about: 'Svaka vrsta ima svoj prsten: usporavanje tanak isprekidan, debela linija debeo prsten s točkicama za ×2, ×3. Bez ikone, ali se razlikuju.' },
+        { tag: '3 · Sjaj i zupčanik', a: false, b: false, c: true, trail: 20, about: 'Udarac drugih (crveno) svijetli oko glave i prazni se; tvoje pojačanje (zeleno) je prsten koji se vrti. Najživlje, ali manje precizno.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
