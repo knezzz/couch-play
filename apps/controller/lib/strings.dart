@@ -258,9 +258,11 @@ abstract final class Strings {
   // Curve
   static const crashed = 'Sudar! Pričekaj sljedeću rundu.';
 
-  /// Debug readout of the phone-to-TV round trip, not meant for players.
-  static String rtt(int now, int p95, int n) =>
-      'rtt ${now}ms · p95 ${p95}ms · n=$n';
+  static const steerLeft = 'Lijevo';
+  static const steerRight = 'Desno';
+  static String curveScore(int n) => '$n ${points(n)}';
+  static const curveHint =
+      'Drži za skretanje. Kad te zahvati „Obrnuto”, lijevo i desno se zamijene: na TV-u uz tvoju liniju vidiš crvene strelice.';
 
   // Results
   static const gameOver = 'Igra je gotova.';

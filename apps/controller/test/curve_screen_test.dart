@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:controller/connection.dart';
 import 'package:controller/screens/curve_screen.dart';
+import 'package:controller/strings.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -50,19 +51,54 @@ void main() {
     expect(c.sent.whereType<Ping>().length, 20);
   });
 
-  test('percentile', () {
-    final v = List.generate(100, (i) => i + 1);
-    expect(percentile(v, .95), 95);
-    expect(percentile([], .95), 0);
-  });
-
-  testWidgets('shows rtt, p95 and sample count', (t) async {
+  testWidgets('header shows face, name and score; the Pong shows nothing', (
+    t,
+  ) async {
     final c = _Fake();
-    await t.pumpWidget(MaterialApp(home: CurveScreen(c)));
+    await t.pumpWidget(
+      MaterialApp(
+        home: CurveScreen(
+          c,
+          name: 'Ana',
+          character: characterIds[3],
+          colorIndex: 2,
+          score: 12,
+        ),
+      ),
+    );
+    expect(find.text('Ana'), findsOneWidget);
+    expect(find.text(Strings.curveScore(12)), findsOneWidget);
+    expect(find.byType(CharacterFace), findsOneWidget);
     c.inbox.add(Pong(DateTime.now().millisecondsSinceEpoch));
     await t.pump();
-    expect(find.textContaining('n=1'), findsOneWidget);
-    expect(find.textContaining('p95'), findsOneWidget);
+    expect(find.textContaining('rtt'), findsNothing);
+    expect(find.textContaining('p95'), findsNothing);
+    await t.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('both buttons are in the player colour, with the steering hint', (
+    t,
+  ) async {
+    final c = _Fake();
+    await t.pumpWidget(
+      MaterialApp(home: CurveScreen(c, name: 'Ana', colorIndex: 2)),
+    );
+    for (final k in ['steer-left', 'steer-right']) {
+      final box = t.widget<Container>(
+        find
+            .ancestor(
+              of: find.byKey(ValueKey(k)),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      expect(
+        (box.decoration! as BoxDecoration).color,
+        playerColors[2],
+        reason: k,
+      );
+    }
+    expect(find.text(Strings.curveHint), findsOneWidget);
     await t.pumpWidget(const SizedBox());
   });
 

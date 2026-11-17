@@ -5,16 +5,25 @@ import 'package:flutter/material.dart';
 
 import '../connection.dart';
 import '../strings.dart';
+import '../theme.dart';
 
-/// Two full-height halves; holding one steers. Each half tracks its own
-/// pointers so two thumbs work.
-/// Value at fraction [q] (0..1) of [sorted] ascending; 0 when empty.
-int percentile(List<int> sorted, double q) =>
-    sorted.isEmpty ? 0 : sorted[((sorted.length - 1) * q).round()];
-
+/// Two big buttons in the player's colour; holding one steers. Each button
+/// tracks its own pointers so two thumbs work.
 class CurveScreen extends StatefulWidget {
-  const CurveScreen(this.conn, {this.alive = true, super.key});
+  const CurveScreen(
+    this.conn, {
+    this.alive = true,
+    this.name = '',
+    this.character = '',
+    this.colorIndex = 0,
+    this.score = 0,
+    super.key,
+  });
   final Connection conn;
+
+  /// For the header: who this phone is and its score in the match.
+  final String name, character;
+  final int colorIndex, score;
 
   /// False after a crash: steering is inert until the next round.
   final bool alive;
@@ -28,23 +37,11 @@ class _CurveScreenState extends State<CurveScreen> {
   // Pointer ids per side live here, not in build(): the 1 s Pong rebuild must not reset them.
   // Ids, not a counter: a release the crash already cleared must not go below zero.
   final _held = [<int>{}, <int>{}];
-  int? _rtt;
-  final _samples = <int>[]; // last 300 round trips, ms
   Timer? _ping;
-  StreamSubscription<Message>? _sub;
 
   @override
   void initState() {
     super.initState();
-    _sub = widget.conn.messages.listen((m) {
-      if (m is Pong) {
-        setState(() {
-          _rtt = DateTime.now().millisecondsSinceEpoch - m.t;
-          _samples.add(_rtt!);
-          if (_samples.length > 300) _samples.removeAt(0);
-        });
-      }
-    });
     // 20 Hz, not 1 Hz: sparse traffic lets the TV's Wi-Fi sleep (p95 ~114 ms
     // at 1 Hz vs ~19 ms at 10 Hz on the Mac), and this keeps the radio warm for steering.
     _ping = Timer.periodic(
@@ -69,7 +66,6 @@ class _CurveScreenState extends State<CurveScreen> {
   @override
   void dispose() {
     _ping?.cancel();
-    _sub?.cancel();
     super.dispose();
   }
 
@@ -92,14 +88,21 @@ class _CurveScreenState extends State<CurveScreen> {
         },
         onPointerUp: (e) => _release(side, e.pointer, set),
         onPointerCancel: (e) => _release(side, e.pointer, set),
-        child: Container(
-          color: color,
-          alignment: Alignment.center,
-          // Drawn: the ◀ ▶ glyphs fall back to an orange emoji font on some phones.
-          child: CustomPaint(
-            key: ValueKey(left ? 'steer-left' : 'steer-right'),
-            size: const Size(72, 96),
-            painter: _ArrowPainter(left),
+        child: Semantics(
+          button: true,
+          label: left ? Strings.steerLeft : Strings.steerRight,
+          child: Container(
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(28),
+            ),
+            alignment: Alignment.center,
+            // Drawn: the glyphs fall back to an emoji font on some phones.
+            child: CustomPaint(
+              key: ValueKey(left ? 'steer-left' : 'steer-right'),
+              size: const Size(96, 96),
+              painter: _ChevronPainter(left),
+            ),
           ),
         ),
       ),
@@ -107,75 +110,117 @@ class _CurveScreenState extends State<CurveScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Stack(
-      children: [
-        IgnorePointer(
-          ignoring: !widget.alive,
-          child: Row(
+  Widget build(BuildContext context) {
+    final color = playerColors[widget.colorIndex % playerColors.length];
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: Column(
             children: [
-              _half(0, true, (v) => _set(left: v), const Color(0xFF1E3A5F)),
-              _half(1, false, (v) => _set(right: v), const Color(0xFF5F1E3A)),
+              SizedBox(
+                height: 48,
+                child: Row(
+                  children: [
+                    if (widget.character.isNotEmpty) ...[
+                      CharacterFace(widget.character, 40, color),
+                      const SizedBox(width: 10),
+                    ],
+                    Expanded(
+                      child: Text(
+                        widget.name,
+                        key: const ValueKey('curve-name'),
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      Strings.curveScore(widget.score),
+                      key: const ValueKey('curve-score'),
+                      style: const TextStyle(fontSize: 18, color: muted),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: Stack(
+                  children: [
+                    IgnorePointer(
+                      ignoring: !widget.alive,
+                      child: Row(
+                        children: [
+                          _half(0, true, (v) => _set(left: v), color),
+                          const SizedBox(width: 12),
+                          _half(1, false, (v) => _set(right: v), color),
+                        ],
+                      ),
+                    ),
+                    if (!widget.alive)
+                      Center(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: const Color(0xF2000000),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Text(
+                              Strings.crashed,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                Strings.curveHint,
+                key: ValueKey('curve-hint'),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, color: muted, height: 1.4),
+              ),
             ],
           ),
         ),
-        if (!widget.alive)
-          Center(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: const Color(0xF2000000),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(24),
-                child: Text(
-                  Strings.crashed,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        Positioned(
-          top: 4,
-          right: 8,
-          child: Text(
-            _rtt == null
-                ? ''
-                : Strings.rtt(
-                    _rtt!,
-                    percentile([..._samples]..sort(), .95),
-                    _samples.length,
-                  ),
-            style: const TextStyle(fontSize: 12, color: Colors.white54),
-          ),
-        ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
-class _ArrowPainter extends CustomPainter {
-  _ArrowPainter(this.left);
+class _ChevronPainter extends CustomPainter {
+  _ChevronPainter(this.left);
   final bool left;
 
   @override
   void paint(Canvas canvas, Size s) {
-    final x0 = left ? s.width : 0.0, x1 = left ? 0.0 : s.width;
+    // The board's 64-unit chevron, scaled to the box.
+    final k = s.width / 64;
+    Offset p(double x, double y) => Offset((left ? x : 64 - x) * k, y * k);
     canvas.drawPath(
       Path()
-        ..moveTo(x1, s.height / 2)
-        ..lineTo(x0, 0)
-        ..lineTo(x0, s.height)
-        ..close(),
-      Paint()..color = Colors.white,
+        ..moveTo(p(40, 12).dx, p(40, 12).dy)
+        ..lineTo(p(20, 32).dx, p(20, 32).dy)
+        ..lineTo(p(40, 52).dx, p(40, 52).dy),
+      Paint()
+        ..color = ink
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 8 * k
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
     );
   }
 
   @override
-  bool shouldRepaint(_ArrowPainter old) => old.left != left;
+  bool shouldRepaint(_ChevronPainter old) => old.left != left;
 }

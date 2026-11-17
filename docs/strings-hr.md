@@ -163,7 +163,9 @@ Informal "ti". `{x}` is filled in by the app.
 | notThisTime | Ovaj put ne | Not this time | quiz result, red |
 | yourTotal | Tvoj ukupni rezultat | Your total | quiz result |
 | crashed | Sudar! Pričekaj sljedeću rundu. | Crash! Wait for the next round. | Curve, after you crash |
-| rtt | rtt 20ms · p95 40ms · n=300 | (technical readout, not for players) | Curve, tiny top-right text |
+| curveScore(n) | {n} bod / boda / bodova | {n} points | Curve, header right (round number comes later) |
+| curveHint | Drži za skretanje. Kad te zahvati „Obrnuto”, lijevo i desno se zamijene: na TV-u uz tvoju liniju vidiš crvene strelice. | Hold to steer. When "Reversed" hits you, left and right swap: on the TV you see red arrows by your line. | Curve, under the buttons |
+| steerLeft / steerRight | Lijevo / Desno | Left / Right | Curve buttons (screen reader) |
 | gameOver | Igra je gotova. | The game is over. | results, if you had no placement |
 | placed | Tvoje mjesto: {n}. | Your place: {n}th | results |
 | sessionPoints | +{n} bod / boda / bodova za ovu večer | +{n} points for this evening | results |

@@ -52,6 +52,7 @@ class _AppState extends State<App> {
   String _waitReason = '';
   String? _error;
   bool _alive = true;
+  int _curveScore = 0;
   QuizQuestion? _question;
   QuizReveal? _reveal;
   int _quizTotal = 0; // running total, from the last reveal
@@ -123,6 +124,7 @@ class _AppState extends State<App> {
         case CurveStatus():
           if (_screen != _Screen.curve) _error = null;
           _alive = m.alive;
+          _curveScore = m.score;
           _screen = _Screen.curve;
         case QuizQuestion():
           _question = m;
@@ -181,6 +183,9 @@ class _AppState extends State<App> {
     }
   }
 
+  PlayerInfo? get _me =>
+      _lobby?.players.where((p) => p.id == _myId).firstOrNull;
+
   Widget _body() => switch (_screen) {
     _Screen.join => JoinScreen(widget.conn, onJoined: () {}),
     _Screen.lobby =>
@@ -188,7 +193,14 @@ class _AppState extends State<App> {
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : LobbyScreen(widget.conn, _lobby!, _myId, addPack: widget.addPack),
     _Screen.wait => WaitScreen(_waitReason),
-    _Screen.curve => CurveScreen(widget.conn, alive: _alive),
+    _Screen.curve => CurveScreen(
+      widget.conn,
+      alive: _alive,
+      name: _me?.name ?? '',
+      character: _me?.character ?? '',
+      colorIndex: _myColor,
+      score: _curveScore,
+    ),
     _Screen.quiz => QuizScreen(
       widget.conn,
       _question,
