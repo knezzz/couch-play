@@ -15,6 +15,8 @@ const _tileColors = [
   Color(0xFF2ECC71),
 ];
 const _green = Color(0xFF2ECC71);
+const _amber = Color(0xFFFFB020);
+const _red = Color(0xFFFF4D6D);
 
 /// One quiz question (TvQuiz) or its reveal (TvReveal) on a 1920x1080 canvas,
 /// scaled to fit. Pure: [Session] rebuilds it on each tick. [correctIndex] is
@@ -26,6 +28,7 @@ class QuizScreen extends StatelessWidget {
     required this.number,
     required this.total,
     required this.remaining,
+    this.limitSeconds = 20,
     required this.answered,
     required this.expected,
     required this.players,
@@ -50,6 +53,9 @@ class QuizScreen extends StatelessWidget {
 
   /// Countdown, 1 down to 0.
   final double remaining;
+
+  /// The host's time per question: the 20 segments and the ring follow it.
+  final int limitSeconds;
   final int? correctIndex;
 
   /// Player id -> shown choice index. Only used at the reveal.
@@ -69,15 +75,20 @@ class QuizScreen extends StatelessWidget {
       child: SizedBox(
         width: 1920,
         height: 1080,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(96, 56, 96, 72),
-          // A photo that will not decode falls back to the text layout.
-          child: picture == null
-              ? _layout(false, () {})
-              : _PictureGuard(
-                  picture!,
-                  (broken, report) => _layout(!broken, report),
-                ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(96, 56, 96, 72),
+              // A photo that will not decode falls back to the text layout.
+              child: picture == null
+                  ? _layout(false, () {})
+                  : _PictureGuard(
+                      picture!,
+                      (broken, report) => _layout(!broken, report),
+                    ),
+            ),
+            if (correctIndex == null) _ticker(),
+          ],
         ),
       ),
     ),
@@ -89,10 +100,71 @@ class QuizScreen extends StatelessWidget {
     return asking ? _askingPicture(onBroken) : _revealPicture(onBroken);
   }
 
+  // --- the ticker: 20 segments along the top edge and a ring ---
+
+  /// Whole seconds left. The small tolerance keeps 14.000000000000002 from
+  /// counting as 15.
+  int get _secondsLeft => (remaining.clamp(0.0, 1.0) * limitSeconds - 1e-6).ceil().clamp(0, limitSeconds);
+
+  bool get _urgent => _secondsLeft <= 5;
+  Color get _tickColor => _urgent ? _red : _amber;
+
+  Widget _ticker() {
+    final lit = (remaining.clamp(0.0, 1.0) * 20 - 1e-6).ceil().clamp(0, 20);
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: 0,
+      height: 20,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Row(
+          children: [
+            for (var i = 0; i < 20; i++) ...[
+              if (i > 0) const SizedBox(width: 6),
+              Expanded(
+                child: Container(
+                  key: ValueKey('tick-$i'),
+                  decoration: BoxDecoration(
+                    color: i < lit ? _tickColor : const Color(0x14FFFFFF),
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(6)),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// The seconds left, in a ring that drains.
+  Widget _ring(double size) => SizedBox(
+        key: const ValueKey('ring'),
+        width: size,
+        height: size,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox.expand(
+              child: CircularProgressIndicator(
+                value: remaining.clamp(0.0, 1.0),
+                strokeWidth: size * 0.08,
+                strokeCap: StrokeCap.round,
+                color: _tickColor,
+                backgroundColor: const Color(0x1AFFFFFF),
+              ),
+            ),
+            Text('$_secondsLeft',
+                style: TextStyle(fontSize: size * 0.46, fontWeight: FontWeight.w900, height: 1, color: tvText)),
+          ],
+        ),
+      );
+
   // --- the question ---
 
   /// Header row and timer bar, with [gap] around the bar.
-  List<Widget> _header(double gap) => [
+  List<Widget> _header(double gap, {double ring = 0}) => [
     Row(
       children: [
         Text(
@@ -117,27 +189,8 @@ class QuizScreen extends StatelessWidget {
           Strings.answered(answered, expected),
           style: const TextStyle(fontSize: 40, color: tvMuted),
         ),
+        if (ring > 0) ...[const SizedBox(width: 32), _ring(ring)],
       ],
-    ),
-    SizedBox(height: gap),
-    Container(
-      width: double.infinity,
-      height: 16,
-      decoration: BoxDecoration(
-        color: tvRaised,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: FractionallySizedBox(
-        key: const ValueKey('timer-bar'),
-        alignment: Alignment.centerLeft,
-        widthFactor: remaining.clamp(0.0, 1.0),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: tvAccent,
-            borderRadius: BorderRadius.circular(999),
-          ),
-        ),
-      ),
     ),
     SizedBox(height: gap),
   ];
@@ -162,6 +215,8 @@ class QuizScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(width: 48),
+            Align(alignment: Alignment.topCenter, child: _ring(240)),
           ],
         ),
       ),
@@ -224,7 +279,7 @@ class QuizScreen extends StatelessWidget {
 
   Widget _askingPicture(VoidCallback onBroken) => Column(
     children: [
-      ..._header(28),
+      ..._header(28, ring: 96),
       Expanded(
         child: Row(
           // Stretch: the frame fills the room, whatever the photo's shape.

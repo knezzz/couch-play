@@ -71,15 +71,6 @@ void main() {
       expect(_fs(t, find.text(Strings.answered(2, 4))), 40);
     });
 
-    testWidgets('accent progress bar follows the countdown', (t) async {
-      await _pump(t, _quiz(remaining: 0.6));
-      final bar = t.widget<FractionallySizedBox>(find.byKey(const ValueKey('timer-bar')));
-      expect(bar.widthFactor, 0.6);
-      expect(t.getSize(find.byKey(const ValueKey('timer-bar'))).height, 16);
-      final deco = t.widget<DecoratedBox>(find.descendant(of: find.byKey(const ValueKey('timer-bar')), matching: find.byType(DecoratedBox)));
-      expect((deco.decoration as BoxDecoration).color, tvAccent);
-    });
-
     testWidgets('a text-only question is 80 px, with no picture frame', (t) async {
       await _pump(t, _quiz(svg: false));
       expect(_fs(t, find.textContaining('Which of these')), 80);
@@ -108,11 +99,6 @@ void main() {
         expect(find.text(g), findsNothing, reason: 'a glyph needs a symbol font on the TV');
       }
       expect(find.descendant(of: find.byKey(const ValueKey('tile-0')), matching: find.byType(CustomPaint)), findsWidgets);
-    });
-
-    testWidgets('timer bar spans the full width', (t) async {
-      await _pump(t, _quiz(remaining: 1));
-      expect(t.getSize(find.byKey(const ValueKey('timer-bar'))).width, 1728);
     });
 
     testWidgets('answers stay at 40 px or more up to 3 lines', (t) async {

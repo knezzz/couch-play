@@ -66,6 +66,7 @@ Choices that were put to the person:
 | nextGameSoon | Sljedeća igra uskoro počinje. | The next game starts soon. | Phone waiting screen for someone who joined mid-game |
 | gameRunning | Igra je već u tijeku. | A game is already running. | Error on the phone |
 | packUnavailable | Taj paket nije dostupan. | That pack is not available. | Error on the phone (quiz pack missing) |
+| vukodlakSoon | Vukodlak još nije spreman na ovom televizoru. | Vukodlak is not ready on this TV yet. | Error on the phone until Task 33 |
 | curveNeedsTwo | Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja. | Curve needs at least 2 players. Add a bot or invite a friend. | Error on the phone |
 | noSuchPlayer | Tog igrača nema. | That player is not here. | Error on the phone (kick) |
 | cannotKickSelf | Ne možeš izbaciti sebe. | You can't kick yourself. | Error on the phone (kick) |

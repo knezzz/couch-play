@@ -138,13 +138,26 @@ void main() {
       s.dispose();
     });
 
-    testWidgets('the_last_5_seconds_tick_once_each', (t) async {
+    testWidgets('the_whole_question_ticks_once_a_second_then_twice_a_second_in_the_last_5', (t) async {
       await start(t);
       sfx.played.clear();
-      await step(t, const Duration(milliseconds: 4900));
-      expect(sfx.played, isEmpty);
-      await step(t, const Duration(milliseconds: 5000)); // to 9.9 s
-      expect(sfx.played, List.filled(5, Sound.tick));
+      await step(t, const Duration(milliseconds: 900));
+      expect(sfx.played, isEmpty, reason: 'the first second has no tick; the question just started');
+      await step(t, const Duration(milliseconds: 4000)); // to 4.9 s: ticks at 1, 2, 3, 4 s
+      expect(sfx.played, List.filled(4, Sound.quizTick));
+      await step(t, const Duration(milliseconds: 5000)); // to 9.9 s: 10 half-second ticks
+      expect(sfx.played.skip(4), List.filled(10, Sound.tick));
+      s.dispose();
+    });
+
+    testWidgets('a_40_second_question_ticks_all_the_way_too', (t) async {
+      setUpSession();
+      a.say(const SetSettings(GameSettings(quizSeconds: 40, quizQuestions: 5)));
+      a.say(const StartGame(GameKind.quiz, null));
+      await t.pump();
+      sfx.played.clear();
+      await step(t, const Duration(milliseconds: 34900)); // to 34.9 s: 5.1 s left
+      expect(sfx.played, List.filled(34, Sound.quizTick));
       s.dispose();
     });
 

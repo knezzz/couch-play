@@ -388,6 +388,8 @@ class Session {
         }
         _startCurve(parts);
         onStart?.call(game, packId);
+      case GameKind.vukodlak:
+        peer.send(const ErrorMsg(Strings.vukodlakSoon)); // Task 33 builds it
     }
   }
 
@@ -694,7 +696,7 @@ class Session {
     }
   }
 
-  int? _lastTickSec; // the last whole second that ticked, this question
+  int? _lastTickSec; // the last tick slot (a second, or half a second in the last 5 s), this question
 
   void _sendReveal(Player p) {
     final q = _quiz!;
@@ -730,11 +732,15 @@ class Session {
       }
     }
     if (q.step == QuizStep.asking) {
+      // The whole question ticks: a soft tock each second, then a sharper tick
+      // twice a second for the last 5 s. The first second is silent.
       final left = q.limit - (now - _stepStart);
       final sec = (left.inMilliseconds / 1000).ceil();
-      if (sec >= 1 && sec <= 5 && sec != _lastTickSec) {
-        _lastTickSec = sec;
-        sfx.play(Sound.tick);
+      final last5 = sec >= 1 && sec <= 5;
+      final slot = last5 ? (left.inMilliseconds / 500).ceil() : sec;
+      if (sec >= 1 && sec < q.limit.inSeconds && slot != _lastTickSec) {
+        _lastTickSec = slot;
+        sfx.play(last5 ? Sound.tick : Sound.quizTick);
       }
     }
     _notify();

@@ -223,6 +223,7 @@ class _TvAppState extends State<TvApp> {
                     number: quiz.number,
                     total: quiz.total,
                     remaining: _session.quizRemaining,
+                    limitSeconds: quiz.limit.inSeconds,
                     answered: _session.quizAnswered,
                     expected: _session.quizExpected,
                     correctIndex:

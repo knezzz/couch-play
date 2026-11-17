@@ -34,10 +34,11 @@ abstract final class Strings {
         CurveMode.onlyYou => 'Samo za tebe',
       };
   /// The host's game card on the lobby, same words as the phone's game details.
-  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve' };
+  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak' };
   static String gameBlurb(GameKind k) => switch (k) {
         GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
         GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
+        GameKind.vukodlak => 'Netko u selu nije ono što se čini.',
       };
   /// Bottom of the lobby while the host has a game's card open (the phones say the same).
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
@@ -92,6 +93,7 @@ abstract final class Strings {
   static const nextGameSoon = 'Sljedeća igra uskoro počinje.';
   static const gameRunning = 'Igra je već u tijeku.';
   static const packUnavailable = 'Taj paket nije dostupan.';
+  static const vukodlakSoon = 'Vukodlak još nije spreman na ovom televizoru.';
   static const curveNeedsTwo = 'Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja.';
   static const noSuchPlayer = 'Tog igrača nema.';
   static const cannotKickSelf = 'Ne možeš izbaciti sebe.';
