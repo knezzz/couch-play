@@ -115,7 +115,7 @@ void main() {
       g.setAway(3, true);
       expect(g.allAnswered, isTrue);
       g.setAway(3, false);
-      expect(g.allAnswered, isTrue, reason: 'they came back after the question closed for them? no: they answer next time');
+      expect(g.allAnswered, isFalse, reason: 'back while the question is open: expected again');
     });
   });
 
@@ -215,6 +215,44 @@ void main() {
       final r = g.reveal();
       expect(r.entries.every((e) => e.points == 0), isTrue);
       expect(g.totals.values.every((v) => v == 0), isTrue);
+    });
+  });
+
+  group('away and back', () {
+    test('a player who drops and comes back while the question is open can answer it', () {
+      final g = game(3);
+      g.setAway(3, true);
+      expect(g.answer(3, 5), isFalse, reason: 'away: refused');
+      g.setAway(3, false);
+      expect(g.answer(3, truth(g)), isTrue);
+      g.answer(1, 1);
+      g.answer(2, 1);
+      expect(g.allAnswered, isTrue);
+      final r = g.reveal();
+      expect(r.entries.first.id, 3);
+      expect(g.totals[3], 1500);
+    });
+
+    test('while away they are not waited for; back, they are expected again', () {
+      final g = game(3);
+      g.answer(1, 1);
+      g.answer(2, 1);
+      g.setAway(3, true);
+      expect(g.allAnswered, isTrue);
+      g.setAway(3, false);
+      expect(g.allAnswered, isFalse);
+    });
+
+    test('back after the reveal they simply wait for the next question', () {
+      final g = game(3, questions: 2);
+      g.setAway(3, true);
+      g.answer(1, 1);
+      g.answer(2, 1);
+      g.reveal();
+      g.setAway(3, false);
+      expect(g.answer(3, 5), isFalse, reason: 'revealed');
+      g.next();
+      expect(g.answer(3, 5), isTrue);
     });
   });
 

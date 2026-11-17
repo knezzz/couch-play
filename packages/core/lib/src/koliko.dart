@@ -9,8 +9,8 @@ import 'dart:math';
 ///    everyone else 0. Equal distances share the better rank and its points;
 ///    the next rank skips (1, 1, 3). An exact hit adds 500. No answer: 0 and
 ///    no rank.
-///  * A player who drops out during a question misses it (0 for it, not waited
-///    for, keeps their points) and answers again from the next question.
+///  * A player who drops out is not waited for while away and keeps their points;
+///    coming back while the question is still open puts them in again for it.
 ///  * The game's points are the totals; they go through placementPoints.
 class KolikoQuestion {
   const KolikoQuestion(this.q, this.answer, this.unit, this.image, this.source);
@@ -110,7 +110,9 @@ class KolikoGame {
       _away.add(id);
       _missed.add(id);
     } else {
+      // Back while the step is still open: in again for it (not just from the next).
       _away.remove(id);
+      _missed.remove(id);
     }
   }
 

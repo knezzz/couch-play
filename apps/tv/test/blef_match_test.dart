@@ -250,4 +250,35 @@ void main() {
     expect(r.played, contains(Sound.fanfare));
     r.match.dispose();
   });
+
+  testWidgets('a screen lock during writing: drop, rejoin, and the fake counts; the same during picking', (t) async {
+    final r = Rig(n: 3);
+    r.match.onFake(1, const BlefFake('a'));
+    r.match.setAway(3, true);
+    r.match.setAway(3, false);
+    r.match.rejoin(3);
+    expect(r.to(3).whereType<BlefWrite>().length, 2);
+    r.match.onFake(3, const BlefFake('moja'));
+    expect(r.match.sent, {1, 3});
+    r.match.onFake(2, const BlefFake('b'));
+    expect(r.match.stage, BlefStageTv.pick);
+    r.match.setAway(2, true);
+    r.match.setAway(2, false);
+    r.match.rejoin(2);
+    final l = r.to(2).whereType<BlefList>().last;
+    r.match.onPick(2, BlefPick(l.ids.first));
+    expect(r.match.picked, {2});
+    r.match.dispose();
+  });
+
+  testWidgets('a fake with a trailing dot is still the true answer; 40 characters are counted as characters', (t) async {
+    final r = Rig();
+    r.match.onFake(1, BlefFake('${r.truth}.'));
+    expect((r.to(1).last as ErrorMsg).message, BlefText.truth);
+    r.match.onFake(1, BlefFake('😀' * 40));
+    expect(r.match.sent, {1});
+    r.match.onFake(2, BlefFake('😀' * 41));
+    expect((r.to(2).last as ErrorMsg).message, BlefText.tooLong);
+    r.match.dispose();
+  });
 }

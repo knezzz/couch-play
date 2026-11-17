@@ -133,6 +133,20 @@ void main() {
       expect(game(3).sessionScores, isEmpty);
     });
 
+    test('a player who drops and comes back while the prompt is open can vote on it; not waited for while away', () {
+      final g = game(3);
+      g.vote(1, 2);
+      g.vote(2, 2);
+      g.setAway(3, true);
+      expect(g.vote(3, 1), isFalse);
+      expect(g.allVoted, isTrue);
+      g.setAway(3, false);
+      expect(g.allVoted, isFalse);
+      expect(g.vote(3, 2), isTrue);
+      expect(g.allVoted, isTrue);
+      expect(g.reveal().points[3], 1);
+    });
+
     test('an away player misses the prompt (no vote, 0) and votes again from the next', () {
       final g = game(3, prompts: 2);
       g.setAway(3, true);

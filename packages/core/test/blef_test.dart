@@ -254,6 +254,59 @@ void main() {
     });
   });
 
+  group('away and back', () {
+    test('a player who drops and comes back during writing can still send a fake, and during picking can pick', () {
+      final g = game(3);
+      g.setAway(3, true);
+      expect(g.submitFake(3, 'x'), FakeResult.closed);
+      g.setAway(3, false);
+      expect(g.submitFake(3, 'moja laž'), FakeResult.ok);
+      g.submitFake(1, 'a');
+      g.submitFake(2, 'b');
+      g.closeWriting();
+      g.setAway(2, true);
+      g.setAway(2, false);
+      expect(g.pick(2, g.entries.indexWhere((e) => e.isTruth)), isTrue);
+    });
+
+    test('while away not waited for; back, expected again', () {
+      final g = game(3);
+      g.submitFake(1, 'a');
+      g.submitFake(2, 'b');
+      g.setAway(3, true);
+      expect(g.allSent, isTrue);
+      g.setAway(3, false);
+      expect(g.allSent, isFalse);
+    });
+  });
+
+  group('the truth check and the length', () {
+    test('trailing punctuation does not make a different answer', () {
+      final g = game(3, p: BlefPack('p', 'P', [for (var i = 0; i < 12; i++) BlefQuestion('q', 'Šećer', 's')]));
+      expect(g.submitFake(1, 'Šećer.'), FakeResult.truth);
+      expect(g.submitFake(1, 'secer!!'), FakeResult.truth);
+      expect(g.submitFake(1, 'Šećer"'), FakeResult.truth);
+      expect(g.submitFake(1, 'Šećerana'), FakeResult.ok);
+      expect(blefFold('Dva sata...'), blefFold('dva sata'));
+      expect(blefFold('a-b'), 'a-b', reason: 'only the END is stripped');
+    });
+
+    test('fakes that differ only by trailing punctuation merge', () {
+      final g = game(4);
+      g.submitFake(1, 'Dva sata');
+      g.submitFake(2, 'dva sata.');
+      g.closeWriting();
+      expect(g.entries.where((e) => e.writers.length == 2).length, 1);
+    });
+
+    test('the 40-character limit counts characters, not UTF-16 units', () {
+      final g = game(3);
+      expect(g.submitFake(1, '😀' * 40), FakeResult.ok, reason: '40 characters');
+      expect(g.submitFake(2, '😀' * 41), FakeResult.tooLong);
+      expect(g.submitFake(3, 'č' * 40), FakeResult.ok);
+    });
+  });
+
   group('away', () {
     test('an away player misses the question: no fake, no pick, 0 points, back in the next', () {
       final g = game(3, questions: 2);

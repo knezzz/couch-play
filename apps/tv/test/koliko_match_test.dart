@@ -161,4 +161,19 @@ void main() {
     expect(res.last, res.first);
     r.match.dispose();
   });
+
+  testWidgets('a screen lock: drop mid-question, rejoin, and the answer counts', (t) async {
+    final r = Rig();
+    r.match.onNumber(1, NumberAnswer(r.truth + 9));
+    r.match.setAway(3, true);
+    r.match.setAway(3, false); // the phone is back
+    r.match.rejoin(3);
+    expect(r.sent[3]!.whereType<KolikoAsk>().length, 2, reason: 'the open question again');
+    r.match.onNumber(3, NumberAnswer(r.truth));
+    expect(r.match.answered, {1, 3});
+    r.match.onNumber(2, NumberAnswer(r.truth + 1));
+    expect(r.match.stage, KolikoStageTv.reveal);
+    expect(r.sent[3]!.whereType<KolikoResult>().single.rank, 1);
+    r.match.dispose();
+  });
 }

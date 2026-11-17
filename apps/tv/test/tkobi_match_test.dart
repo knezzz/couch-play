@@ -149,4 +149,19 @@ void main() {
     expect(r.to(2).whereType<TkobiAsk>().last.picked, isNull);
     r.match.dispose();
   });
+
+  testWidgets('a screen lock: drop mid-prompt, rejoin, and the vote counts', (t) async {
+    final r = Rig(n: 3);
+    r.match.onVote(1, const Vote(2));
+    r.match.setAway(3, true);
+    r.match.setAway(3, false);
+    r.match.rejoin(3);
+    expect(r.to(3).whereType<TkobiAsk>().length, 2);
+    r.match.onVote(3, const Vote(2));
+    expect(r.match.votedCount, 2);
+    r.match.onVote(2, const Vote(2));
+    expect(r.match.stage, TkobiStageTv.reveal);
+    expect(r.to(3).whereType<TkobiResult>().single.votedRight, isTrue);
+    r.match.dispose();
+  });
 }

@@ -5,8 +5,8 @@ import 'dart:math';
 /// Rule readings (simplest):
 ///  * 3-8 players, N questions drawn without repeats.
 ///  * A fake is trimmed, 1-40 characters, accepted ONCE (the first accepted
-///    one stays). A fake equal to the true answer ignoring case, spaces and
-///    Croatian diacritics is refused ([FakeResult.truth]) and must be replaced.
+///    one stays). A fake equal to the true answer ignoring case, spaces, trailing
+///    punctuation and Croatian diacritics is refused ([FakeResult.truth]) and must be replaced.
 ///  * Identical fakes (same folding) merge into one entry with all their
 ///    writers. The list is every fake plus the true answer, shuffled.
 ///  * A player's own list leaves out their own entry (also a merged one).
@@ -19,13 +19,19 @@ import 'dart:math';
 ///    pick, 0 points, not waited for) and plays again from the next question.
 String blefFold(String s) {
   const map = {'č': 'c', 'ć': 'c', 'š': 's', 'ž': 'z', 'đ': 'd'};
+  const trailing = '.,;:!?…"\'`)]}-–—';
   final sb = StringBuffer();
   for (final r in s.toLowerCase().runes) {
     final ch = String.fromCharCode(r);
     if (ch.trim().isEmpty) continue; // spaces of any kind
     sb.write(map[ch] ?? ch);
   }
-  return sb.toString();
+  var out = sb.toString();
+  // trailing punctuation does not make a different answer: 'Šećer.' is 'Šećer'
+  while (out.isNotEmpty && trailing.contains(out[out.length - 1])) {
+    out = out.substring(0, out.length - 1);
+  }
+  return out;
 }
 
 class BlefQuestion {
@@ -52,7 +58,7 @@ class BlefPack {
       if (e is! Map) throw const FormatException('bad question');
       final q = e['q'], a = e['answer'], source = e['source'];
       if (q is! String || q.trim().isEmpty) throw const FormatException('a question has no text');
-      if (a is! String || a.trim().isEmpty || a.trim().length > 40) throw FormatException('bad answer for: $q');
+      if (a is! String || a.trim().isEmpty || a.trim().runes.length > 40) throw FormatException('bad answer for: $q');
       if (source is! String || source.trim().isEmpty) throw FormatException('no source for: $q');
       qs.add(BlefQuestion(q.trim(), a.trim(), source));
     }
@@ -122,7 +128,9 @@ class BlefGame {
       _away.add(id);
       _missed.add(id);
     } else {
+      // Back while the step is still open: in again for it (not just from the next).
       _away.remove(id);
+      _missed.remove(id);
     }
   }
 
@@ -133,7 +141,7 @@ class BlefGame {
     if (_fakes.containsKey(id)) return FakeResult.alreadySent;
     final t = text.trim();
     if (t.isEmpty) return FakeResult.empty;
-    if (t.length > 40) return FakeResult.tooLong;
+    if (t.runes.length > 40) return FakeResult.tooLong; // characters, like the phone
     if (blefFold(t) == blefFold(current.answer)) return FakeResult.truth;
     _fakes[id] = t;
     return FakeResult.ok;

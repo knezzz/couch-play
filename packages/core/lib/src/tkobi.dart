@@ -87,7 +87,9 @@ class TkobiGame {
       _away.add(id);
       _missed.add(id);
     } else {
+      // Back while the step is still open: in again for it (not just from the next).
       _away.remove(id);
+      _missed.remove(id);
     }
   }
 
