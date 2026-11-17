@@ -164,12 +164,20 @@ class GameSettings with _JsonEq {
 class PackInfo with _JsonEq {
   final String id, title;
   final int questionCount;
-  const PackInfo(this.id, this.title, this.questionCount);
+
+  /// The pack has questions with a picture (a tag on the pack grid).
+  final bool pictures;
+
+  /// A pack added recently: the six packs of Task 28, or one the host
+  /// uploaded since the TV app started (a tag on the pack grid).
+  final bool isNew;
+  const PackInfo(this.id, this.title, this.questionCount, {this.pictures = false, this.isNew = false});
   factory PackInfo.fromJson(Map<String, dynamic> j) => PackInfo(
-      j['id'] as String, j['title'] as String, j['questionCount'] as int);
+      j['id'] as String, j['title'] as String, j['questionCount'] as int,
+      pictures: (j['pictures'] as bool?) ?? false, isNew: (j['isNew'] as bool?) ?? false);
   @override
   Map<String, Object?> toJson() =>
-      {'id': id, 'title': title, 'questionCount': questionCount};
+      {'id': id, 'title': title, 'questionCount': questionCount, 'pictures': pictures, 'isNew': isNew};
 }
 
 class Placement with _JsonEq {

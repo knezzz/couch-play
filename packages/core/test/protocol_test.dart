@@ -267,4 +267,25 @@ void main() {
       expect(Message.decode('{"type":"uljezEnd","winner":"nobody","village":"a","impostor":"b","impostors":[]}'), isNull);
     });
   });
+
+  group('pack tags', () {
+    test('PackInfo carries pictures and isNew, and round trips', () {
+      const p = PackInfo('a', 'A', 12, pictures: true, isNew: true);
+      expect(PackInfo.fromJson(p.toJson()), p);
+      expect(p.toJson()['pictures'], true);
+      expect(p.toJson()['isNew'], true);
+      const lobby = LobbyState(players: [], packs: [PackInfo('a', 'A', 12, pictures: true), PackInfo('b', 'B', 3, isNew: true)], hostId: 1);
+      expect(Message.decode(lobby.encode()), lobby);
+    });
+
+    test('old packs without the tags decode as false', () {
+      final p = PackInfo.fromJson({'id': 'a', 'title': 'A', 'questionCount': 5});
+      expect([p.pictures, p.isNew], [false, false]);
+      expect(p, const PackInfo('a', 'A', 5));
+    });
+
+    test('a wrong type for a tag is an error, not a silent false', () {
+      expect(() => PackInfo.fromJson({'id': 'a', 'title': 'A', 'questionCount': 5, 'pictures': 'yes'}), throwsA(anything));
+    });
+  });
 }
