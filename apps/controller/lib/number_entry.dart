@@ -1,6 +1,6 @@
 /// The number being typed on Koliko?'s pad: digits, one decimal comma, no
 /// minus. The state is the plain text ("1234567,5"); [groupDigits] is what the
-/// player sees ("1.234.567,5").
+/// player sees ("1.234.567,5"; "1886" and "2864" stay whole).
 class NumberEntry {
   const NumberEntry([this.text = '']);
   final String text;
@@ -28,7 +28,8 @@ class NumberEntry {
   NumberEntry delete() =>
       text.isEmpty ? this : NumberEntry(text.substring(0, text.length - 1));
 
-  /// "1.234.567,5": groups of three in the integer part, the comma kept as typed.
+  /// "1.234.567,5": groups of three in the integer part from 10 000 up, the
+  /// comma kept as typed.
   String get shown => groupDigits(text);
 
   /// The number, or null while nothing is typed.
@@ -42,6 +43,9 @@ class NumberEntry {
     final c = raw.indexOf(',');
     final i = c < 0 ? raw : raw.substring(0, c);
     final rest = c < 0 ? '' : raw.substring(c);
+    // Four digits stay whole so that years read as years (1886, not 1.886);
+    // from 10 000 up the thousands get a dot.
+    if (i.length < 5) return raw;
     final b = StringBuffer();
     for (var k = 0; k < i.length; k++) {
       if (k > 0 && (i.length - k) % 3 == 0) b.write('.');

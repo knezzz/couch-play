@@ -66,6 +66,16 @@ void main() {
       expect(_display(t), '123,5');
     });
 
+    testWidgets('a year stays whole while typed; the dot comes from 10 000', (
+      t,
+    ) async {
+      await _show(t, _ask(unit: ''));
+      await _tap(t, '1886');
+      expect(_display(t), '1886');
+      await _tap(t, '5');
+      expect(_display(t), '18.865');
+    });
+
     testWidgets('every key is at least 56 px and fits 360 px', (t) async {
       await _show(t, _ask(), width: 360, h: 640);
       for (final k in ['0', '1', '9', ',', 'del']) {
@@ -112,7 +122,7 @@ void main() {
       'after a reload the sent number is shown and nothing is sendable',
       (t) async {
         await _show(t, _ask(sent: 1234.5));
-        expect(_display(t), '1.234,5');
+        expect(_display(t), '1234,5');
         expect(find.byKey(const ValueKey('koliko-sent')), findsOneWidget);
         expect(find.byKey(const ValueKey('koliko-send')), findsNothing);
       },
@@ -152,6 +162,24 @@ void main() {
       expect(find.text(Strings.closest), findsOneWidget);
       expect(find.text('+1.000 bodova'.replaceAll('.', '')), findsOneWidget);
       expect(find.text(Strings.totalScore(1750)), findsOneWidget);
+    });
+
+    testWidgets('the result writes a year whole and a big number with dots', (
+      t,
+    ) async {
+      await _show(
+        t,
+        KolikoResultScreen(
+          answer: 1886,
+          value: 12500,
+          rank: 2,
+          points: 750,
+          total: 750,
+          unit: '',
+        ),
+      );
+      expect(find.text('1886'), findsOneWidget);
+      expect(find.text('12.500'), findsOneWidget);
     });
 
     testWidgets('an exact hit, a lower rank, no answer', (t) async {

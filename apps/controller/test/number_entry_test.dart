@@ -14,17 +14,21 @@ NumberEntry _type(String keys) {
 }
 
 void main() {
-  test('digits are grouped in threes as they are typed', () {
+  test('digits are grouped in threes from 10 000 up; years stay whole', () {
     expect(_type('1').shown, '1');
-    expect(_type('1234').shown, '1.234');
-    expect(_type('1234567').shown, '1.234.567');
+    expect(_type('1886').shown, '1886');
+    expect(_type('2864').shown, '2864');
+    expect(_type('9999').shown, '9999');
+    expect(_type('12500').shown, '12.500');
     expect(_type('123456').shown, '123.456');
+    expect(_type('1234567').shown, '1.234.567');
   });
 
   test('one decimal comma; the comma is kept as typed', () {
     expect(_type('12,').shown, '12,');
     expect(_type('12,,5').shown, '12,5');
-    expect(_type('1234,5').shown, '1.234,5');
+    expect(_type('1234,5').shown, '1234,5');
+    expect(_type('12345,5').shown, '12.345,5');
     expect(_type(',').shown, '0,');
     expect(_type(',5').value, 0.5);
   });
@@ -58,7 +62,9 @@ void main() {
     expect(NumberEntry.format(3.14), '3,14');
     expect(NumberEntry.format(330), '330');
     expect(NumberEntry.format(0.5), '0,5');
-    expect(NumberEntry.format(1000), '1.000');
+    expect(NumberEntry.format(1000), '1000');
+    expect(NumberEntry.format(1886), '1886');
+    expect(NumberEntry.format(12500), '12.500');
     expect(NumberEntry.format(0), '0');
   });
 }
