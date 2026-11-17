@@ -91,6 +91,17 @@ void main() {
     r.match.dispose();
   });
 
+  testWidgets('the host\'s phone can press Kreni for the explainer', (t) async {
+    final r = Rig();
+    r.match.onGo(1);
+    final stranger = r.match.ids.firstWhere((i) => i != r.ex && i != 1);
+    r.match.onGo(stranger);
+    expect(r.match.stage, ObjasniStageTv.ready);
+    r.match.onGo(1); // the host
+    expect(r.match.stage, ObjasniStageTv.play);
+    r.match.dispose();
+  });
+
   testWidgets('the word goes to the explainer and the OTHER team, never to the explainer\'s own team', (t) async {
     final r = Rig();
     r.begin();

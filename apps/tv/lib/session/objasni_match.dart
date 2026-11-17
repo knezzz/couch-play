@@ -153,7 +153,8 @@ class ObjasniMatch {
     if (stage == ObjasniStageTv.setup && id == hostId()) {
       game.begin();
       _toReady();
-    } else if (stage == ObjasniStageTv.ready && id == game.explainer) {
+    } else if (stage == ObjasniStageTv.ready && (id == game.explainer || id == hostId())) {
+      // the host's phone may press Kreni for an explainer who wandered off
       _startTurn();
     }
   }
