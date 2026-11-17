@@ -306,3 +306,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   Lifts the CLAUDE.md "never touch the Pixel" rule for test work. PM limits: no reset, no changes to their apps,
   accounts, settings or data; uninstall what we install. Seat configs still deny adb to it.
 - 2026-11-17: Blef typing test passed on the Pixel 6a (Chrome, all 8 steps). iPhone Safari not run separately.
+- 2026-11-17: Person confirmed Blef typing with Croatian letters works on the iPhone too. Typing risk closed.
