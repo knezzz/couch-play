@@ -133,7 +133,8 @@ class WolfMatch {
     _timer = Timer(nightMax, _endNight);
     _prompts.clear();
     for (final id in alive) {
-      _prompts[id] = game.hasNightAction(id) ? _Task.actor() : _Task.sum(random, two: game.night == 1);
+      _prompts[id] =
+          game.hasNightAction(id) ? _Task.actor() : _Task.sum(random, alive.length, two: game.night == 1);
     }
     _lightsHeld = true;
     _shown = {};
@@ -415,9 +416,9 @@ class _Task {
   _Task.actor()
       : sum = null,
         sum2 = null;
-  _Task.sum(Random r, {required bool two})
-      : sum = NightSum.draw(r),
-        sum2 = two ? NightSum.draw(r) : null;
+  _Task.sum(Random r, int count, {required bool two})
+      : sum = NightSum.draw(r, count: count),
+        sum2 = two ? NightSum.draw(r, count: count) : null;
   final NightSum? sum;
   final NightSum? sum2;
   int? second;

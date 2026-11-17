@@ -112,18 +112,19 @@ List<WolfRole> drawRoles(int players, Set<WolfRole> on, Random random) {
 }
 
 /// The night task of a player with no night action: a times-table sum with
-/// five answers. A wrong answer counts as done like a right one.
+/// [count] answers (the session uses the number of players alive, so a sum
+/// list is as long as a player list). A wrong answer counts as done like a right one.
 class NightSum {
   const NightSum(this.a, this.b, this.answers, this.correct);
   final int a, b;
   final List<int> answers;
   final int correct;
 
-  factory NightSum.draw(Random random) {
+  factory NightSum.draw(Random random, {int count = 5}) {
     final a = 3 + random.nextInt(7), b = 3 + random.nextInt(7);
     final right = a * b;
     final wrong = <int>{};
-    while (wrong.length < 4) {
+    while (wrong.length < count - 1) {
       final x = right + (random.nextInt(21) - 10);
       if (x > 0 && x != right) wrong.add(x);
     }

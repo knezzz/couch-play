@@ -81,6 +81,38 @@ void main() {
     r.match.dispose();
   });
 
+  testWidgets('every phone gets the same number of choices, in both lists, with 5, 7 and 8 alive', (t) async {
+    final eight = {
+      for (var i = 1; i <= 8; i++)
+        i: const [
+          WolfRole.wolf, WolfRole.wolf, WolfRole.seer, WolfRole.doc, WolfRole.cupid, WolfRole.herb, WolfRole.villager, WolfRole.hunter
+        ][i - 1]
+    };
+    for (final n in [5, 7, 8]) {
+      final r = Rig(roles: {for (final e in eight.entries.take(n)) e.key: e.value});
+      for (final id in r.roles.keys) {
+        final p = r.to(id).whereType<NightPrompt>().first;
+        expect(p.choices.length, n, reason: 'player $id (${r.roles[id]}) of $n');
+        expect(p.ids.length, n);
+        expect(p.choices2.length, n);
+        expect(p.ids2.length, n);
+      }
+      r.match.dispose();
+    }
+  });
+
+  testWidgets('and the same on a later night after someone died', (t) async {
+    final r = Rig();
+    r.pickAll({1: const NightPick(7), 2: const NightPick(7)});
+    await r.wait(t, 4 + 15 + 120 + 30);
+    final counts = {
+      for (final id in r.match.alive) id: r.to(id).whereType<NightPrompt>().last.choices.length
+    };
+    expect(counts.values.toSet().length, 1, reason: '$counts');
+    expect(counts.values.first, r.match.alive.length);
+    r.match.dispose();
+  });
+
   testWidgets('every night message has the same text length and the same two-pick shape on night 1', (t) async {
     final r = Rig();
     for (final id in r.roles.keys) {

@@ -790,6 +790,17 @@ void main() {
       expect(seen.length, greaterThan(1), reason: 'the right answer moves around');
     });
 
+    test('a sum can have as many answers as there are players alive', () {
+      for (final n in [3, 5, 7, 8]) {
+        for (var seed = 0; seed < 30; seed++) {
+          final s = NightSum.draw(Random(seed), count: n);
+          expect(s.answers.length, n);
+          expect(s.answers.toSet().length, n);
+          expect(s.answers[s.correct], s.a * s.b);
+        }
+      }
+    });
+
     test('a player with a sum is done by a pick of null; a wrong answer is the same thing', () {
       final g = game([w, v, v, v, v]);
       expect(g.hasPicked(1), isFalse);
