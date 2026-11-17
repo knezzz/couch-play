@@ -145,6 +145,38 @@ Informal "ti". `{x}` is filled in by the app.
 | placed | Tvoje mjesto: {n}. | Your place: {n}th | results |
 | sessionPoints | +{n} bod / boda / bodova za ovu večer | +{n} points for this evening | results |
 
+### Vukodlak (phone)
+
+The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role names and descriptions are `Strings.wolfRoles` and are not repeated here.
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| holdHere | Drži prst ovdje | Hold your finger here | role card, hidden |
+| holdHint | Uloga se vidi samo dok držiš. Pusti i nestaje. | The role shows only while you hold. Let go and it disappears. | role card, hidden |
+| yourRole | TVOJA ULOGA | YOUR ROLE | role card, shown |
+| night(n) | NOĆ {n} | NIGHT {n} | role card, night screen |
+| nightTitle | Noćna odluka | Night decision | night screen (same for every role) |
+| confirm | Potvrdi | Confirm | night screen button |
+| voteHeader(n) | DAN {n} · GLASANJE | DAY {n} · VOTE | day vote |
+| voteTitle | Koga izbacujete? | Whom do you throw out? | day vote |
+| skipVote | Preskoči glasanje | Skip the vote | day vote |
+| vote | Glasaj | Vote | day vote button |
+| you | ti | you | day vote, your own row |
+| possibleRoles | Moguće uloge | Possible roles | host: role switches |
+| possibleRolesCount(n) | Moguće uloge · {n} uključeno | Possible roles · {n} on | host: Vukodlak settings |
+| drawnByGame | Igra izvlači koje će biti. | The game draws which will be in play. | host: Vukodlak settings |
+| howPlayersSeeIt | Kako to vide igrači | How the players see it | host: Vukodlak settings |
+| rolesPickIntro | Za {n} igrača, vukodlaka: {a} · posebnih uloga: {b} · seljana: {c}. Svaka igra izvuče drugačije. | For {n} players, werewolves: {a} · special roles: {b} · villagers: {c}. Every game draws differently. | host: role switches |
+| rolesInThisGame | Uloge u ovoj igri | Roles in this game | everyone's roles list |
+| rolesLocked | (uvijek u igri) | (always in the game) | host: Vukodlak and Seljanin rows |
+| hiddenRoles | Skrivene uloge | Hidden roles | host: Vukodlak settings |
+| hiddenRolesHint | Kad netko ispadne, uloga se ne otkriva. Sve uloge se vide tek na kraju igre. | When someone is out, their role is not revealed. All roles show only at the end. | host: Vukodlak settings |
+| discussion | Razgovor danju | Day discussion | host: Vukodlak settings |
+| shorter / longer | Kraće / Duže | Shorter / Longer | discussion − and + (screen reader) |
+| save | Spremi | Save | host: role switches |
+| rulesHeader | Pravila | Rules | host: Vukodlak settings |
+| groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
+
 Also shown as received from the TV (builder-2's section): error messages and "waiting" lines such as "Sljedeća igra uskoro počinje."
 Open questions for the person: keep "Curve" as the game name? "Roboti" for bots? "Domaćin" for host?
 
@@ -172,3 +204,35 @@ Shown on the phone (host uploads a pack) as received from the TV. N = question n
 | missingImage(N, X) | Pitanje N: slike X nema u zipu. Dodaj je ili ukloni "image". | Question N: picture X is not in the zip. Add it or remove "image". | upload error |
 
 Field names (`format`, `title`, `q`, `choices`, `answer`, `image`) stay English because they are keys in the JSON file.
+
+## Vukodlak story on the TV (`apps/tv/lib/vukodlak/story_hr.dart`)
+
+The TV reads one line at random per event, so a game doesn't repeat itself. `{name}`, `{name2}` are player names (always where the nominative fits, and no past-tense verb on a player, so any name reads right), `{role}` a role name, `{count}` a number. "Names a role = yes" lines are used only when that role is shown anyway; every "no" line is safe with hidden roles on. Event keys are drafts until the engine's list is final.
+
+| key | when | Croatian lines | English gist | names a role |
+|---|---|---|---|---|
+| firstNight | start of the first night | Prva noć u selu. Nitko još ne zna tko je tko.<br>Selo prvi put tone u san. Nitko još ne zna kome vjerovati.<br>Prva noć. Mjesec gleda odozgo i šuti.<br>Počinje priča o selu i vukovima. Zatvorite oči. | The first night; nobody knows who is who yet. | no |
+| nightFalls | each night begins | Pada noć nad selom. Svi zatvaraju oči i škure.<br>Sunce je zašlo iza brda. Selo tone u san.<br>Mrak se spušta na krovove. Negdje u šumi zavija vuk.<br>Lampe se gase jedna po jedna. Počinje duga noć.<br>Mjesec izlazi nad trgom. Seljani se zavlače pod pokrivače.<br>Noć je pala. Tko ima posla, neka ga obavi tiho. | Night falls over the village; everyone closes their eyes. | no |
+| nightWait | while the phones make their night choices | Selo spava, a netko u mraku ipak bdije.<br>Iz šume se čuju koraci. Nitko ne viri kroz prozor.<br>Tišina. Samo sova zna što se noćas događa.<br>Psi su utihnuli. Nešto se šulja između kuća.<br>Svijeće trepere. Odluke se donose u tami. | The village sleeps, but someone is awake in the dark. | no |
+| morningNoneOut | morning, nobody is out | Svanulo je. Na trgu su svi, živi i zdravi.<br>Pijetao kukuriče, a selo broji glave: nitko ne fali!<br>Jutro je mirno. Noćas vukodlaci nisu imali sreće.<br>Sunce izlazi nad selom koje je noć prebrodilo bez gubitka.<br>Seljani otvaraju vrata i odahnu: svi su na broju. | Morning; everyone is alive and well. | no |
+| morningOneOut | morning, one player is out | Jutro je. Seljani nalaze zatvorena vrata: {name} više nije s nama.<br>Pijetao kukuriče, ali jedna kuća šuti. Iz nje ne izlazi {name}.<br>Svanulo je, ali ne za sve. Noć je odnijela: {name}.<br>Na pragu tragovi šapa. {name} ne dočekuje jutro s nama.<br>Gavran sjeda na krov. {name} odlazi iz igre.<br>Selo se budi tužno: {name} ispada iz igre. | Morning; {name} is no longer with us. | no |
+| morningTwoOut | morning, two players are out | Teško jutro: iz igre ispadaju {name} i {name2}.<br>Dvije kuće ostaju zatvorene: {name} i {name2} ispadaju.<br>Noć je bila gladna. Odlaze {name} i {name2}.<br>Na dva krova sjede gavrani: {name} i {name2} više nisu s nama. | A hard morning: {name} and {name2} are out. | no |
+| someoneProtected | morning, an attack was stopped by a protector | Vukodlaci su noćas pokucali, ali vrata su izdržala.<br>U blatu tragovi šapa, a nitko nije stradao. Netko je bdio.<br>Napad je bio, žrtve nema. Selo ima tajnog čuvara.<br>Vukovi su otišli praznih šapa. Netko je čuvao pravu kuću. | The wolves knocked, but the door held; someone kept watch. | no |
+| attackSurvived | morning, the victim survived the attack on their own | Vukodlaci su ugrizli, ali žrtva je bila tvrđa od njih.<br>Netko je noćas odolio vukodlaku. Selo ne zna tko.<br>Napad u mraku, a ujutro nitko ne fali. Čudna noć!<br>Vuk je zagrizao u tvrdu koru. Svi su ujutro na nogama. | Someone withstood the werewolf tonight. | no |
+| dayStarts | day discussion starts | Seljani se okupljaju na trgu. Vrijeme je za razgovor.<br>Sjednite oko zdenca i recite što ste vidjeli.<br>Dan je kratak, a sumnje duge. Raspravite!<br>Tko laže, a tko govori istinu? Selo ima malo vremena.<br>Pričajte, pitajte i gledajte se u oči. | The villagers gather on the square to talk. | no |
+| voteStarts | the day vote starts | Dosta priče! Koga selo tjera iz sela?<br>Svatko neka pokaže prstom. Počinje glasanje.<br>Selo mora odlučiti. Glasajte na mobitelima.<br>Kucnuo je čas. Tko odlazi iz sela?<br>Glasanje počinje. Neka odluči većina. | Enough talk! Whom does the village send away? | no |
+| voteOut | vote result, one player out | Selo je odlučilo: {name} napušta selo.<br>Većina je rekla svoje. {name} odlazi s trga.<br>Prsti su uprti u jednu kuću. {name} ispada iz igre.<br>Odluka je pala: {name} mora otići.<br>Selo zatvara jedna vrata. {name} više ne glasa s nama. | The village has decided: {name} leaves the village. | no |
+| voteNone | vote result, nobody out (tie or no majority) | Glasovi su se podijelili. Danas nitko ne odlazi.<br>Selo se nije složilo. Svi ostaju, barem do noći.<br>Nema većine, nema odluke. Noć dolazi brzo.<br>Svađa bez kraja: danas nitko ne ispada.<br>Selo okleva, a vukodlaci se smiju u bradu. | The votes split; nobody leaves today. | no |
+| outRevealRole | hidden roles off: the role of the player who is out | Pokazalo se: {name} je {role}.<br>Kad su se vrata zatvorila, saznalo se: {name} je {role}.<br>Tajna je otkrivena. {name} je {role}.<br>Selo sada zna: {name} je {role}. | It turned out: {name} is {role}. | yes |
+| wolvesLeft | hidden roles off: werewolves still in play | Vukodlaka u selu još ima: {count}.<br>Broj vukodlaka koji se još skrivaju: {count}.<br>U selu se još skriva vukodlaka: {count}. | Werewolves still in the village: {count}. | yes |
+| hunterAims | the hunter is out and picks a target | Lovac {name} podiže pušku. Koga će povući sa sobom?<br>Lovac {name} odlazi, ali prije toga nišani.<br>Tišina na trgu. Lovac {name} bira metu. | Hunter {name} raises the gun. | yes |
+| hunterShot | the hunter shoots ({name} = hunter, {name2} = target) | Pucanj odjekne selom! Lovac {name} pogađa: {name2}.<br>Lovac {name} ne odlazi sam. Metak pogađa: {name2}.<br>Lovac {name} ispada, ali stigne opaliti. Pogodak: {name2}.<br>Zadnji hitac s lovačke puške. Odlazi i {name2}. | A shot! Hunter {name} hits {name2}. | yes |
+| loverFollows | a lover follows the other out | Slomljeno srce ne kuca dugo. {name} odlazi za svojom ljubavi.<br>Zaljubljeni ne mogu jedno bez drugoga. Odlazi i {name}.<br>Od tuge za svojom ljubavi iz igre ispada i {name}.<br>Provodadžija ih je spojio, a sudbina rastavila. Odlazi {name}. | A broken heart: {name} follows their love. | yes |
+| mayorDouble | during the vote: the mayor counts twice | Načelnik {name} ima dvostruki glas.<br>Glas načelnika broji se dvaput. Tako je od davnina.<br>Načelnik {name} glasa, a selo broji dvaput. | Mayor {name}'s vote counts twice. | yes |
+| mayorBreaksTie | tie broken by the mayor | Izjednačeno! Odlučuje načelnik {name}.<br>Glasovi su jednaki, pa zadnju riječ ima načelnik {name}.<br>Vaga stoji na sredini. Načelnik {name} odlučuje kamo će pasti. | A tie! Mayor {name} decides. | yes |
+| foolSpared | the village voted out the fool | Selo je izglasalo seosku budalu! {name} ostaje, ali više ne glasa.<br>{name} je seoska budala: ostaje u selu, ali bez prava glasa.<br>Smijeh na trgu: {name} je seoska budala. Ostaje, ali više ne glasa.<br>Budalu se ne tjera iz sela. {name} ostaje, bez glasa. | {name} is the village fool: stays, but no longer votes. | yes |
+| winVillage | the village wins | Posljednji vukodlak je otkriven. Selo slavi uz harmoniku!<br>Nema više vukova! Seljani zvone zvonom i pale krijes.<br>Selo je pobijedilo. Večeras se pleše kolo na trgu.<br>Mir se vraća u selo. Pobjeda pripada seljanima!<br>Šuma je opet tiha. Seljani su pobijedili. | The last werewolf is found; the village celebrates. | team only |
+| winWolves | the werewolves win | Vukodlaka je sada koliko i seljana. Selo pripada čoporu!<br>Zavijanje odjekuje trgom. Pobijedili su vukodlaci.<br>Selo je palo pod šape. Vukodlaci slave pod punim mjesecom.<br>Prekasno je za seljane. Čopor je pobijedio.<br>Vukovi su nadmudrili selo. Pobjeda je njihova! | The werewolves equal the villagers; the pack wins. | team only |
+| winLoneWolf | the lone wolf wins | Na trgu ostaje samo vuk samotnjak {name}. Pobjeda!<br>Vuk samotnjak {name} nadmudruje i selo i čopor. Pobjeda!<br>Posljednji na nogama je vuk samotnjak: {name}.<br>Čopora više nema, a vuk samotnjak {name} slavi bez društva. | Only the lone wolf {name} is left: victory. | yes |
+| winTramp | the tramp is voted out and wins | Selo je izbacilo lutalicu! {name} odlazi pjevajući i pobjeđuje.<br>Lutalica {name} dobiva što želi: put pod noge i pobjedu.<br>Izbacili ste lutalicu. Pobjeđuje {name}!<br>Pobjeda pripada lutalici: {name}. | The village threw out the tramp; {name} wins. | yes |
+| endReveal | end of game, all roles shown | Igra je gotova. Evo tko se krio iza koje uloge!<br>Maske padaju! Pogledajte sve uloge.<br>Kraj priče. Sad smijete vidjeti tko je što bio.<br>Sve se otkriva: uloge svih igrača. | Game over: here is who was who. | no |
