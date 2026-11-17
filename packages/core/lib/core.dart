@@ -16,3 +16,4 @@ export 'src/objasni.dart';
 export 'src/powerup_texts.dart';
 export 'src/power_up_icon.dart';
 export 'src/koliko.dart';
+export 'src/blef.dart';
