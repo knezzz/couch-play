@@ -52,7 +52,10 @@ class _RoundBreakCardState extends State<RoundBreakCard> {
     final seconds = (widget.remaining().inMilliseconds / 1000).ceil().clamp(0, 99);
     final many = sorted.length > 5;
     final rowH = many ? 72.0 : 96.0;
-    return Container(
+    // Material so the text never falls back to the yellow-underlined default (no Scaffold above in tests).
+    return Material(
+      type: MaterialType.transparency,
+      child: Container(
       color: tvBg,
       child: FittedBox(
         fit: BoxFit.contain,
@@ -96,7 +99,7 @@ class _RoundBreakCardState extends State<RoundBreakCard> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _row(BreakPlayer p, double h) {

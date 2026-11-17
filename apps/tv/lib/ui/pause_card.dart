@@ -42,7 +42,10 @@ class _PauseCardState extends State<PauseCard> {
     final seconds = (left.inMilliseconds / 1000).ceil().clamp(0, 999);
     final fraction = (left.inMilliseconds / widget.total.inMilliseconds).clamp(0.0, 1.0);
     final who = widget.who;
-    return Container(
+    // Material so the text never falls back to the yellow-underlined default (no Scaffold above in tests).
+    return Material(
+      type: MaterialType.transparency,
+      child: Container(
       color: tvBg,
       child: FittedBox(
         fit: BoxFit.contain,
@@ -94,6 +97,6 @@ class _PauseCardState extends State<PauseCard> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
