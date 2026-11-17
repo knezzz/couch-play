@@ -5,7 +5,8 @@
 /// session's (marked "session"). An event that may carry a role has two keys:
 /// `xxx` without it and `xxxRole` with `{role}`; the engine sends the role only
 /// when roles are shown. Placeholders: {name}, {name2} player names, {role} a
-/// role name, {count} a number. Every placeholder stands where the nominative
+/// role name, {count} a number. The session also sends {night} and {day}
+/// numbers; no line needs them. Every placeholder stands where the nominative
 /// fits and no line puts a past-tense verb on a player, so any name reads right.
 /// Review table: docs/strings-hr.md.
 const Map<String, List<String>> storyHr = {
@@ -23,13 +24,6 @@ const Map<String, List<String>> storyHr = {
     'Lampe se gase jedna po jedna. Počinje duga noć.',
     'Mjesec izlazi nad trgom. Seljani se zavlače pod pokrivače.',
     'Noć je pala. Tko ima posla, neka ga obavi tiho.',
-  ],
-  'nightWait': [
-    'Selo spava, a netko u mraku ipak bdije.',
-    'Iz šume se čuju koraci. Nitko ne viri kroz prozor.',
-    'Tišina. Samo sova zna što se noćas događa.',
-    'Psi su utihnuli. Nešto se šulja između kuća.',
-    'Svijeće trepere. Odluke se donose u tami.',
   ],
 
   // --- Morning (engine) ---
@@ -111,11 +105,6 @@ const Map<String, List<String>> storyHr = {
   ],
 
   // --- Events that show a role by their nature (see [storyNamesRole]) ---
-  'hunterAims': [
-    'Lovac {name} podiže pušku. Koga će povući sa sobom?',
-    'Lovac {name} odlazi, ali prije toga nišani.',
-    'Tišina na trgu. Lovac {name} bira metu.',
-  ],
   'hunterShot': [
     'Pucanj odjekne selom! Lovac {name} pogađa: {name2}.',
     'Lovac {name} ne odlazi sam. Metak pogađa: {name2}.',
@@ -191,14 +180,13 @@ const Map<String, List<String>> storyHr = {
 
 /// Keys whose lines name a role. `xxxRole` keys are used only when roles are
 /// shown; the others belong to events that show the role by their nature (the
-/// hunter shoots, the fool stays, the mayor decides, the tramp or lone wolf
+/// hunter's shot, the fool stays, the mayor decides, the tramp or lone wolf
 /// wins) or, for wolvesLeft, only when roles are shown.
 const Set<String> storyNamesRole = {
   'morningDiedRole',
   'loverDiedRole',
   'voteOutRole',
   'hunterShotRole',
-  'hunterAims',
   'hunterShot',
   'mayorBreaksTie',
   'foolSpared',

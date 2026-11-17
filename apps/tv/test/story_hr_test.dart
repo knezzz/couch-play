@@ -16,7 +16,7 @@ void main() {
       for (final line in value) {
         final words = line.split(RegExp(r'\s+')).length;
         expect(words, inInclusiveRange(4, 15), reason: '$key: $line');
-        expect(holes.difference({'name', 'name2', 'role', 'count'}), isEmpty, reason: key);
+        expect(holes.difference({'name', 'name2', 'role', 'count', 'night', 'day'}), isEmpty, reason: key);
       }
     }
   });
@@ -38,8 +38,7 @@ void main() {
     const engine = ['morningNobody', 'morningDied', 'loverDied', 'hunterShot', 'voteOut', 'voteTie', 'voteNobody',
         'mayorBreaksTie', 'foolSpared', 'trampWins'];
     const roleVariants = ['morningDied', 'loverDied', 'hunterShot', 'voteOut'];
-    const session = ['firstNight', 'nightFalls', 'nightWait', 'dayStarts', 'voteStarts', 'hunterAims', 'wolvesLeft',
-        'endReveal'];
+    const session = ['firstNight', 'nightFalls', 'dayStarts', 'voteStarts', 'wolvesLeft', 'endReveal'];
     final winners = ['village', 'wolves', 'lone', 'tramp', 'nobody']
         .map((w) => 'gameOver${w[0].toUpperCase()}${w.substring(1)}');
     expect(storyHr.keys.toSet(), {...engine, ...session, ...winners, for (final k in roleVariants) '${k}Role'});
