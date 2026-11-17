@@ -572,6 +572,54 @@ class _SettingsPanel extends StatelessWidget {
   }
 }
 
+/// One ribbon of the Curve card's art (docs/design/couchplay-screens/V2Home.dc.html).
+class HomeRibbon {
+  HomeRibbon(this.path, this.color, this.alpha, {this.dashed = false});
+  final Path path;
+  final Color color;
+  final double alpha;
+  final bool dashed;
+  final double width = 44;
+}
+
+/// Curve's art follows Curve's rule: lines never cross or touch (crossing is death), so the
+/// four ribbons run side by side with gaps. Same shapes as the canvas (031034e).
+final homeCurveRibbons = <HomeRibbon>[
+  HomeRibbon(
+    Path()
+      ..moveTo(-40, 180)
+      ..cubicTo(300, 120, 520, 300, 820, 220)
+      ..cubicTo(1120, 140, 1320, 80, 1560, 200)
+      ..lineTo(1640, 240),
+    const Color(0xFF2ECC71),
+    0.45,
+  ),
+  HomeRibbon(
+    Path()
+      ..moveTo(-40, 760)
+      ..cubicTo(260, 640, 520, 860, 820, 740)
+      ..cubicTo(1120, 620, 1300, 600, 1560, 720),
+    const Color(0xFFFF4D6D),
+    0.55,
+  ),
+  HomeRibbon(
+    Path()
+      ..moveTo(1700, 1120)
+      ..cubicTo(1760, 900, 1660, 760, 1820, 560)
+      ..cubicTo(1980, 360, 1960, 360, 1880, 300),
+    const Color(0xFF22B8F0),
+    0.4,
+  ),
+  HomeRibbon(
+    Path()
+      ..moveTo(-40, 1000)
+      ..cubicTo(200, 940, 420, 1040, 640, 960),
+    const Color(0xFFFFB020),
+    0.4,
+    dashed: true,
+  ),
+];
+
 /// Each game's own background, drawn in code, once (it does not move).
 /// shapes a little; it stands still with reduced motion.
 class _Backdrop extends StatelessWidget {
@@ -615,48 +663,23 @@ class _ArtPainter extends CustomPainter {
     const a = 0.0, b = 1.0; // where the shapes rest
     switch (kind) {
       case GameKind.curve:
-        void ribbon(Color c, double o, Path p, double dx, double dy) {
-          canvas.save();
-          canvas.translate(dx, dy);
-          canvas.drawPath(
-            p,
-            Paint()
-              ..color = c.withValues(alpha: o)
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = 44
-              ..strokeCap = StrokeCap.round,
-          );
-          canvas.restore();
+        for (final r in homeCurveRibbons) {
+          final paint = Paint()
+            ..color = r.color.withValues(alpha: r.alpha)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = r.width
+            ..strokeCap = StrokeCap.round;
+          if (!r.dashed) {
+            canvas.drawPath(r.path, paint);
+          } else {
+            // 260 on, 70 off, along the line (the canvas's stroke-dasharray).
+            for (final m in r.path.computeMetrics()) {
+              for (var d = 0.0; d < m.length; d += 330) {
+                canvas.drawPath(m.extractPath(d, min(d + 260, m.length)), paint);
+              }
+            }
+          }
         }
-        ribbon(
-          const Color(0xFFFF4D6D),
-          0.55,
-          Path()
-            ..moveTo(-40, 900)
-            ..cubicTo(300, 300, 640, 1000, 980, 420)
-            ..cubicTo(1320, -160, 1600, 80, 1980, 520),
-          30 * a,
-          14 * b,
-        );
-        ribbon(
-          const Color(0xFF2ECC71),
-          0.45,
-          Path()
-            ..moveTo(-40, 160)
-            ..cubicTo(420, 520, 820, 40, 1300, 300)
-            ..cubicTo(1780, 560, 1800, 820, 1980, 700),
-          -26 * b,
-          18 * a,
-        );
-        ribbon(
-          const Color(0xFF22B8F0),
-          0.4,
-          Path()
-            ..moveTo(200, 1120)
-            ..cubicTo(500, 760, 900, 980, 1240, 760),
-          20 * a,
-          -16 * b,
-        );
       case GameKind.quiz:
         void tile(
           double x,
