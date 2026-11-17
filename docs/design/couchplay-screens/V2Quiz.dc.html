@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Quiz full screen with ticker</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: linear-gradient(160deg, #0B0B18 0%, #161232 60%, #0B0B18 100%); color: #F4F4F8; font-family: Roboto, system-ui, sans-serif">
+  <div style="position: absolute; left: 0; right: 0; top: 0; height: 20px; display: flex; gap: 6px; padding: 0 6px; box-sizing: border-box" aria-hidden="true">
+    <sc-for list="{{ticks}}" as="t" hint-placeholder-count="20">
+      <span style="flex: 1 1 0; height: 20px; border-radius: 0 0 6px 6px; background: {{t.c}}"></span>
+    </sc-for>
+  </div>
+  <div style="position: absolute; left: 96px; top: 72px; font-size: 34px; color: #A9A9BC">Pitanje 4 od 10 · Opće znanje</div>
+  <div style="position: absolute; right: 96px; top: 64px; display: flex; align-items: center; gap: 16px">
+    <sc-for list="{{answered}}" as="p" hint-placeholder-count="3">
+      <dc-import name="Face" animal="{{p.animal}}" color="{{p.color}}" size="{{s52}}" hint-size="52px,52px"></dc-import>
+    </sc-for>
+    <span style="font-size: 34px; color: #A9A9BC">3 od 5 odgovorilo</span>
+  </div>
+  <div style="position: absolute; left: 96px; top: 180px; width: 1360px; font-size: 84px; font-weight: 900; line-height: 1.12">Koliko je godina uistinu trajao Stogodišnji rat?</div>
+  <div style="position: absolute; right: 120px; top: 170px; width: 260px; height: 260px">
+    <svg viewBox="0 0 100 100" width="260" height="260" aria-hidden="true">
+      <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="8"></circle>
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#FFB020" stroke-width="8" stroke-dasharray="276.5" stroke-dashoffset="{{offset}}" transform="rotate(-90 50 50)" stroke-linecap="round"></circle>
+    </svg>
+    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center">
+      <span style="font-size: 120px; font-weight: 900; line-height: 1">{{left}}</span>
+      <span style="font-size: 28px; color: #FFB020; font-weight: 700">tik · tak</span>
+    </div>
+  </div>
+  <div style="position: absolute; left: 96px; right: 96px; bottom: 72px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+    <div style="height: 200px; border-radius: 32px; background: #FF4D6D; color: #14141E; display: flex; align-items: center; gap: 32px; padding: 0 44px; font-size: 64px; font-weight: 900"><span style="font-size: 60px">▲</span>99</div>
+    <div style="height: 200px; border-radius: 32px; background: #22B8F0; color: #14141E; display: flex; align-items: center; gap: 32px; padding: 0 44px; font-size: 64px; font-weight: 900"><span style="font-size: 60px">◆</span>116</div>
+    <div style="height: 200px; border-radius: 32px; background: #FFB020; color: #14141E; display: flex; align-items: center; gap: 32px; padding: 0 44px; font-size: 64px; font-weight: 900"><span style="font-size: 60px">●</span>100</div>
+    <div style="height: 200px; border-radius: 32px; background: #2ECC71; color: #14141E; display: flex; align-items: center; gap: 32px; padding: 0 44px; font-size: 64px; font-weight: 900"><span style="font-size: 60px">■</span>124</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"secondsLeft":{"editor":"range","min":0,"max":20,"step":1,"default":14},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const total = 20, left = this.props.secondsLeft ?? 14;
+    const ticks = Array.from({ length: total }, (_, i) => ({ c: i < left ? (left <= 5 ? '#FF4D6D' : '#FFB020') : 'rgba(255,255,255,0.08)' }));
+    return {
+      left, ticks, s52: 52,
+      offset: (276.5 * (1 - left / total)).toFixed(1),
+      answered: [{ animal: 'fox', color: '#FF4D6D' }, { animal: 'owl', color: '#FFB020' }, { animal: 'panda', color: '#9B5CFF' }]
+    };
+  }
+}
+</script>
+</body>
+</html>

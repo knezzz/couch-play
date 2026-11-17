@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Your role</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 20px 32px; background: linear-gradient(180deg, #05060F 0%, #0C1430 100%); color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 16px">
+  <div style="display: flex; align-items: center; gap: 10px">
+    <dc-import name="Face" animal="cat" color="#9B5CFF" size="{{s40}}" hint-size="40px,40px"></dc-import>
+    <span style="font-size: 20px; font-weight: 700; flex-grow: 1">Petra</span>
+    <span style="font-size: 16px; color: #8FA0D8">Noć 1</span>
+  </div>
+  <sc-if value="{{shown}}" hint-placeholder-val="{{ true }}">
+    <div style="flex-grow: 1; background: #1A1F3A; border: 3px solid #FF4D6D; border-radius: 28px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center">
+      <svg viewBox="0 0 200 200" width="180" height="180" aria-hidden="true">
+        <circle cx="100" cy="88" r="70" fill="#F2E9C9"></circle>
+        <path d="M40 190 L60 120 L72 92 L84 116 L100 108 L116 116 L128 92 L140 120 L160 190 Z" fill="#14141E"></path>
+        <circle cx="88" cy="140" r="4" fill="#FF4D6D"></circle><circle cx="112" cy="140" r="4" fill="#FF4D6D"></circle>
+      </svg>
+      <div style="font-size: 16px; color: #8FA0D8; letter-spacing: 3px; font-weight: 700">TVOJA ULOGA</div>
+      <div style="font-size: 40px; font-weight: 900; color: #FF4D6D">Vukodlak</div>
+      <div style="font-size: 18px; line-height: 1.45; color: #C3CBEA">Svake noći s ostalim vukodlacima biraš jednog seljana. Danju se pretvaraj da si jedan od njih.</div>
+      <div style="font-size: 17px; color: #F4F4F8; background: rgba(255,77,109,0.15); border-radius: 12px; padding: 10px 14px">Drugi vukodlak: <b>Luka</b></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{hidden}}" hint-placeholder-val="{{ false }}">
+    <div style="flex-grow: 1; background: #1A1F3A; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #8FA0D8; text-align: center; padding: 24px">Uloga je skrivena. Drži gumb da je vidiš.</div>
+  </sc-if>
+  <button onClick="{{toggle}}" style="font: inherit; font-size: 20px; font-weight: 700; color: #F4F4F8; background: #2A2F4A; border: 0; border-radius: 16px; height: 60px">{{btn}}</button>
+  <div style="font-size: 15px; color: #8FA0D8; text-align: center">Pazi da ti nitko ne gleda u ekran.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { shown: true }; }
+  renderVals() {
+    const s = this.state.shown;
+    return { s40: 40, shown: s, hidden: !s, btn: s ? 'Sakrij ulogu' : 'Pokaži ulogu', toggle: () => this.setState({ shown: !s }) };
+  }
+}
+</script>
+</body>
+</html>

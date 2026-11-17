@@ -261,3 +261,7 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   standby. Design canvas updated with Curve, power-ups, characters and game picker screens (19ef448).
 - 2026-11-17: Task 28 accepted (lead ran core 132, tv 283, controller 67 on 5fa5fb3; PM sampled memeovi, matematika,
   psihologija). APK 40.6 MB. Photo credits stay in .sources.md (home use), as decided in Task 22.
+- 2026-11-17: Person asked for a console-style redesign (full-screen games, like a retro console front end), sound
+  in every game, a ticker on quizzes, and a new social-deduction game (Vukodlak: story on the TV, roles and actions
+  on phones). "Make an artifact first": canvas page "Konzola i Vukodlak" drawn (8 screens + notes). Nothing routed
+  yet; waiting for the person's comments.
