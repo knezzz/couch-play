@@ -188,7 +188,7 @@ void main() {
   /// Head 1 gets [stacks] fat (from head 0) and maybe slow, then holds right
   /// from the centre. Heads 0 and 2 turn ghost in the corners so the round never
   /// ends. Returns the tick head 1 died, or -1. (Probe from check-review.)
-  int circle(int stacks, bool slow) {
+  int circle(int stacks, bool slow, [bool fast = false]) {
     final s = CurveSim([0, 1, 2],
         config: const CurveConfig(
             countdown: 0, gapEveryMin: 1e6, gapEveryMax: 1e6 + 1, powerUps: false, effectSeconds: 100),
@@ -202,6 +202,10 @@ void main() {
     }
     if (slow) {
       s.placePowerUp(PowerUpKind.slow, _head(s, 1).x, _head(s, 1).y);
+      s.tick();
+    }
+    if (fast) {
+      s.placePowerUp(PowerUpKind.speed, _head(s, 1).x, _head(s, 1).y);
       s.tick();
     }
     s.placePowerUp(PowerUpKind.ghost, _head(s, 0).x, _head(s, 0).y);
@@ -542,5 +546,256 @@ void main() {
     s.setInput(1, left: true, right: false);
     _ticks(s, 100);
     expect(s.powerUps, isEmpty);
+  });
+
+  group('cheese (green): your line gets many long gaps', () {
+    /// Gaps that start (inGap false -> true) in the next [n] ticks for head 0.
+    int gapStarts(CurveSim s, int n) {
+      var was = _head(s, 0).inGap, starts = 0;
+      for (var i = 0; i < n; i++) {
+        s.tick();
+        final now = _head(s, 0).inGap;
+        if (now && !was) starts++;
+        was = now;
+      }
+      return starts;
+    }
+
+    /// The longest run of ticks head 0 spends in a gap.
+    int longestGap(CurveSim s, int n) {
+      var run = 0, best = 0;
+      for (var i = 0; i < n; i++) {
+        s.tick();
+        run = _head(s, 0).inGap ? run + 1 : 0;
+        if (run > best) best = run;
+      }
+      return best;
+    }
+
+    CurveSim cheeseSim({double effectSeconds = 3, double gapEvery = 1e6}) {
+      final s = CurveSim([0, 1, 2],
+          config: CurveConfig(
+              countdown: 0,
+              arenaW: 4000,
+              gapEveryMin: gapEvery,
+              gapEveryMax: gapEvery + 1,
+              powerUps: false,
+              effectSeconds: effectSeconds),
+          random: Random(1));
+      s.place(0, 100, 450, 0);
+      s.place(1, 100, 100, 0);
+      s.place(2, 100, 800, 0);
+      return s;
+    }
+
+    test('only the picker gets it', () {
+      final s = _sim();
+      _pickUp(s, PowerUpKind.cheese);
+      expect(s.hasEffect(0, PowerUpKind.cheese), isTrue);
+      expect(s.hasEffect(1, PowerUpKind.cheese), isFalse);
+      expect(s.hasEffect(2, PowerUpKind.cheese), isFalse);
+    });
+
+    test('while it lasts there are many gaps (normal gaps are switched off here), then none', () {
+      final s = cheeseSim(); // 3 s = 180 ticks
+      expect(gapStarts(s, 240), 0, reason: 'no gaps without cheese in this setup');
+      s.place(0, 100, 300, 0); // a fresh lane: not across the trail just laid
+      s.placePowerUp(PowerUpKind.cheese, _head(s, 0).x, _head(s, 0).y);
+      s.tick();
+      final during = gapStarts(s, 175);
+      expect(during, greaterThanOrEqualTo(3), reason: 'many gaps in 3 s: $during');
+      s.tick();
+      s.tick();
+      s.tick();
+      s.tick();
+      s.tick();
+      expect(s.hasEffect(0, PowerUpKind.cheese), isFalse);
+      final startedGap = _head(s, 0).inGap;
+      final after = gapStarts(s, 600);
+      expect(startedGap, isFalse, reason: 'no gap is opened by the end of cheese itself');
+      expect(after, 0, reason: 'normal gaps again, and those are off here');
+    });
+
+    test('the first cheese gap comes soon after the pickup, even when the normal gap is far off', () {
+      final s = cheeseSim(effectSeconds: 5);
+      s.placePowerUp(PowerUpKind.cheese, _head(s, 0).x, _head(s, 0).y);
+      s.tick();
+      expect(gapStarts(s, 90), greaterThanOrEqualTo(1), reason: 'within 1.5 s');
+    });
+
+    test('cheese gaps are longer than the normal gap', () {
+      final normal = cheeseSim(gapEvery: 0.3)..place(0, 100, 450, 0);
+      final normalLongest = longestGap(normal, 300);
+      expect(normalLongest, lessThanOrEqualTo((const CurveConfig().gapLength * 60).round()));
+      final s = cheeseSim(effectSeconds: 5);
+      s.placePowerUp(PowerUpKind.cheese, _head(s, 0).x, _head(s, 0).y);
+      s.tick();
+      expect(longestGap(s, 280), greaterThan(normalLongest * 1.4));
+    });
+
+    test('a gap leaves no trail: the cheese line really has holes', () {
+      final s = cheeseSim(effectSeconds: 4);
+      s.placePowerUp(PowerUpKind.cheese, _head(s, 0).x, _head(s, 0).y);
+      s.tick();
+      var segments = 0, ticks = 0;
+      for (var i = 0; i < 200; i++) {
+        s.tick();
+        ticks++;
+        segments += s.takeNewSegments().where((t) => t.id == 0).length;
+      }
+      expect(segments, lessThan(ticks * 0.8), reason: 'painted in fewer than 80% of the ticks: $segments of $ticks');
+    });
+
+    test('it ends with the round', () {
+      final s = _sim(effectSeconds: 10);
+      _pickUp(s, PowerUpKind.cheese);
+      s.startRound();
+      expect(s.hasEffect(0, PowerUpKind.cheese), isFalse);
+    });
+  });
+
+  group('square turns (red): a held button turns exactly 90 degrees once', () {
+    CurveSim squareSim() {
+      final s = _sim(effectSeconds: 2);
+      s.place(0, 800, 450, 0);
+      s.place(1, 400, 450, 0);
+      s.place(2, 400, 800, 0);
+      return s;
+    }
+
+    void giveSquare(CurveSim s) => _pickUp(s, PowerUpKind.squareOthers);
+
+    test('only the others are hit', () {
+      final s = squareSim();
+      giveSquare(s);
+      expect(s.hasEffect(0, PowerUpKind.squareOthers), isFalse);
+      expect(s.hasEffect(1, PowerUpKind.squareOthers), isTrue);
+      expect(s.hasEffect(2, PowerUpKind.squareOthers), isTrue);
+    });
+
+    test('a held right turns +90 degrees once, then goes straight', () {
+      final s = squareSim();
+      giveSquare(s);
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: false, right: true);
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h0 + pi / 2, 1e-9));
+      _ticks(s, 30);
+      expect(_head(s, 1).heading, closeTo(h0 + pi / 2, 1e-9), reason: 'still held, still straight');
+    });
+
+    test('a held left turns -90 degrees once', () {
+      final s = squareSim();
+      giveSquare(s);
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: true, right: false);
+      s.tick();
+      _ticks(s, 10);
+      expect(_head(s, 1).heading, closeTo(h0 - pi / 2, 1e-9));
+    });
+
+    test('release and press again turns another 90 degrees', () {
+      final s = squareSim();
+      giveSquare(s);
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: false, right: true);
+      _ticks(s, 5);
+      s.setInput(1, left: false, right: false);
+      _ticks(s, 3);
+      expect(_head(s, 1).heading, closeTo(h0 + pi / 2, 1e-9));
+      s.setInput(1, left: false, right: true);
+      _ticks(s, 5);
+      expect(_head(s, 1).heading, closeTo(h0 + pi, 1e-9));
+    });
+
+    test('switching straight from one button to the other turns the other way', () {
+      final s = squareSim();
+      giveSquare(s);
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: false, right: true);
+      s.tick();
+      s.setInput(1, left: true, right: false);
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h0, 1e-9), reason: '+90 then -90');
+    });
+
+    test('a button already held when it is picked up does not turn until pressed again', () {
+      final s = squareSim();
+      s.setInput(1, left: false, right: true);
+      _ticks(s, 3);
+      giveSquare(s);
+      final h1 = _head(s, 1).heading;
+      _ticks(s, 10);
+      expect(_head(s, 1).heading, closeTo(h1, 1e-9), reason: 'held, so no new press: straight, no snap');
+      s.setInput(1, left: false, right: false);
+      s.tick();
+      s.setInput(1, left: false, right: true);
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h1 + pi / 2, 1e-9));
+    });
+
+    test('the picker keeps steering smoothly', () {
+      final s = squareSim();
+      giveSquare(s);
+      final h0 = _head(s, 0).heading;
+      s.setInput(0, left: false, right: true);
+      _ticks(s, 10);
+      expect(_head(s, 0).heading - h0, closeTo(pi * 10 / 60, 1e-6));
+    });
+
+    test('after it ends steering is smooth again', () {
+      final s = squareSim();
+      giveSquare(s);
+      _ticks(s, 125); // 2 s = 120 ticks
+      expect(s.hasEffect(1, PowerUpKind.squareOthers), isFalse);
+      s.setInput(1, left: false, right: true);
+      final h0 = _head(s, 1).heading;
+      _ticks(s, 10);
+      expect(_head(s, 1).heading - h0, closeTo(pi * 10 / 60, 1e-6));
+    });
+
+    test('with reverse on top, the 90 degrees go the other way', () {
+      final s = squareSim();
+      _pickUp(s, PowerUpKind.reverseOthers);
+      s.place(0, 800, 450, 0);
+      giveSquare(s);
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: false, right: true);
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h0 - pi / 2, 1e-9));
+    });
+  });
+
+  group('speed and slow exist both ways', () {
+    test('speed up: the picker 1.6 x (green)', () {
+      final s = _sim();
+      final base = _travel(s, 1, 10);
+      _pickUp(s, PowerUpKind.speed);
+      expect(s.hasEffect(0, PowerUpKind.speed), isTrue);
+      expect(s.hasEffect(1, PowerUpKind.speed), isFalse);
+      expect(_travel(s, 0, 10) / base, closeTo(1.6, 0.02));
+      expect(_travel(s, 1, 10), closeTo(base, 0.01));
+    });
+
+    test('slow down others: everyone but the picker 0.6 x (red)', () {
+      final s = _sim();
+      final base = _travel(s, 1, 10);
+      _pickUp(s, PowerUpKind.slowOthers);
+      expect(s.hasEffect(0, PowerUpKind.slowOthers), isFalse);
+      expect(s.hasEffect(1, PowerUpKind.slowOthers), isTrue);
+      expect(s.hasEffect(2, PowerUpKind.slowOthers), isTrue);
+      expect(_travel(s, 1, 10) / base, closeTo(0.6, 0.02));
+      expect(_travel(s, 0, 10), closeTo(base, 0.01));
+    });
+
+    test('all four exist, plus cheese and square turns', () {
+      expect(PowerUpKind.values.map((k) => k.name),
+          containsAll(['speed', 'slow', 'speedOthers', 'slowOthers', 'ghost', 'cheese', 'fatOthers', 'reverseOthers', 'squareOthers', 'clear', 'wrap']));
+    });
+
+    test('a fast head does not die on its own fresh trail while turning (grace scales with speed)', () {
+      expect(circle(0, false, true), -1);
+      expect(circle(3, false, true), -1);
+    });
   });
 }

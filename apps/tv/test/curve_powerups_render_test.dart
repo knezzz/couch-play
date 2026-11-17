@@ -167,11 +167,15 @@ void main() {
   testWidgets('green rings are on you, red are from others, in the power-up colours', (tester) async {
     await tester.runAsync(() async {
       for (final (kind, color) in [
+        (PowerUpKind.speed, _green),
         (PowerUpKind.slow, _green),
         (PowerUpKind.ghost, _green),
+        (PowerUpKind.cheese, _green),
         (PowerUpKind.speedOthers, red),
+        (PowerUpKind.slowOthers, red),
         (PowerUpKind.fatOthers, red),
         (PowerUpKind.reverseOthers, red),
+        (PowerUpKind.squareOthers, red),
       ]) {
         final sim = _Fx();
         sim.place(0, 800, 450, 0);
@@ -210,7 +214,7 @@ void main() {
     });
   });
 
-  testWidgets('the seven pickup icons are drawn on the power-up colour disc, each its own picture', (tester) async {
+  testWidgets('all eleven pickups are drawn on the power-up colour disc; nine different pictures (speed and slow come in green and red)', (tester) async {
     await tester.runAsync(() async {
       final pics = <PowerUpKind, List<bool>>{};
       for (final kind in PowerUpKind.values) {
@@ -219,8 +223,13 @@ void main() {
         sim.placePowerUp(kind, 800, 450);
         final d = await _render(sim);
         final disc = switch (kind) {
-          PowerUpKind.slow || PowerUpKind.ghost => _green,
-          PowerUpKind.speedOthers || PowerUpKind.fatOthers || PowerUpKind.reverseOthers => red,
+          PowerUpKind.speed || PowerUpKind.slow || PowerUpKind.ghost || PowerUpKind.cheese => _green,
+          PowerUpKind.speedOthers ||
+          PowerUpKind.slowOthers ||
+          PowerUpKind.fatOthers ||
+          PowerUpKind.reverseOthers ||
+          PowerUpKind.squareOthers =>
+            red,
           _ => const Color(0xFF4DA6FF),
         };
         expect(_near(_at(d, 800, 430), disc), isTrue, reason: '$kind disc');
@@ -234,6 +243,8 @@ void main() {
       for (final a in PowerUpKind.values) {
         for (final b in PowerUpKind.values) {
           if (a.index >= b.index) continue;
+          // The same picture in the other colour: you or the others.
+          if ((a, b) == (PowerUpKind.speed, PowerUpKind.speedOthers) || (a, b) == (PowerUpKind.slow, PowerUpKind.slowOthers)) continue;
           var diff = 0;
           for (var i = 0; i < pics[a]!.length; i++) {
             if (pics[a]![i] != pics[b]![i]) diff++;
@@ -252,8 +263,13 @@ void main() {
         sim.placePowerUp(kind, 800, 450);
         final d = await _render(sim);
         final disc = switch (kind) {
-          PowerUpKind.slow || PowerUpKind.ghost => _green,
-          PowerUpKind.speedOthers || PowerUpKind.fatOthers || PowerUpKind.reverseOthers => const Color(0xFFFF4D4D),
+          PowerUpKind.speed || PowerUpKind.slow || PowerUpKind.ghost || PowerUpKind.cheese => _green,
+          PowerUpKind.speedOthers ||
+          PowerUpKind.slowOthers ||
+          PowerUpKind.fatOthers ||
+          PowerUpKind.reverseOthers ||
+          PowerUpKind.squareOthers =>
+            const Color(0xFFFF4D4D),
           _ => const Color(0xFF4DA6FF),
         };
         for (var i = 0; i < 72; i++) {
@@ -298,6 +314,92 @@ void main() {
       // The head moved up from y=800; the trail is on x=4, inside the 10-wide border.
       expect(_near(_at(d, 4, 780), const Color(0xFFFF0000)), isTrue);
       expect(_near(_at(d, 800, 5), _white), isTrue, reason: 'border still drawn elsewhere');
+    });
+  });
+
+  testWidgets('speed up and slow down exist both ways: the same picture on a green disc (you) and a red one (others)', (tester) async {
+    await tester.runAsync(() async {
+      for (final (you, others) in [(PowerUpKind.speed, PowerUpKind.speedOthers), (PowerUpKind.slow, PowerUpKind.slowOthers)]) {
+        final a = _Fx()..place(0, 100, 100, 0);
+        a.placePowerUp(you, 800, 450);
+        final b = _Fx()..place(0, 100, 100, 0);
+        b.placePowerUp(others, 800, 450);
+        final da = await _render(a), db = await _render(b);
+        expect(_near(_at(da, 800, 430), _green), isTrue, reason: '$you is yours: green');
+        expect(_near(_at(db, 800, 430), red), isTrue, reason: '$others is for the others: red');
+        var inkDiff = 0;
+        for (var y = 426; y < 474; y += 2) {
+          for (var x = 776; x < 824; x += 2) {
+            if (_near(_at(da, x, y), _bg) != _near(_at(db, x, y), _bg)) inkDiff++;
+          }
+        }
+        expect(inkDiff, 0, reason: 'same glyph');
+      }
+    });
+  });
+
+  testWidgets('the cheese has holes (disc colour inside the ink) and the square-turn arrow is a right angle', (tester) async {
+    await tester.runAsync(() async {
+      final c = _Fx()..place(0, 100, 100, 0);
+      c.placePowerUp(PowerUpKind.cheese, 800, 450);
+      final d = await _render(c);
+      // Grid (34,64) is a hole: 24 units radius -> 24/47 per grid unit; centre (50,50) at (800,450).
+      Offset at(double gx, double gy) => Offset(800 + (gx - 50) * 24 / 47, 450 + (gy - 50) * 24 / 47);
+      final hole = at(34, 64), wedge = at(46, 68);
+      expect(_near(_at(d, hole.dx, hole.dy), _green), isTrue, reason: 'a hole shows the disc');
+      expect(_near(_at(d, wedge.dx, wedge.dy), _bg), isTrue, reason: 'cheese between the holes');
+      final q = _Fx()..place(0, 100, 100, 0);
+      q.placePowerUp(PowerUpKind.squareOthers, 800, 450);
+      final e = await _render(q);
+      final along = at(40, 72), up = at(58, 50), outside = at(30, 40);
+      expect(_near(_at(e, along.dx, along.dy), _bg), isTrue, reason: 'the shaft runs along');
+      expect(_near(_at(e, up.dx, up.dy), _bg), isTrue, reason: 'and turns up at a right angle');
+      expect(_near(_at(e, outside.dx, outside.dy), red), isTrue, reason: 'nothing in the corner it cuts');
+    });
+  });
+
+  testWidgets('a ghost\'s head is see-through; any other head is solid white (PuActive note)', (tester) async {
+    await tester.runAsync(() async {
+      final solid = _Fx()..place(0, 800, 450, 0);
+      var d = await _render(solid);
+      expect(_near(_at(d, 800, 450), _white), isTrue, reason: 'the normal head');
+      final ghost = _Fx()..place(0, 800, 450, 0);
+      ghost.fx[PowerUpKind.ghost] = 1;
+      d = await _render(ghost);
+      final c = _at(d, 800, 450);
+      expect(_near(c, _white), isFalse, reason: 'not solid white');
+      expect(_near(c, _bg), isFalse, reason: 'but still there');
+      expect(c.computeLuminance(), inInclusiveRange(0.1, 0.8), reason: 'a faint head');
+    });
+  });
+
+  testWidgets('the reverse ring turns slowly backwards (anticlockwise) as it drains', (tester) async {
+    await tester.runAsync(() async {
+      final sim = _Fx()..place(0, 800, 450, 0);
+      sim.fx[PowerUpKind.reverseOthers] = 0.1; // a short arc: 36 degrees
+      final game = CurveGame(sim, const [Color(0xFFFF0000)], holdWhen: () => true)..onGameResize(Vector2(1600, 900));
+      Future<ByteData> shot() async {
+        final rec = PictureRecorder();
+        game.render(Canvas(rec));
+        return (await (await rec.endRecording().toImage(1600, 900)).toByteData())!;
+      }
+
+      var d = await shot();
+      expect(_near(_at(d, 800 + 8, 450 - r0), red), isTrue, reason: 'at the start the arc begins at the top');
+      expect(_near(_at(d, 800 - r0, 450), red), isFalse);
+      game.update(1.0); // one second: a quarter turn backwards
+      d = await shot();
+      expect(_near(_at(d, 800 - 0.985 * r0, 450 - 0.174 * r0), red), isTrue, reason: 'now it begins at the left: it turned anticlockwise');
+      expect(_near(_at(d, 800 + 8, 450 - r0), red), isFalse, reason: 'and has left the top');
+      // Any other ring stays where it starts: at the top.
+      final other = _Fx()..place(0, 800, 450, 0);
+      other.fx[PowerUpKind.speedOthers] = 0.1;
+      final g2 = CurveGame(other, const [Color(0xFFFF0000)], holdWhen: () => true)..onGameResize(Vector2(1600, 900));
+      g2.update(1.0);
+      final rec = PictureRecorder();
+      g2.render(Canvas(rec));
+      final d2 = (await (await rec.endRecording().toImage(1600, 900)).toByteData())!;
+      expect(_near(_at(d2, 800 + 8, 450 - r0), red), isTrue, reason: 'a normal ring does not turn');
     });
   });
 }

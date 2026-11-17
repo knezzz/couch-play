@@ -276,4 +276,61 @@ void main() {
     print('mean survival (ticks): smart=${smart.toStringAsFixed(0)} random=${random.toStringAsFixed(0)}');
     expect(smart, greaterThan(random * 1.3));
   });
+
+  group('square turns', () {
+    /// Ticks until the first of the bots dies (or [limit]) when player 0 hands
+    /// out square turns on the first tick.
+    int firstDeath({required bool square, required int seed, int limit = 900}) {
+      final sim = CurveSim([0, 1, 2, 3, 4], config: _cfg, random: Random(seed));
+      final bots = Bots(sim, [1, 2, 3, 4], Random(seed + 100));
+      if (square) {
+        sim.placePowerUp(PowerUpKind.squareOthers, _head(sim, 0).x, _head(sim, 0).y);
+        sim.tick();
+      }
+      for (var t = 1; t <= limit; t++) {
+        bots.tick();
+        sim.setInput(0, left: false, right: false);
+        sim.tick();
+        // player 0 just flies straight; it may die, that does not matter
+        if ([1, 2, 3, 4].any((i) => !_head(sim, i).alive)) return t;
+      }
+      return limit;
+    }
+
+    test('bots under square turns are hit by the power-up and do not crash at once', () {
+      final sim = CurveSim([0, 1], config: _cfg, random: Random(1));
+      sim.placePowerUp(PowerUpKind.squareOthers, _head(sim, 0).x, _head(sim, 0).y);
+      sim.tick();
+      expect(sim.hasEffect(1, PowerUpKind.squareOthers), isTrue);
+      // The bots steer through the same input. Four bots and a straight-flying
+      // human in the open arena: the first crash comes about as late with square
+      // turns as without them (the bots do meet each other's trails either way).
+      var square = 0, normal = 0, earliest = 1 << 30;
+      for (var seed = 1; seed <= 12; seed++) {
+        final t = firstDeath(square: true, seed: seed, limit: 300);
+        square += t;
+        normal += firstDeath(square: false, seed: seed, limit: 300);
+        earliest = min(earliest, t);
+      }
+      expect(earliest, greaterThan(45), reason: 'no bot crashes within the first 0.75 s');
+      expect(square, greaterThan(normal * 0.7), reason: 'square $square vs normal $normal (sum of first-crash ticks)');
+    });
+
+    test('a bot flying at a wall still turns away under square turns', () {
+      for (final startY in [450.0, 60.0, 840.0]) {
+        final sim = CurveSim([1, 2], config: _cfg, random: Random(1));
+        final bots = Bots(sim, [1], Random(2));
+        sim.place(1, 130, startY, pi);
+        sim.place(2, 1500, 450, 0);
+        sim.placePowerUp(PowerUpKind.squareOthers, 1500, 450);
+        sim.tick(); // 2 picks it up; 1 is hit
+        expect(sim.hasEffect(1, PowerUpKind.squareOthers), isTrue);
+        for (var i = 0; i < 100; i++) {
+          bots.tick();
+          sim.tick();
+          expect(_head(sim, 1).alive, isTrue, reason: 'startY $startY, tick $i');
+        }
+      }
+    });
+  });
 }

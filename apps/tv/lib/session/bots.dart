@@ -28,6 +28,8 @@ class Bots {
     _lapseUntil = Int32List(n);
     _lastChange = Int32List(n);
     _applied = Int8List(n);
+    _sqDir = Int8List(n);
+    _sqAt = Int32List(n);
     _lastWant = Int8List(n);
     _replanAt = Int32List(n);
     _calmUntil = Int32List(n);
@@ -58,6 +60,8 @@ class Bots {
   late final Int8List _dodgeDir; // direction of the last dodge
   late final Float64List _bold, _lapseRate, _tx, _ty;
   late final Int8List _applied, _lastWant, _ring; // -1 left, 0 straight, 1 right
+  late final Int8List _sqDir; // the press last sent under square turns
+  late final Int32List _sqAt; // and when
   late final Uint8List _urgent; // ring slots written by a danger dodge
   bool _dodging = false; // set by _perceive: this decision is a dodge
   int _t = 0;
@@ -115,7 +119,22 @@ class Bots {
         _applied[id] = out;
         _lastChange[id] = _t;
       }
-      sim.setInput(id, left: _applied[id] < 0, right: _applied[id] > 0);
+      var left = _applied[id] < 0, right = _applied[id] > 0;
+      if (sim.hasEffect(id, PowerUpKind.squareOthers)) {
+        // Square turns: a held button turns only once, so press for one tick
+        // when the wish starts and again every quarter second while it stands.
+        final a = _applied[id];
+        final press = a != 0 && (a != _sqDir[id] || _t - _sqAt[id] >= 15);
+        if (press) {
+          _sqDir[id] = a;
+          _sqAt[id] = _t;
+        } else if (a == 0) {
+          _sqDir[id] = 0;
+        }
+        left = press && a < 0;
+        right = press && a > 0;
+      }
+      sim.setInput(id, left: left, right: right);
     }
   }
 

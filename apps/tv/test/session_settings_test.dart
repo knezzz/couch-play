@@ -153,7 +153,7 @@ void main() {
       expect(peaceful.countdown, 4);
       expect((await matchWith(t, CurveMode.chaos)).powerUpMax, greaterThan(3));
       expect((await matchWith(t, CurveMode.onlyYou)).powerUpKinds,
-          [PowerUpKind.slow, PowerUpKind.ghost]);
+          [PowerUpKind.speed, PowerUpKind.slow, PowerUpKind.ghost, PowerUpKind.cheese]);
       expect((await matchWith(t, CurveMode.balanced)).powerUpKinds, isNull);
     });
 

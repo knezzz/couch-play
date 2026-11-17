@@ -53,12 +53,12 @@ void main() {
   });
 
   test('only_you_spawns_only_the_green_kinds_at_balanced_pace', () {
-    const green = {PowerUpKind.slow, PowerUpKind.ghost};
+    const green = {PowerUpKind.speed, PowerUpKind.slow, PowerUpKind.ghost, PowerUpKind.cheese};
     final c = CurveConfig.forMode(CurveMode.onlyYou);
     final got = spawned(c, rounds: 300);
     expect(got, isNotEmpty);
     expect(got.toSet().difference(green), isEmpty);
-    expect(got.toSet(), green, reason: 'both green kinds turn up');
+    expect(got.toSet(), green, reason: 'all four green kinds turn up');
     expect([c.powerUpEveryMin, c.powerUpEveryMax, c.powerUpMax], [4, 8, 3]);
   });
 
@@ -70,5 +70,13 @@ void main() {
     }
     expect(spawned(CurveConfig.forMode(CurveMode.balanced), rounds: 300).toSet(),
         contains(PowerUpKind.reverseOthers));
+  });
+
+  test('cheese and square turns spawn in Kaos and Uravnoteženo, and all four speed kinds exist', () {
+    for (final m in [CurveMode.chaos, CurveMode.balanced]) {
+      final got = spawned(CurveConfig.forMode(m), rounds: 1500).toSet();
+      expect(got, containsAll([PowerUpKind.cheese, PowerUpKind.squareOthers, PowerUpKind.speed, PowerUpKind.slow, PowerUpKind.speedOthers, PowerUpKind.slowOthers]), reason: '$m');
+    }
+    expect(spawned(CurveConfig.forMode(CurveMode.peaceful), rounds: 30), isEmpty);
   });
 }

@@ -9,10 +9,11 @@ import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, Te
 import '../../strings.dart';
 
 class _Icon {
-  const _Icon({this.fill, this.line, this.lineW = 8, this.holes = const [], this.cut, this.cutW = 6});
+  const _Icon({this.fill, this.line, this.lineW = 8, this.holes = const [], this.holeR = 5.5, this.cut, this.cutW = 6});
   final Path? fill, line;
   final double lineW;
   final List<Offset> holes;
+  final double holeR;
 
   /// Lines drawn in the disc's colour over the ink: a spiral, the gaps between bristles.
   final Path? cut;
@@ -47,6 +48,7 @@ class CurveGame extends FlameGame {
     ..strokeCap = StrokeCap.round;
   final _head = Paint();
   double _acc = 0;
+  double _time = 0; // seconds the game has run: the reverse ring turns with it
   var _cdTicks = 0; // ticks of the countdown that have run
 
   /// The whole seconds of the countdown that are left: 3, 2, 1, then 0 once the round runs.
@@ -77,6 +79,7 @@ class CurveGame extends FlameGame {
   @override
   void update(double dt) {
     super.update(dt);
+    _time += dt;
     if (holdWhen?.call() ?? false) {
       _acc = 0;
       return;
@@ -137,7 +140,7 @@ class CurveGame extends FlameGame {
     for (final hd in sim.heads) {
       if (!hd.alive) continue;
       canvas.drawCircle(Offset(hd.x, hd.y), base * (counting ? 1.6 : 0.8),
-          _head..color = counting ? _color(hd.id) : const Color(0xFFFFFFFF));
+          _head..color = counting ? _color(hd.id) : (sim.effectLeft(hd.id, PowerUpKind.ghost) > 0 ? const Color(0x59FFFFFF) : const Color(0xFFFFFFFF)));
       if (counting) _drawArrow(canvas, hd.x, hd.y, hd.heading, base * 8, _color(hd.id));
       if (counting) _drawName(canvas, hd.id, hd.x, hd.y, hd.heading, base * 2, w, h);
       if (!counting) _drawEffects(canvas, hd);
@@ -270,9 +273,8 @@ class CurveGame extends FlameGame {
     return p;
   }
 
-  static final Map<PowerUpKind, _Icon> _icons = {
-    // Snail: a big spiral shell on a thick body with a head and a feeler.
-    PowerUpKind.slow: _Icon(
+  // The snail and the lightning serve both the green (you) and the red (others) kinds.
+  static final _Icon _snail = _Icon(
       fill: Path()
         ..addOval(Rect.fromCircle(center: const Offset(44, 40), radius: 25))
         ..addRRect(RRect.fromLTRBR(20, 64, 80, 82, const Radius.circular(9)))
@@ -283,24 +285,52 @@ class CurveGame extends FlameGame {
       lineW: 7,
       cut: _spiral(44, 40),
       cutW: 6,
+  );
+  static final _Icon _bolt = _Icon(fill: _poly([60, 10, 26, 56, 47, 56, 38, 90, 74, 42, 53, 42]));
+
+  static final _Icon _ghost = _Icon(
+    fill: Path()
+      ..moveTo(26, 84)
+      ..lineTo(26, 46)
+      ..arcToPoint(const Offset(74, 46), radius: const Radius.circular(24))
+      ..lineTo(74, 84)
+      ..lineTo(65, 74)
+      ..lineTo(57, 84)
+      ..lineTo(50, 74)
+      ..lineTo(43, 84)
+      ..lineTo(35, 74)
+      ..close(),
+    holes: const [Offset(40, 46), Offset(60, 46)],
+  );
+  static final _Icon _reverse = _Icon(
+    line: _strokes([
+      [20, 34, 76, 34], [64, 22, 78, 34, 64, 46],
+      [80, 66, 24, 66], [36, 54, 22, 66, 36, 78],
+    ]),
+    lineW: 8,
+  );
+
+  static final Map<PowerUpKind, _Icon> _icons = {
+    PowerUpKind.slow: _snail,
+    PowerUpKind.slowOthers: _snail,
+    PowerUpKind.speed: _bolt,
+    PowerUpKind.speedOthers: _bolt,
+    // Cheese: a wedge with holes (ink wedge, the holes in the disc's colour).
+    PowerUpKind.cheese: _Icon(
+      fill: _poly([18, 74, 82, 74, 82, 34, 18, 50]),
+      holes: const [Offset(34, 65), Offset(55, 61), Offset(71, 66)],
+      holeR: 6.5,
+    ),
+    // Square turns: a right-angle arrow, along and then straight up.
+    PowerUpKind.squareOthers: _Icon(
+      line: _strokes([
+        [22, 72, 58, 72, 58, 32],
+        [45, 44, 58, 30, 71, 44],
+      ]),
+      lineW: 10,
     ),
     // Ghost: a sheet with a wavy hem; the eyes are holes.
-    PowerUpKind.ghost: _Icon(
-      fill: Path()
-        ..moveTo(26, 84)
-        ..lineTo(26, 46)
-        ..arcToPoint(const Offset(74, 46), radius: const Radius.circular(24))
-        ..lineTo(74, 84)
-        ..lineTo(65, 74)
-        ..lineTo(57, 84)
-        ..lineTo(50, 74)
-        ..lineTo(43, 84)
-        ..lineTo(35, 74)
-        ..close(),
-      holes: const [Offset(40, 46), Offset(60, 46)],
-    ),
-    // Lightning bolt.
-    PowerUpKind.speedOthers: _Icon(fill: _poly([60, 10, 26, 56, 47, 56, 38, 90, 74, 42, 53, 42])),
+    PowerUpKind.ghost: _ghost,
     // A thin trail beside a thick one: two solid diagonal bars (a rectangle read as a door).
     PowerUpKind.fatOthers: _Icon(
       fill: _poly([22.8, 70.6, 29.2, 73.5, 49.2, 29.5, 42.8, 26.6]),
@@ -310,13 +340,7 @@ class CurveGame extends FlameGame {
       lineW: 20,
     ),
     // Two arrows the opposite way round.
-    PowerUpKind.reverseOthers: _Icon(
-      line: _strokes([
-        [20, 34, 76, 34], [64, 22, 78, 34, 64, 46],
-        [80, 66, 24, 66], [36, 54, 22, 66, 36, 78],
-      ]),
-      lineW: 8,
-    ),
+    PowerUpKind.reverseOthers: _reverse,
     // Broom: a long handle and a head whose bristles fan out.
     PowerUpKind.clear: _Icon(
       fill: _poly([40, 52, 62, 52, 76, 82, 26, 82]),
@@ -345,8 +369,13 @@ class CurveGame extends FlameGame {
   };
 
   static Color _powerUpColor(PowerUpKind k) => switch (k) {
-        PowerUpKind.slow || PowerUpKind.ghost => _green,
-        PowerUpKind.speedOthers || PowerUpKind.fatOthers || PowerUpKind.reverseOthers => _red,
+        PowerUpKind.speed || PowerUpKind.slow || PowerUpKind.ghost || PowerUpKind.cheese => _green,
+        PowerUpKind.speedOthers ||
+        PowerUpKind.slowOthers ||
+        PowerUpKind.fatOthers ||
+        PowerUpKind.reverseOthers ||
+        PowerUpKind.squareOthers =>
+          _red,
         PowerUpKind.clear || PowerUpKind.wrap => _blue,
       };
 
@@ -385,7 +414,7 @@ class CurveGame extends FlameGame {
         ..style = PaintingStyle.fill
         ..color = disc;
       for (final h in ic.holes) {
-        canvas.drawCircle(h, 5.5, _icon);
+        canvas.drawCircle(h, ic.holeR, _icon);
       }
     }
     canvas.restore();
@@ -399,15 +428,19 @@ class CurveGame extends FlameGame {
   /// Angle between the dots that count fat stacks, on the ring's bottom.
   static const stackStep = 0.42;
   static const _effectKinds = [
+    PowerUpKind.speed,
     PowerUpKind.slow,
     PowerUpKind.ghost,
+    PowerUpKind.cheese,
     PowerUpKind.speedOthers,
+    PowerUpKind.slowOthers,
     PowerUpKind.fatOthers,
     PowerUpKind.reverseOthers,
+    PowerUpKind.squareOthers,
   ];
-  final _ringKind = List<PowerUpKind>.filled(5, PowerUpKind.slow);
-  final _ringLeft = Float64List(5); // fraction left: the arc
-  final _ringTime = Float64List(5); // seconds-ish left: the order
+  final _ringKind = List<PowerUpKind>.filled(_effectKinds.length, PowerUpKind.slow);
+  final _ringLeft = Float64List(_effectKinds.length); // fraction left: the arc
+  final _ringTime = Float64List(_effectKinds.length); // seconds-ish left: the order
 
   void _drawEffects(Canvas canvas, CurveHead hd) {
     var n = 0;
@@ -440,7 +473,9 @@ class CurveGame extends FlameGame {
         ..color = color.withValues(alpha: 0.25);
       canvas.drawCircle(c, radius, _icon);
       _icon.color = color;
-      canvas.drawArc(rect, -pi / 2, 2 * pi * _ringLeft[i], false, _icon);
+      // Reversed steering: the ring slowly turns the other way round, one turn in 4 s.
+      final start = -pi / 2 - (kind == PowerUpKind.reverseOthers ? _time * pi / 2 : 0);
+      canvas.drawArc(rect, start, 2 * pi * _ringLeft[i], false, _icon);
       if (kind == PowerUpKind.fatOthers) {
         final stacks = sim.effectStacks(hd.id, kind);
         _icon

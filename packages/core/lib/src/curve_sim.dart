@@ -14,6 +14,9 @@ class CurveConfig {
     this.gapEveryMin = 1.5,
     this.gapEveryMax = 3.5,
     this.gapLength = 0.25,
+    this.cheeseGapEveryMin = 0.3,
+    this.cheeseGapEveryMax = 0.7,
+    this.cheeseGapLength = 0.45,
     this.selfGraceTicks = 12,
     this.tickHz = 60,
     this.countdown = 2.0,
@@ -33,16 +36,21 @@ class CurveConfig {
             countdown: countdown, powerUpEveryMin: 1, powerUpEveryMax: 2.5, powerUpMax: 8),
         CurveMode.balanced => CurveConfig(countdown: countdown),
         CurveMode.peaceful => CurveConfig(countdown: countdown, powerUps: false),
-        // Only the kinds that help you: slow, ghost.
+        // Only the kinds that act on you: speed up, slow down, ghost, cheese.
         CurveMode.onlyYou => CurveConfig(
             countdown: countdown,
-            powerUpKinds: [PowerUpKind.slow, PowerUpKind.ghost]),
+            powerUpKinds: [PowerUpKind.speed, PowerUpKind.slow, PowerUpKind.ghost, PowerUpKind.cheese]),
       };
 
   final int arenaW, arenaH;
   final double speed, turnRate, lineWidth;
   final int cell;
   final double gapEveryMin, gapEveryMax, gapLength;
+
+  /// While cheese lasts the line has gaps much more often and longer than the
+  /// normal random ones: one every 0.3-0.7 s, each 0.45 s (normal: every
+  /// 1.5-3.5 s, 0.25 s).
+  final double cheeseGapEveryMin, cheeseGapEveryMax, cheeseGapLength;
   final int selfGraceTicks, tickHz;
   final double countdown;
 
@@ -57,9 +65,22 @@ class CurveConfig {
   final List<PowerUpKind>? powerUpKinds;
 }
 
-/// Green ones act on the picker (slow, ghost), red ones on everyone else
-/// (speedOthers, fatOthers, reverseOthers), blue ones on the board (clear, wrap).
-enum PowerUpKind { slow, ghost, speedOthers, fatOthers, reverseOthers, clear, wrap }
+/// Green ones act on the picker (speed up, slow down, ghost, cheese), red ones
+/// on everyone else (speedOthers, slowOthers, fatOthers, reverseOthers,
+/// squareOthers), blue ones on the board (clear, wrap).
+enum PowerUpKind {
+  speed,
+  slow,
+  ghost,
+  cheese,
+  speedOthers,
+  slowOthers,
+  fatOthers,
+  reverseOthers,
+  squareOthers,
+  clear,
+  wrap
+}
 
 class CurvePowerUp {
   const CurvePowerUp(this.id, this.kind, this.x, this.y);
@@ -116,9 +137,14 @@ class _Head {
   final Int32List fx = Int32List(PowerUpKind.values.length);
 
   bool has(PowerUpKind k) => fx[k.index] > 0;
+  /// Speed up (yours or the others') and slow down (yours or the others') can
+  /// all run at once: the factors multiply.
   double get speedFactor =>
-      (has(PowerUpKind.speedOthers) ? _speedUp : 1) *
-      (has(PowerUpKind.slow) ? _slowDown : 1);
+      (has(PowerUpKind.speed) || has(PowerUpKind.speedOthers) ? _speedUp : 1) *
+      (has(PowerUpKind.slow) || has(PowerUpKind.slowOthers) ? _slowDown : 1);
+
+  /// The steering input of the last tick (-1, 0, 1): square turns turn on a new press.
+  int lastSteer = 0;
   /// Fat pickups running on this head (0 when fat is off), 1..[maxFatStacks].
   int fatStacks = 0;
   double get widthFactor => has(PowerUpKind.fatOthers) ? 1.0 + fatStacks : 1;
@@ -290,6 +316,7 @@ class CurveSim {
     for (final h in _heads.values) {
       h.alive = !_gone.contains(h.id);
       h.inGap = false;
+      h.lastSteer = 0;
       h.fx.fillRange(0, h.fx.length, 0);
       h.gapTicks = _nextGap();
       // Rejection sampling; after 100 tries accept the spot (tiny arenas).
@@ -309,6 +336,11 @@ class CurveSim {
 
   int _nextGap() => ((config.gapEveryMin +
               _random.nextDouble() * (config.gapEveryMax - config.gapEveryMin)) *
+          config.tickHz)
+      .round();
+
+  int _nextCheeseGap() => ((config.cheeseGapEveryMin +
+              _random.nextDouble() * (config.cheeseGapEveryMax - config.cheeseGapEveryMin)) *
           config.tickHz)
       .round();
 
@@ -344,10 +376,20 @@ class CurveSim {
       if (!h.alive) continue;
       final f = h.fx;
       for (var k = 0; k < f.length; k++) {
-        if (f[k] > 0) f[k]--;
+        if (f[k] > 0 && --f[k] == 0 && k == PowerUpKind.cheese.index && !h.inGap) {
+          h.gapTicks = _nextGap(); // cheese is over: normal gaps again
+        }
       }
       final steer = (h.right ? 1 : 0) - (h.left ? 1 : 0);
-      h.heading += config.turnRate * dt * (h.has(PowerUpKind.reverseOthers) ? -steer : steer);
+      final turn = h.has(PowerUpKind.reverseOthers) ? -steer : steer;
+      if (h.has(PowerUpKind.squareOthers)) {
+        // Square turns: a new press (also switching sides) turns exactly 90
+        // degrees at once; a held button then goes straight.
+        if (steer != 0 && steer != h.lastSteer) h.heading += turn * pi / 2;
+      } else {
+        h.heading += config.turnRate * dt * turn;
+      }
+      h.lastSteer = steer;
       final step = config.speed * h.speedFactor * dt;
       h.x += cos(h.heading) * step;
       h.y += sin(h.heading) * step;
@@ -375,9 +417,10 @@ class CurveSim {
     for (final h in _moved) {
       if (--h.gapTicks <= 0) {
         h.inGap = !h.inGap;
+        final cheese = h.has(PowerUpKind.cheese);
         h.gapTicks = h.inGap
-            ? (config.gapLength * config.tickHz).round()
-            : _nextGap();
+            ? ((cheese ? config.cheeseGapLength : config.gapLength) * config.tickHz).round()
+            : (cheese ? _nextCheeseGap() : _nextGap());
       }
       if (h.inGap || h.has(PowerUpKind.ghost)) continue; // a ghost paints nothing
       final width = config.lineWidth * h.widthFactor;
@@ -432,12 +475,19 @@ class CurveSim {
   void _apply(_Head picker, PowerUpKind kind) {
     final ticks = _ticksFor(kind);
     switch (kind) {
+      case PowerUpKind.speed:
       case PowerUpKind.slow:
       case PowerUpKind.ghost:
         picker.fx[kind.index] = ticks;
+      case PowerUpKind.cheese:
+        picker.fx[kind.index] = ticks;
+        // The first hole comes soon, not after the normal gap timer.
+        if (!picker.inGap) picker.gapTicks = min(picker.gapTicks, _nextCheeseGap());
       case PowerUpKind.speedOthers:
+      case PowerUpKind.slowOthers:
       case PowerUpKind.fatOthers:
       case PowerUpKind.reverseOthers:
+      case PowerUpKind.squareOthers:
         for (final h in _heads.values) {
           if (h == picker) continue;
           if (kind == PowerUpKind.fatOthers) {
