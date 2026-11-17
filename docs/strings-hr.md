@@ -327,3 +327,13 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | WolfText.needPlayers / noBots | Vukodlak traži 5 do 8 igrača na mobitelima. / Vukodlak se igra bez botova. Ukloni botove. | Vukodlak needs 5 to 8 players on phones. / No bots in Vukodlak. Remove the bots. | error to the host |
 | UljezText.needPlayers / noBots | Uljez traži 3 do 8 igrača na mobitelima. / Uljez se igra bez botova. Ukloni botove. | Uljez needs 3 to 8 players on phones. / No bots in Uljez. Remove the bots. | error to the host |
 | Uljez guessing (Waiting) | Uljez pogađa riječ sela. | The impostor is guessing the village's word. | Waiting for everyone but the caught impostor |
+| curveBreakTitle(n) / curveBreakTarget(n) / curveBreakNext(s) | Rezultat nakon runde 3 / Pobjeđuje tko prvi dosegne 30 / Sljedeća runda za 4 s | Score after round 3 / First to reach 30 wins / Next round in 4 s | TV, between Curve rounds |
+| pauseSub(s) | Igra je zaustavljena. Još 22 s, onda završava. | The game is paused. 22 s more, then it ends. | TV pause card |
+| curveCountdownHint | Pronađi svoju točku. Strelica pokazuje kamo kreneš. | Find your dot. The arrow shows where you go. | TV, Curve countdown |
+| legendTitle | Pojačanja | Power-ups | TV home, Curve legend |
+| tonight | Večeras | Tonight | TV home strip with the evening's totals |
+| wolfRolePrefix | Uloga: | Role: | TV vote screen, role of who was voted out |
+| wolfLightsLeft(n) | Svjetlo gori dok netko još nije odlučio: još 2. | The light stays on while someone has not decided: 2 left. | TV village, night |
+| packsWord(n) / questionsWord(n) | 16 paketa, 2 000 pitanja | 16 packs, 2 000 questions | TV home, Kviz blurb (Croatian plural: 1 paket, 2 paketa, 21 paket) |
+| gameName / gameBlurb / homeMeta for Objasni, Koliko?, Blef, Tko bi? | see strings.dart | placeholder blurbs until Tasks 39–42 | TV home |
+| powerUpTexts (core) | e.g. Ubrzanje · 5 s: Ti voziš brže. | e.g. Speed up · 5 s: You drive faster. | shared TV and phone legend |
