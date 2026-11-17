@@ -19,17 +19,17 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 10 | Quiz round logic | done (0a679e8, fixes e6b6d64, eae0ec9) | builder-2 |
 | 11 | Quiz screens | done on macOS (e0f899d, 4c9f22a, 8ba1b0c, a22faec); design review 2 in progress | core + app |
 | 12 | Pack store and upload | done (3e49ecb, e5fcb49, 0606039, 729b9a9, e06c9fe) | builder-2 |
-| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | built: 10 packs, 449 questions (4c17e2d, a99feee, cd0b775); waits on the person's hr-medimurje review | content |
-| 14 | TV polish and release install | Steps 1–4 done (5d32880); Step 5 leftovers (3+ phones, Android Chrome) with the person | lead |
-| 15 | Design pass to the reference screens (person, 2026-11-14) | done on macOS (ee77c55, 9cd8631, a7bbada, 7cf32db); see it on the TV next session | lead |
+| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | approved by the person 2026-11-17 with changes (no village names in word questions, no easy words); closes with Task 38 | content |
+| 14 | TV polish and release install | Steps 1–4 done (5d32880); Step 5 leftovers (3+ phones incl. Android Chrome) still with the person | lead |
+| 15 | Design pass to the reference screens (person, 2026-11-14) | done; on the TV | lead |
 | 13b | Croatian content: all HR packs verified + harder; Croatian versions of the 6 English packs (person, 2026-11-14) | built (bf474df, e8ec4ed, 617240e, 6f1fe36, a408ee1): 16 packs, 759 questions; hr-medimurje waits on the person | content |
-| 16 | Croatian user interface (person, 2026-11-14) | done on macOS (605053a … 526c98e); see it on the TV next session | lead |
-| 17 | Show active power-ups and time left; wrap = shrinking white border (person, 2026-11-14) | done on macOS (58c90f8, 077870a, 87ea9c8); see it + frame times on the TV next session | lead |
-| 18 | Keep the TV awake while the app is open (screensaver started mid-game; person, 2026-11-14) | built (9541811); TV check next session | lead |
+| 16 | Croatian user interface (person, 2026-11-14) | done; on the TV | lead |
+| 17 | Show active power-ups and time left; wrap = shrinking white border (person, 2026-11-14) | done; replaced by Task 34 rings; on the TV | lead |
+| 18 | Keep the TV awake while the app is open (screensaver started mid-game; person, 2026-11-14) | built (9541811); on the TV; screensaver check still to do | lead |
 | 19 | Curve: a phone button sometimes stops reacting (person, 2026-11-15) | done on macOS (edd0ca4; cause: a crash reset the per-button finger count, the late lift sent it to -1); real phones next session | lead |
 | 20 | Game keeps going when the host leaves; dropped players come back in (person, 2026-11-15) | done on macOS (696669b … 9d7e1bf); real phones + TV next session | lead |
 | 21 | Croatian packs only, all as big as verified questions allow; pub-quiz/Potjera as a guide (person, 2026-11-15) | done (59588ed … 0b07659): 10 packs, ~1,245 questions, all sourced; 52 new Međimurje ones wait on the person | lead + content |
-| 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | app done on macOS (89c05ab, 335c62b); 20 Commons photos so far (geografija 18, medimurje 2); 11 world cities in zemljopis-svijeta (31 photos) | lead + content |
+| 22 | Photo questions ("Koji je ovo grad?"), pictures as big as possible on the TV (person, 2026-11-15) | done; on the TV | lead + content |
 | 23 | Host game settings: quiz time per question, questions per game, time between questions; Curve pause between rounds (person, 2026-11-16) | done; on the TV in a286dc2 | lead |
 | 24 | Curve modes (Kaos, Uravnoteženo, Mirno, Samo za tebe); speed up hits others, slow down is yours; thin/fat last longer (person, 2026-11-16) | done; on the TV in a286dc2 (Kaos tuned by guess) | lead |
 | 25 | Fat stacks, ghost leaves no line, thin removed, reverse-others added (person, 2026-11-16) | done on macOS; fat stacking, ghost line return, the swap itself unit-tested only; on the TV in a286dc2 | lead |
@@ -39,23 +39,23 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | done; on the TV since a286dc2 (chip contrast 9826952 next install); join screen does not grey taken faces | lead |
 | 30 | Console home (one game full screen, neighbours at the edges, QR top left), games full screen (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 31 | Quiz ticker (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
-| 32 | Sound in every game and the menus (person, 2026-11-17) | queued to lead | lead |
-| 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | queued to lead | lead + content |
+| 32 | Sound in every game and the menus (person, 2026-11-17) | built (58ac542, 9de1471); on the TV in fd838d6; not heard yet | lead |
+| 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | playable on the TV in fd838d6; review clean; full QA with 5–8 phones running; vote shows only who is out | lead + content |
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
-| 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | queued to lead | lead + content |
-| 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | queued to lead | lead |
+| 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | playable on the TV in fd838d6; QA with 3–8 phones running | lead + content |
+| 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | in progress: speed and slow both ways (4 kinds), cheese, square turns | lead |
+| 37 | Design-audit decisions: scores between Curve rounds, Večeras strip, power-up legend, fat icon, night switch (person, 2026-11-17) | in progress; audit fixes (pack grid f1d37a9, Curve art de932f6) | lead |
 | 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | queued to lead | lead + content |
 
 ## Open questions for the person
 
-- Task 14 Step 5 leftovers, on your own time (no adb needed; the app is installed): play with 3+ phones at once,
-  including an Android phone in Chrome.
-- Back on the results screen: exit the app (Android TV default, as now) or go to the lobby?
-- Quiz: when everyone scores 0, everyone ties for first and gets confetti + session points (the plan's tie rule).
-  Should a 0-point game award nothing instead?
-- Task 13: review the `hr-medimurje` pack when it's ready.
+- Task 14 Step 5 leftovers: play with 3+ phones at once, including an Android phone in Chrome.
+- TV A/B for the frame-time fix: reconnect adb when convenient (~10 min).
+- docs/specs/2026-11-17-party-games-design.md (four more games) appeared untracked on 2026-11-17; nobody routed it. Ask the person whether it is theirs and wanted.
 
 Answered:
+- 2026-11-17: Back on results moves on (next round/game, or home when the game is over); an all-zero game gives
+  everyone 0; placement points last = 0. hr-medimurje approved with changes. (Task 38.)
 - 2026-11-13: Task 1 installs (Flutter cask, Android licenses, android-34 TV x86 image): **yes**.
 - 2026-11-13: Local merges of team branches into main: **fine without asking**. Pushes, PRs, GitHub merges still ask.
 - 2026-11-14: Task 5 gate: **GO**, with the RTT investigated alongside Task 5b.
@@ -97,6 +97,7 @@ Answered:
 | builder-2 | build-builder-2@couchplay | 2026-11-14 | **added**: RTT investigation, while core + app are on Task 5b |
 | design | (removed 2026-11-14) | 2026-11-14 | added for design reviews of Tasks 6, 11, 14, 15; removed when done |
 | content | build-content@couchplay | 2026-11-14 | **added**: Task 13 question packs |
+| content-2 | build-content-2@couchplay | 2026-11-15 | **added**: Task 21 packs (template rigs/seats/content-2.member.yaml) |
 
 Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its work is done.
 
