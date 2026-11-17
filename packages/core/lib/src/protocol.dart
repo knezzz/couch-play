@@ -340,7 +340,8 @@ sealed class Message with _JsonEq {
             picks: m['picks'] as int,
             picked: m['picked'] as int?,
             picked2: m['picked2'] as int?,
-            special: m['special'] as bool),
+            special: m['special'] as bool,
+            done: (m['done'] as bool?) ?? false),
         'morning' => Morning(m['day'] as int, m['text'] as String),
         'votePrompt' => VotePrompt(
             day: m['day'] as int,
@@ -776,6 +777,10 @@ class NightPrompt extends Message {
   final int? picked;
   final int? picked2;
   final bool special;
+
+  /// This phone already confirmed its night answer (the same for every role,
+  /// a sum included): show 'Poslano'. False from an older TV.
+  final bool done;
   const NightPrompt(
       {required this.night,
       required this.text,
@@ -786,7 +791,8 @@ class NightPrompt extends Message {
       this.picks = 1,
       this.picked,
       this.picked2,
-      this.special = false});
+      this.special = false,
+      this.done = false});
   @override
   String get type => 'night';
   @override
@@ -801,6 +807,7 @@ class NightPrompt extends Message {
         'picked': picked,
         'picked2': picked2,
         'special': special,
+        'done': done,
       };
 }
 
