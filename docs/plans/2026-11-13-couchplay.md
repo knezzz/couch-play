@@ -897,3 +897,34 @@ The person: "Add a way for players to choose a character. Show characters on TV 
 - [x] **Step 3: Implement** core (SVGs + protocol), TV session + screens, phone join/lobby; strings into the strings files and `docs/strings-hr.md`.
 - [x] **Step 4: Run.** Expected: PASS in every member. QA on macOS release + release web: 8 players and bots, every screen with characters, fit at 360–390 px, characters readable on the TV.
 - [x] **Step 5: Commit** by path.
+
+---
+
+### Task 30: Console home and full-screen games (added 2026-11-17, user request)
+
+Reference: canvas page "Konzola i Vukodlak", `V2Home.dc.html` (and `V2Quiz.dc.html` for the full-screen look). The spec's "Console redesign".
+
+- [ ] **Step 1:** TV home replaces the lobby layout: one game full screen with its background art, big centred title, description and current settings; neighbours peek at the edges; ◀ ▶ / OK / ▼ / Back on the remote; the same selection from the host's phone (Task 27's selection protocol). QR + address top left, characters top right. Background art drawn in code (no new assets unless licensed and credited). Light animation where cheap; respects reduced motion.
+- [ ] **Step 2:** games full screen (no side panels): quiz and results first; Curve already is.
+- [ ] **Step 3:** tests (widget: home shows the selected game, ◀ ▶ changes it, phone selection mirrors); QA on macOS release; frame times on the TV next session.
+- [ ] **Step 4: Commit** by path.
+
+### Task 31: Quiz ticker (added 2026-11-17, user request)
+
+Reference: `V2Quiz.dc.html`.
+- [ ] 20-segment bar along the top losing one per second (red in the last 5), the big ring countdown, ticking sound for the whole question, faster in the last 5 s. Follows the host's time per question. Tests + QA; commit.
+
+### Task 32: Sound in every game and the menus (added 2026-11-17, user request)
+
+- [ ] Menu move/confirm clicks on the TV home; quiz ticking (Task 31); Curve as Task 26; Vukodlak: night ambience, howl, rooster, vote bell, drum. Self-made or CC0, listed in `apps/tv/assets/sounds/SOURCES.md`; never stalls the game loop; mixed below talking volume. Tests through the fake player; QA by ear on the TV.
+
+### Task 33: Vukodlak (added 2026-11-17, user request)
+
+Reference: canvas page "Konzola i Vukodlak" (`Village.dc.html`, `V2WolfNight/Day/Vote`, `V2PhoneRole`, `V2PhoneNight`, `V2PhoneVote`, `V2PhoneWolfSettings`, `V2PhoneWolfRolesPick`, `V2PhoneRolesInfo`, `WolfRoles.dc.html`), and the spec's "Vukodlak".
+
+- [ ] **Step 1: Core (pure Dart, tests first):** roles and teams; the mix draw from the enabled roles and player count (seeded); night resolution (wolf choice by agreement/majority, protection, bodyguard, herbalist cure/poison, elder, alpha conversion, lovers); day vote (mayor double, fool, hunter's shot, tramp win); win checks; hidden-roles option. A test per role rule.
+- [ ] **Step 2: Protocol + session:** game kind `vukodlak`, host settings (possible roles, hidden roles, discussion time), private per-phone messages (role, night prompt, results) that never go to other phones; 5–8 humans, no bots.
+- [ ] **Step 3: TV:** the animated village (houses in a circle, story and clock in the square, closed house with blood and a crow for players who are out), night/morning/vote/end screens; story lines in Croatian (a content seat writes varied lines for each event).
+- [ ] **Step 4: Phones:** hold-to-see role; one grey night screen for every role; vote; host settings with the possible-roles screen; everyone's "possible roles" list.
+- [ ] **Step 5: Check:** tests in all members; QA on macOS release with 5–8 browser phones: a full game for several role mixes; nothing on a phone (colour, layout, timing) reveals a role; review checks that no private message reaches the wrong phone.
+- [ ] **Step 6: Commit** by path.

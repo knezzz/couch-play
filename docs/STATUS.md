@@ -37,6 +37,10 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 27 | Host picks a game from a carousel; details with settings, mirrored on the TV; Igraj starts it (person, 2026-11-16) | done; on the TV since a286dc2 (polish 3ec57e3 next install) | lead |
 | 28 | Six new packs (Umjetnost, Psihologija, Ljudsko tijelo, Memeovi, Fizika, Matematika) + more picture questions (person, 2026-11-16) | done (5fa5fb3): 16 packs, ~2,000 questions, 89 new photos; most on the TV in ecf8eb9 | lead + content |
 | 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | done; on the TV since a286dc2 (chip contrast 9826952 next install); join screen does not grey taken faces | lead |
+| 30 | Console home (one game full screen, neighbours at the edges, QR top left), games full screen (person, 2026-11-17) | queued to lead | lead |
+| 31 | Quiz ticker (person, 2026-11-17) | queued to lead | lead |
+| 32 | Sound in every game and the menus (person, 2026-11-17) | queued to lead | lead |
+| 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | queued to lead | lead + content |
 
 ## Open questions for the person
 
@@ -265,3 +269,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   in every game, a ticker on quizzes, and a new social-deduction game (Vukodlak: story on the TV, roles and actions
   on phones). "Make an artifact first": canvas page "Konzola i Vukodlak" drawn (8 screens + notes). Nothing routed
   yet; waiting for the person's comments.
+- 2026-11-17: Person approved the design page "Konzola i Vukodlak" ("odlično", QR moved top left). Spec + plan Tasks
+  30-33; routed to lead.

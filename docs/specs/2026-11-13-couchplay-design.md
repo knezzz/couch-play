@@ -8,7 +8,7 @@ A party-games console for the living room. An Android TV shows the game; everyon
 
 ## Goals (v1)
 
-- Android TV app that hosts a lobby and two games: **Quiz** and **Curve** (Tron / Curve Fever style).
+- Android TV app that hosts a lobby and three games: **Quiz**, **Curve** (Tron / Curve Fever style) and **Vukodlak** (a werewolf-style social deduction game, added 2026-11-17).
 - Phones join by scanning a QR code on the TV and get a browser controller (Flutter Web) served by the TV itself.
 - One Dart codebase: TV app, controller, and a shared package for protocol, theme, and visual effects, so the same effects (particles, color flashes, animations) can play on TV and phone.
 - Quiz question packs in a simple, documented file format; ships with packs written by Claude, some with simple vector pictures (flags, shapes).
@@ -161,10 +161,46 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
   affected line's head, with a ring that drains as the time runs out. Clear is instant and needs no timer. The Curve
   screen uses the reference-screen tokens below.
 
+### Console redesign (user request, 2026-11-17)
+
+Reference: the design canvas, page "Konzola i Vukodlak" (copy in `docs/design/couchplay-screens/V2*.dc.html`,
+`Village.dc.html`, `WolfRoles.dc.html`).
+
+- **Home:** one game fills the screen with its own background art; its title is big in the middle with a one-line
+  description and its current settings; the previous and next games just show at the left and right edges. ◀ ▶ changes
+  game, OK plays, ▼ opens its settings, Back exits. The QR code and the join address sit in the top-left corner; the
+  players' characters top right. The remote and the host's phone drive the same choice. Replaces the lobby layout.
+- **Games full screen:** no frame or side panels; the quiz uses the whole screen.
+- **Quiz ticker:** a 20-segment bar along the top edge loses one segment per second (red for the last 5), a large ring
+  countdown shows the seconds, and the TV ticks for the whole question, faster at the end.
+
+### Vukodlak (user request, 2026-11-17)
+
+A werewolf-style social deduction game for 5–8 people (no bots). The TV tells the story; roles and actions are on
+the phones. Folk-game roles in our own words; no names or roles from Town of Salem or other products.
+
+- **TV:** the village: each player's house in a circle around the square, with their character and name; the story
+  and the clock in the square. Night: dark, lit windows; morning: daylight. A player who is out: their house closes up
+  (boarded, grey), with blood around it and a crow. Light animation: chimney smoke, flickering windows, stars,
+  fireflies, drifting clouds, swaying trees (off with reduced motion). The day vote shows who voted for whom.
+- **Phones:** the role is hidden by default and shows only while a finger is on the screen. At night every phone
+  looks the same (grey, same layout, same button) whatever the role; only a short grey line of text differs; villagers
+  also pick (whom they suspect) so every phone looks busy. Day vote on the phones.
+- **Roles (14):** Vukodlak, Vođa čopora, Vuk samotnjak; Seljanin, Vidovnjakinja, Ljekarnik, Tjelohranitelj, Travarica,
+  Lovac, Starješina, Načelnik, Provodadžija, Seoska budala; Lutalica (descriptions in `WolfRoles.dc.html`).
+- **Host settings:** switch on the possible roles (Vukodlak and Seljanin always on); the game draws the mix each game:
+  1 werewolf for 5–6 players, 2 for 7–8; up to (players − werewolves − 2) special roles at random from those switched
+  on; the rest Seljani; Vođa čopora / Vuk samotnjak may replace an ordinary werewolf. "Skrivene uloge" (on by default):
+  a player who is out is not revealed; all roles are shown at the end. Day discussion time.
+- **Players see every possible role** (all switched on, not only those drawn) and what each does, on a phone screen.
+- Win: the village when no werewolves are left; the werewolves when they equal the rest; solo roles as described.
+
 ### Sound (user request, 2026-11-16)
 
 The TV plays short sound effects from its speakers: Curve countdown, power-up pickup, crash, round and match win;
-quiz question start, last seconds, reveal (right/wrong), winner. Phones stay silent. Sounds are freely licensed (CC0)
+quiz question start, last seconds, reveal (right/wrong), winner. Phones stay silent. Extended 2026-11-17: sound in
+every game and in the menus: menu move and confirm clicks; the quiz ticks for the whole question; Vukodlak night
+ambience, a howl when the wolves choose, a rooster in the morning, a bell for the vote, a drum when someone is out. Sounds are freely licensed (CC0)
 or made for the project, small, and mixed so they don't drown out talking.
 
 ### Shared effects

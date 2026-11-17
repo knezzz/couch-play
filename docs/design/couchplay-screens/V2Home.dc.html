@@ -43,16 +43,23 @@ body{margin:0}
   <div style="position: absolute; left: 0; right: 0; top: 820px; display: flex; justify-content: center; gap: 14px" aria-hidden="true">
     <sc-for list="{{dots}}" as="d" hint-placeholder-count="3"><span style="{{d.s}}"></span></sc-for>
   </div>
-  <div style="position: absolute; left: 72px; top: 48px; font-size: 36px; font-weight: 900; opacity: 0.8">CouchPlay</div>
-  <div style="position: absolute; right: 72px; top: 40px; display: flex; align-items: center; gap: 14px">
+  <div style="position: absolute; left: 48px; top: 40px; display: flex; align-items: center; gap: 20px; background: rgba(0,0,0,0.5); border-radius: 24px; padding: 14px 28px 14px 14px">
+    <div style="width: 168px; height: 168px; background: #FFFFFF; border-radius: 14px; box-sizing: border-box; padding: 14px; display: flex">
+      <div style="flex-grow: 1; border: 3px dashed #14141E; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #14141E; font-size: 22px; font-weight: 700">QR</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 34px; font-weight: 900">Skeniraj i pridruži se</span>
+      <span style="font-size: 28px; color: #C9C9D8">ili otvori u pregledniku:</span>
+      <span style="font-size: 34px; font-weight: 700">192.168.1.5:8080</span>
+    </div>
+  </div>
+  <div style="position: absolute; right: 72px; top: 48px; display: flex; align-items: center; gap: 14px">
     <sc-for list="{{players}}" as="p" hint-placeholder-count="5">
       <dc-import name="Face" animal="{{p.animal}}" color="{{p.color}}" size="{{s52}}" hint-size="52px,52px"></dc-import>
     </sc-for>
-    <div style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.45); border-radius: 16px; padding: 8px 16px 8px 8px; margin-left: 12px">
-      <div style="width: 80px; height: 80px; background: #FFFFFF; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #14141E; font-size: 16px; font-weight: 700">QR</div>
-      <span style="font-size: 28px; font-weight: 700">192.168.1.5:8080</span>
-    </div>
+    <span style="font-size: 30px; color: #C9C9D8; margin-left: 6px">5 igrača</span>
   </div>
+  <div style="position: absolute; left: 0; right: 0; top: 52px; text-align: center; font-size: 36px; font-weight: 900; opacity: 0.75; pointer-events: none">CouchPlay</div>
   <div style="position: absolute; left: 0; right: 0; bottom: 44px; display: flex; justify-content: center; gap: 48px; font-size: 30px; color: #C9C9D8">
     <span>◀ ▶ igra</span><span>OK igraj</span><span>▼ postavke</span><span>Natrag izlaz</span>
   </div>
