@@ -904,10 +904,10 @@ The person: "Add a way for players to choose a character. Show characters on TV 
 
 Reference: canvas page "Konzola i Vukodlak", `V2Home.dc.html` (and `V2Quiz.dc.html` for the full-screen look). The spec's "Console redesign".
 
-- [ ] **Step 1:** TV home replaces the lobby layout: one game full screen with its background art, big centred title, description and current settings; neighbours peek at the edges; ◀ ▶ / OK / ▼ / Back on the remote; the same selection from the host's phone (Task 27's selection protocol). QR + address top left, characters top right. Background art drawn in code (no new assets unless licensed and credited). Light animation where cheap; respects reduced motion.
-- [ ] **Step 2:** games full screen (no side panels): quiz and results first; Curve already is.
-- [ ] **Step 3:** tests (widget: home shows the selected game, ◀ ▶ changes it, phone selection mirrors); QA on macOS release; frame times on the TV next session.
-- [ ] **Step 4: Commit** by path.
+- [x] **Step 1:** TV home replaces the lobby layout: one game full screen with its background art, big centred title, description and current settings; neighbours peek at the edges; ◀ ▶ / OK / ▼ / Back on the remote; the same selection from the host's phone (Task 27's selection protocol). QR + address top left, characters top right. Background art drawn in code (no new assets unless licensed and credited). Light animation where cheap; respects reduced motion.
+- [x] **Step 2:** games full screen (no side panels): quiz and results first; Curve already is.
+- [x] **Step 3:** tests (widget: home shows the selected game, ◀ ▶ changes it, phone selection mirrors); QA on macOS release; frame times on the TV next session.
+- [x] **Step 4: Commit** by path.
 
 ### Task 31: Quiz ticker (added 2026-11-17, user request)
 
