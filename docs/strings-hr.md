@@ -221,8 +221,7 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | key | Croatian | English | where it shows |
 |---|---|---|---|
 | tkobiVoted | Glas je poslan. Gledaj TV. | Vote sent. Watch the TV. | after the tap |
-| tkobiRight / tkobiWrong | Tvoj glas je išao pobjedniku. / Tvoj glas nije išao pobjedniku. | Your vote went to the winner. / Your vote did not go to the winner. | result |
-| tkobiNoVote | Bez glasa. | No vote. | (reserved) |
+| tkobiRight / tkobiWrong | Pogodak! Tvoj glas je pogodio krunu. / Ovaj put bez pogotka. | Hit! Your vote hit the crown. / No hit this time. | result (no gendered form) |
 
 ### Blef (phone)
 
@@ -235,7 +234,9 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | blefPicked | Odabir je poslan. Gledaj TV. | Your pick is sent. Watch the TV. | after the pick |
 | truthFound / truthMissed | Točan odgovor: pronađen / promašen | Correct answer: found / missed | result |
 | fooledN(n) | Prevarenih: {n} | Fooled: {n} | result |
-| (TV's refusal) | To je točan odgovor! Smisli laž. | That is the correct answer! Make up a lie. | under the field, shown as received |
+| (TV's refusal) BlefText.truth | To je točan odgovor! Smisli laž. | That is the correct answer! Make up a lie. | under the field, shown as received |
+| (TV's refusal) BlefText.empty | Upiši svoju laž. | Type your lie. | under the field, shown as received |
+| (TV's refusal) BlefText.tooLong | Najviše 40 znakova. | At most 40 characters. | under the field, shown as received |
 | blefSpikeTitle / blefSpikeTry | Blef: probno tipkanje / Upiši riječi sa č ć š ž đ … | Blef: typing test | /?spike=blef only |
 
 ### Koliko? (phone)
@@ -243,7 +244,7 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | key | Croatian | English | where it shows |
 |---|---|---|---|
 | questionOf(n, total) | Pitanje {n} od {total} | Question {n} of {total} | the pad, top left |
-| sentNumber + waitTv | Poslano Gledaj TV. | Sent. Watch the TV. | after Pošalji |
+| sentNumber + waitTv | Poslano. Gledaj TV. | Sent. Watch the TV. | after Pošalji |
 | send | Pošalji | Send | Koliko? and Blef |
 | del | Obriši | Delete | the ⌫ key (screen reader) |
 | correctAnswer / yourNumber | Točan odgovor / Tvoj broj | The correct answer / Your number | result |

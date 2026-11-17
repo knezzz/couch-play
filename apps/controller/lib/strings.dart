@@ -77,7 +77,7 @@ abstract final class Strings {
 
   // Koliko?
   static String questionOf(int n, int total) => 'Pitanje $n od $total';
-  static const sentNumber = 'Poslano';
+  static const sentNumber = 'Poslano.';
   static const waitTv = 'Gledaj TV.';
   static const correctAnswer = 'Točan odgovor';
   static const yourNumber = 'Tvoj broj';
@@ -100,9 +100,8 @@ abstract final class Strings {
 
   // Tko bi?
   static const tkobiVoted = 'Glas je poslan. Gledaj TV.';
-  static const tkobiRight = 'Tvoj glas je išao pobjedniku.';
-  static const tkobiWrong = 'Tvoj glas nije išao pobjedniku.';
-  static const tkobiNoVote = 'Bez glasa.';
+  static const tkobiRight = 'Pogodak! Tvoj glas je pogodio krunu.';
+  static const tkobiWrong = 'Ovaj put bez pogotka.';
   static const crowned = 'Pobjednik';
 
   static const send = 'Pošalji';

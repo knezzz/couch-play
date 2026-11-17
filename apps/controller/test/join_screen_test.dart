@@ -125,11 +125,12 @@ void main() {
     });
 
     testWidgets('each grid cell is labelled with its animal', (t) async {
+      final h = t.ensureSemantics(); // before the first frame, so it is built
       tall(t);
       await t.pumpWidget(
         MaterialApp(home: JoinScreen(_Fake(), onJoined: () {})),
       );
-      final h = t.ensureSemantics();
+      await t.pumpAndSettle();
       expect(find.bySemanticsLabel('Lisica'), findsOneWidget);
       expect(find.bySemanticsLabel('Majmun'), findsOneWidget);
       h.dispose();
