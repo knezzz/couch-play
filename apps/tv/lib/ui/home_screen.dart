@@ -226,7 +226,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Positioned(
                         left: 0,
                         right: 0,
-                        top: 716,
+                        // Curve's panel also holds the power-up legend, so it starts higher.
+                        top: g == GameKind.curve ? 130 : 716,
                         child: Center(
                           child: _SettingsPanel(
                             g,
@@ -260,6 +261,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
+                    if (!_settingsOpen && widget.players.any((p) => p.sessionScore > 0))
+                      Positioned(left: 0, right: 0, bottom: 108, child: Center(child: _Tonight(widget.players))),
                     Positioned(
                       left: 48,
                       top: 40,
@@ -558,7 +561,7 @@ class _SettingsPanel extends StatelessWidget {
     );
     return Container(
       key: const ValueKey('game-card'),
-      width: 1360,
+      width: kind == GameKind.curve ? 1640 : 1360,
       padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
       decoration: BoxDecoration(
         color: const Color(0xE61F1F2C),
@@ -582,6 +585,55 @@ class _SettingsPanel extends StatelessWidget {
                 ],
               ),
             ),
+          if (kind == GameKind.curve) ...[
+            const SizedBox(height: 18),
+            const Text(Strings.legendTitle, style: TextStyle(fontSize: 34, fontWeight: FontWeight.w700, color: tvText)),
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 36,
+              runSpacing: 14,
+              children: [for (final k in PowerUpKind.values) _LegendEntry(k)],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// One power-up in the legend: its icon, its name and time, and what it does in one line.
+class _LegendEntry extends StatelessWidget {
+  const _LegendEntry(this.kind);
+  final PowerUpKind kind;
+
+  @override
+  Widget build(BuildContext context) {
+    final info = powerUpTexts[kind]!;
+    return SizedBox(
+      key: ValueKey('legend-${kind.name}'),
+      width: 480,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PowerUpIcon(kind, 64),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  TextSpan(children: [
+                    TextSpan(text: info.name, style: TextStyle(fontWeight: FontWeight.w700, color: PowerUpIcon.colorOf(kind))),
+                    TextSpan(text: ' · ${info.time}', style: const TextStyle(color: tvMuted)),
+                  ]),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 30),
+                ),
+                Text(info.what, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 28, color: tvMuted)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -654,7 +706,7 @@ class _Backdrop extends StatelessWidget {
               GameKind.uljez => const [Color(0xFF1A0E2E), Color(0xFF2A1646)],
           GameKind.objasni => const [Color(0xFF2A1410), Color(0xFF14283A)],
           GameKind.koliko => const [Color(0xFF0B1F1A), Color(0xFF12304A)],
-          GameKind.blef => const [Color(0xFF2A0F1F), Color(0xFF241446)],
+          GameKind.blef => const [Color(0xFF3A2008), Color(0xFF2A0E0E)],
           GameKind.tkobi => const [Color(0xFF2A1030), Color(0xFF3A1430)],
         },
       ),
@@ -803,4 +855,38 @@ class _Vignette extends CustomPainter {
 
   @override
   bool shouldRepaint(_Vignette old) => false;
+}
+
+/// Tonight's totals along the bottom, once a game has been played: a small strip, leader first.
+class _Tonight extends StatelessWidget {
+  const _Tonight(this.players);
+  final List<PlayerInfo> players;
+
+  @override
+  Widget build(BuildContext context) {
+    final sorted = [...players]..sort((a, b) => b.sessionScore.compareTo(a.sessionScore)); // stable: ties keep join order
+    return Container(
+      key: const ValueKey('tonight'),
+      constraints: const BoxConstraints(maxWidth: 1800),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+      decoration: BoxDecoration(color: const Color(0x80000000), borderRadius: BorderRadius.circular(999)),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(Strings.tonight, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: tvMuted)),
+            for (final p in sorted) ...[
+              const SizedBox(width: 36),
+              PlayerDot(playerColors[p.colorIndex % playerColors.length], size: 40, character: p.character),
+              const SizedBox(width: 10),
+              Text(p.name, maxLines: 1, style: const TextStyle(fontSize: 30, color: tvText)),
+              const SizedBox(width: 10),
+              Text('${p.sessionScore}', style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: tvText)),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }

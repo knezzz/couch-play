@@ -445,6 +445,94 @@ void main() {
     expect(find.descendant(of: card, matching: find.textContaining(Strings.settingImpostors)), findsOneWidget);
   });
 
+  group('the power-up legend (▼ on the Curve card)', () {
+    testWidgets('lists every power-up with its icon, name, time and one line, below the settings', (t) async {
+      await _pump(t, selected: GameKind.curve);
+      await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await t.pump();
+      for (final k in PowerUpKind.values) {
+        final e = find.byKey(ValueKey('legend-${k.name}'));
+        expect(e, findsOneWidget, reason: '$k');
+        final info = powerUpTexts[k]!;
+        expect(find.descendant(of: e, matching: find.textContaining(info.name, findRichText: true)), findsWidgets, reason: '${k.name} name');
+        expect(find.descendant(of: e, matching: find.text(info.what)), findsOneWidget, reason: '${k.name} line');
+        expect(find.descendant(of: e, matching: find.textContaining(info.time, findRichText: true)), findsWidgets, reason: '${k.name} time');
+        expect(t.widget<PowerUpIcon>(find.descendant(of: e, matching: find.byType(PowerUpIcon))).kind, k);
+      }
+      expect(find.descendant(of: find.byKey(const ValueKey('game-card')), matching: find.textContaining(Strings.settingMode)), findsOneWidget, reason: 'the settings are still there');
+    });
+
+    testWidgets('it fits: everything between the top and 1030 px, texts 28 px or more, no overflow', (t) async {
+      await _pump(t, selected: GameKind.curve);
+      await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await t.pump();
+      expect(t.takeException(), isNull);
+      final card = t.getRect(find.byKey(const ValueKey('game-card')));
+      expect(card.bottom, lessThanOrEqualTo(1030));
+      expect(card.top, greaterThanOrEqualTo(0));
+      for (final k in PowerUpKind.values) {
+        final r = t.getRect(find.byKey(ValueKey('legend-${k.name}')));
+        expect(r.right, lessThanOrEqualTo(1920), reason: '${k.name}');
+        expect(r.bottom, lessThanOrEqualTo(card.bottom));
+      }
+      for (final w in t.widgetList<Text>(find.descendant(of: find.byKey(const ValueKey('game-card')), matching: find.byType(Text)))) {
+        final size = w.style?.fontSize ?? 28;
+        expect(size, greaterThanOrEqualTo(28), reason: w.data ?? w.textSpan?.toPlainText());
+      }
+    });
+
+    testWidgets('the other games\' panels have no legend', (t) async {
+      await _pump(t, selected: GameKind.quiz);
+      await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await t.pump();
+      expect(find.byKey(ValueKey('legend-${PowerUpKind.speed.name}')), findsNothing);
+    });
+  });
+
+  group('Večeras (tonight\'s totals)', () {
+    final scored = [
+      for (var i = 0; i < 4; i++) PlayerInfo(i, ['Ana', 'Luka', 'Marko', 'Ivana'][i], i, true, [2, 5, 0, 3][i], character: characterIds[i]),
+    ];
+
+    testWidgets('after the first game a small strip along the bottom: each player\'s total, leader first', (t) async {
+      await _pump(t, players: scored);
+      final strip = find.byKey(const ValueKey('tonight'));
+      expect(strip, findsOneWidget);
+      expect(find.descendant(of: strip, matching: find.text(Strings.tonight)), findsOneWidget);
+      double x(String name) => t.getTopLeft(find.descendant(of: strip, matching: find.text(name))).dx;
+      expect(x('Luka'), lessThan(x('Ivana')));
+      expect(x('Ivana'), lessThan(x('Ana')));
+      expect(x('Ana'), lessThan(x('Marko')));
+      expect(find.descendant(of: strip, matching: find.text('5')), findsOneWidget);
+      for (var i = 0; i < 4; i++) {
+        expect(find.descendant(of: strip, matching: find.byWidgetPredicate((w) => w is CharacterFace && w.id == characterIds[i])), findsOneWidget);
+      }
+      expect(t.getRect(strip).bottom, lessThanOrEqualTo(1030), reason: 'clear of the overscan');
+      expect(t.takeException(), isNull);
+    });
+
+    testWidgets('no strip before anyone has points (the first game has not been played)', (t) async {
+      await _pump(t);
+      expect(find.byKey(const ValueKey('tonight')), findsNothing);
+    });
+
+    testWidgets('the settings panel hides it', (t) async {
+      await _pump(t, players: scored, selected: GameKind.quiz);
+      await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await t.pump();
+      expect(find.byKey(const ValueKey('tonight')), findsNothing);
+    });
+
+    testWidgets('8 players with long names still fit on one line, on screen', (t) async {
+      final eight = [for (var i = 0; i < 8; i++) PlayerInfo(i, 'Abcdefghijklmnop', i, true, 40 - i, character: characterIds[i])];
+      await _pump(t, players: eight);
+      expect(t.takeException(), isNull);
+      final r = t.getRect(find.byKey(const ValueKey('tonight')));
+      expect(r.left, greaterThanOrEqualTo(0));
+      expect(r.right, lessThanOrEqualTo(1920));
+    });
+  });
+
   group('each game has its own background art', () {
     final key = GlobalKey();
     Future<ByteData> shot(WidgetTester t, GameKind g) async {

@@ -80,6 +80,7 @@ abstract final class Strings {
   static String curveBreakNext(int seconds) => 'Sljedeća runda za $seconds s';
   static const curveCountdownHint = 'Pronađi svoju točku. Strelica pokazuje kamo kreneš.';
 
+  static const legendTitle = 'Pojačanja';
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';
   static String playerCount(int n) => n == 1 ? '1 igrač' : '$n igrača';
