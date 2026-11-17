@@ -169,7 +169,7 @@ class UljezGame {
   }
 
   void _nextVoteOrEnd() {
-    if (votesLeft > 0) {
+    if (votesLeft > 0 && _caught.length < impostorCount) {
       _beginVote();
     } else {
       _end(_caught.length == impostorCount ? UljezWinner.village : UljezWinner.impostors);
@@ -231,7 +231,8 @@ class UljezGame {
     _votes.updateAll((_, t) => t == id ? null : t); // voted for them: now a skip
     if (isImpostor(id) && !_caught.contains(id)) {
       _caught.add(id);
-      if (_caught.length == impostorCount) _end(UljezWinner.village);
+      // While a caught impostor is still guessing, resolveGuess ends the game.
+      if (_caught.length == impostorCount && phase != UljezPhase.guess) _end(UljezWinner.village);
     }
     return true;
   }

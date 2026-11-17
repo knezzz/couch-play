@@ -425,6 +425,38 @@ void main() {
       expect(g.winner, UljezWinner.village);
     });
 
+    test('the second impostor kicked while the first is guessing: the guess still decides', () {
+      final g = game(7, impostors: 2);
+      clues(g);
+      g.startVote();
+      final imps = g.ids.where(g.isImpostor).toList();
+      for (final i in g.ids) {
+        if (i != imps[0]) g.vote(i, imps[0]);
+      }
+      g.resolveVote();
+      expect(g.phase, UljezPhase.guess);
+      g.expel(imps[1]);
+      expect(g.winner, isNull, reason: 'the guess is still to come');
+      expect(g.phase, UljezPhase.guess);
+      g.guess(imps[0], g.rightGuess);
+      g.resolveGuess();
+      expect(g.winner, UljezWinner.impostors);
+    });
+
+    test('and with a wrong guess the village wins then', () {
+      final g = game(7, impostors: 2);
+      clues(g);
+      g.startVote();
+      final imps = g.ids.where(g.isImpostor).toList();
+      for (final i in g.ids) {
+        if (i != imps[0]) g.vote(i, imps[0]);
+      }
+      g.resolveVote();
+      g.expel(imps[1]);
+      g.resolveGuess();
+      expect(g.winner, UljezWinner.village);
+    });
+
     test('a kicked guesser just has no guess', () {
       final g = game(5);
       clues(g);

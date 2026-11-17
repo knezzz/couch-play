@@ -306,4 +306,49 @@ void main() {
     expect(r.match.votedCount, 3);
     r.match.dispose();
   });
+
+  testWidgets('two impostors: a voted-out innocent and a caught impostor leave the vote screen; a reload keeps them out', (t) async {
+    final r = Rig(n: 7, impostors: 2);
+    await r.toVote(t);
+    final imps = r.match.game.impostors;
+    final innocent = r.match.ids.firstWhere((i) => !imps.contains(i));
+    for (final id in r.match.ids) {
+      if (id != innocent) r.match.onVote(id, Vote(innocent));
+    }
+    r.match.onVote(innocent, const Vote(null));
+    expect(r.match.phase, UljezPhase.vote, reason: 'the second vote follows');
+    expect(r.to(innocent).last, isA<Waiting>(), reason: 'out: not left on the old vote screen');
+    r.match.rejoin(innocent);
+    expect(r.to(innocent).last, isA<Waiting>());
+    r.match.dispose();
+  });
+
+  testWidgets('a caught impostor who guessed wrong leaves the guess screen when the game goes on', (t) async {
+    final r = Rig(n: 7, impostors: 2);
+    await r.toVote(t);
+    final imps = r.match.game.impostors;
+    for (final id in r.match.alive) {
+      if (id != imps[0]) r.match.onVote(id, Vote(imps[0]));
+    }
+    r.match.onVote(imps[0], const Vote(null));
+    r.match.onGuess(imps[0], Guess((r.match.game.rightGuess + 1) % 4));
+    expect(r.match.winner, isNull);
+    expect(r.to(imps[0]).last, isA<Waiting>());
+    r.match.dispose();
+  });
+
+  testWidgets('the second impostor kicked while the first guesses: the game waits for the guess', (t) async {
+    final r = Rig(n: 7, impostors: 2);
+    await r.toVote(t);
+    final imps = r.match.game.impostors;
+    for (final id in r.match.alive) {
+      if (id != imps[0]) r.match.onVote(id, Vote(imps[0]));
+    }
+    r.match.onVote(imps[0], const Vote(null));
+    r.match.expel(imps[1]);
+    expect(r.match.winner, isNull);
+    r.match.onGuess(imps[0], Guess(r.match.game.rightGuess));
+    expect(r.match.winner, UljezWinner.impostors);
+    r.match.dispose();
+  });
 }

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:core/core.dart';
 
 import '../sound/sfx.dart';
+import 'uljez_text.dart';
 
 /// One game of Uljez on the TV: drives [UljezGame] through the clue turns, the
 /// discussion, the vote(s) and the caught impostor's guess, and talks to the
@@ -153,6 +154,9 @@ class UljezMatch {
     lastVotes = r.votes;
     lastOut = r.out;
     if (r.out != null) sfx.play(Sound.drum);
+    // Someone voted out of a game that goes on leaves the vote screen. (The
+    // caught impostor gets the guess instead; the end goes to everyone.)
+    if (r.out != null && !r.caught && game.phase != UljezPhase.over) send(r.out!, const Waiting(UljezText.out));
     if (r.caught) {
       _beginGuess();
     } else {
@@ -186,8 +190,10 @@ class UljezMatch {
 
   void _endGuess() {
     if (game.phase != UljezPhase.guess) return;
+    final guesser = game.guesser;
     game.resolveGuess();
     if (game.phase == UljezPhase.over) return _finish();
+    if (guesser != null) send(guesser, const Waiting(UljezText.out)); // caught and wrong: out, the game goes on
     _beginVote();
   }
 
@@ -239,7 +245,11 @@ class UljezMatch {
       case UljezPhase.discussion:
         send(id, _turnMsg());
       case UljezPhase.vote:
-        send(id, VotePrompt(day: voteNo, seconds: remaining.inSeconds, ids: game.alive, picked: game.votes[id]));
+        send(
+            id,
+            game.alive.contains(id)
+                ? VotePrompt(day: voteNo, seconds: remaining.inSeconds, ids: game.alive, picked: game.votes[id])
+                : const Waiting(UljezText.out));
       case UljezPhase.guess:
         send(
             id,
