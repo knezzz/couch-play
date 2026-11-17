@@ -301,6 +301,8 @@ class Session {
     p.disconnectedAt = null;
     if (old != null && old != peer) old.close();
     peer.send(Welcome(p.id, p.colorIndex, p.token, character: p.character));
+    // The (public) lobby too: a reloaded phone needs the names and colours.
+    if (_phase == Phase.wolf || _phase == Phase.uljez) peer.send(_lobbyMsg());
     switch (_phase) {
       case Phase.lobby:
         _broadcastLobby();
@@ -354,16 +356,20 @@ class Session {
 
   void _broadcastLobby() {
     if (_selectedBy != hostId) _selected = null; // a new host starts clean
-    final lobby = LobbyState(
+    final lobby = _lobbyMsg();
+    for (final p in _players) {
+      p.socket?.send(lobby);
+    }
+  }
+
+  LobbyState _lobbyMsg() {
+    return LobbyState(
         players: playerInfos,
         packs: packStore?.infos ?? const [],
         hostId: hostId ?? -1,
         selected: _selected,
         uljezPacks: [for (final p in uljezPacks) PackInfo(p.id, p.title, p.pairs.length)],
         settings: _settings);
-    for (final p in _players) {
-      p.socket?.send(lobby);
-    }
   }
 
   /// A lobby player who stayed away for more than 10 minutes is dropped.
@@ -477,6 +483,7 @@ class Session {
       return;
     }
     final socket = target.socket;
+    _wolf?.expel(target.id); // out of a running Vukodlak now
     _remove(target); // bots can be kicked too
     socket?.send(const Kicked());
     socket?.close();

@@ -331,7 +331,111 @@ void main() {
     r.match.onNightPick(7, const NightPick(99));
     expect(r.match.game.done, {7});
     final p = r.to(7).whereType<NightPrompt>().last;
-    expect(p.picked, isNull, reason: 'no pick is recorded for a sum');
+    expect(p.picked, 99, reason: 'echoed like an actor\'s pick, so a reload looks the same');
+    r.match.dispose();
+  });
+
+  testWidgets('a reload shows picks the same way for an actor and a sum phone', (t) async {
+    final r = Rig();
+    r.match.onNightPick(4, const NightPick(3, second: 5, special: true)); // the doctor
+    r.match.onNightPick(7, const NightPick(2, second: 4, special: true)); // a villager with a sum
+    for (final id in [4, 7]) {
+      r.match.rejoin(id);
+      final p = r.to(id).whereType<NightPrompt>().last;
+      expect([p.picked != null, p.picked2 != null, p.special], [true, true, true], reason: 'player $id');
+    }
+    r.match.dispose();
+  });
+
+  testWidgets('a rejoin during the vote keeps the vote already cast', (t) async {
+    final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.villager, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer});
+    r.pickAll({});
+    await r.wait(t, 4 + 120);
+    expect(r.match.stage, WolfStage.vote);
+    r.match.onVote(3, const Vote(1));
+    r.match.rejoin(3);
+    expect(r.to(3).whereType<VotePrompt>().last.picked, 1);
+    expect(r.to(2).whereType<VotePrompt>().last.picked, isNull);
+    r.match.dispose();
+  });
+
+  testWidgets('the longest hint (an alpha, two packmates, 16-letter names) is not cut', (t) async {
+    final long = {for (var i = 1; i <= 6; i++) i: 'Abcdefghijklmnop'.replaceRange(0, 1, '${i}')};
+    final roles = {1: WolfRole.alpha, 2: WolfRole.wolf, 3: WolfRole.wolf, 4: WolfRole.villager, 5: WolfRole.villager, 6: WolfRole.villager};
+    final sent = <int, List<Message>>{};
+    final m = WolfMatch(
+      ids: roles.keys.toList(),
+      nameOf: (id) => long[id]!,
+      settings: const GameSettings(),
+      send: (id, msg) => (sent[id] ??= []).add(msg),
+      clock: () => Duration.zero,
+      random: Random(1),
+      fixedRoles: roles,
+    )..start();
+    m.onNightPick(2, const NightPick(4));
+    m.onNightPick(3, const NightPick(5));
+    final text = sent[1]!.whereType<NightPrompt>().last.text;
+    expect(text.length, wolfTextWidth);
+    expect(text.contains('${long[2]} → ${long[4]}'), isTrue);
+    expect(text.contains('${long[3]} → ${long[5]}'), isTrue);
+    expect(text.trimRight().endsWith('vukodlak.'), isTrue, reason: 'the alpha hint is whole: $text');
+    m.dispose();
+  });
+
+  testWidgets('a kicked player is out at once; the night does not wait for them; no role is shown when hidden', (t) async {
+    final r = Rig();
+    for (final id in r.match.alive) {
+      if (id != 6) r.match.onNightPick(id, const NightPick(null));
+    }
+    expect(r.match.stage, WolfStage.night, reason: 'waiting for 6');
+    r.match.expel(6);
+    expect(r.match.stage, WolfStage.dawn, reason: 'everyone else was done');
+    expect(r.match.isAlive(6), isFalse);
+    expect(r.match.story.where((e) => e.key == 'playerLeft').single.args.containsKey('role'), isFalse);
+    expect(r.match.publicRole(6), isNull);
+    r.match.dispose();
+  });
+
+  testWidgets('a kicked hunter takes no shot, and the match goes on', (t) async {
+    final r = Rig();
+    r.match.expel(5);
+    expect(r.match.game.pendingHunters, isEmpty);
+    r.pickAll({});
+    await r.wait(t, 4);
+    expect(r.match.stage, WolfStage.day);
+    r.match.dispose();
+  });
+
+  testWidgets('roles shown: a kicked player\'s role is in the story', (t) async {
+    final r = Rig(hide: false);
+    r.match.expel(7);
+    expect(r.match.story.where((e) => e.key == 'playerLeft').single.args['role'], 'villager');
+    r.match.dispose();
+  });
+
+  testWidgets('no vote count anywhere: not in the story, not on any phone, whoever the mayor is', (t) async {
+    final r = Rig(roles: {
+      1: WolfRole.wolf, 2: WolfRole.mayor, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager
+    });
+    r.pickAll({});
+    await r.wait(t, 4 + 120);
+    for (final id in r.match.alive) {
+      r.match.onVote(id, Vote(id == 1 ? 2 : 1));
+    }
+    await r.wait(t, 20);
+    for (final e in r.match.story) {
+      expect(e.args.containsKey('votes'), isFalse, reason: '$e');
+      expect(e.key, isNot('mayorBreaksTie'));
+    }
+    for (final id in r.roles.keys) {
+      for (final m in r.to(id)) {
+        final j = jsonEncode(m.toJson());
+        expect(j.contains('votes'), isFalse, reason: j);
+        expect(j.contains('tally'), isFalse);
+      }
+    }
+    // who voted for whom is public, one arrow per voter
+    expect(r.match.lastVotes.length, 6);
     r.match.dispose();
   });
 }

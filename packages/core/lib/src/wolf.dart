@@ -137,7 +137,7 @@ enum WolfPhase { night, day, vote, over }
 
 enum WolfWinner { village, wolves, lone, tramp, nobody }
 
-enum DeathCause { wolves, poison, guard, lover, vote, shot }
+enum DeathCause { wolves, poison, guard, lover, vote, shot, left }
 
 class WolfDeath {
   const WolfDeath(this.id, this.cause);
@@ -149,7 +149,7 @@ class WolfDeath {
 
 /// A story event for the TV. [key] and [args] are the contract with the story
 /// writers: args hold player ids under 'player' / 'partner' / 'hunter',
-/// numbers under 'votes' / 'count' / 'night', and 'role' (a [WolfRole] name)
+/// numbers under 'count' / 'night' (never a vote count: the mayor is secret), and 'role' (a [WolfRole] name)
 /// only when the role may be shown (hidden roles off, or the game is over).
 class WolfEvent {
   const WolfEvent(this.key, [this.args = const {}]);
@@ -453,6 +453,23 @@ class WolfGame {
     return true;
   }
 
+  /// What [id] has voted for in the current vote (null: skip or not yet).
+  int? voteOf(int id) => _votes[id];
+
+  /// A player who is kicked or leaves for good is out at once: no shot, no
+  /// story of what they were unless roles are shown. Their lover goes too (also
+  /// without a shot). Returns everyone who went out.
+  List<WolfDeath> expel(int id) {
+    if (_winner != null || !isAlive(id)) return const [];
+    final before = {..._pendingHunters};
+    final deaths = <WolfDeath>[];
+    _kill(id, DeathCause.left, deaths);
+    _pendingHunters.removeWhere((h) => !before.contains(h));
+    _pendingHunters.remove(id);
+    if (_pendingHunters.isEmpty) _checkWin([]);
+    return deaths;
+  }
+
   bool get voteComplete => alive.where(canVote).every(_votes.containsKey);
 
   VoteResult resolveVote() {
@@ -473,7 +490,6 @@ class WolfGame {
     final top = tally.values.reduce(max);
     final tied = [for (final e in tally.entries) if (e.value == top) e.key];
     int? out;
-    var viaMayor = false;
     if (tied.length == 1) {
       out = tied.first;
     } else {
@@ -481,15 +497,13 @@ class WolfGame {
       final mv = mayors.isEmpty ? null : votes[mayors.first];
       if (mv != null && tied.contains(mv)) {
         out = mv;
-        viaMayor = true;
       }
     }
     if (out == null) {
       events.add(const WolfEvent('voteTie'));
       return VoteResult(votes, null, events, tie: true);
     }
-    final args = <String, Object>{'player': out, 'votes': top};
-    if (viaMayor) events.add(WolfEvent('mayorBreaksTie', {'player': mayorOf()!}));
+    final args = <String, Object>{'player': out};
     if (_roles[out] == WolfRole.fool && !_silenced.contains(out)) {
       _silenced.add(out);
       events.add(WolfEvent('foolSpared', {'player': out}));

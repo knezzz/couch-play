@@ -132,4 +132,24 @@ void main() {
     expect(s.phase, Phase.lobby);
     s.dispose();
   });
+
+  test('a phone that reloads mid-game gets the public lobby (names, colours) with its own state', () async {
+    setUpSession(5);
+    ps[0].say(const StartGame(GameKind.vukodlak, null));
+    await ps[2].drop();
+    final again = join(s, 'P2', token: 't2');
+    expect(again.sent.whereType<LobbyState>(), isNotEmpty);
+    final order = [for (final m in again.sent) m.type];
+    expect(order.indexOf('lobby'), lessThan(order.indexOf('role')));
+    s.dispose();
+  });
+
+  test('a kicked player is out of the match', () {
+    setUpSession(6);
+    ps[0].say(const StartGame(GameKind.vukodlak, null));
+    final id = ps[3].sent.whereType<Welcome>().first.playerId;
+    ps[0].say(Kick(id));
+    expect(s.wolf!.isAlive(id), isFalse);
+    s.dispose();
+  });
 }

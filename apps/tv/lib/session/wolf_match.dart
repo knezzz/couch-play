@@ -210,7 +210,7 @@ class WolfMatch {
       choices2: c2,
       ids2: i2,
       picks: two ? 2 : 1,
-      picked: game.pickOf(id),
+      picked: t.first,
       picked2: t.second,
       special: t.special,
     );
@@ -228,11 +228,13 @@ class WolfMatch {
     if (game.hasNightAction(id)) {
       final ok = game.pick(id, m.target, special: m.special, second: game.night == 1 ? m.second : null);
       if (!ok) game.pick(id, null);
-      t.second = game.night == 1 ? m.second : null;
-      t.special = m.special;
     } else {
       game.pick(id, null); // a sum: any answer is done, none does anything
     }
+    // The phone's own choice is echoed back on reconnect for EVERY role alike.
+    t.first = m.target;
+    t.second = game.night == 1 ? m.second : null;
+    t.special = m.special;
     _refreshShown();
     _sendPrompts();
     notify?.call();
@@ -391,6 +393,29 @@ class WolfMatch {
     onOver?.call(game.winner!);
   }
 
+  // ---- a kicked player is out at once ----
+
+  /// The host kicked [id]: out of the match now (no farewell window, no shot).
+  /// Whoever else goes out with them (a lover) is told they are out.
+  void expel(int id) {
+    if (!ids.contains(id) || stage == WolfStage.over || !game.isAlive(id)) return;
+    final deaths = game.expel(id);
+    sfx.play(Sound.drum);
+    for (final d in deaths) {
+      _out.add(d.id);
+      _inFarewell.remove(d.id);
+      story.add(WolfEvent('playerLeft', {
+        'player': d.id,
+        if (!game.hideRoles) 'role': game.roleOf(d.id).name,
+      }));
+      if (d.id != id) send(d.id, const Waiting(WolfText.out));
+    }
+    if (game.winner != null) return _finish();
+    if (stage == WolfStage.night && game.nightComplete) _endNight();
+    if (stage == WolfStage.vote && game.voteComplete) _endVote();
+    notify?.call();
+  }
+
   // ---- reconnect: a phone gets only its own state ----
 
   void rejoin(int id) {
@@ -405,7 +430,7 @@ class WolfMatch {
     } else if (stage == WolfStage.night) {
       send(id, _prompt(id));
     } else if (stage == WolfStage.vote) {
-      send(id, VotePrompt(day: day, seconds: remaining.inSeconds, ids: alive, canVote: game.canVote(id)));
+      send(id, VotePrompt(day: day, seconds: remaining.inSeconds, ids: alive, canVote: game.canVote(id), picked: game.voteOf(id)));
     } else if (_morning.containsKey(id)) {
       send(id, Morning(day, _morning[id]!));
     }
@@ -421,6 +446,7 @@ class _Task {
         sum2 = two ? NightSum.draw(r, count: count) : null;
   final NightSum? sum;
   final NightSum? sum2;
+  int? first;
   int? second;
   bool special = false;
 }

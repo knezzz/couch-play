@@ -546,8 +546,9 @@ class Kicked extends Message {
 // go to one phone only and never inside a broadcast.
 
 /// Fixed width of the free-text field in [NightPrompt] and [Morning]: the
-/// session pads to it so a message's length does not tell the role.
-const wolfTextWidth = 120;
+/// session pads to it so a message's length does not tell the role. 200 holds
+/// the longest hint (an alpha with two packmates, 16-letter names).
+const wolfTextWidth = 200;
 
 /// Phone -> TV, night: [target] is the id picked (null: skipped, or a sum
 /// answer: the TV does not look). [special] is the extra switch every phone

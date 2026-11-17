@@ -475,7 +475,7 @@ void main() {
       expect(r.out, 0);
       expect(g.isAlive(0), isFalse);
       expect(r.events.first.key, 'voteOut');
-      expect(r.events.first.args['votes'], 3);
+      expect(r.events.first.args.containsKey('votes'), isFalse, reason: 'no vote counts: the mayor is secret');
     });
 
     test('a tie puts nobody out', () {
@@ -527,7 +527,7 @@ void main() {
       g.vote(4, 1);
       final r = g.resolveVote();
       expect(r.out, 0);
-      expect(r.events.first.key, 'mayorBreaksTie');
+      expect(r.events.map((e) => e.key), ['voteOut'], reason: 'the story does not name the mayor');
     });
 
     test('a tie not involving the mayors pick stays a tie', () {
@@ -813,6 +813,39 @@ void main() {
       g.pick(0, 2);
       g.pick(2, null);
       expect(g.done, {0, 2});
+    });
+  });
+
+  group('expel (kicked)', () {
+    test('a kicked player is out at once, with no shot', () {
+      final g = game([w, WolfRole.hunter, v, v, v, v]);
+      final d = g.expel(1);
+      expect(d.single.cause, DeathCause.left);
+      expect(g.isAlive(1), isFalse);
+      expect(g.pendingHunters, isEmpty);
+      night(g, {});
+      expect(g.phase, WolfPhase.day);
+    });
+
+    test('their lover goes too, and a hunter lover loses the shot', () {
+      final g = game([w, WolfRole.cupid, WolfRole.hunter, v, v, v]);
+      night(g, {1: 2}, second: {1: 3});
+      g.startVote();
+      g.resolveVote();
+      final d = g.expel(3);
+      expect(d.map((x) => x.id), [3, 2]);
+      expect(g.pendingHunters, isEmpty);
+      g.startNight();
+    });
+
+    test('it can end the game, and is ignored for the dead and after the end', () {
+      final g = game([w, v, v]);
+      g.expel(1);
+      expect(g.winner, WolfWinner.wolves);
+      expect(g.expel(2), isEmpty);
+      final h = game([w, v, v, v, v]);
+      h.expel(1);
+      expect(h.expel(1), isEmpty);
     });
   });
 }
