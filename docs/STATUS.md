@@ -301,3 +301,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   d378cf3 on the TV. QA visual pass waits for 8080 (the person's Mac test).
 - 2026-11-17: Task 38 accepted (PM sampled hr-medimurje: no village names left, 84 questions). Task 13 done.
 - 2026-11-17: Tasks 32 and 33 accepted. Watch: the night village is the heaviest scene (Mac p95 up to 44 ms).
+- 2026-11-17: Person joined QA's Mac run from their iPhone on purpose: "all works as intended". ee00641 on the TV (not launched).
