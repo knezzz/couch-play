@@ -114,7 +114,7 @@ class KolikoMatch {
     final byId = {for (final e in r.entries) e.id: e};
     for (final id in ids) {
       final e = byId[id]!;
-      send(id, KolikoResult(answer: r.answer, value: e.value, rank: e.rank, points: e.points, total: game.totals[id]!));
+      send(id, KolikoResult(answer: r.answer, value: e.value, rank: e.rank, points: e.points, total: game.totals[id]!, unit: game.current.unit));
     }
     _stageEnd = clock() + revealTime;
     _timer?.cancel();
@@ -151,7 +151,7 @@ class KolikoMatch {
       send(id, _askMsg(id));
     } else {
       final e = game.lastReveal!.entries.firstWhere((e) => e.id == id);
-      send(id, KolikoResult(answer: game.lastReveal!.answer, value: e.value, rank: e.rank, points: e.points, total: game.totals[id]!));
+      send(id, KolikoResult(answer: game.lastReveal!.answer, value: e.value, rank: e.rank, points: e.points, total: game.totals[id]!, unit: game.current.unit));
     }
   }
 }

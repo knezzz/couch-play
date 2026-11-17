@@ -75,7 +75,7 @@ void main() {
     final r2 = r.sent[2]!.whereType<KolikoResult>().single;
     expect([r2.answer, r2.value, r2.rank, r2.points, r2.total], [tr, tr, 1, 1500, 1500]);
     final r1 = r.sent[1]!.whereType<KolikoResult>().single;
-    expect([r1.value, r1.rank, r1.points], [tr + 10, 2, 750]);
+    expect([r1.value, r1.rank, r1.points, r1.unit], [tr + 10, 2, 750, 'm']);
     // the TV, though, can draw them all
     expect([for (final e in r.match.reveal!.entries) e.id], [2, 1, 3]);
     r.match.dispose();
@@ -159,6 +159,7 @@ void main() {
     final res = r.sent[2]!.whereType<KolikoResult>().toList();
     expect(res.length, 2);
     expect(res.last, res.first);
+    expect(res.last.unit, 'm', reason: 'a reload during the reveal still has the unit');
     r.match.dispose();
   });
 
