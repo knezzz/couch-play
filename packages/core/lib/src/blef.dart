@@ -169,6 +169,12 @@ class BlefGame {
   }
 
   Set<int> get picked => {..._picks.keys};
+
+  /// This player's own entry index pick, or null.
+  int? pickOf(int id) => _picks[id];
+
+  /// This player's own accepted fake (null if none).
+  String? sentTextOf(int id) => _fakes[id];
   bool get allPicked => ids.where(_present).every(_picks.containsKey);
 
   // ---- reveal ----
