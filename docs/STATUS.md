@@ -279,3 +279,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-17: Person chose power-up icons A and ring-only active effects 1. Task 34.
 - 2026-11-17: Person asked for a word game where the impostor gets a similar word without knowing (Spužva Bob vs
   Pikachu), and both new games on the home screen. Canvas page "Uljez"; Task 35.
+- 2026-11-17: Person gave a standing yes for TV installs today whenever something new is ready (green commit,
+  BRAVIA only). bd9ff83 on the TV.
