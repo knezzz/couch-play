@@ -138,26 +138,69 @@ void main() {
       s.dispose();
     });
 
-    testWidgets('the_whole_question_ticks_once_a_second_then_twice_a_second_in_the_last_5', (t) async {
+    int count(Sound x) => sfx.played.where((p) => p == x).length;
+
+    // A 10 s question, nobody answering; the session polls every 100 ms.
+    testWidgets('a_10_s_question_ticks_each_second_then_speeds_up_with_a_heartbeat_in_the_last_5', (t) async {
       await start(t);
       sfx.played.clear();
       await step(t, const Duration(milliseconds: 900));
-      expect(sfx.played, isEmpty, reason: 'the first second has no tick; the question just started');
-      await step(t, const Duration(milliseconds: 4000)); // to 4.9 s: ticks at 1, 2, 3, 4 s
+      expect(sfx.played, isEmpty, reason: 'the first second is quiet');
+      await step(t, const Duration(milliseconds: 4000)); // 4.9 s: ticks at 1, 2, 3, 4 s
       expect(sfx.played, List.filled(4, Sound.quizTick));
-      await step(t, const Duration(milliseconds: 5000)); // to 9.9 s: 10 half-second ticks
-      expect(sfx.played.skip(4), List.filled(10, Sound.tick));
+      // Urgent ticks and heartbeats, counted at the end of each of the last 5 seconds:
+      // 2 a second to the last 3 s, then 4 a second; a heartbeat each second.
+      final urgent = <int>[], beats = <int>[];
+      for (var i = 0; i < 5; i++) {
+        await step(t, const Duration(seconds: 1));
+        urgent.add(count(Sound.tickUrgent));
+        beats.add(count(Sound.heartbeat));
+      }
+      expect(urgent, [2, 4, 8, 12, 16]);
+      expect(beats, [1, 2, 3, 4, 5]);
+      expect(count(Sound.quizTick), 4, reason: 'the slow tock stops in the last 5 s');
+      expect(count(Sound.timeUp), 0, reason: 'not before the time is up');
       s.dispose();
     });
 
-    testWidgets('a_40_second_question_ticks_all_the_way_too', (t) async {
+    testWidgets('a_60_s_question_ticks_all_the_way_and_ends_the_same_way', (t) async {
       setUpSession();
-      a.say(const SetSettings(GameSettings(quizSeconds: 40, quizQuestions: 5)));
+      a.say(const SetSettings(GameSettings(quizSeconds: 60, quizQuestions: 5)));
       a.say(const StartGame(GameKind.quiz, null));
       await t.pump();
       sfx.played.clear();
-      await step(t, const Duration(milliseconds: 34900)); // to 34.9 s: 5.1 s left
-      expect(sfx.played, List.filled(34, Sound.quizTick));
+      await step(t, const Duration(milliseconds: 59900));
+      expect(count(Sound.quizTick), 54, reason: 'one a second from 1 s to 54 s');
+      expect(count(Sound.tickUrgent), 16);
+      expect(count(Sound.heartbeat), 5);
+      s.dispose();
+    });
+
+    testWidgets('time_up_plays_once_when_the_time_runs_out', (t) async {
+      await start(t);
+      sfx.played.clear();
+      await step(t, const Duration(milliseconds: 10300));
+      expect(count(Sound.timeUp), 1);
+      expect(sfx.played.last, Sound.wrong, reason: 'then the reveal, as before');
+      await step(t, const Duration(seconds: 3));
+      expect(count(Sound.timeUp), 1, reason: 'once');
+      s.dispose();
+    });
+
+    testWidgets('everyone_answering_early_reveals_without_time_up_and_the_ticking_stops', (t) async {
+      await start(t);
+      sfx.played.clear();
+      await step(t, const Duration(milliseconds: 2500));
+      a.say(Answer(s.quiz!.current.correctIndex));
+      b.say(Answer((s.quiz!.current.correctIndex + 1) % 4));
+      await step(t, const Duration(milliseconds: 300));
+      expect(s.quiz!.step, QuizStep.revealing);
+      sfx.played.clear();
+      await step(t, const Duration(seconds: 3));
+      expect(count(Sound.timeUp), 0);
+      expect(count(Sound.tickUrgent), 0);
+      expect(count(Sound.heartbeat), 0);
+      expect(count(Sound.quizTick), 0);
       s.dispose();
     });
 

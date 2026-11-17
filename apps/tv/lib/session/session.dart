@@ -418,10 +418,11 @@ class Session {
   /// The remote picked a game on the TV home: the same selection the host's
   /// phone makes (every phone is told), with the TV's own click.
   void selectFromTv(GameKind game) {
-    if (_phase != Phase.lobby || hostId == null) return;
+    if (_phase != Phase.lobby) return;
+    sfx.play(Sound.menuMove); // moving on an empty home clicks too
+    if (hostId == null) return;
     _selected = game;
     _selectedBy = hostId;
-    sfx.play(Sound.menuMove);
     _broadcastLobby();
     _notify();
   }
@@ -840,6 +841,7 @@ class Session {
   void _sendQuestion() {
     final q = _quiz!;
     _lastTickSec = null;
+    _lastBeatSec = null;
     sfx.play(Sound.quizStart);
     final msg = _questionFor(q);
     for (final id in _quizIds) {
@@ -847,6 +849,7 @@ class Session {
     }
   }
 
+  int? _lastBeatSec; // the last second whose heartbeat played, this question
   int? _lastTickSec; // the last tick slot (a second, or half a second in the last 5 s), this question
 
   void _sendReveal(Player p) {
@@ -863,11 +866,14 @@ class Session {
     if (_phase != Phase.quiz || q == null || _paused) return;
     final step = q.step, number = q.number;
     final now = _quizNow();
+    final askedFor = now - _stepStart;
     q.advance(now);
     if (q.step != step || q.number != number) {
       _stepStart = now;
       switch (q.step) {
         case QuizStep.revealing:
+          // Time ran out (not everyone answered early): the three falling notes.
+          if (step == QuizStep.asking && askedFor >= q.limit) sfx.play(Sound.timeUp);
           sfx.play(q.lastPoints.values.any((v) => v > 0) ? Sound.right : Sound.wrong);
           for (final id in _quizIds) {
             final p = _byId(id);
@@ -883,15 +889,25 @@ class Session {
       }
     }
     if (q.step == QuizStep.asking) {
-      // The whole question ticks: a soft tock each second, then a sharper tick
-      // twice a second for the last 5 s. The first second is silent.
-      final left = q.limit - (now - _stepStart);
-      final sec = (left.inMilliseconds / 1000).ceil();
-      final last5 = sec >= 1 && sec <= 5;
-      final slot = last5 ? (left.inMilliseconds / 500).ceil() : sec;
-      if (sec >= 1 && sec < q.limit.inSeconds && slot != _lastTickSec) {
-        _lastTickSec = slot;
-        sfx.play(last5 ? Sound.tick : Sound.quizTick);
+      // The whole question ticks: a soft tock each second (the first second is
+      // quiet), then in the last 5 s a high click about twice a second and a
+      // heartbeat each second, and in the last 3 s four clicks a second.
+      final leftMs = (q.limit - (now - _stepStart)).inMilliseconds;
+      final sec = (leftMs / 1000).ceil();
+      if (sec >= 1 && sec <= 5) {
+        if (sec != _lastBeatSec) {
+          _lastBeatSec = sec;
+          sfx.play(Sound.heartbeat);
+        }
+        final fast = leftMs <= 3000;
+        final slot = (fast ? 2000 : 1000) + (leftMs / (fast ? 250 : 500)).ceil();
+        if (slot != _lastTickSec) {
+          _lastTickSec = slot;
+          sfx.play(Sound.tickUrgent);
+        }
+      } else if (sec > 5 && sec < q.limit.inSeconds && sec != _lastTickSec) {
+        _lastTickSec = sec;
+        sfx.play(Sound.quizTick);
       }
     }
     _notify();

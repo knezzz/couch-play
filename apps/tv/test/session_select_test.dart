@@ -149,10 +149,13 @@ void main() {
       s.dispose();
     });
 
-    test('selectFromTv_with_nobody_in_the_room_does_nothing', () {
+    test('selectFromTv_with_nobody_in_the_room_selects_nothing_but_still_clicks', () {
       s = Session(random: Random(1));
+      final sfx = FakeSfx();
+      s.sfx = sfx;
       s.selectFromTv(GameKind.quiz);
       expect(s.selectedGame, isNull);
+      expect(sfx.played, [Sound.menuMove]);
       s.dispose();
     });
 
