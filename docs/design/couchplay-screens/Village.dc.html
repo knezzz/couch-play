@@ -124,21 +124,23 @@ class Component extends DCLogic {
       ['Petra', 'cat', '#9B5CFF'], ['Josip', 'bear', '#FF7AD9'], ['Maja', 'mouse', '#F5E94B']
     ];
     const dead = night ? { Marko: 1 } : { Marko: 1, Ivana: 1 };
+    const pending = { Ana: 1, Petra: 1, Maja: 1 };
     const cx = 960, cy = 590, rx = 560, ry = 330;
     const houses = people.map(([name, animal, color], i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / people.length;
       const x = Math.round(cx + rx * Math.cos(a)), y = Math.round(cy + ry * Math.sin(a));
       const d = !!dead[name];
+      const on = night && !d && !!pending[name];
       const below = Math.sin(a) > 0.2;
       return {
-        name, animal, color: d ? '#6E6E7A' : color, dead: d, lit: night && !d, smoke: !d,
+        name, animal, color: d ? '#6E6E7A' : color, dead: d, lit: on, smoke: !d,
         at: `translate(${x} ${y})`,
         wall: d ? '#55505A' : (night ? '#3B4466' : '#F5ECDA'), wallShade: d ? '#48434C' : (night ? '#323A58' : '#E6D9BF'),
         roof: d ? '#3A3036' : (night ? '#5A2E36' : '#C2563E'), roofLine: d ? '#2E262B' : (night ? '#4A262D' : '#A9472F'), roofEdge: d ? '#2E262B' : (night ? '#40222A' : '#8F3A26'),
         chimney: d ? '#3A3036' : (night ? '#4A3A40' : '#9A6B55'),
         smokeC: night ? '#8A93B8' : '#FFFFFF',
         door: d ? '#2A2024' : (night ? '#2A2238' : '#7A4A2E'), knob: d ? '#2A2024' : '#E7B36A',
-        win: d ? '#2A2024' : (night ? '#F7D774' : '#A9D4F0'), winClass: night && !d ? 'v-win' : '',
+        win: d ? '#2A2024' : (night ? (on ? '#F7D774' : '#1A1E34') : '#A9D4F0'), winClass: on ? 'v-win' : '',
         frame: d ? '#2A2024' : (night ? '#C9A64A' : '#FFFFFF'), shutter: d ? '#3A2E26' : (night ? '#2E5A46' : '#3E7A5C'),
         label: `position: absolute; left: ${x - 130}px; top: ${below ? y + 92 : y - 156}px; width: 260px; display: flex; align-items: center; justify-content: center; gap: 10px`,
         faceWrap: d ? 'filter: grayscale(1); opacity: 0.5; display: flex' : 'display: flex',
@@ -157,7 +159,7 @@ class Component extends DCLogic {
       trunk: night ? '#3A2E2A' : '#7A5236', leaf: night ? '#16302A' : '#4E9A4A',
       well: night ? '#3A4262' : '#B9B3A8', wellTop: night ? '#1A2038' : '#5A6A7A', wellRoof: night ? '#5A2E36' : '#C2563E',
       kicker: night ? 'NOĆ 2' : 'JUTRO 3', kickerColor: night ? '#8FA0D8' : '#7A3A2A',
-      story: night ? 'Selo spava. Svi gledaju svoje mobitele.' : 'Ivanina vrata ostala su zatvorena. Oko kuće su tragovi krvi.',
+      story: night ? 'Selo spava. Svjetlo gori dok netko još nije odlučio: još 3.' : 'Ivanina vrata ostala su zatvorena. Oko kuće su tragovi krvi.',
       storyColor: night ? '#F4F4F8' : '#2A1E2E', storyShadow: night ? '0 2px 8px #000' : 'none',
       clock: night ? '0:21' : '1:40'
     };

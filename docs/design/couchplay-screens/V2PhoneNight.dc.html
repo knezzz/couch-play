@@ -20,7 +20,7 @@ body{margin:0}
   <div role="radiogroup" aria-label="Odabir" style="display: flex; flex-direction: column; gap: 8px">
     <sc-for list="{{targets}}" as="t" hint-placeholder-count="5">
       <button role="radio" aria-checked="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">
-        <span style="filter: grayscale(1); opacity: 0.7; display: flex"><dc-import name="Face" animal="{{t.animal}}" color="#9A9AA6" size="{{s44}}" hint-size="44px,44px"></dc-import></span>
+        <span style="filter: grayscale(1); opacity: 0.7; display: flex; width: 44px; height: 44px"><sc-if value="{{t.face}}" hint-placeholder-val="{{ true }}"><dc-import name="Face" animal="{{t.animal}}" color="#9A9AA6" size="{{s44}}" hint-size="44px,44px"></dc-import></sc-if></span>
         <span style="font-size: 21px; font-weight: 700; flex-grow: 1; text-align: left">{{t.name}}</span>
         <span style="font-size: 18px">{{t.mark}}</span>
       </button>
@@ -37,18 +37,20 @@ body{margin:0}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   constructor(p) { super(p); this.state = { pick: 'Ivana', role: 'wolf' }; }
+  componentDidUpdate(pp, ps) { if (ps.role !== this.state.role) this.setState({ pick: '' }); }
   renderVals() {
     const H = {
       wolf: 'Koga posjećujete? Luka je odabrao Ivanu.',
       seer: 'Čiju ulogu želiš vidjeti?',
       doc: 'Koga štitiš noćas?',
-      vil: 'Tko ti je sumnjiv? (samo za tebe)'
+      vil: 'Zadatak za noć: koliko je 7 × 8?'
     };
-    const list = [['Ana', 'owl'], ['Ivana', 'rabbit'], ['Josip', 'bear'], ['Luka', 'fox'], ['Maja', 'mouse']];
+    const math = this.state.role === 'vil';
+    const list = math ? [['48'], ['54'], ['56'], ['63'], ['64']] : [['Ana', 'owl'], ['Ivana', 'rabbit'], ['Josip', 'bear'], ['Luka', 'fox'], ['Maja', 'mouse']];
     const targets = list.map(([name, animal]) => {
       const on = this.state.pick === name;
       return {
-        name, animal, on: on ? 'true' : 'false', mark: on ? '●' : '',
+        name, animal: animal || 'mouse', face: !!animal, on: on ? 'true' : 'false', mark: on ? '●' : '',
         pick: () => this.setState({ pick: name }),
         style: 'font: inherit; color: #E8E8EE; height: 64px; border-radius: 14px; display: flex; align-items: center; gap: 12px; padding: 0 14px; cursor: pointer; background: #18181E; ' +
           (on ? 'border: 2px solid #B8B8C2;' : 'border: 2px solid #18181E;')

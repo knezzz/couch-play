@@ -184,8 +184,10 @@ the phones. Folk-game roles in our own words; no names or roles from Town of Sal
   (boarded, grey), with blood around it and a crow. Light animation: chimney smoke, flickering windows, stars,
   fireflies, drifting clouds, swaying trees (off with reduced motion). The day vote shows who voted for whom.
 - **Phones:** the role is hidden by default and shows only while a finger is on the screen. At night every phone
-  looks the same (grey, same layout, same button) whatever the role; only a short grey line of text differs; villagers
-  also pick (whom they suspect) so every phone looks busy. Day vote on the phones.
+  looks the same (grey, same layout, same button) whatever the role; only a short grey line of text differs. Everyone
+  has a night task: roles with no night action get a simple sum (e.g. 7 × 8, five answers) in the same grey list, so
+  every phone looks busy (user request, 2026-11-17). On the TV only the houses of players who have not finished their
+  task yet are lit; when a player finishes, their light goes out. Day vote on the phones.
 - **Roles (14):** Vukodlak, Vođa čopora, Vuk samotnjak; Seljanin, Vidovnjakinja, Ljekarnik, Tjelohranitelj, Travarica,
   Lovac, Starješina, Načelnik, Provodadžija, Seoska budala; Lutalica (descriptions in `WolfRoles.dc.html`).
 - **Host settings:** switch on the possible roles (Vukodlak and Seljanin always on); the game draws the mix each game:
