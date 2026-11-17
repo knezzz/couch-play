@@ -303,7 +303,7 @@ class _NightState extends State<NightScreen> {
             ),
             border: const Color(0xFFB8B8C2),
             fill: _nightCard,
-            note: t.note,
+            note: picked == t.id ? '●' : t.note,
             onTap: _sent || !t.enabled
                 ? null
                 : () => setState(() => pick(t.id)),
@@ -342,20 +342,21 @@ class _NightState extends State<NightScreen> {
               ),
               const SizedBox(height: 14),
               // Fixed height so a longer hint never moves anything below it.
-              SizedBox(
-                width: double.infinity,
-                height: 72,
-                child: Text(
-                  widget.hint.trimRight(), // the TV pads it to a fixed length
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: _nightMuted,
-                    height: 1.3,
+              if (widget.hint.isNotEmpty)
+                SizedBox(
+                  width: double.infinity,
+                  height: 72,
+                  child: Text(
+                    widget.hint.trimRight(), // the TV pads it to a fixed length
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: _nightMuted,
+                      height: 1.3,
+                    ),
                   ),
                 ),
-              ),
               Expanded(
                 child: ListView(
                   children: [

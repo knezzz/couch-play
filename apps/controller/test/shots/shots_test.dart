@@ -35,6 +35,15 @@ Future<void> _fonts() async {
     roboto.addFont(read('Roboto-$f.ttf'));
   }
   await roboto.load();
+  // Button labels set no font family, and flutter_test's default is Ahem:
+  // give that name the real glyphs too, for these screenshots only.
+  for (final name in ['FlutterTest', 'sans-serif', 'Arial', 'Helvetica', 'system-ui', '.SF Pro Text', 'Noto Sans']) {
+    final l = FontLoader(name);
+    for (final f in ['Regular', 'Medium', 'Bold', 'Black']) {
+      l.addFont(read('Roboto-$f.ttf'));
+    }
+    await l.load();
+  }
   final icons = FontLoader('MaterialIcons')
     ..addFont(read('MaterialIcons-Regular.otf'));
   await icons.load();

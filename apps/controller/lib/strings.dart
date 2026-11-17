@@ -48,6 +48,10 @@ abstract final class Strings {
     if (p.pictures) 'slike',
     if (p.isNew) 'novo',
   ].join(' · ');
+  static const powerUps = 'Pojačanja';
+  static const puYou = 'na tebe';
+  static const puOthers = 'na sve ostale';
+  static const puAll = 'na sve';
   static const pickPack = 'Odaberi paket';
   static const addPack = 'Dodaj svoj paket…';
 

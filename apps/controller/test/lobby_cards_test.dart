@@ -270,6 +270,18 @@ void main() {
       );
     });
 
+    testWidgets('Vukodlak and Uljez have a plain title, no header card', (
+      t,
+    ) async {
+      await open(t, GameKind.vukodlak);
+      expect(find.byKey(const ValueKey('game-header')), findsNothing);
+      expect(find.byKey(const ValueKey('game-title')), findsOneWidget);
+      await t.pumpWidget(const SizedBox());
+      await open(t, GameKind.uljez);
+      expect(find.byKey(const ValueKey('game-header')), findsNothing);
+      expect(find.byKey(const ValueKey('game-title')), findsOneWidget);
+    });
+
     testWidgets('Vukodlak shows the player count under the title', (t) async {
       await open(t, GameKind.vukodlak);
       expect(find.text(Strings.playerCount(4)), findsOneWidget);

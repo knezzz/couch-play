@@ -104,6 +104,19 @@ void main() {
       expect(sent, [2], reason: 'one guess only');
     });
 
+    testWidgets('the picked row is marked, and an empty hint leaves no gap', (
+      t,
+    ) async {
+      await _show(t, UljezVoteScreen(targets: _people, onVote: (_) {}));
+      expect(find.text('●'), findsNothing);
+      await t.tap(find.byKey(const ValueKey('night-2')));
+      await t.pump();
+      expect(find.text('●'), findsOneWidget);
+      final title = t.getBottomLeft(find.text(Strings.whoIsImpostor)).dy;
+      final first = t.getTopLeft(find.byKey(const ValueKey('night-1'))).dy;
+      expect(first - title, lessThan(40), reason: 'no 72 px hint box');
+    });
+
     testWidgets('vote rows are at least 56 px and fit at 360 px', (t) async {
       await _show(
         t,

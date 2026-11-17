@@ -367,7 +367,17 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       label: const Text(Strings.back),
                     ),
                   ),
-                  GameHeaderCard(kind),
+                  if (kind == GameKind.quiz || kind == GameKind.curve)
+                    GameHeaderCard(kind)
+                  else
+                    Text(
+                      Strings.gameName(kind),
+                      key: const ValueKey('game-title'),
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
                   if (kind == GameKind.vukodlak)
                     Padding(
                       padding: const EdgeInsets.only(top: 12),
