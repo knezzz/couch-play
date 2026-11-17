@@ -176,11 +176,13 @@ void main() {
       await r.wait(t, 4);
       if (k < 4) expect(r.match.shown.length, k + 1);
     }
-    expect(r.match.stage, BlefStageTv.reveal, reason: 'the last entry shows for its 4 s');
+    expect(r.match.stage, BlefStageTv.reveal, reason: 'the last entry (the true answer) and the points hold for 8 s');
     expect(r.match.shown.last.isTruth, isTrue);
     expect(r.match.questionPoints, isNotNull);
     expect(r.to(1).whereType<BlefResult>().length, 1);
-    await r.wait(t, 4);
+    await r.wait(t, 7);
+    expect(r.match.stage, BlefStageTv.reveal, reason: '7 s into the hold');
+    await r.wait(t, 1);
     expect(r.match.stage, BlefStageTv.over);
     expect(r.result, isNotNull);
     r.match.dispose();
@@ -243,7 +245,7 @@ void main() {
         final l = r.to(id).whereType<BlefList>().last;
         r.match.onPick(id, BlefPick(id == 1 && l.ids.contains(truthId) ? truthId : l.ids.last));
       }
-      await r.wait(t, 4 * 4 + 4);
+      await r.wait(t, 4 * 4 + 8);
     }
     expect(r.match.stage, BlefStageTv.over);
     expect(r.result!.keys.toSet(), {1, 2, 3});

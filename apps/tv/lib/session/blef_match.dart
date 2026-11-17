@@ -52,6 +52,9 @@ class BlefMatch {
   static const pickTime = Duration(seconds: 20);
   static const stepTime = Duration(seconds: 4);
 
+  /// After the LAST entry (the true answer) all rows and the points stay up this long.
+  static const finalHold = Duration(seconds: 8);
+
   /// The rules. Holds the true answer and every fake: not for the TV to show from.
   @visibleForTesting
   late BlefGame game;
@@ -208,10 +211,12 @@ class BlefMatch {
     if (_step < r.order.length) {
       final e = game.entries[r.order[_step]];
       sfx.play(e.isTruth ? Sound.right : Sound.menuMove);
-      _stageEnd = clock() + stepTime;
+      final last = _step == r.order.length - 1;
+      final hold = last ? finalHold : stepTime;
+      _stageEnd = clock() + hold;
       _timer?.cancel();
-      _timer = Timer(stepTime, _nextStep);
-      if (_step == r.order.length - 1) _sendResults();
+      _timer = Timer(hold, _nextStep);
+      if (last) _sendResults();
       notify?.call();
     } else {
       _next();
