@@ -69,6 +69,8 @@ flutter:
   assets:
     - assets/controller.zip
     - assets/packs/
+    - assets/koliko/
+    - assets/blef/
     - assets/sounds/
     - assets/uljez/
     - assets/objasni/
