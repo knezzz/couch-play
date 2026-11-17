@@ -67,7 +67,7 @@ void main() {
   });
 
   testWidgets('nobody picked an entry says so; a full 8-player reveal still fits above 1030 px', (t) async {
-    final eight = [for (var i = 0; i < 9; i++) BlefCard('odgovor $i s malo duljim tekstom', i == 8, i == 8 ? const [] : [_ps[0]], i == 0 ? const [] : [_ps[1]])];
+    final eight = [for (var i = 0; i < 9; i++) BlefCard('odgovor $i s malo duljim tekstom', i == 8, i == 8 ? const [] : [_ps[0]], i == 5 ? const [] : [_ps[1]])];
     final b8 = _b(BlefStageTv.reveal, shown: eight, points: const {0: 500});
     await _show(
         t,
@@ -77,8 +77,12 @@ void main() {
     expect(find.text('nitko'), findsOneWidget);
     expect(t.takeException(), isNull);
     expect(t.getRect(find.byKey(const ValueKey('points'))).bottom, lessThanOrEqualTo(1030));
-    for (var i = 0; i < 9; i++) {
+    for (var i = 3; i < 9; i++) {
       expect(t.getRect(find.byKey(ValueKey('card-$i-${i == 8 ? 'truth' : 'fake'}'))).bottom, lessThanOrEqualTo(1030));
+    }
+    expect(find.byKey(const ValueKey('card-2-fake')), findsNothing, reason: 'only the latest six stay up');
+    for (final w in t.widgetList<Text>(find.byType(Text))) {
+      expect(w.style?.fontSize ?? 40, greaterThanOrEqualTo(40), reason: 'sofa-readable: ${w.data}');
     }
   });
 

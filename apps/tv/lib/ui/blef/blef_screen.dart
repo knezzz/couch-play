@@ -106,12 +106,12 @@ class BlefScreen extends StatelessWidget {
               opacity: lit.contains(p.id) ? 1 : 0.3,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 _face(p, 80),
-                Text(p.name, maxLines: 1, style: const TextStyle(fontSize: 28, color: tvText)),
+                Text(p.name, maxLines: 1, style: const TextStyle(fontSize: 40, color: tvText)),
               ]),
             ),
         ]),
         const SizedBox(height: 10),
-        Text(label, key: const ValueKey('count'), style: const TextStyle(fontSize: 34, color: tvMuted)),
+        Text(label, key: const ValueKey('count'), style: const TextStyle(fontSize: 40, color: tvMuted)),
       ]);
 
   Widget _body() => switch (b.stage) {
@@ -151,17 +151,19 @@ class BlefScreen extends StatelessWidget {
         BlefStageTv.reveal || BlefStageTv.over => _reveal(),
       };
 
-  Widget _names(List<PlayerInfo> ps) => Text(ps.isEmpty ? Strings.blefNobody : ps.map((p) => p.name).join(', '), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 24, color: tvMuted));
+  Widget _names(List<PlayerInfo> ps) => Text(ps.isEmpty ? Strings.blefNobody : ps.map((p) => p.name).join(', '), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 40, color: tvMuted));
 
   Widget _reveal() {
     final last = b.shown.length - 1;
+    // Only the latest six stay up (three rows of two): with eight players there can be nine entries.
+    final first = b.shown.length > 6 ? b.shown.length - 6 : 0;
     return Column(children: [
       _header(),
       Text(b.question, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 42, color: tvMuted)),
       const SizedBox(height: 14),
       Expanded(
         child: Wrap(alignment: WrapAlignment.center, spacing: 28, runSpacing: 14, children: [
-          for (var i = 0; i < b.shown.length; i++) _card(i, b.shown[i], i == last),
+          for (var i = first; i < b.shown.length; i++) _card(i, b.shown[i], i == last),
         ]),
       ),
       if (b.points != null)
@@ -171,34 +173,31 @@ class BlefScreen extends StatelessWidget {
               Row(mainAxisSize: MainAxisSize.min, children: [
                 _face(p, 52),
                 const SizedBox(width: 8),
-                Text('${p.name} +${b.points![p.id]}', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: _green)),
+                Text('${p.name} +${b.points![p.id]}', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: _green)),
               ]),
         ]),
     ]);
   }
 
-  /// With more than four players there can be nine entries: three smaller cards to a row.
-  bool get _compact => b.players.length > 4;
-
   Widget _card(int i, BlefCard c, bool newest) {
-    final big = _compact ? 32.0 : 40.0, small = _compact ? 26.0 : 28.0;
+    const big = 44.0, small = 40.0;
     final color = c.isTruth ? _green : _red;
     return Container(
       key: ValueKey('card-$i-${c.isTruth ? 'truth' : 'fake'}'),
-      width: _compact ? 540 : 820,
-      padding: EdgeInsets.symmetric(horizontal: 22, vertical: _compact ? 8 : 12),
+      width: 820,
+      padding: EdgeInsets.symmetric(horizontal: 22, vertical: 10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: newest ? 0.3 : 0.14),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: color, width: newest ? 5 : 2),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Text(c.text, maxLines: _compact ? 1 : 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: big, fontWeight: FontWeight.w800, color: tvText)),
+        Text(c.text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: big, fontWeight: FontWeight.w800, color: tvText)),
         const SizedBox(height: 2),
         Text(c.isTruth ? Strings.blefTruth : Strings.blefAuthor(c.writers.map((p) => p.name).join(', ')), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: small, fontWeight: FontWeight.w700, color: color)),
         Row(children: [
           Text('${Strings.blefChoice}: ', style: TextStyle(fontSize: small, color: tvMuted)),
-          for (final p in c.pickers.take(_compact ? 3 : 8)) Padding(padding: const EdgeInsets.only(right: 4), child: _face(p, _compact ? 28 : 34)),
+          for (final p in c.pickers.take(8)) Padding(padding: const EdgeInsets.only(right: 4), child: _face(p, 40)),
           Expanded(child: _names(c.pickers)),
         ]),
       ]),

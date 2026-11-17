@@ -6,11 +6,13 @@ import '../tv_theme.dart';
 
 const _amber = Color(0xFFFFB020), _red = Color(0xFFFF4D6D), _gold = Color(0xFFFFD54A), _green = Color(0xFF2ECC71);
 
-/// One player's result at the reveal.
+/// One player's result at the reveal: the votes they got and whether they are crowned. No points and no
+/// running totals on the TV: a point means "voted for the crowned", so beside each name it would say who
+/// voted for whom. The phones show their own result.
 class TkobiRow {
-  const TkobiRow(this.player, this.votes, this.points, this.total, this.crowned);
+  const TkobiRow(this.player, this.votes, this.crowned);
   final PlayerInfo player;
-  final int votes, points, total;
+  final int votes;
   final bool crowned;
 }
 
@@ -137,8 +139,6 @@ class TkobiScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 20),
                 SizedBox(width: 70, child: Text('${r.votes}', textAlign: TextAlign.right, style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: r.crowned ? _gold : tvText))),
-                SizedBox(width: 120, child: Text(r.points > 0 ? '+${r.points}' : '', textAlign: TextAlign.right, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w800, color: _green))),
-                SizedBox(width: 130, child: Text(grouped(r.total), textAlign: TextAlign.right, style: const TextStyle(fontSize: 32, color: tvMuted))),
               ]),
             ),
         ]),

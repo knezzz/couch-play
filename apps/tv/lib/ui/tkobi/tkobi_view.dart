@@ -51,7 +51,7 @@ class _TkobiViewState extends State<TkobiView> {
     List<TkobiRow>? rows;
     if (rev != null) {
       rows = [
-        for (final p in inGame) TkobiRow(p, rev.counts[p.id] ?? 0, rev.points[p.id] ?? 0, m.totals[p.id] ?? 0, rev.crowned.contains(p.id)),
+        for (final p in inGame) TkobiRow(p, rev.counts[p.id] ?? 0, rev.crowned.contains(p.id)),
       ]..sort((a, b) => b.votes.compareTo(a.votes)); // stable: ties keep join order
     }
     return TkobiScreen(TkobiBoard(

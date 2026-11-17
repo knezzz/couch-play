@@ -39,11 +39,11 @@ void main() {
     expect(t.takeException(), isNull);
   });
 
-  testWidgets('reveal: votes per player as bars (longest = most), the crowned in gold, points and totals', (t) async {
+  testWidgets('reveal: votes per player as bars (longest = most), the crowned in gold, and no per-player points or totals (they would say who voted for whom)', (t) async {
     final rows = [
-      TkobiRow(_p(1), 3, 1, 5, true),
-      TkobiRow(_p(0), 1, 0, 2, false),
-      TkobiRow(_p(2), 0, 0, 0, false),
+      TkobiRow(_p(1), 3, true),
+      TkobiRow(_p(0), 1, false),
+      TkobiRow(_p(2), 0, false),
     ];
     await _show(t, TkobiBoard(number: 3, total: 10, prompt: 'p', players: [for (var i = 0; i < 3; i++) _p(i)], votedCount: 3, secondsLeft: 0, seconds: 15, rows: rows));
     expect(find.byKey(const ValueKey('row-1-crowned')), findsOneWidget);
@@ -52,12 +52,15 @@ void main() {
     final w1 = t.getSize(find.byKey(const ValueKey('bar-1'))).width, w0 = t.getSize(find.byKey(const ValueKey('bar-0'))).width, w2 = t.getSize(find.byKey(const ValueKey('bar-2'))).width;
     expect(w1, greaterThan(w0 * 2.5), reason: '3 votes vs 1');
     expect(w2, lessThan(w0 / 4), reason: 'no votes is a sliver');
-    expect(find.text('+1'), findsOneWidget);
+    expect(find.textContaining('+'), findsNothing, reason: 'no +points beside a name');
+    for (final total in ['5', '2']) {
+      expect(find.text(total), findsNothing, reason: 'no running total column');
+    }
     expect(t.takeException(), isNull);
   });
 
   testWidgets('a tie crowns both; eight rows fit above 1030 px', (t) async {
-    final rows = [for (var i = 0; i < 8; i++) TkobiRow(_p(i), i < 2 ? 3 : 0, 0, 10, i < 2)];
+    final rows = [for (var i = 0; i < 8; i++) TkobiRow(_p(i), i < 2 ? 3 : 0, i < 2)];
     await _show(t, TkobiBoard(number: 1, total: 5, prompt: 'p', players: [for (var i = 0; i < 8; i++) _p(i)], votedCount: 8, secondsLeft: 0, seconds: 15, rows: rows));
     expect(find.byKey(const ValueKey('row-0-crowned')), findsOneWidget);
     expect(find.byKey(const ValueKey('row-1-crowned')), findsOneWidget);
