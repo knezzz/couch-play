@@ -5,9 +5,6 @@ import '../../session/objasni_match.dart' show ObjasniStageTv;
 import '../../strings.dart';
 import '../tv_theme.dart';
 
-/// The two Objasni teams' colours (Tim 1, Tim 2).
-const objasniTeamColors = [Color(0xFFFF4D6D), Color(0xFF4DD9FF)];
-
 const _amber = Color(0xFFFFB020), _red = Color(0xFFFF4D6D), _green = Color(0xFF2ECC71);
 
 /// What the TV needs of one Objasni game, as plain data (the word being explained is never in it).
