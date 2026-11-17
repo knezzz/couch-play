@@ -308,3 +308,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   accounts, settings or data; uninstall what we install. Seat configs still deny adb to it.
 - 2026-11-17: Blef typing test passed on the Pixel 6a (Chrome, all 8 steps). iPhone Safari not run separately.
 - 2026-11-17: Person confirmed Blef typing with Croatian letters works on the iPhone too. Typing risk closed.
+- 2026-11-17: Person (via product-pm@web-editor): Oblici too easy, Matematika/Fizika too hard; middle spot, pub-quiz level. Task 44.
+  Another rig (web-editor) is building a Mac pack editor; it tells the PM before writing pack files.
