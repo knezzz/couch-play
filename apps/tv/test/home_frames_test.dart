@@ -78,6 +78,68 @@ void main() {
     s.dispose();
   });
 
+  // The BRAVIA logged 60 frames a second (12-24 tickers) on the home AFTER phones joined and a game was
+  // played. This walks that real path: join four phones, play a whole quiz, results, back to the home.
+  testWidgets('the home after joined phones and a whole quiz game asks for no frames', (t) async {
+    t.view
+      ..physicalSize = const Size(1920, 1080)
+      ..devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    var now = Duration.zero;
+    final s = Session(random: Random(1), clock: () => now)..joinUrl = 'http://192.168.1.5:8080/';
+    await t.pumpWidget(TvApp(session: s, serve: false));
+    final ps = [for (var i = 0; i < 4; i++) join(s, 'P$i', token: 't$i')];
+    await t.pump();
+    ps[0].say(const StartGame(GameKind.quiz, null));
+    for (var i = 0; i < 4000 && s.phase != Phase.results; i++) {
+      if (s.quiz != null && s.quiz!.step == QuizStep.asking) {
+        for (final p in ps) {
+          p.say(Answer(s.quiz!.current.correctIndex));
+        }
+      }
+      now += const Duration(milliseconds: 100);
+      await t.pump(const Duration(milliseconds: 100));
+    }
+    expect(s.phase, Phase.results);
+    for (var i = 0; i < 200 && s.phase != Phase.lobby; i++) {
+      now += const Duration(milliseconds: 100);
+      await t.pump(const Duration(milliseconds: 100));
+    }
+    expect(s.phase, Phase.lobby, reason: 'back on the home');
+    await t.pump(const Duration(seconds: 7)); // the confetti and the Večeras strip settle
+    expect(find.byKey(const ValueKey('tonight')), findsOneWidget, reason: 'the strip with tonight\'s totals is up');
+    expect(SchedulerBinding.instance.transientCallbackCount, 0, reason: 'a ticker is still running on the home');
+    expect(await framesAsked(t), lessThanOrEqualTo(2));
+    await t.pumpWidget(const SizedBox());
+    s.dispose();
+  });
+
+  testWidgets('the home after a Curve game that was left (Flame loop removed) asks for no frames', (t) async {
+    t.view
+      ..physicalSize = const Size(1920, 1080)
+      ..devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    final s = Session(random: Random(1))..joinUrl = 'http://192.168.1.5:8080/';
+    await t.pumpWidget(TvApp(session: s, serve: false));
+    final ps = [for (var i = 0; i < 3; i++) join(s, 'P$i', token: 't$i')];
+    await t.pump();
+    ps[0].say(const StartGame(GameKind.curve, null));
+    expect(s.phase, Phase.curve);
+    await t.pump(const Duration(seconds: 1));
+    for (var i = 0; i < 100; i++) {
+      await t.pump(const Duration(milliseconds: 50));
+    }
+    expect(SchedulerBinding.instance.transientCallbackCount, greaterThan(0), reason: 'the game runs a loop');
+    s.endGame();
+    await t.pump();
+    await t.pump(const Duration(seconds: 2));
+    expect(s.phase, Phase.lobby);
+    expect(SchedulerBinding.instance.transientCallbackCount, 0, reason: 'the Flame loop is gone');
+    expect(await framesAsked(t), lessThanOrEqualTo(2));
+    await t.pumpWidget(const SizedBox());
+    s.dispose();
+  });
+
   testWidgets('with remote key presses it settles back to the idle rate after each press', (t) async {
     final s = await _homeWith8(t);
     for (final key in [

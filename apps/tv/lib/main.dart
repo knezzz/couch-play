@@ -46,7 +46,11 @@ const _botCount = int.fromEnvironment('BOTS');
 const _qaPowerUp = String.fromEnvironment('QA_POWERUP');
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  if (_perf) {
+    PerfBinding.ensureInitialized();
+  } else {
+    WidgetsFlutterBinding.ensureInitialized();
+  }
   // A TV has no touch: focus rings show from the start, not after a key press.
   FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
   if (_perf) PerfLog.start();

@@ -1,5 +1,11 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 /// Value at fraction [q] (0..1) of [sorted] ascending; 0 when empty.
 int percentile(List<int> sorted, double q) =>
@@ -31,6 +37,7 @@ class PerfLog {
   }
 
   static void reset() {
+    _starts.clear();
     _screens.clear();
     _tickSamples = _tickActive = _tickMax = 0;
   }
@@ -59,7 +66,7 @@ class PerfLog {
     // ignore: avoid_print
     print('${line(_build, _raster, _total)} ${context()}');
     // ignore: avoid_print
-    if (_tickMax > 0) print('PERF-TICKERS ${tickerOwners()}');
+    if (_starts.isNotEmpty) print('PERF-STARTS ${starts()}');
     reset();
     _build.clear();
     _raster.clear();
@@ -80,20 +87,40 @@ class PerfLog {
         '${stats('raster', raster)} ${stats('total', total)} total_over16ms=$over';
   }
 
-  /// Who in the widget tree owns tickers: 'StateName(tracking N tickers)'. A frame-by-frame
-  /// animation shows up here with the screen that has it. Debug aid for the PERF lines.
-  static String tickerOwners() {
-    final out = <String>[];
-    void walk(Element e) {
-      if (e is StatefulElement && e.state is TickerProvider) {
-        final t = e.state.toDiagnosticsNode().getProperties().where((n) => n.name == 'tickers').map((n) => n.toDescription()).join();
-        if (t.isNotEmpty && t != 'null') out.add('${e.state.runtimeType}($t)');
-      }
-      e.visitChildren(walk);
-    }
+  // Where animations/tickers were started in the last minute: the app frames of the stack that called
+  // scheduleFrameCallback (not a reschedule), counted. A ticker that runs for ever shows up here once, with
+  // the widget code that started it. (The ticker owners can't be read in a release build.)
+  static final _starts = <String, int>{};
 
-    final root = WidgetsBinding.instance.rootElement;
-    if (root != null) walk(root);
-    return out.join(', ');
+  static void noteStart(StackTrace st) {
+    final frames = [
+      for (final l in st.toString().split('\n'))
+        if (l.contains('package:') && !l.contains('/scheduler/') && !l.contains('/animation/') && !l.contains('perf_log')) l.trim().replaceFirst(RegExp(r'^#\d+\s+'), ''),
+    ].take(4).join(' < ');
+    final key = frames.isEmpty ? 'unknown' : frames;
+    if (_starts.length < 200 || _starts.containsKey(key)) _starts[key] = (_starts[key] ?? 0) + 1;
+  }
+
+  /// The six most frequent starts: 'n x frames | n x frames'.
+  static String starts() {
+    final by = _starts.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    return by.take(6).map((e) => '${e.value}x ${e.key}').join(' | ');
+  }
+}
+
+/// PERF=true only: a binding that tells [PerfLog] who starts each animation.
+mixin PerfStarts on SchedulerBinding {
+  @override
+  int scheduleFrameCallback(FrameCallback callback, {bool rescheduling = false, bool scheduleNewFrame = true}) {
+    if (!rescheduling) PerfLog.noteStart(StackTrace.current);
+    return super.scheduleFrameCallback(callback, rescheduling: rescheduling, scheduleNewFrame: scheduleNewFrame);
+  }
+}
+
+class PerfBinding extends BindingBase with GestureBinding, SchedulerBinding, ServicesBinding, PaintingBinding, SemanticsBinding, RendererBinding, WidgetsBinding, PerfStarts {
+  static WidgetsBinding ensureInitialized() {
+    // ignore: prefer_conditional_assignment
+    if (WidgetsBinding.instance is! PerfBinding) PerfBinding();
+    return WidgetsBinding.instance;
   }
 }
