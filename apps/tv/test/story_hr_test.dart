@@ -36,8 +36,8 @@ void main() {
 
   test('has a line list for every engine event, with and without the role', () {
     const engine = ['morningNobody', 'morningDied', 'loverDied', 'hunterShot', 'voteOut', 'voteTie', 'voteNobody',
-        'mayorBreaksTie', 'foolSpared', 'trampWins'];
-    const roleVariants = ['morningDied', 'loverDied', 'hunterShot', 'voteOut'];
+        'foolSpared', 'trampWins', 'playerLeft'];
+    const roleVariants = ['morningDied', 'loverDied', 'hunterShot', 'voteOut', 'playerLeft'];
     const session = ['firstNight', 'nightFalls', 'dayStarts', 'voteStarts', 'wolvesLeft', 'endReveal'];
     final winners = ['village', 'wolves', 'lone', 'tramp', 'nobody']
         .map((w) => 'gameOver${w[0].toUpperCase()}${w.substring(1)}');

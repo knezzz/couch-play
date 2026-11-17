@@ -61,6 +61,19 @@ const Map<String, List<String>> storyHr = {
     'Od tuge ispada i {name}. Bila je to uloga: {role}.',
   ],
 
+  // A player removed from the game (left or kicked).
+  'playerLeft': [
+    '{name} napušta selo i odlazi svojim putem.',
+    'Jedna kuća ostaje prazna: {name} više ne igra.',
+    'Put zove: {name} izlazi iz igre.',
+    '{name} odlazi iz sela. Igra ide dalje.',
+  ],
+  'playerLeftRole': [
+    '{name} napušta selo. Uloga: {role}.',
+    'Jedna kuća ostaje prazna: {name} više ne igra. Uloga: {role}.',
+    '{name} odlazi svojim putem. Bila je to uloga: {role}.',
+  ],
+
   // --- Day (session) ---
   'dayStarts': [
     'Seljani se okupljaju na trgu. Vrijeme je za razgovor.',
@@ -115,11 +128,6 @@ const Map<String, List<String>> storyHr = {
     'Pucanj odjekne selom! Lovac {name} pogađa: {name2}. Uloga: {role}.',
     'Metak lovca pogađa: {name2}. Bila je to uloga: {role}.',
     'Lovac {name} stigne opaliti. Pogodak: {name2}, uloga: {role}.',
-  ],
-  'mayorBreaksTie': [
-    'Izjednačeno! Odlučuje načelnik {name}.',
-    'Glasovi su jednaki, pa zadnju riječ ima načelnik {name}.',
-    'Vaga stoji na sredini. Načelnik {name} odlučuje kamo će pasti.',
   ],
   'foolSpared': [
     'Selo je izglasalo seosku budalu! {name} ostaje, ali više ne glasa.',
@@ -180,15 +188,15 @@ const Map<String, List<String>> storyHr = {
 
 /// Keys whose lines name a role. `xxxRole` keys are used only when roles are
 /// shown; the others belong to events that show the role by their nature (the
-/// hunter's shot, the fool stays, the mayor decides, the tramp or lone wolf
+/// hunter's shot, the fool stays, the tramp or lone wolf
 /// wins) or, for wolvesLeft, only when roles are shown.
 const Set<String> storyNamesRole = {
+  'playerLeftRole',
   'morningDiedRole',
   'loverDiedRole',
   'voteOutRole',
   'hunterShotRole',
   'hunterShot',
-  'mayorBreaksTie',
   'foolSpared',
   'trampWins',
   'wolvesLeft',
