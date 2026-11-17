@@ -82,6 +82,15 @@ try:
         s.settimeout(None)
     else:
         time.sleep(wait)
+    if os.environ.get('TYPE'):  # click the field, type, press Enter (send), look again
+        tap = lambda x, y: [call(10 + i, 'Input.dispatchMouseEvent', {'type': t, 'x': x, 'y': y, 'button': 'left', 'clickCount': 1}) for i, t in enumerate(['mousePressed', 'mouseReleased'])]
+        tap(195, int(os.environ.get('FIELD_Y', '230')))
+        time.sleep(1)
+        call(20, 'Input.insertText', {'text': os.environ['TYPE']})
+        time.sleep(1)
+        for i, t in enumerate(['keyDown', 'keyUp']):
+            call(30 + i, 'Input.dispatchKeyEvent', {'type': t, 'key': 'Enter', 'code': 'Enter', 'windowsVirtualKeyCode': 13, 'text': '\r'})
+        time.sleep(1)
     r = call(3, 'Page.captureScreenshot', {'format': 'png'})
     open(out, 'wb').write(base64.b64decode(r['result']['data']))
 finally:
