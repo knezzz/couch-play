@@ -43,7 +43,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | playable on the TV in fd838d6; review clean; full QA with 5–8 phones running; vote shows only who is out | lead + content |
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | playable on the TV in fd838d6; QA with 3–8 phones running | lead + content |
-| 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | in progress: speed and slow both ways (4 kinds), cheese, square turns | lead |
+| 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | done; on the TV (682e883); QA release run waits for 8080 | lead |
 | 37 | Design-audit decisions: scores between Curve rounds, Večeras strip, power-up legend, fat icon, night switch (person, 2026-11-17) | in progress; audit fixes (pack grid f1d37a9, Curve art de932f6) | lead |
 | 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | queued to lead | lead + content |
 | 39–42 | Party games: Objasni, Koliko?, Blef, Tko bi?, with new packs (person, 2026-11-17) | queued to lead | lead + content |

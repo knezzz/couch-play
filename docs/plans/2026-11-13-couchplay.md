@@ -966,11 +966,11 @@ The person: "Cheese, one where you are getting a lot of holes. 90 deg, where oth
 - **Square turns (red, on everyone else):** while it lasts, their steering turns in sharp 90° steps (a held button turns 90° once, then goes straight until pressed again). Icon: a right-angle arrow. Bots cope (they steer in 90° steps too).
 - Both get the ring-only active indicator (Task 34) and spawn in Kaos/Uravnoteženo; Samo za tebe = speed up, slow down, ghost, cheese. Effect durations: the default `effectSeconds` unless it plays badly.
 
-- [ ] **Step 1: Failing tests:** speed up only on the picker, slow down only on the others; cheese gives far more trail gaps than normal and no gaps after it ends; square turns: a held button turns exactly 90° once, then straight; only the others are hit; bots don't crash immediately under square turns.
-- [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** core, TV icons/rings, bots, mode lists.
-- [ ] **Step 4: Run.** Expected: PASS. QA on macOS release: each seen working.
-- [ ] **Step 5: Commit** by path.
+- [x] **Step 1: Failing tests:** speed up only on the picker, slow down only on the others; cheese gives far more trail gaps than normal and no gaps after it ends; square turns: a held button turns exactly 90° once, then straight; only the others are hit; bots don't crash immediately under square turns.
+- [x] **Step 2: Run.** Expected: FAIL.
+- [x] **Step 3: Implement** core, TV icons/rings, bots, mode lists.
+- [x] **Step 4: Run.** Expected: PASS. QA on macOS release: each seen working.
+- [x] **Step 5: Commit** by path.
 
 ### Task 37: Design-audit decisions (added 2026-11-17, user choices)
 
