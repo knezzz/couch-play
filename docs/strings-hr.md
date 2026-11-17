@@ -78,6 +78,10 @@ Choices that were put to the person:
 | homeKeyBack / homeHelpBack | Natrag izlaz | Back exit | TV home help line |
 | homeMeta | 2–8 igrača · Uravnoteženo · pauza 2 s | players · mode · pause | TV home, the line under the description |
 | uljezSoon | Uljez još nije spreman na ovom televizoru. | Uljez is not ready on this TV yet. | Error on the phone until Task 35 |
+| wolfNight / wolfMorning / wolfDay | NOĆ 2 / JUTRO 3 / DAN 3 | NIGHT 2 / MORNING 3 / DAY 3 | Vukodlak village, small caps line above the story |
+| wolfVoteHeader / wolfVoteQuestion | DAN 3 · GLASANJE / Koga selo izbacuje? | DAY 3 · VOTE / Whom does the village throw out? | Vukodlak vote screen |
+| wolfVoted | Glasalo 4 od 5 | 4 of 5 have voted | Vukodlak vote screen, top right (the only count shown) |
+| wolfEndHeader / wolfTeam* | KRAJ IGRE / Selo / Vukodlaci / Sam | GAME OVER / Village / Werewolves / Alone | Vukodlak end screen (all roles shown) |
 | curveNeedsTwo | Za Curve trebaju barem 2 igrača. Dodaj robota ili pozovi prijatelja. | Curve needs at least 2 players. Add a bot or invite a friend. | Error on the phone |
 | noSuchPlayer | Tog igrača nema. | That player is not here. | Error on the phone (kick) |
 | cannotKickSelf | Ne možeš izbaciti sebe. | You can't kick yourself. | Error on the phone (kick) |

@@ -75,6 +75,19 @@ abstract final class Strings {
         GameKind.uljez => '3–8 igrača · bez robota',
       };
 
+  // --- Vukodlak (the village on the TV) ---
+
+  static String wolfNight(int n) => 'NOĆ $n';
+  static String wolfMorning(int n) => 'JUTRO $n';
+  static String wolfDay(int n) => 'DAN $n';
+  static String wolfVoteHeader(int n) => 'DAN $n · GLASANJE';
+  static const wolfVoteQuestion = 'Koga selo izbacuje?';
+  static String wolfVoted(int x, int y) => 'Glasalo $x od $y';
+  static const wolfEndHeader = 'KRAJ IGRE';
+  static const wolfTeamVillage = 'Selo';
+  static const wolfTeamWolves = 'Vukodlaci';
+  static const wolfTeamSolo = 'Sam';
+
   /// Bots are named "Robot 1", "Robot 2", ...
   static String botName(int n) => 'Robot $n';
 
