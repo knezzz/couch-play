@@ -18,6 +18,24 @@ String _token() {
   return t;
 }
 
+const _nameKey = 'couchplay.name', _charKey = 'couchplay.character';
+
+SavedJoin? _saved() {
+  final n = web.window.localStorage.getItem(_nameKey);
+  if (n == null || n.isEmpty) return null;
+  return SavedJoin(n, web.window.localStorage.getItem(_charKey) ?? '');
+}
+
+void _save(SavedJoin? j) {
+  if (j == null) {
+    web.window.localStorage.removeItem(_nameKey);
+    web.window.localStorage.removeItem(_charKey);
+  } else {
+    web.window.localStorage.setItem(_nameKey, j.name);
+    web.window.localStorage.setItem(_charKey, j.character);
+  }
+}
+
 void main() {
   final loc = Uri.parse(web.window.location.href);
   final ws = Uri(
@@ -26,5 +44,12 @@ void main() {
     port: loc.port,
     path: '/ws',
   );
-  runApp(App(Connection(ws, _token()), addPack: pickAndUploadPack));
+  runApp(
+    App(
+      Connection(ws, _token()),
+      addPack: pickAndUploadPack,
+      saved: _saved(),
+      onSave: _save,
+    ),
+  );
 }

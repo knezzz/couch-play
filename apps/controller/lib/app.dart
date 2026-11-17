@@ -17,10 +17,23 @@ import 'strings.dart';
 
 enum _Screen { join, lobby, wait, curve, quiz, results, wolf, uljez, kicked }
 
+/// What the browser keeps after a join, so a reload rejoins by itself.
+class SavedJoin {
+  const SavedJoin(this.name, this.character);
+  final String name, character;
+}
+
 /// Routes the TV's messages to a screen. No web imports, so it runs in tests.
 class App extends StatefulWidget {
-  const App(this.conn, {this.addPack, super.key});
+  const App(this.conn, {this.addPack, this.saved, this.onSave, super.key});
   final Connection conn;
+
+  /// A name kept from an earlier join: send Join at once instead of asking.
+  final SavedJoin? saved;
+
+  /// Called with the name and character to keep, or null to forget them
+  /// (kicked, or the TV refused the automatic rejoin). Browser-only in main.
+  final void Function(SavedJoin?)? onSave;
 
   /// Browser-only pack upload (see pack_upload.dart); null in tests.
   final Future<String?> Function(String token)? addPack;
@@ -30,7 +43,8 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  _Screen _screen = _Screen.join;
+  late _Screen _screen = widget.saved == null ? _Screen.join : _Screen.lobby;
+  late bool _rejoining = widget.saved != null; // no Welcome yet
   int _myId = -1;
   int _myColor =
       0; // from Welcome, so it survives a reload before any LobbyState
@@ -52,6 +66,16 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     _sub = widget.conn.messages.listen(_onMessage);
+    final s = widget.saved;
+    if (s != null) {
+      widget.conn.send(
+        Join(
+          s.name,
+          widget.conn.token,
+          character: s.character.isEmpty ? null : s.character,
+        ),
+      );
+    }
   }
 
   @override
@@ -80,12 +104,17 @@ class _AppState extends State<App> {
     setState(() {
       switch (m) {
         case Welcome():
+          _rejoining = false;
           _myId = m.playerId;
           _myColor = m.colorIndex;
           _error = null;
           _screen = _Screen.lobby;
         case LobbyState():
           _lobby = m;
+          final me = m.players.where((p) => p.id == _myId).firstOrNull;
+          if (me != null && !_rejoining) {
+            widget.onSave?.call(SavedJoin(me.name, me.character));
+          }
           if (_screen != _Screen.kicked) _screen = _Screen.lobby;
         case Waiting():
           _waitReason = m.reason;
@@ -127,9 +156,17 @@ class _AppState extends State<App> {
           _wolf.on(m);
           _screen = _Screen.wolf;
         case Kicked():
+          widget.onSave?.call(null);
           _screen = _Screen.kicked;
         case ErrorMsg():
-          _error = m.message;
+          if (_rejoining) {
+            // The TV refused the automatic rejoin: ask for the name again.
+            _rejoining = false;
+            widget.onSave?.call(null);
+            _screen = _Screen.join;
+          } else {
+            _error = m.message;
+          }
         default:
           break;
       }
