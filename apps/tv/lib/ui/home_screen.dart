@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:core/core.dart';
-import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -61,10 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
     widget.games.indexOf(widget.selected ?? widget.games.first),
   );
   var _settingsOpen = false;
-  // The background drifts 0..1 over 24 s, in steps of 8 a second: slow enough that
-  // nobody sees the steps, and the screen is only redrawn 8 times a second, not 60.
-  final _drift = ValueNotifier<double>(0);
-  Timer? _driftTimer;
+  // The background is still: drawn once, so an idle home asks for no frames at all (the
+  // BRAVIA logged 60 frames a second there). Only the change of game fades.
   bool? _reduced;
 
   GameKind get _game => widget.games[_i];
@@ -72,13 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final reduced = MediaQuery.disableAnimationsOf(context);
-    if (reduced == _reduced) return;
-    _reduced = reduced;
-    _driftTimer?.cancel();
-    _driftTimer = reduced
-        ? null
-        : Timer.periodic(const Duration(milliseconds: 125), (_) => _drift.value = (_drift.value + 0.125 / 24) % 1);
+    _reduced = MediaQuery.disableAnimationsOf(context);
   }
 
   @override
@@ -88,13 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final k = s == null ? -1 : widget.games.indexOf(s);
     if (k >= 0 && s != old.selected) _i = k;
     if (_i >= widget.games.length) _i = 0;
-  }
-
-  @override
-  void dispose() {
-    _driftTimer?.cancel();
-    _drift.dispose();
-    super.dispose();
   }
 
   void _move(int by) {
@@ -159,11 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         duration: _reduced == true
                             ? Duration.zero
                             : const Duration(milliseconds: 300),
-                        child: _Backdrop(
-                          g,
-                          _drift,
-                          key: ValueKey('backdrop-$g'),
-                        ),
+                        child: _Backdrop(g, key: ValueKey('backdrop-$g')),
                       ),
                     ),
                     _Edge(const ValueKey('prev'), prev, left: true),
@@ -593,13 +572,11 @@ class _SettingsPanel extends StatelessWidget {
   }
 }
 
-/// Each game's own background, drawn in code. [drift] loops 0..1 and moves the
+/// Each game's own background, drawn in code, once (it does not move).
 /// shapes a little; it stands still with reduced motion.
 class _Backdrop extends StatelessWidget {
-  const _Backdrop(this.kind, this.drift, {super.key});
+  const _Backdrop(this.kind, {super.key});
   final GameKind kind;
-  final ValueListenable<double> drift;
-
   @override
   Widget build(BuildContext context) => DecoratedBox(
     decoration: BoxDecoration(
@@ -620,7 +597,7 @@ class _Backdrop extends StatelessWidget {
     child: Stack(
       fit: StackFit.expand,
       children: [
-        RepaintBoundary(child: CustomPaint(painter: _ArtPainter(kind, drift), size: Size.infinite)),
+        RepaintBoundary(child: CustomPaint(painter: _ArtPainter(kind), isComplex: true, size: Size.infinite)),
         const RepaintBoundary(child: CustomPaint(painter: _Vignette(), isComplex: true, size: Size.infinite)),
       ],
     ),
@@ -628,16 +605,14 @@ class _Backdrop extends StatelessWidget {
 }
 
 class _ArtPainter extends CustomPainter {
-  _ArtPainter(this.kind, this.drift) : super(repaint: drift);
+  const _ArtPainter(this.kind);
   final GameKind kind;
-  final ValueListenable<double> drift;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
     canvas.scale(size.width / 1920, size.height / 1080);
-    final a = sin(drift.value * 2 * pi);
-    final b = cos(drift.value * 2 * pi);
+    const a = 0.0, b = 1.0; // where the shapes rest
     switch (kind) {
       case GameKind.curve:
         void ribbon(Color c, double o, Path p, double dx, double dy) {
@@ -711,7 +686,7 @@ class _ArtPainter extends CustomPainter {
         // A big moon over a dark ridge; the stars twinkle.
         canvas.drawCircle(const Offset(1460, 300), 220, Paint()..color = const Color(0xD9F2E9C9));
         for (var i = 0; i < 18; i++) {
-          final tw = 0.25 + 0.75 * (0.5 + 0.5 * sin(drift.value * 2 * pi * 6 + i));
+          final tw = 0.25 + 0.75 * (0.5 + 0.5 * sin(i * 1.7));
           canvas.drawCircle(Offset(80.0 + (i * 211) % 1300, 60.0 + (i * 97) % 380), 1.5 + i % 3, Paint()..color = Color.fromRGBO(255, 255, 255, tw));
         }
         const xs = <double>[160, 260, 380, 520, 680, 820, 980, 1140, 1300, 1460, 1620, 1780, 1920];
@@ -726,7 +701,7 @@ class _ArtPainter extends CustomPainter {
         canvas.drawOval(Rect.fromCenter(center: const Offset(960, 650), width: 1100, height: 520), Paint()..color = const Color(0x8C3A2A55));
         canvas.drawOval(Rect.fromCenter(center: const Offset(960, 640), width: 1040, height: 490), Paint()..color = const Color(0x8C4A3670));
         for (var i = 0; i < 6; i++) {
-          final a = -pi / 2 + i * 2 * pi / 6 + 0.04 * sin(drift.value * 2 * pi);
+          final a = -pi / 2 + i * 2 * pi / 6;
           canvas.drawCircle(Offset(960 + 700 * cos(a), 640 + 360 * sin(a)), 64, Paint()..color = playerColors[i].withValues(alpha: 0.45));
         }
     }

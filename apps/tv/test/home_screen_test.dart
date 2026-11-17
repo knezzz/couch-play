@@ -350,7 +350,7 @@ void main() {
     }
   });
 
-  testWidgets('light animation in the background (a few steps a second, not every frame), off with reduced motion', (t) async {
+  testWidgets('the background is still: the picture never changes by itself, with or without reduced motion', (t) async {
     final key = GlobalKey();
     Future<List<int>> picture(bool reduce, {int afterSeconds = 0}) async {
       t.view
@@ -383,9 +383,9 @@ void main() {
       return n;
     }
 
-    final moving = await picture(false);
+    final first = await picture(false);
     final later = await picture(false, afterSeconds: 6);
-    expect(diff(moving, later), greaterThan(50), reason: 'the ribbons have drifted');
+    expect(diff(first, later), 0, reason: 'nothing drifts: an idle home must not ask for frames');
     final still = await picture(true);
     final stillLater = await picture(true, afterSeconds: 6);
     expect(diff(still, stillLater), 0, reason: 'reduced motion keeps it still');
