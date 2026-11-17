@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'uljez.dart';
 import 'wolf.dart';
 
-enum GameKind { quiz, curve, vukodlak }
+enum GameKind { quiz, curve, vukodlak, uljez }
 
 /// Value equality from the JSON form, so every wire type compares by content.
 mixin _JsonEq {
@@ -76,6 +77,13 @@ class GameSettings with _JsonEq {
   final Set<WolfRole> wolfRoles;
   final bool wolfHideRoles;
   final int wolfDiscussion;
+
+  /// Uljez: the word pack (null = the TV's first pack), the free discussion
+  /// in seconds (30-300 in steps of 30) and 1 or 2 impostors (2 only counts
+  /// with 7-8 players).
+  final String? uljezPackId;
+  final int uljezDiscussion;
+  final int uljezImpostors;
   static const defaultWolfRoles = {
     WolfRole.wolf,
     WolfRole.villager,
@@ -94,6 +102,9 @@ class GameSettings with _JsonEq {
     this.wolfRoles = defaultWolfRoles,
     this.wolfHideRoles = true,
     this.wolfDiscussion = 120,
+    this.uljezPackId,
+    this.uljezDiscussion = 90,
+    this.uljezImpostors = 1,
   });
   factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
       quizSeconds: j['quizSeconds'] as int,
@@ -108,7 +119,10 @@ class GameSettings with _JsonEq {
           ? defaultWolfRoles
           : {for (final n in j['wolfRoles'] as List) WolfRole.values.byName(n as String)},
       wolfHideRoles: (j['wolfHideRoles'] as bool?) ?? true,
-      wolfDiscussion: (j['wolfDiscussion'] as int?) ?? 120);
+      wolfDiscussion: (j['wolfDiscussion'] as int?) ?? 120,
+      uljezPackId: j['uljezPackId'] as String?,
+      uljezDiscussion: (j['uljezDiscussion'] as int?) ?? 90,
+      uljezImpostors: (j['uljezImpostors'] as int?) ?? 1);
 
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
@@ -124,6 +138,9 @@ class GameSettings with _JsonEq {
       wolfRoles: {...wolfRoles, ...wolfAlwaysOn},
       wolfHideRoles: wolfHideRoles,
       wolfDiscussion: snap(wolfDiscussion, 30, 300, 30),
+      uljezPackId: uljezPackId,
+      uljezDiscussion: snap(uljezDiscussion, 30, 300, 30),
+      uljezImpostors: uljezImpostors.clamp(1, 2),
     );
   }
 
@@ -138,6 +155,9 @@ class GameSettings with _JsonEq {
         'wolfRoles': [for (final r in WolfRole.values) if (wolfRoles.contains(r)) r.name],
         'wolfHideRoles': wolfHideRoles,
         'wolfDiscussion': wolfDiscussion,
+        'uljezPackId': uljezPackId,
+        'uljezDiscussion': uljezDiscussion,
+        'uljezImpostors': uljezImpostors,
       };
 }
 
@@ -201,6 +221,7 @@ sealed class Message with _JsonEq {
         'nightPick' => NightPick(m['target'] as int?,
             special: m['special'] as bool, second: m['second'] as int?),
         'vote' => Vote(m['target'] as int?),
+        'guess' => Guess(m['index'] as int),
         'shoot' => Shoot(m['target'] as int?),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
@@ -210,6 +231,7 @@ sealed class Message with _JsonEq {
             players: list('players', PlayerInfo.fromJson),
             packs: list('packs', PackInfo.fromJson),
             hostId: m['hostId'] as int,
+            uljezPacks: m['uljezPacks'] == null ? const [] : list('uljezPacks', PackInfo.fromJson),
             selected: m['selected'] == null
                 ? null
                 : GameKind.values.byName(m['selected'] as String),
@@ -254,6 +276,16 @@ sealed class Message with _JsonEq {
             for (final e in (m['roles'] as Map<String, dynamic>).entries)
               int.parse(e.key): WolfRole.values.byName(e.value as String)
           }),
+        'uljezWord' => UljezWord(m['word'] as String),
+        'uljezTurn' => UljezTurn(
+            round: m['round'] as int,
+            speaker: m['speaker'] as int?,
+            seconds: m['seconds'] as int,
+            stage: m['stage'] as String),
+        'uljezGuess' => UljezGuess(
+            seconds: m['seconds'] as int, options: [for (final e in m['options'] as List) e as String]),
+        'uljezEnd' => UljezEnd(UljezWinner.values.byName(m['winner'] as String), m['village'] as String,
+            m['impostor'] as String, [for (final e in m['impostors'] as List) e as int]),
         'pong' => Pong(m['t'] as int),
         'waiting' => Waiting(m['reason'] as String),
         'error' => ErrorMsg(m['message'] as String),
@@ -392,6 +424,9 @@ class LobbyState extends Message {
   final int hostId;
   final GameSettings settings;
 
+  /// Uljez word packs (questionCount = number of word pairs).
+  final List<PackInfo> uljezPacks;
+
   /// The game the host has open, or null.
   final GameKind? selected;
   const LobbyState(
@@ -399,6 +434,7 @@ class LobbyState extends Message {
       required this.packs,
       required this.hostId,
       this.selected,
+      this.uljezPacks = const [],
       this.settings = const GameSettings()});
   @override
   String get type => 'lobby';
@@ -408,6 +444,7 @@ class LobbyState extends Message {
         'packs': [for (final p in packs) p.toJson()],
         'hostId': hostId,
         'selected': selected?.name,
+        'uljezPacks': [for (final p in uljezPacks) p.toJson()],
         'settings': settings.toJson(),
       };
 }
@@ -671,4 +708,68 @@ class WolfEnd extends Message {
         'winner': winner.name,
         'roles': {for (final e in roles.entries) '${e.key}': e.value.name},
       };
+}
+
+// Uljez. The impostor's phone gets the same message types at the same moments
+// as every other phone; only the word differs.
+
+/// Phone -> TV: the caught impostor's pick among the guess options.
+class Guess extends Message {
+  final int index;
+  const Guess(this.index);
+  @override
+  String get type => 'guess';
+  @override
+  Map<String, Object?> get fields => {'index': index};
+}
+
+/// TV -> one phone: your word (everyone gets one; sent at the start and on
+/// reconnect). The phone shows it only while a finger is down.
+class UljezWord extends Message {
+  final String word;
+  const UljezWord(this.word);
+  @override
+  String get type => 'uljezWord';
+  @override
+  Map<String, Object?> get fields => {'word': word};
+}
+
+/// TV -> everyone: whose turn it is to give a clue ([stage] 'clues', [speaker]
+/// the player id) or the free discussion ([stage] 'discussion', no speaker).
+/// Public: it carries no private information.
+class UljezTurn extends Message {
+  final int round, seconds;
+  final int? speaker;
+  final String stage;
+  const UljezTurn({required this.round, required this.speaker, required this.seconds, required this.stage});
+  @override
+  String get type => 'uljezTurn';
+  @override
+  Map<String, Object?> get fields =>
+      {'round': round, 'speaker': speaker, 'seconds': seconds, 'stage': stage};
+}
+
+/// TV -> the caught impostor only (everybody already knows who was voted
+/// out): the 4 options, pick one with [Guess].
+class UljezGuess extends Message {
+  final int seconds;
+  final List<String> options;
+  const UljezGuess({required this.seconds, required this.options});
+  @override
+  String get type => 'uljezGuess';
+  @override
+  Map<String, Object?> get fields => {'seconds': seconds, 'options': options};
+}
+
+/// TV -> everyone, at the end: both words and who the impostors were.
+class UljezEnd extends Message {
+  final UljezWinner winner;
+  final String villageWord, impostorWord;
+  final List<int> impostors;
+  const UljezEnd(this.winner, this.villageWord, this.impostorWord, this.impostors);
+  @override
+  String get type => 'uljezEnd';
+  @override
+  Map<String, Object?> get fields =>
+      {'winner': winner.name, 'village': villageWord, 'impostor': impostorWord, 'impostors': impostors};
 }

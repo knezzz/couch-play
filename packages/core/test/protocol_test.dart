@@ -225,4 +225,46 @@ void main() {
       expect(Message.decode('{"type":"start","game":"chess","packId":null}'), isNull);
     });
   });
+
+  group('uljez', () {
+    test('every new message round trips', () {
+      final ms = <Message>[
+        const StartGame(GameKind.uljez, null),
+        const SelectGame(GameKind.uljez),
+        const Guess(2),
+        const UljezWord('Pikachu'),
+        const UljezTurn(round: 1, speaker: 3, seconds: 20, stage: 'clues'),
+        const UljezTurn(round: 2, speaker: null, seconds: 90, stage: 'discussion'),
+        const UljezGuess(seconds: 15, options: ['a', 'b', 'c', 'd']),
+        const UljezEnd(UljezWinner.village, 'Spužva Bob', 'Pikachu', [2, 5]),
+        const SetSettings(GameSettings(uljezPackId: 'uljez-hrana', uljezDiscussion: 60, uljezImpostors: 2)),
+        const LobbyState(players: [], packs: [], hostId: 1, uljezPacks: [PackInfo('uljez-hrana', 'Hrana', 40)]),
+      ];
+      for (final m in ms) {
+        expect(Message.decode(m.encode()), m, reason: m.encode());
+      }
+    });
+
+    test('uljez settings: defaults, an old message, clamping', () {
+      const d = GameSettings();
+      expect([d.uljezPackId, d.uljezDiscussion, d.uljezImpostors], [null, 90, 1]);
+      final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
+      expect((old as SetSettings).settings, const GameSettings());
+      final c = const GameSettings(uljezDiscussion: 1000, uljezImpostors: 5).clamped();
+      expect([c.uljezDiscussion, c.uljezImpostors], [300, 2]);
+      final f = const GameSettings(uljezDiscussion: 10, uljezImpostors: 0).clamped();
+      expect([f.uljezDiscussion, f.uljezImpostors], [30, 1]);
+    });
+
+    test('an old lobby has no uljez packs', () {
+      final m = Message.decode('{"type":"lobby","players":[],"packs":[],"hostId":1}');
+      expect((m as LobbyState).uljezPacks, isEmpty);
+    });
+
+    test('wrong types are null', () {
+      expect(Message.decode('{"type":"guess","index":"1"}'), isNull);
+      expect(Message.decode('{"type":"uljezWord"}'), isNull);
+      expect(Message.decode('{"type":"uljezEnd","winner":"nobody","village":"a","impostor":"b","impostors":[]}'), isNull);
+    });
+  });
 }
