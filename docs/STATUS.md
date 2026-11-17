@@ -44,6 +44,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | queued to lead | lead + content |
 | 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | queued to lead | lead |
+| 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | queued to lead | lead + content |
 
 ## Open questions for the person
 
@@ -290,3 +291,6 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   is no longer on the home). If hatched text returns, Skia is the fallback and needs the person's yes.
 - 2026-11-17: TV ran at ~half speed on fd838d6 (person: "a bit" choppy, on the home screen); Curve end-of-game crash.
   Both with builder-2. Person: Vukodlak night screens stay as they are (no hold-to-see for the task); TV A/B later.
+- 2026-11-17: Person answered the long-open questions: Međimurje pack approved with changes (no village in word
+  questions, no easy words); Back on results moves on; all-zero quiz gives 0; placement points shift down (last = 0).
+  Task 38.

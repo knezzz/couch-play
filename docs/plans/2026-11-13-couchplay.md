@@ -18,7 +18,7 @@
 - Server port is 8080. If it is taken, try ports up to 8090.
 - Quiz: 4 choices, 20 s per question, 10 questions per round (defaults; the host can change them, Task 23). A correct answer scores 500–1000 points, depending on speed. A wrong answer or no answer scores 0.
 - Curve: 60 Hz fixed tick, left/right steering, trails with random gaps, +1 point for each player you outlive. The match target is `10 × (players − 1)`, fixed when the match starts. You die on any trail, including your own older trail. Power-ups: see Task 5b.
-- Session scoreboard: placement points after each game (1st = N, …, last = 1, where N = players in that game). Scores last only for the session.
+- Session scoreboard: placement points after each game (1st = N−1, …, last = 0, where N = players in that game; everyone 0 if everyone scored 0). Scores last only for the session.
 - The D-pad only moves focus and backs out of a game. A phone host runs the session.
 - Dev machine: Intel Mac (x86_64). Xcode and Android Studio are installed. Flutter 3.47.7 (Dart 3.13.5) is installed via fvm. `avdmanager` needs `JAVA_HOME` set to Android Studio's bundled jbr.
 - Copy rules for UI text: plain words, active voice, and errors that say how to fix the problem. All UI text is in Croatian (changed 2026-11-14, Task 16).
@@ -979,3 +979,12 @@ The person: "Cheese, one where you are getting a lot of holes. 90 deg, where oth
 - [ ] Power-up legend: ▼ on the Curve card on the home and the host's Curve details on the phone: every power-up, its icon, one line.
 - [ ] Fat icon: keep the two diagonal bars.
 - [ ] Vukodlak night: keep the shared "Iskoristi posebnu moć (ako je imaš)" switch (PM).
+
+---
+
+### Task 38: The person's open answers (added 2026-11-17)
+
+- [ ] **Placement points:** 1st = N−1 … last = 0; a game where everyone scored 0 gives everyone 0. Update the session tests and the results/"Večeras" text.
+- [ ] **Back on the results screen:** closes the results and moves on (next round/game, or the home screen when the game is over). A remote test.
+- [ ] **hr-medimurje (Task 13 review):** approved. Dialect-word questions no longer name the village ("u selu X"), and the easy words go: keep only words a local would have to think about. Mark the easy ones in the sources file and drop or replace them; the pack stays ≥ 30 questions and the tests pass.
+
