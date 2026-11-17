@@ -1109,6 +1109,17 @@ class Session {
     }
   }
 
+  /// What the TV's game loop calls before every tick: the countdown sounds and the
+  /// bots' steering. The loop can tick once more after the session has left the game
+  /// (the match ends inside the same loop, or Back was pressed), when the bots are
+  /// gone: it must do nothing then (a null check here crashed the BRAVIA).
+  void beforeGameTick() {
+    final bots = _bots;
+    if (_phase != Phase.curve || _sim == null || bots == null) return;
+    beforeTick();
+    bots.tick();
+  }
+
   /// Feed this the events of every `CurveSim.tick()` (CurveGame.onEvents).
   void curveEvents(List<CurveEvent> events) {
     if (_phase != Phase.curve || _sim == null) return;
