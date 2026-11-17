@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Roles in this game</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 48px 0 24px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 8px">
+  <div style="margin: 0 20px; font-size: 18px; color: #4DD9FF; height: 40px; display: flex; align-items: center">‹ Natrag</div>
+  <div style="margin: 0 20px; font-size: 28px; font-weight: 900">Uloge u ovoj igri</div>
+  <div style="margin: 0 20px; font-size: 15px; color: #A9A9BC; line-height: 1.4">Svi vide isti popis. Tko ima koju ulogu, ne piše nigdje.</div>
+  <div style="flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 0 20px">
+    <dc-import name="WolfRoles" mode="view" counts="{{counts}}" hint-size="350px,900px"></dc-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { counts: { wolf: 2, alpha: 0, lone: 0, vil: 1, seer: 1, doc: 1, guard: 0, herb: 1, hunter: 1, elder: 0, mayor: 0, cupid: 0, fool: 0, tramp: 0 } };
+  }
+}
+</script>
+</body>
+</html>

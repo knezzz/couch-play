@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Vukodlak roles (data)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif">
+  <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+    <div style="font-size: 15px; font-weight: 700; letter-spacing: 2px; color: {{g.color}}; margin-top: 8px">{{g.title}}</div>
+    <sc-for list="{{g.roles}}" as="r" hint-placeholder-count="4">
+      <div style="{{r.row}}">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="font-size: 19px; font-weight: 700; flex-grow: 1">{{r.name}}</span>
+          <sc-if value="{{edit}}" hint-placeholder-val="{{ false }}">
+            <button aria-label="{{r.lessLabel}}" onClick="{{r.less}}" style="font: inherit; font-size: 22px; font-weight: 700; color: #F4F4F8; background: #2A2A3A; border: 0; border-radius: 10px; width: 44px; height: 44px">−</button>
+            <span style="font-size: 20px; font-weight: 700; width: 24px; text-align: center">{{r.count}}</span>
+            <button aria-label="{{r.moreLabel}}" onClick="{{r.more}}" style="font: inherit; font-size: 22px; font-weight: 700; color: #F4F4F8; background: #2A2A3A; border: 0; border-radius: 10px; width: 44px; height: 44px">+</button>
+          </sc-if>
+          <sc-if value="{{view}}" hint-placeholder-val="{{ true }}">
+            <span style="font-size: 17px; color: #A9A9BC">× {{r.count}}</span>
+          </sc-if>
+        </div>
+        <div style="font-size: 14px; color: #A9A9BC; line-height: 1.35">{{r.desc}}</div>
+      </div>
+    </sc-for>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["edit","view"],"default":"edit"},"counts":{"editor":null},"onChange":{"editor":null},"$preview":{"width":390,"height":1400}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { counts: null }; }
+  renderVals() {
+    const ALL = [
+      ['wolf', 'VUKODLACI', '#FF7A8F', [
+        ['wolf', 'Vukodlak', 'Noću s ostalim vukodlacima bira jednu žrtvu. Danju glumi seljana.', 2, 0, 4],
+        ['alpha', 'Vođa čopora', 'Vukodlak. Jednom u igri može žrtvu pretvoriti u vukodlaka umjesto da je ubije.', 0, 0, 1],
+        ['lone', 'Vuk samotnjak', 'Ubija s čoporom, ali pobjeđuje samo ako ostane zadnji živ.', 0, 0, 1]
+      ]],
+      ['village', 'SELO', '#7FD8A8', [
+        ['vil', 'Seljanin', 'Nema noćnu moć. Danju sluša, pita i glasa.', 3, 0, 8],
+        ['seer', 'Vidovnjakinja', 'Svake noći sazna ulogu jednog igrača.', 1, 0, 1],
+        ['doc', 'Ljekarnik', 'Svake noći štiti jednog igrača od vukodlaka. Ne isti dvije noći zaredom.', 1, 0, 1],
+        ['guard', 'Tjelohranitelj', 'Čuva jednog igrača. Ako ga vukodlaci napadnu, strada tjelohranitelj umjesto njega.', 0, 0, 1],
+        ['herb', 'Travarica', 'Ima jedan lijek (spašava žrtvu noći) i jedan otrov (ubija nekoga). Svaki jednom u igri.', 0, 0, 1],
+        ['hunter', 'Lovac', 'Kad ispadne, odmah izbacuje još jednog igrača po izboru.', 0, 0, 1],
+        ['elder', 'Starješina', 'Preživi prvi napad vukodlaka.', 0, 0, 1],
+        ['mayor', 'Načelnik', 'Glas mu se broji dvostruko. Ako je izjednačeno, on odlučuje.', 0, 0, 1],
+        ['cupid', 'Provodadžija', 'Prve noći spoji dvoje zaljubljenih. Ako jedno ispadne, ispada i drugo.', 0, 0, 1],
+        ['fool', 'Seoska budala', 'Ako ga selo izglasa, ostaje u igri, ali više ne smije glasati.', 0, 0, 1]
+      ]],
+      ['solo', 'SAMI ZA SEBE', '#E7B36A', [
+        ['tramp', 'Lutalica', 'Pobjeđuje sam ako ga selo izglasa van.', 0, 0, 1]
+      ]]
+    ];
+    const def = {};
+    ALL.forEach(([, , , rs]) => rs.forEach(([k, , , n]) => { def[k] = n; }));
+    const counts = this.props.counts || this.state.counts || def;
+    const edit = (this.props.mode ?? 'edit') === 'edit';
+    const set = (k, v) => { const c = { ...counts, [k]: v }; this.setState({ counts: c }); this.props.onChange && this.props.onChange(c); };
+    const groups = ALL.map(([id, title, color, rs]) => ({
+      title, color,
+      roles: rs.filter(([k]) => edit || counts[k] > 0).map(([k, name, desc, , min, max]) => {
+        const n = counts[k] || 0, on = n > 0;
+        return {
+          name, desc, count: n,
+          lessLabel: 'Manje: ' + name, moreLabel: 'Više: ' + name,
+          less: () => set(k, Math.max(min, n - 1)), more: () => set(k, Math.min(max, n + 1)),
+          row: 'background: #1F1F2C; border-radius: 14px; padding: 10px 12px 10px 14px; display: flex; flex-direction: column; gap: 4px; ' + (edit && !on ? 'opacity: 0.6;' : '')
+        };
+      })
+    })).filter((g) => g.roles.length);
+    return { groups, edit, view: !edit };
+  }
+}
+</script>
+</body>
+</html>
