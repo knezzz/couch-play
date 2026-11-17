@@ -946,12 +946,12 @@ Reference: canvas page "Curve pojačanja": icons version **A** (`PuIcons.dc.html
 
 Reference: canvas page "Uljez"; the spec's "Uljez". Same privacy rules as Vukodlak (hold to see, same screen for everyone, private messages only to their phone).
 
-- [ ] **Step 1: Core (tests first):** pairs, the draw (who is the impostor, which side of the pair), clue turn order, vote (plurality; tie = nobody out), the impostor's guess (4 options: the right word + 3 decoys from the same pack), wins, scoring into placement points.
-- [ ] **Step 2: Protocol + session:** game kind `uljez`, host settings (pack, discussion time, 1 or 2 impostors at 7–8), private word per phone.
-- [ ] **Step 3: TV:** players around a table, whose turn and the clock, vote result, both words at the end; console look (Task 30).
-- [ ] **Step 4: Phones:** hold-to-see word, vote, the impostor's guess; host settings in the game's details.
-- [ ] **Step 5: Content:** Croatian word-pair packs (similar but different pairs; at least 6 themes, 40+ pairs each; no offensive pairs).
-- [ ] **Step 6: Check:** tests in all members; QA with 3–8 browser phones; review of private messages. Commit by path.
+- [x] **Step 1: Core (tests first):** pairs, the draw (who is the impostor, which side of the pair), clue turn order, vote (plurality; tie = nobody out), the impostor's guess (4 options: the right word + 3 decoys from the same pack), wins, scoring into placement points.
+- [x] **Step 2: Protocol + session:** game kind `uljez`, host settings (pack, discussion time, 1 or 2 impostors at 7–8), private word per phone.
+- [x] **Step 3: TV:** players around a table, whose turn and the clock, vote result, both words at the end; console look (Task 30).
+- [x] **Step 4: Phones:** hold-to-see word, vote, the impostor's guess; host settings in the game's details.
+- [x] **Step 5: Content:** Croatian word-pair packs (similar but different pairs; at least 6 themes, 40+ pairs each; no offensive pairs).
+- [x] **Step 6: Check:** tests in all members; QA with 3–8 browser phones; review of private messages. Commit by path.
 
 Both new games (Vukodlak, Uljez) appear on the console home (Task 30) as their own cards.
 
