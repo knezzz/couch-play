@@ -12,6 +12,14 @@ enum Sound {
   right,
   wrong,
   fanfare,
+  menuMove,
+  menuConfirm,
+  quizTick,
+  nightAmbience,
+  howl,
+  rooster,
+  voteBell,
+  drum,
 }
 
 /// The session calls this on each event. Fire and forget: it must never block

@@ -1,9 +1,10 @@
 # Sound effects
 
-All twelve files are made in this repo by `tool/make_sounds.py` (sine waves, a
+All files are made in this repo by `tool/make_sounds.py` (sine waves, a
 square wave for `wrong`, seeded noise for `crash`; Python standard library
 only). No recordings, no samples: nothing to license. Licence: the same as the
-rest of the project. 22.05 kHz, 16-bit, mono, peak 35 % of full scale. Run the
+rest of the project. 22.05 kHz (nightAmbience and howl 11.025 kHz), 16-bit, mono,
+peak at most 35 % of full scale (frequent or long ones lower). Run the
 script to regenerate them; the names match `Sound` in `lib/sound/sfx.dart`.
 
 | File | Used for | What it is |
@@ -20,3 +21,11 @@ script to regenerate them; the names match `Sound` in `lib/sound/sfx.dart`.
 | right.wav | reveal, someone scored | two rising notes |
 | wrong.wav | reveal, nobody scored | low falling buzz |
 | fanfare.wav | the quiz ends | short fanfare |
+| menuMove.wav | TV home: focus moves | 40 ms soft click |
+| menuConfirm.wav | TV home: a choice is confirmed | two quick rising notes |
+| quizTick.wav | quiz: every second of a question | 50 ms soft low tock |
+| nightAmbience.wav | Vukodlak: night falls | 8 s low drone and wind that swells in and fades out (one-shot, no loop) |
+| howl.wav | Vukodlak: the wolves choose | 1.6 s rising and falling howl |
+| rooster.wav | Vukodlak: morning | three-part crow, 0.9 s |
+| voteBell.wav | Vukodlak: the vote starts | 1.2 s hand bell |
+| drum.wav | Vukodlak: someone is out | 0.6 s low drum |

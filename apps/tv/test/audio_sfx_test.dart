@@ -12,7 +12,9 @@ void main() {
     for (final s in Sound.values) {
       final f = File('assets/sounds/${s.name}.wav');
       expect(f.existsSync(), isTrue, reason: '${s.name}.wav');
-      expect(f.lengthSync(), lessThan(60 * 1024), reason: '${s.name}.wav is a short effect');
+      // The night ambience is a long quiet pad; everything else is a short effect.
+      final limit = s == Sound.nightAmbience ? 200 * 1024 : 60 * 1024;
+      expect(f.lengthSync(), lessThan(limit), reason: '${s.name}.wav is too big');
       expect(sources, contains('${s.name}.wav'));
     }
   });
