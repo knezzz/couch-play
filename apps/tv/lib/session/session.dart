@@ -11,6 +11,7 @@ import '../packs/test_pack.dart';
 import '../server/game_server.dart';
 import '../sound/sfx.dart';
 import 'bots.dart';
+import 'game_ready.dart';
 import 'uljez_match.dart';
 import 'uljez_text.dart';
 import 'wolf_match.dart';
@@ -450,11 +451,13 @@ class Session {
         if (parts.length < 2) return Strings.curveNeedsTwo;
         _startCurve(parts);
       case GameKind.vukodlak:
+        if (!wolfTvReady) return Strings.vukodlakSoon;
         if (_players.any((p) => p.bot)) return WolfText.noBots;
         final parts = participants(GameKind.vukodlak);
         if (parts.length < 5 || parts.length > 8) return WolfText.needPlayers;
         _startWolf(parts);
       case GameKind.uljez:
+        if (!uljezTvReady) return Strings.uljezSoon;
         if (_players.any((p) => p.bot)) return UljezText.noBots;
         final parts = participants(GameKind.uljez);
         if (parts.length < 3 || parts.length > 8) return UljezText.needPlayers;
@@ -684,6 +687,10 @@ class Session {
 
   // --- Vukodlak: the match holds the rules and every private message ---
 
+  /// Start is refused ('soon') until the TV has screens for the game; tests
+  /// of the session itself switch these on.
+  bool wolfTvReady = kWolfTvReady;
+  bool uljezTvReady = kUljezTvReady;
   WolfMatch? _wolf;
   Timer? _wolfEndTimer;
   WolfMatch? get wolf => _wolf;

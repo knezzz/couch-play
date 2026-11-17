@@ -17,7 +17,7 @@ void main() {
   late List<FakePeer> ps;
 
   void setUpSession(int n, {int bots = 0}) {
-    s = Session(random: Random(1));
+    s = Session(random: Random(1))..uljezTvReady = true;
     s.uljezPacks = [pack('one'), pack('two')];
     ps = [for (var i = 0; i < n; i++) join(s, 'P$i', token: 't$i')];
     if (bots > 0) s.setBotCount(bots);
@@ -50,7 +50,7 @@ void main() {
   });
 
   test('with no packs loaded the host is told', () {
-    s = Session(random: Random(1));
+    s = Session(random: Random(1))..uljezTvReady = true;
     ps = [for (var i = 0; i < 3; i++) join(s, 'P$i', token: 't$i')];
     ps[0].say(const StartGame(GameKind.uljez, null));
     expect(ps[0].last<ErrorMsg>()!.message, Strings.packUnavailable);
@@ -137,6 +137,15 @@ void main() {
     expect(u.phase, UljezPhase.guess);
     imp.say(Guess(u.game.rightGuess));
     expect(u.winner, UljezWinner.impostors);
+    s.dispose();
+  });
+
+  test('refused with the soon text while the TV has no screens for it', () {
+    s = Session(random: Random(1));
+    ps = [for (var i = 0; i < 6; i++) join(s, 'P$i', token: 't$i')];
+    ps[0].say(const StartGame(GameKind.uljez, null));
+    expect(s.phase, Phase.lobby);
+    expect(ps[0].last<ErrorMsg>()!.message, Strings.uljezSoon);
     s.dispose();
   });
 }

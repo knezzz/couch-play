@@ -4,6 +4,7 @@ import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/session/session.dart';
 import 'package:tv/session/wolf_text.dart';
+import 'package:tv/strings.dart';
 
 import 'session_test.dart' show FakePeer, join;
 
@@ -13,7 +14,7 @@ void main() {
   late List<FakePeer> ps;
 
   void setUpSession(int n, {int bots = 0}) {
-    s = Session(random: Random(1));
+    s = Session(random: Random(1))..wolfTvReady = true;
     ps = [for (var i = 0; i < n; i++) join(s, 'P$i', token: 't$i')];
     if (bots > 0) s.setBotCount(bots);
   }
@@ -150,6 +151,15 @@ void main() {
     final id = ps[3].sent.whereType<Welcome>().first.playerId;
     ps[0].say(Kick(id));
     expect(s.wolf!.isAlive(id), isFalse);
+    s.dispose();
+  });
+
+  test('refused with the soon text while the TV has no screens for it', () {
+    s = Session(random: Random(1));
+    ps = [for (var i = 0; i < 6; i++) join(s, 'P$i', token: 't$i')];
+    ps[0].say(const StartGame(GameKind.vukodlak, null));
+    expect(s.phase, Phase.lobby);
+    expect(ps[0].last<ErrorMsg>()!.message, Strings.vukodlakSoon);
     s.dispose();
   });
 }
