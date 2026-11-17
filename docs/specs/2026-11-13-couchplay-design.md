@@ -201,6 +201,10 @@ the phones. Folk-game roles in our own words; no names or roles from Town of Sal
   on; the rest Seljani; Vođa čopora / Vuk samotnjak may replace an ordinary werewolf. "Skrivene uloge" (on by default):
   a player who is out is not revealed; all roles are shown at the end. Day discussion time.
 - **Players see every possible role** (all switched on, not only those drawn) and what each does, on a phone screen.
+- **Rule choices (user answers, 2026-11-17):** Travarica cures by guessing whom to save (she is not shown the
+  victim; one night step for everyone). Provodadžija picks two other players as the lovers on night 1, so night 1 has
+  two picks on every phone (the others get a second dummy pick). Vuk samotnjak wins only as the last one alive;
+  Lutalica wins alone when voted out. The other rule readings are build-core's (qitem-20261117093430-e04f231f).
 - Win: the village when no werewolves are left; the werewolves when they equal the rest; solo roles as described.
 
 ### Sound (user request, 2026-11-16)
