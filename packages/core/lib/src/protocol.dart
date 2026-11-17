@@ -198,7 +198,8 @@ sealed class Message with _JsonEq {
         'bots' => SetBots(m['count'] as int),
         'settings' => SetSettings(GameSettings.fromJson(m)),
         'select' => SelectGame(m['game'] == null ? null : GameKind.values.byName(m['game'] as String)),
-        'nightPick' => NightPick(m['target'] as int?, special: m['special'] as bool),
+        'nightPick' => NightPick(m['target'] as int?,
+            special: m['special'] as bool, second: m['second'] as int?),
         'vote' => Vote(m['target'] as int?),
         'shoot' => Shoot(m['target'] as int?),
         'ping' => Ping(m['t'] as int),
@@ -234,7 +235,9 @@ sealed class Message with _JsonEq {
             text: m['text'] as String,
             choices: [for (final e in m['choices'] as List) e as String],
             ids: [for (final e in m['ids'] as List) e as int],
+            picks: m['picks'] as int,
             picked: m['picked'] as int?,
+            picked2: m['picked2'] as int?,
             special: m['special'] as bool),
         'morning' => Morning(m['day'] as int, m['text'] as String),
         'votePrompt' => VotePrompt(
@@ -512,12 +515,15 @@ const wolfTextWidth = 120;
 /// carries; only some roles read it.
 class NightPick extends Message {
   final int? target;
+
+  /// Night 1 has two picks on every phone; only the cupid's count.
+  final int? second;
   final bool special;
-  const NightPick(this.target, {this.special = false});
+  const NightPick(this.target, {this.special = false, this.second});
   @override
   String get type => 'nightPick';
   @override
-  Map<String, Object?> get fields => {'target': target, 'special': special};
+  Map<String, Object?> get fields => {'target': target, 'second': second, 'special': special};
 }
 
 /// Phone -> TV, day vote: [target] null = skip.
@@ -564,20 +570,26 @@ class RoleMsg extends Message {
 /// TV -> one phone, night: the hint [text] (padded), and the list to choose
 /// from: [choices] are the labels, [ids] what a pick sends back. For a role
 /// with a night action the labels are the alive players; otherwise they are
-/// the five answers of a sum. [picked] and [special] restore the screen.
+/// the five answers of a sum. [picks] is 2 on night 1 for EVERY phone (the
+/// cupid's two lovers), else 1. [picked], [picked2] and [special] restore
+/// the screen.
 class NightPrompt extends Message {
   final int night;
   final String text;
   final List<String> choices;
   final List<int> ids;
+  final int picks;
   final int? picked;
+  final int? picked2;
   final bool special;
   const NightPrompt(
       {required this.night,
       required this.text,
       required this.choices,
       required this.ids,
+      this.picks = 1,
       this.picked,
+      this.picked2,
       this.special = false});
   @override
   String get type => 'night';
@@ -587,7 +599,9 @@ class NightPrompt extends Message {
         'text': text,
         'choices': choices,
         'ids': ids,
+        'picks': picks,
         'picked': picked,
+        'picked2': picked2,
         'special': special,
       };
 }

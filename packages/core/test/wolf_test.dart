@@ -10,9 +10,9 @@ WolfGame game(List<WolfRole> roles, {bool hide = true, int seed = 1}) =>
     WolfGame({for (var i = 0; i < roles.length; i++) i: roles[i]}, hideRoles: hide, random: Random(seed));
 
 /// Everyone alive skips, except the picks given as {who: target}.
-NightResult night(WolfGame g, Map<int, int?> picks, {Set<int> special = const {}}) {
+NightResult night(WolfGame g, Map<int, int?> picks, {Set<int> special = const {}, Map<int, int?> second = const {}}) {
   for (final id in g.alive) {
-    g.pick(id, picks[id], special: special.contains(id));
+    g.pick(id, picks[id], special: special.contains(id), second: second[id]);
   }
   return g.resolveNight();
 }
@@ -298,12 +298,13 @@ void main() {
   });
 
   group('cupid and lovers', () {
-    test('night 1: cupid and the picked player are lovers and both are told', () {
+    test('night 1: the cupid picks two other players, both are told, he is not one of them', () {
       final g = game([w, WolfRole.cupid, v, v, v]);
-      final r = night(g, {1: 3});
-      expect(g.lovers, {1, 3});
-      expect(r.notes[1]!.single.target, 3);
-      expect(r.notes[3]!.single.target, 1);
+      final r = night(g, {1: 3}, second: {1: 4});
+      expect(g.lovers, {3, 4});
+      expect(r.notes[3]!.single.target, 4);
+      expect(r.notes[4]!.single.target, 3);
+      expect(r.notes.containsKey(1), isFalse);
     });
 
     test('a pick on a later night makes no lovers', () {
@@ -312,39 +313,52 @@ void main() {
       g.startVote();
       g.resolveVote();
       g.startNight();
-      night(g, {1: 3});
+      night(g, {1: 3}, second: {1: 4});
       expect(g.lovers, isEmpty);
     });
 
-    test('picking himself makes no lovers', () {
-      final g = game([w, WolfRole.cupid, v, v, v]);
-      night(g, {1: 1});
+    test('himself, the same player twice, or one pick only make no lovers', () {
+      for (final c in [
+        (3, 1), // the cupid himself
+        (3, 3),
+        (3, null),
+      ]) {
+        final g = game([w, WolfRole.cupid, v, v, v]);
+        night(g, {1: c.$1}, second: {1: c.$2});
+        expect(g.lovers, isEmpty, reason: '$c');
+      }
+    });
+
+    test('everyone else may carry a second pick and it does nothing', () {
+      final g = game([WolfRole.wolf, WolfRole.seer, WolfRole.doc, v, v]);
+      final r = night(g, {0: 3, 1: 0, 2: 3}, second: {0: 4, 1: 4, 2: 4, 3: 1, 4: 2});
       expect(g.lovers, isEmpty);
+      expect(r.deaths, isEmpty, reason: 'the doctor saved 3; the seconds changed nothing');
     });
 
     test('when one lover dies at night the other follows', () {
       final g = game([w, WolfRole.cupid, v, v, v, v]);
-      night(g, {1: 3});
+      night(g, {1: 3}, second: {1: 4});
       g.startVote();
       g.resolveVote();
       g.startNight();
       final r = night(g, {0: 3});
-      expect(r.deaths.map((d) => d.id), [3, 1]);
+      expect(r.deaths.map((d) => d.id), [3, 4]);
       expect(r.deaths.last.cause, DeathCause.lover);
       expect(r.events.map((e) => e.key), ['morningDied', 'loverDied']);
     });
 
     test('lovers follow after a vote too', () {
       final g = game([w, WolfRole.cupid, v, v, v, v]);
-      night(g, {1: 3});
+      night(g, {1: 3}, second: {1: 4});
       g.startVote();
-      for (final id in [0, 1, 2, 4, 5]) {
+      for (final id in [0, 1, 2, 5]) {
         g.vote(id, 3);
       }
-      g.vote(3, null);
       final r = g.resolveVote();
       expect(r.out, 3);
-      expect(g.isAlive(1), isFalse);
+      expect(g.isAlive(4), isFalse);
+      expect(g.isAlive(1), isTrue);
     });
   });
 
@@ -432,11 +446,11 @@ void main() {
 
     test('a hunter killed with his lover shoots; lover death goes in the events', () {
       final g = game([w, WolfRole.cupid, WolfRole.hunter, v, v, v]);
-      night(g, {1: 2});
+      night(g, {1: 2}, second: {1: 3});
       g.startVote();
       g.resolveVote();
       g.startNight();
-      night(g, {0: 1});
+      night(g, {0: 3});
       expect(g.pendingHunters, [2]);
       g.shoot(2, 0);
       expect(g.lastShotEvents.first.key, 'hunterShot');
@@ -635,24 +649,18 @@ void main() {
 
     test('poisoning the wolf takes his lover too and the village wins', () {
       final g = game([w, v, WolfRole.cupid, WolfRole.herb, v]);
-      night(g, {2: 0});
+      night(g, {2: 0}, second: {2: 1});
       g.startVote();
       g.resolveVote();
       g.startNight();
       final r = night(g, {3: 0}, special: {3});
-      expect(r.deaths.map((d) => d.id), [0, 2]);
+      expect(r.deaths.map((d) => d.id), [0, 1]);
       expect(g.winner, WolfWinner.village);
     });
 
-    test('no one left at all', () {
-      final g = game([WolfRole.lone, WolfRole.cupid]);
-      night(g, {1: 0});
-      expect(g.winner, isNull);
-      g.startVote();
-      g.resolveVote();
-      g.startNight();
-      final r = night(g, {0: 1});
-      expect(r.deaths.map((d) => d.id), [1, 0]);
+    test('everyone going out in one night is nobody', () {
+      final g = game([w, WolfRole.herb]);
+      night(g, {0: 1, 1: 0}, special: {1});
       expect(g.winner, WolfWinner.nobody);
     });
 

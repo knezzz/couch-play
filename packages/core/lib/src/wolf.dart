@@ -23,9 +23,9 @@ import 'dart:math';
 ///    and the attack would have killed: the victim becomes an ordinary
 ///    Vukodlak instead of dying.
 ///  * Elder: the first wolf attack that reaches him fails, once.
-///  * Cupid (night 1 only): the cupid and the picked player become lovers
-///    (one pick, so the cupid is one of the pair). If one lover leaves, so
-///    does the other.
+///  * Cupid (night 1 only): picks two OTHER players, who become lovers. Night 1
+///    has two picks on every phone (the second is ignored for everyone else).
+///    If one lover leaves, so does the other.
 ///  * Seer: learns the exact role of the picked player (as of the start of
 ///    that night).
 ///  * Hunter: whenever he leaves (night, vote, lover, poison), he must shoot
@@ -159,7 +159,7 @@ class WolfEvent {
 }
 
 /// A private fact for one player after the night: 'saw' (seer: [target] and
-/// [role]), 'lover' (the partner is [target]), 'converted' (you are a wolf now).
+/// [role]), 'lover' (the partner is [target]; the cupid gets none), 'converted' (you are a wolf now).
 class WolfNote {
   const WolfNote(this.kind, {this.target, this.role});
   final String kind;
@@ -205,7 +205,7 @@ class WolfGame {
   final Set<int> _out = {};
   final Set<int> _silenced = {};
   final List<int> _pendingHunters = [];
-  final Map<int, ({int? target, bool special})> _picks = {};
+  final Map<int, ({int? target, int? second, bool special})> _picks = {};
   final Map<int, int?> _votes = {};
   final Set<int> _lovers = {};
 
@@ -272,10 +272,11 @@ class WolfGame {
   /// if it is not night, [who] is out, or [target] is not an alive player.
   /// A pick with no effect (a wolf on a wolf, a repeat protection) is
   /// accepted and ignored, so a phone cannot learn anything from it.
-  bool pick(int who, int? target, {bool special = false}) {
+  bool pick(int who, int? target, {bool special = false, int? second}) {
     if (_phase != WolfPhase.night || !isAlive(who)) return false;
     if (target != null && !isAlive(target)) return false;
-    _picks[who] = (target: target, special: special);
+    if (second != null && !isAlive(second)) return false;
+    _picks[who] = (target: target, second: second, special: special);
     return true;
   }
 
@@ -300,13 +301,13 @@ class WolfGame {
     // Lovers, night 1 only.
     if (night == 1) {
       for (final c in _alive((r) => r == WolfRole.cupid)) {
-        final t = _picks[c]?.target;
-        if (t != null && t != c) {
+        final a = _picks[c]?.target, b = _picks[c]?.second;
+        if (a != null && b != null && a != b && a != c && b != c && _lovers.isEmpty) {
           _lovers
-            ..add(c)
-            ..add(t);
-          notes.putIfAbsent(c, () => []).add(WolfNote('lover', target: t));
-          notes.putIfAbsent(t, () => []).add(WolfNote('lover', target: c));
+            ..add(a)
+            ..add(b);
+          notes.putIfAbsent(a, () => []).add(WolfNote('lover', target: b));
+          notes.putIfAbsent(b, () => []).add(WolfNote('lover', target: a));
         }
       }
     }
