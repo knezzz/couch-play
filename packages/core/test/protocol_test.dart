@@ -360,7 +360,7 @@ void main() {
         const NumberAnswer(0),
         const KolikoAsk(number: 2, total: 10, seconds: 30, q: 'Koliko je visok Eiffelov toranj?', unit: 'm'),
         const KolikoAsk(number: 3, total: 10, seconds: 12, q: 'x', unit: '', sent: 330),
-        const KolikoResult(answer: 330, value: 300, rank: 2, points: 750, total: 1750),
+        const KolikoResult(answer: 330, value: 300, rank: 2, points: 750, total: 1750, unit: 'm'),
         const KolikoResult(answer: 330, value: null, rank: null, points: 0, total: 0),
       ];
       for (final m in ms) {
@@ -432,5 +432,10 @@ void main() {
     final t = Message.decode('{"type":"objasniTurn","stage":"play","role":"watch","team":0,"explainer":1,"word":"x","seconds":5,"scores":[0,0]}') as ObjasniTurn;
     expect(t.wordNo, 0);
     expect(Message.decode('{"type":"objasniAction","act":"foul","wordNo":"3"}'), isNull);
+  });
+
+  test('a KolikoResult without a unit (an older TV) decodes with an empty unit', () {
+    final m = Message.decode('{"type":"kolikoResult","answer":3,"value":null,"rank":null,"points":0,"total":0}') as KolikoResult;
+    expect(m.unit, '');
   });
 }

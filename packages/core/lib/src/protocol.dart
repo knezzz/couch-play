@@ -407,7 +407,8 @@ sealed class Message with _JsonEq {
             value: (m['value'] as num?)?.toDouble(),
             rank: m['rank'] as int?,
             points: m['points'] as int,
-            total: m['total'] as int),
+            total: m['total'] as int,
+            unit: (m['unit'] as String?) ?? ''),
         'objasniTeams' => ObjasniTeams(
             team: m['team'] as int,
             teams: [
@@ -1055,13 +1056,22 @@ class KolikoResult extends Message {
   final double? value;
   final int? rank;
   final int points, total;
+
+  /// The question's unit ('m', 'km'...), so a phone that reloads during the
+  /// reveal can still show it; '' when there is none or from an older TV.
+  final String unit;
   const KolikoResult(
-      {required this.answer, required this.value, required this.rank, required this.points, required this.total});
+      {required this.answer,
+      required this.value,
+      required this.rank,
+      required this.points,
+      required this.total,
+      this.unit = ''});
   @override
   String get type => 'kolikoResult';
   @override
   Map<String, Object?> get fields =>
-      {'answer': answer, 'value': value, 'rank': rank, 'points': points, 'total': total};
+      {'answer': answer, 'value': value, 'rank': rank, 'points': points, 'total': total, 'unit': unit};
 }
 
 // Blef (bluff trivia). Nobody sees another player's fake before the list.
