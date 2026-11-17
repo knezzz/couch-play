@@ -214,6 +214,7 @@ class NightScreen extends StatefulWidget {
     super.key,
     required this.night,
     this.header,
+    this.seconds,
     this.title = Strings.nightTitle,
     this.confirmLabel = Strings.confirm,
     required this.hint,
@@ -230,6 +231,9 @@ class NightScreen extends StatefulWidget {
   /// Replaces "NOĆ n", the title and the button text (Uljez's vote and guess
   /// use this same screen).
   final String? header;
+
+  /// A clock after the header (Uljez's vote and guess), counting down.
+  final int? seconds;
   final String title, confirmLabel;
   final String hint;
   final List<NightItem> targets;
@@ -252,7 +256,25 @@ class NightScreen extends StatefulWidget {
 class _NightState extends State<NightScreen> {
   late int? _p1 = widget.picked, _p2 = widget.picked2;
   late bool _special = widget.special;
+  late int _left = widget.seconds ?? 0;
+  Timer? _tick;
   bool _sent = false; // the same "done" look for every role
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.seconds != null) {
+      _tick = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (_left > 0) setState(() => _left--);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
+  }
 
   Widget _list(
     List<NightItem> items,
@@ -301,7 +323,11 @@ class _NightState extends State<NightScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.header ?? Strings.night(widget.night),
+                (widget.header ?? Strings.night(widget.night)) +
+                    (widget.seconds == null
+                        ? ''
+                        : ' · ${Strings.minutes(_left)}'),
+                key: const ValueKey('night-header'),
                 style: const TextStyle(
                   fontSize: 18,
                   color: _nightMuted,
@@ -749,17 +775,10 @@ class WolfRolesPickScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-              child: Text(
-                Strings.rolesPickIntro(players, m.$1, m.$2, m.$3),
-                key: const ValueKey('mix'),
-                style: const TextStyle(
-                  fontSize: 18,
-                  height: 1.35,
-                  color: muted,
-                ),
-              ),
+            _intro(
+              key: const ValueKey('mix'),
+              lead: Strings.rolesPickIntroLead,
+              bold: Strings.rolesPickMix(players, m.$1, m.$2, m.$3),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -793,13 +812,50 @@ Widget _back(String label, VoidCallback onBack) => Align(
 );
 
 /// Everyone: the roles that can be in this game.
+/// The grey box above a roles list: a sentence, optionally one in bold.
+Widget _intro({Key? key, String? lead, required String bold}) => Padding(
+  padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+  child: Container(
+    key: key,
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    decoration: BoxDecoration(
+      color: surface,
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: Text.rich(
+      TextSpan(
+        style: const TextStyle(
+          fontSize: 18,
+          height: 1.4,
+          color: Color(0xFFC9C9D8),
+        ),
+        children: [
+          if (lead != null) TextSpan(text: '$lead\n'),
+          TextSpan(
+            text: bold,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              color: textColor,
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+
 class WolfRolesInfoScreen extends StatelessWidget {
   const WolfRolesInfoScreen({
     super.key,
     required this.enabled,
     required this.onBack,
+    this.players,
   });
   final Set<String> enabled;
+
+  /// The number of players, for the intro; no intro without it.
+  final int? players;
   final VoidCallback onBack;
 
   @override
@@ -816,6 +872,16 @@ class WolfRolesInfoScreen extends StatelessWidget {
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
             ),
           ),
+          if (players != null)
+            Builder(
+              builder: (_) {
+                final m = WolfRolesPickScreen.mix(players!, enabled);
+                return _intro(
+                  key: const ValueKey('roles-intro'),
+                  bold: Strings.rolesInfoIntro(m.$1, m.$2),
+                );
+              },
+            ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),

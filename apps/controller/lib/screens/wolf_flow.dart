@@ -58,6 +58,7 @@ class WolfFlow extends StatelessWidget {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (c) => WolfRolesInfoScreen(
+            players: lobby.players.length,
             enabled: {for (final r in possible) r.name},
             onBack: () => Navigator.of(c).pop(),
           ),

@@ -159,6 +159,49 @@ void main() {
     expect(c.sent.last, const Vote(2));
   });
 
+  testWidgets('the vote and the guess show a clock that counts down', (
+    t,
+  ) async {
+    final c = await _app(t);
+    await _send(t, c, const UljezWord('Pikachu'));
+    await _send(t, c, const VotePrompt(day: 1, seconds: 20, ids: [0, 2]));
+    expect(find.text('GLASANJE · 0:20'), findsOneWidget);
+    await t.pump(const Duration(seconds: 3));
+    expect(find.text('GLASANJE · 0:17'), findsOneWidget);
+    await _send(
+      t,
+      c,
+      const UljezGuess(seconds: 15, options: ['a', 'b', 'c', 'd']),
+    );
+    expect(find.text('POGAĐANJE · 0:15'), findsOneWidget);
+  });
+
+  testWidgets('the word card shows the stage: Tragovi, then Rasprava', (
+    t,
+  ) async {
+    final c = await _app(t);
+    await _send(t, c, const UljezWord('Pikachu'));
+    await _send(
+      t,
+      c,
+      const UljezTurn(round: 2, speaker: 0, seconds: 20, stage: 'clues'),
+    );
+    expect(find.text('Tragovi'), findsOneWidget);
+    expect(find.text(Strings.uljezRound(2)), findsOneWidget);
+    await _send(
+      t,
+      c,
+      const UljezTurn(
+        round: 2,
+        speaker: null,
+        seconds: 90,
+        stage: 'discussion',
+      ),
+    );
+    expect(find.text('Rasprava'), findsOneWidget);
+    expect(find.text('Tragovi'), findsNothing);
+  });
+
   testWidgets('the next turn after a vote brings the word card back', (
     t,
   ) async {

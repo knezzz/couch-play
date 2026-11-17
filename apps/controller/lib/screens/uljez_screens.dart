@@ -15,15 +15,19 @@ class UljezWordScreen extends StatelessWidget {
     required this.name,
     required this.round,
     required this.word,
+    this.stage = '',
   });
   final String name, word;
+
+  /// 'clues' or 'discussion': shown top right (Tragovi, Rasprava).
+  final String stage;
   final int round;
 
   @override
   Widget build(BuildContext context) => RoleHoldScreen(
-    name: name,
+    name: Strings.uljezRound(round),
     night: round,
-    header: Strings.uljezRound(round),
+    header: Strings.uljezStage(stage),
     heading: Strings.yourWord,
     hiddenHint: Strings.wordHint,
     role: word,
@@ -38,7 +42,9 @@ class UljezVoteScreen extends StatelessWidget {
     required this.targets,
     required this.onVote,
     this.picked,
+    this.seconds,
   });
+  final int? seconds;
   final int? picked;
   final List<NightItem> targets;
   final void Function(int target) onVote;
@@ -52,6 +58,7 @@ class UljezVoteScreen extends StatelessWidget {
     hint: '',
     showSpecial: false,
     picked: picked,
+    seconds: seconds,
     targets: targets,
     onConfirm: (t, _, _) => onVote(t),
   );
@@ -64,7 +71,9 @@ class UljezGuessScreen extends StatelessWidget {
     required this.word,
     required this.options,
     required this.onGuess,
+    this.seconds,
   });
+  final int? seconds;
   final String word;
   final List<NightItem> options;
   final void Function(int option) onGuess;
@@ -75,6 +84,7 @@ class UljezGuessScreen extends StatelessWidget {
     header: Strings.guessHeader,
     title: Strings.caught,
     hint: Strings.caughtHint(word),
+    seconds: seconds,
     showSpecial: false,
     targets: options,
     onConfirm: (t, _, _) => onGuess(t),

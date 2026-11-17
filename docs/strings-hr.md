@@ -215,6 +215,10 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | save | Spremi | Save | host: role switches |
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
+| rolesPickIntroLead | Ti biraš koje uloge smiju biti u igri. Igra sama izvlači koje će biti i koliko. | You choose which roles may be in the game. The game draws which and how many. | host: role switches, grey box |
+| rolesPickMix | Za {n} igrača: {a} vukodlaka, {b} posebne uloge od uključenih, {c} seljana. Svaka igra izvuče drugačije. | For {n} players: {a} werewolves, {b} special roles from those on, {c} villagers. Every game draws differently. | host: role switches, bold line (plurals: 1 vukodlak, 1 posebna uloga, 1 seljanin) |
+| rolesInfoIntro | 2 vukodlaka i do 3 posebne uloge s ovog popisa. Ne mora svaka biti u igri. Ostali su Seljani. Svi vide isti popis. | 2 werewolves and up to 3 special roles from this list. Not every one has to be in play. The rest are Villagers. Everyone sees the same list. | everyone's roles list, grey box |
+| uljezStage | Tragovi / Rasprava | Clues / Discussion | word card, top right |
 
 ### Uljez (phone)
 

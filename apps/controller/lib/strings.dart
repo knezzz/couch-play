@@ -178,13 +178,36 @@ abstract final class Strings {
       '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
   static const drawnByGame = 'Igra izvlači koje će biti.';
   static const howPlayersSeeIt = 'Kako to vide igrači';
-  static String rolesPickIntro(
+  static const rolesPickIntroLead =
+      'Ti biraš koje uloge smiju biti u igri. Igra sama izvlači koje će biti i koliko.';
+
+  /// 1 vukodlak, 2 vukodlaka.
+  static String wolvesN(int n) => n == 1 ? '1 vukodlak' : '$n vukodlaka';
+
+  /// 1 posebna uloga, 3 posebne uloge, 5 posebnih uloga.
+  static String specialsN(int n) => switch (n) {
+    1 => '1 posebna uloga',
+    2 || 3 || 4 => '$n posebne uloge',
+    _ => '$n posebnih uloga',
+  };
+
+  /// do 1 posebne uloge, do 3 posebne uloge, do 5 posebnih uloga.
+  static String specialsUpTo(int n) => switch (n) {
+    1 => 'do 1 posebne uloge',
+    2 || 3 || 4 => 'do $n posebne uloge',
+    _ => 'do $n posebnih uloga',
+  };
+  static String villagersN(int n) => n == 1 ? '1 seljanin' : '$n seljana';
+  static String rolesPickMix(
     int players,
     int wolves,
     int specials,
     int villagers,
   ) =>
-      'Za $players igrača, vukodlaka: $wolves · posebnih uloga: $specials · seljana: $villagers. Svaka igra izvuče drugačije.';
+      'Za $players igrača: ${wolvesN(wolves)}, ${specialsN(specials)} od uključenih, ${villagersN(villagers)}. Svaka igra izvuče drugačije.';
+  static String rolesInfoIntro(int wolves, int specials) => specials == 0
+      ? '${wolvesN(wolves)}. Ostali su Seljani. Svi vide isti popis.'
+      : '${wolvesN(wolves)} i ${specialsUpTo(specials)} s ovog popisa. Ne mora svaka biti u igri. Ostali su Seljani. Svi vide isti popis.';
   static const groupWolves = 'VUKODLACI';
   static const groupVillage = 'SELO';
   static const groupSolo = 'SAMI ZA SEBE';
@@ -285,6 +308,11 @@ abstract final class Strings {
   static const yourWord = 'TVOJA RIJEČ';
   static const wordHint = 'Tvoja riječ se vidi samo dok držiš.';
   static const wordNote = 'Netko možda ima drugu riječ. Možda i ti.';
+  static String uljezStage(String stage) => switch (stage) {
+    'clues' => 'Tragovi',
+    'discussion' => 'Rasprava',
+    _ => '',
+  };
   static const uljezVoteHeader = 'GLASANJE';
   static const whoIsImpostor = 'Tko je uljez?';
   static const caught = 'Uhvatili su te!';

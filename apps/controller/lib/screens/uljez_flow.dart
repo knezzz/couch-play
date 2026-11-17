@@ -68,6 +68,7 @@ class UljezFlow extends StatelessWidget {
               ),
           ],
           picked: v.picked,
+          seconds: v.seconds,
           onVote: (t) => conn.send(Vote(t)),
         );
       case 'guess':
@@ -75,6 +76,7 @@ class UljezFlow extends StatelessWidget {
         return UljezGuessScreen(
           key: ValueKey('uljez-guess-${g.options.join('|')}'),
           word: inbox.word?.word ?? '',
+          seconds: g.seconds,
           options: [
             for (var i = 0; i < g.options.length; i++)
               NightItem(i, g.options[i]),
@@ -94,6 +96,7 @@ class UljezFlow extends StatelessWidget {
           name:
               lobby.players.where((p) => p.id == myId).firstOrNull?.name ?? '',
           round: inbox.turn?.round ?? 1,
+          stage: inbox.turn?.stage ?? '',
           word: w.word,
         );
     }

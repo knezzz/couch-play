@@ -218,6 +218,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
 
   void _showRoles() => _pushLive(
     (l) => WolfRolesInfoScreen(
+      players: l.players.length,
       enabled: {for (final r in l.settings.wolfRoles) r.name},
       onBack: () => Navigator.of(context).pop(),
     ),

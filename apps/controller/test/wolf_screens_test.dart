@@ -549,6 +549,72 @@ void main() {
       expect(t.takeException(), isNull);
     });
 
+    test('the plurals of the intros', () {
+      expect(Strings.wolvesN(1), '1 vukodlak');
+      expect(Strings.wolvesN(2), '2 vukodlaka');
+      expect(Strings.specialsN(1), '1 posebna uloga');
+      expect(Strings.specialsN(3), '3 posebne uloge');
+      expect(Strings.specialsN(5), '5 posebnih uloga');
+      expect(Strings.specialsUpTo(3), 'do 3 posebne uloge');
+      expect(Strings.villagersN(1), '1 seljanin');
+      expect(Strings.villagersN(2), '2 seljana');
+    });
+
+    testWidgets('the pick screen: the lead sentence and the mix in bold', (
+      t,
+    ) async {
+      await _show(
+        t,
+        WolfRolesPickScreen(
+          players: 7,
+          enabled: const {'seer', 'doc', 'hunter', 'herb'},
+          onToggle: (_) {},
+          onBack: () {},
+        ),
+      );
+      final box = find.byKey(const ValueKey('mix'));
+      final text = t
+          .widget<Text>(find.descendant(of: box, matching: find.byType(Text)))
+          .textSpan!
+          .toPlainText();
+      expect(text, contains(Strings.rolesPickIntroLead));
+      expect(
+        text,
+        contains(
+          'Za 7 igrača: 2 vukodlaka, 3 posebne uloge od uključenih, 2 seljana.',
+        ),
+      );
+    });
+
+    testWidgets('the info screen explains the mix for this game', (t) async {
+      await _show(
+        t,
+        WolfRolesInfoScreen(
+          players: 7,
+          enabled: const {'seer', 'hunter', 'doc', 'herb'},
+          onBack: () {},
+        ),
+      );
+      expect(
+        find.text(
+          '2 vukodlaka i do 3 posebne uloge s ovog popisa. Ne mora svaka biti u igri. Ostali su Seljani. Svi vide isti popis.',
+          findRichText: true,
+        ),
+        findsOneWidget,
+      );
+      await _show(
+        t,
+        WolfRolesInfoScreen(players: 5, enabled: const {}, onBack: () {}),
+      );
+      expect(
+        find.text(
+          '1 vukodlak. Ostali su Seljani. Svi vide isti popis.',
+          findRichText: true,
+        ),
+        findsOneWidget,
+      );
+    });
+
     test('the mix: 1 wolf up to 6 players, 2 from 7, specials capped', () {
       expect(WolfRolesPickScreen.mix(5, {'seer', 'doc', 'hunter'}), (1, 2, 2));
       expect(WolfRolesPickScreen.mix(6, {'seer'}), (1, 1, 4));
