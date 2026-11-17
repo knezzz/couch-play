@@ -9,4 +9,5 @@ class PartyText {
   static const objasniName = 'Objasni';
   static const kolikoName = 'Koliko?';
   static const blefName = 'Blef';
+  static const tkobiName = 'Tko bi?';
 }

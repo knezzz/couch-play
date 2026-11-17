@@ -23,3 +23,5 @@ Future<List<ObjasniPack>> loadObjasniPacks(AssetBundle bundle) => _load(bundle, 
 Future<List<KolikoPack>> loadKolikoPacks(AssetBundle bundle) => _load(bundle, 'koliko', KolikoPack.fromJson);
 
 Future<List<BlefPack>> loadBlefPacks(AssetBundle bundle) => _load(bundle, 'blef', BlefPack.fromJson);
+
+Future<List<TkobiPack>> loadTkobiPacks(AssetBundle bundle) => _load(bundle, 'tkobi', TkobiPack.fromJson);

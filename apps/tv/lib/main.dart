@@ -31,6 +31,10 @@ import 'strings.dart';
 
 const _perf = bool.fromEnvironment('PERF');
 // QA/perf: pre-seeds this many bots when the first phone joins, e.g. BOTS=7.
+
+/// QA bisect: --dart-define=NOTICKERS=true mutes every ticker in the app. If the frames on an idle home
+/// then stop, an animation was the cause; if not, something asks for frames without one.
+const _noTickers = bool.fromEnvironment('NOTICKERS');
 // The host can still change it with the - / + buttons.
 const _botCount = int.fromEnvironment('BOTS');
 // QA only: e.g. QA_POWERUP=ghost puts that power-up just ahead of the first
@@ -113,6 +117,7 @@ class _TvAppState extends State<TvApp> {
       _session.objasniPacks = await loadObjasniPacks(rootBundle);
       _session.kolikoPacks = await loadKolikoPacks(rootBundle);
       _session.blefPacks = await loadBlefPacks(rootBundle);
+      _session.tkobiPacks = await loadTkobiPacks(rootBundle);
       _session.loadSettings(File('${support.path}/settings.json'));
       final server = await GameServer.start(
         webRoot: web,

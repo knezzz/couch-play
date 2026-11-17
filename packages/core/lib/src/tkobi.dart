@@ -73,6 +73,9 @@ class TkobiGame {
   bool get revealed => _revealed;
   String get current => _drawn[_i];
   Set<int> get voted => {..._votes.keys};
+
+  /// This player's own vote (for a reload); never anyone else's.
+  int? pickOf(int id) => _votes[id];
   int get votedCount => _votes.length;
   Set<int> get away => Set.unmodifiable(_away);
 
