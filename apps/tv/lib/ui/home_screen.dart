@@ -227,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         left: 0,
                         right: 0,
                         // Curve's panel also holds the power-up legend, so it starts higher.
-                        top: g == GameKind.curve ? 130 : 716,
+                        top: g == GameKind.curve ? 272 : 716,
                         child: Center(
                           child: _SettingsPanel(
                             g,
@@ -564,7 +564,7 @@ class _SettingsPanel extends StatelessWidget {
       width: kind == GameKind.curve ? 1640 : 1360,
       padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
       decoration: BoxDecoration(
-        color: const Color(0xE61F1F2C),
+        color: kind == GameKind.curve ? const Color(0xFA1F1F2C) : const Color(0xE61F1F2C),
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: tvAccent, width: 3),
       ),
@@ -586,12 +586,12 @@ class _SettingsPanel extends StatelessWidget {
               ),
             ),
           if (kind == GameKind.curve) ...[
-            const SizedBox(height: 18),
+            const SizedBox(height: 10),
             const Text(Strings.legendTitle, style: TextStyle(fontSize: 34, fontWeight: FontWeight.w700, color: tvText)),
-            const SizedBox(height: 14),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 36,
-              runSpacing: 14,
+              runSpacing: 6,
               children: [for (final k in PowerUpKind.values) _LegendEntry(k)],
             ),
           ],
@@ -630,7 +630,7 @@ class _LegendEntry extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 30),
                 ),
-                Text(info.what, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 28, color: tvMuted)),
+                Text(info.what, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 28, color: tvMuted)),
               ],
             ),
           ),
