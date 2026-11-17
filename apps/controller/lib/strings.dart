@@ -78,7 +78,7 @@ abstract final class Strings {
   static const confirm = 'Potvrdi';
   static const sent = 'Poslano';
   static const farewellHint =
-      'Ispao si iz igre. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom.';
+      'Više nisi u igri. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom.';
   static String wolfMates(String names) => 'Drugi vukodlaci: $names';
   static String wolfWinner(WolfWinner w) => switch (w) {
     WolfWinner.village => 'Selo je pobijedilo.',
@@ -87,7 +87,7 @@ abstract final class Strings {
     WolfWinner.tramp => 'Lutalica je pobijedila.',
     WolfWinner.nobody => 'Nitko nije pobijedio.',
   };
-  static const nightSpecial = 'Posebna moć';
+  static const nightSpecial = 'Iskoristi posebnu moć (ako je imaš)';
   static String voteHeader(int day) => 'DAN $day · GLASANJE';
   static const voteTitle = 'Koga izbacujete?';
   static const skipVote = 'Preskoči glasanje';

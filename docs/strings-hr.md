@@ -178,8 +178,8 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
 | sent | Poslano | Sent | night screen button after Potvrdi (same for every role) |
-| nightSpecial | Posebna moć | Special power | night screen switch; on every phone, used by few roles (placeholder wording, please review) |
-| farewellHint | Ispao si iz igre. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom. | You are out. If you have one more move, pick whom you take with you. | farewell screen, same for every player who is out |
+| nightSpecial | Iskoristi posebnu moć (ako je imaš) | Use your special power (if you have one) | night screen switch; the same on every phone, used by few roles |
+| farewellHint | Više nisi u igri. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom. | You are no longer in the game. If you have one more move, pick whom you take with you. | farewell screen, same for every player who is out |
 | wolfMates(names) | Drugi vukodlaci: {names} | Other werewolves: {names} | role card, werewolves only |
 | wolfWinner | Selo je pobijedilo. / Vukodlaci su pobijedili. / Vuk samotnjak je pobijedio. / Lutalica je pobijedila. / Nitko nije pobijedio. | The village won. / The werewolves won. / The lone wolf won. / The tramp won. / Nobody won. | end screen |
 
