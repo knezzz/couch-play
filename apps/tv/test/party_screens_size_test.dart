@@ -64,4 +64,45 @@ void main() {
       }
     });
   }
+
+  for (final size in [const Size(1280, 720), const Size(1920, 1080)]) {
+    testWidgets('${size.width.toInt()}x${size.height.toInt()}: an Objasni summary with 60 (and 150) words fits, shows the latest 28 and says how many more', (t) async {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      for (final n in [60, 150, 20]) {
+        await t.pumpWidget(Directionality(
+            textDirection: TextDirection.ltr,
+            child: ObjasniScreen(ObjasniBoard(
+              stage: ObjasniStageTv.summary,
+              teams: [eight.sublist(0, 4), eight.sublist(4)],
+              scores: const [12, 9],
+              target: 30,
+              turnTeam: 0,
+              explainer: eight[0],
+              words: [for (var i = 0; i < n; i++) ObjasniMarked('riječ $i', ObjasniMark.values[i % 3])],
+              secondsLeft: 0,
+              turnSeconds: 60,
+              summarySeconds: 4,
+              winnerTeam: null,
+              pausedSeconds: null,
+            ))));
+        expect(t.takeException(), isNull, reason: '$n words');
+        for (final w in t.widgetList<Text>(find.byType(Text))) {
+          final r = t.getRect(find.byWidget(w));
+          expect(r.bottom, lessThanOrEqualTo(size.height * 1030 / 1080 + 1), reason: '$n words: ${w.data} $r');
+        }
+        if (n > 28) {
+          expect(find.byKey(const ValueKey('more-words')), findsOneWidget);
+          expect(t.widget<Text>(find.byKey(const ValueKey('more-words'))).data, '+${n - 28} više');
+          expect(find.textContaining('riječ ${n - 1}'), findsOneWidget, reason: 'the latest word is shown');
+          expect(find.text('riječ 0'), findsNothing);
+        } else {
+          expect(find.byKey(const ValueKey('more-words')), findsNothing);
+          expect(find.text('riječ 0'), findsOneWidget);
+        }
+      }
+    });
+  }
 }

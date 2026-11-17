@@ -200,14 +200,19 @@ class ObjasniScreen extends StatelessWidget {
         ],
       );
 
+  static const _summaryMax = 28;
+
   Widget _wordChips({required bool big}) => Wrap(
         key: const ValueKey('turn-words'),
         alignment: WrapAlignment.center,
         spacing: 16,
         runSpacing: 14,
         children: [
-          // In play only the latest five stay up beside the clock; the summary shows them all.
-          for (var i = big ? 0 : (b.words.length > 5 ? b.words.length - 5 : 0); i < b.words.length; i++) _chip(i, b.words[i], big),
+          // In play only the latest five stay up beside the clock; the summary shows the latest 28 (a turn is
+          // 10-25 words) and says how many more there were.
+          if (big && b.words.length > _summaryMax)
+            Text(Strings.objasniMore(b.words.length - _summaryMax), key: const ValueKey('more-words'), style: const TextStyle(fontSize: 40, color: tvMuted)),
+          for (var i = big ? (b.words.length > _summaryMax ? b.words.length - _summaryMax : 0) : (b.words.length > 5 ? b.words.length - 5 : 0); i < b.words.length; i++) _chip(i, b.words[i], big),
         ],
       );
 
@@ -252,7 +257,7 @@ class ObjasniScreen extends StatelessWidget {
         children: [
           Text(Strings.objasniTurnOver, style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w800, color: tvText)),
           const SizedBox(height: 30),
-          if (b.words.isEmpty) const Text(Strings.objasniNoWords, style: TextStyle(fontSize: 36, color: tvMuted)) else _wordChips(big: true),
+          if (b.words.isEmpty) const Text(Strings.objasniNoWords, style: TextStyle(fontSize: 36, color: tvMuted)) else Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: SizedBox(width: 1720, child: _wordChips(big: true)))),
           const SizedBox(height: 40),
           Text(Strings.objasniNextIn(b.summarySeconds), key: const ValueKey('summary-next'), style: const TextStyle(fontSize: 34, color: tvMuted)),
         ],
