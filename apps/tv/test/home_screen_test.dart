@@ -25,6 +25,8 @@ Future<_Probe> _pump(
   List<PlayerInfo>? players,
   GameSettings settings = const GameSettings(),
   String? packTitle,
+  int quizPacks = 0,
+  int quizQuestions = 0,
   String? notice,
   bool reduceMotion = false,
   List<GameKind> games = const [GameKind.curve, GameKind.quiz],
@@ -46,6 +48,8 @@ Future<_Probe> _pump(
         settings: settings,
         selected: selected,
         packTitle: packTitle,
+        quizPacks: quizPacks,
+        quizQuestions: quizQuestions,
         notice: notice,
         games: games,
         onSelect: probe.selected.add,
@@ -63,6 +67,20 @@ Finder _face(String id) =>
     find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);
 
 void main() {
+  testWidgets('the blurbs are the canvas\'s (V2Home); Kviz says how much there is to play', (t) async {
+    await _pump(t, selected: GameKind.curve);
+    expect(find.text('Vozi svoju krivulju i ne udari ni u koga.'), findsOneWidget);
+    await _pump(t, selected: GameKind.quiz, quizPacks: 16, quizQuestions: 2000);
+    expect(find.text('16 paketa, 2\u00A0000 pitanja. Odgovaraš na mobitelu.'), findsOneWidget);
+    await _pump(t, selected: GameKind.quiz);
+    expect(find.text('Pitanja s četiri odgovora. Odgovaraš na mobitelu.'), findsOneWidget, reason: 'counts not known yet');
+  });
+
+  test('Croatian counts: 1 paket, 2 paketa, 5 paketa, 21 paket, 12 paketa; 1 pitanje, 2 pitanja, 21 pitanje', () {
+    expect([1, 2, 4, 5, 11, 12, 21, 22, 100].map(Strings.packsWord), ['1 paket', '2 paketa', '4 paketa', '5 paketa', '11 paketa', '12 paketa', '21 paket', '22 paketa', '100 paketa']);
+    expect([1, 2, 5, 11, 21].map(Strings.questionsWord), ['1 pitanje', '2 pitanja', '5 pitanja', '11 pitanja', '21 pitanje']);
+  });
+
   testWidgets(
     'with nothing selected the first game fills the screen: big title, one-line description, settings',
     (t) async {

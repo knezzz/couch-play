@@ -200,11 +200,7 @@ class _TvAppState extends State<TvApp> {
         }
       }
     }
-    if (events.any((e) => e is RoundOver) && _session.phase == Phase.curve) {
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) _session.nextRound();
-      });
-    }
+    // The next round starts by itself after the scores break (Session.roundBreak).
   }
 
   /// Over the frozen game while it waits for players to come back.
@@ -280,6 +276,8 @@ class _TvAppState extends State<TvApp> {
                   settings: _session.settings,
                   selected: _session.selectedGame ?? _homeGame,
                   packTitle: _session.selectedPackTitle,
+                  quizPacks: _session.packStore?.infos.length ?? 0,
+                  quizQuestions: _session.packStore?.infos.fold<int>(0, (a, p) => a + p.questionCount) ?? 0,
                   notice: _notice,
                   onSelect: (k) {
                     _homeGame = k;

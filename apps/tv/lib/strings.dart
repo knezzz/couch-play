@@ -36,9 +36,21 @@ abstract final class Strings {
       };
   /// The host's game card on the lobby, same words as the phone's game details.
   static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez' };
-  static String gameBlurb(GameKind k) => switch (k) {
-        GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
-        GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
+  /// 2000 -> '2 000' (no-break space).
+  static String _g(int n) => n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => '\u00A0');
+
+  /// 1 paket, 2 paketa, 5 paketa (Croatian counting: 21 paket, 12 paketa).
+  static String packsWord(int n) => '${_g(n)} ${n % 10 == 1 && n % 100 != 11 ? 'paket' : 'paketa'}';
+
+  /// 1 pitanje, 2 pitanja, 2 000 pitanja.
+  static String questionsWord(int n) => '${_g(n)} ${n % 10 == 1 && n % 100 != 11 ? 'pitanje' : 'pitanja'}';
+
+  /// The line under a game's name (V2Home). The Kviz one says how much there is to play, when known.
+  static String gameBlurb(GameKind k, {int packs = 0, int questions = 0}) => switch (k) {
+        GameKind.quiz => packs > 0
+            ? '${packsWord(packs)}, ${questionsWord(questions)}. Odgovaraš na mobitelu.'
+            : 'Pitanja s četiri odgovora. Odgovaraš na mobitelu.',
+        GameKind.curve => 'Vozi svoju krivulju i ne udari ni u koga.',
         GameKind.vukodlak => 'Netko u selu nije ono što se čini.',
         GameKind.uljez => 'Svi imaju istu riječ, osim uljeza. Nađi ga.',
       };

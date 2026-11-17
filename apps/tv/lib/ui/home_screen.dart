@@ -29,6 +29,8 @@ class HomeScreen extends StatefulWidget {
     required this.onPlay,
     this.selected,
     this.packTitle,
+    this.quizPacks = 0,
+    this.quizQuestions = 0,
     this.notice,
     this.games = homeGames,
     super.key,
@@ -42,6 +44,9 @@ class HomeScreen extends StatefulWidget {
 
   /// Title of the pack Igraj would start (Kviz).
   final String? packTitle;
+
+  /// How many packs and questions the Kviz has, for its line (0: not known).
+  final int quizPacks, quizQuestions;
 
   /// A line above the help, e.g. why OK did nothing.
   final String? notice;
@@ -173,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            Strings.gameBlurb(g),
+                            Strings.gameBlurb(g, packs: widget.quizPacks, questions: widget.quizQuestions),
                             style: const TextStyle(
                               fontSize: 44,
                               color: Color(0xFFE6E6F0),
