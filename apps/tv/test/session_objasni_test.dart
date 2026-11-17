@@ -101,7 +101,7 @@ void main() {
     expect(m.stage, ObjasniStageTv.ready);
     final ex = m.explainer!;
     final p = ps.firstWhere((x) => idOf(x) == ex);
-    final not = ps.firstWhere((x) => idOf(x) != ex);
+    final not = ps.firstWhere((x) => idOf(x) != ex && x != ps[0]); // not the host: the host may press Kreni too
     not.say(const Go());
     expect(m.stage, ObjasniStageTv.ready);
     p.say(const Go());
