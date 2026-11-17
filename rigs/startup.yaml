@@ -26,7 +26,6 @@ pods:
             - Bash(git add -A*)
             - Bash(git add .)
             - Bash(git commit -a*)
-            - Bash(adb -s 28051JEGR09026 *)
         startup:
           files:
             - path: roles/product-manager.md
@@ -53,7 +52,6 @@ pods:
             - Bash(git add -A*)
             - Bash(git add .)
             - Bash(git commit -a*)
-            - Bash(adb -s 28051JEGR09026 *)
         startup:
           files:
             - path: roles/tech-lead.md
@@ -75,7 +73,6 @@ pods:
             - Bash(git add -A*)
             - Bash(git add .)
             - Bash(git commit -a*)
-            - Bash(adb -s 28051JEGR09026 *)
         startup:
           files:
             - path: roles/core-engineer.md
@@ -97,7 +94,6 @@ pods:
             - Bash(git add -A*)
             - Bash(git add .)
             - Bash(git commit -a*)
-            - Bash(adb -s 28051JEGR09026 *)
         startup:
           files:
             - path: roles/app-engineer.md
@@ -133,7 +129,6 @@ pods:
             - Bash(git add -A*)
             - Bash(git add .)
             - Bash(git commit -a*)
-            - Bash(adb -s 28051JEGR09026 *)
         startup:
           files:
             - path: roles/qa-engineer.md
@@ -155,7 +150,6 @@ pods:
             - Bash(git add -A*)
             - Bash(git add .)
             - Bash(git commit -a*)
-            - Bash(adb -s 28051JEGR09026 *)
         startup:
           files:
             - path: roles/code-reviewer.md

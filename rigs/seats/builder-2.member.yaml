@@ -16,7 +16,6 @@ claude_permissions:
     - Bash(git add -A*)
     - Bash(git add .)
     - Bash(git commit -a*)
-    - Bash(adb -s 28051JEGR09026 *)
 startup:
   files:
     - path: roles/flutter-engineer.md

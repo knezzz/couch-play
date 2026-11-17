@@ -35,8 +35,10 @@ plan disagree, say so to your lead instead of quietly picking one.
 - Intel Mac (x86_64). Xcode, Android Studio and Flutter 3.47.7 (through fvm) are installed.
 - Check `df -h` before emulator or release builds. A nearly full disk makes installs hang without an error.
 - Run Gradle as `./gradlew --no-daemon` if you run it directly.
-- The Pixel 6a (adb device `28051JEGR09026`) is the person's own phone. Never install to it or drive it. Phones only
-  ever open the controller in their browser.
+- The Pixel 6a (adb device `28051JEGR09026`) is the person's own phone. Since 2026-11-17 the person allows it for
+  testing whenever they have connected it: drive it, open the controller in Chrome, install test builds. Stop at once
+  when they take it away or say stop. Never reset it, change their apps, accounts or settings, or read their data;
+  uninstall what you install. The PM tracks whether it is currently allowed (docs/STATUS.md).
 - The Android TV is the person's. Connecting to it over adb (Task 5 and Task 14) needs the person's yes each session;
   the PM asks.
 
