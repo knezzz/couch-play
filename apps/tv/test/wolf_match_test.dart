@@ -532,4 +532,68 @@ void main() {
     expect(r.match.lastOut, isNull, reason: 'nobody is out of that vote');
     r.match.dispose();
   });
+
+  testWidgets('a confirmed night answer is final, counts after a reload, and the reload says done the same for every role', (t) async {
+    final r = Rig();
+    // an actor (seer 3), a wolf (1) and a sum villager (7) confirm; then everybody reloads
+    r.match.onNightPick(3, const NightPick(1));
+    r.match.onNightPick(1, const NightPick(7));
+    r.match.onNightPick(7, const NightPick(2));
+    for (final id in [3, 1, 7]) {
+      r.match.rejoin(id);
+      final p = r.to(id).whereType<NightPrompt>().last;
+      expect(p.done, isTrue, reason: 'player $id (${r.roles[id]}) must see Poslano');
+      expect(p.picked, isNotNull, reason: 'its own choice is echoed for every role');
+    }
+    // a phone that did not confirm is not done
+    r.match.rejoin(4);
+    expect(r.to(4).whereType<NightPrompt>().last.done, isFalse);
+    // a second confirm cannot change it
+    r.match.onNightPick(3, const NightPick(2));
+    r.match.onNightPick(1, const NightPick(2));
+    expect(r.match.game.pickOf(3), 1);
+    expect(r.match.game.pickOf(1), 7);
+    r.match.rejoin(3);
+    expect(r.to(3).whereType<NightPrompt>().last.picked, 1);
+    // and the confirmed answer still counts when the night ends
+    r.match.dispose();
+  });
+
+  testWidgets('the confirmed pick is used at the end of the night after the rejoin', (t) async {
+    final r = Rig();
+    r.match.onNightPick(1, const NightPick(7));
+    r.match.onNightPick(2, const NightPick(7));
+    r.match.rejoin(1);
+    r.match.rejoin(2);
+    r.match.onNightPick(1, const NightPick(6)); // too late to change
+    for (final id in r.match.alive) {
+      r.match.onNightPick(id, const NightPick(null));
+    }
+    expect(r.match.stage, WolfStage.dawn);
+    expect(r.match.game.isAlive(7), isFalse, reason: 'the wolves\' confirmed pick killed 7');
+    r.match.dispose();
+  });
+
+  testWidgets('the rejoin message has the same shape for every role (privacy)', (t) async {
+    final r = Rig();
+    for (final id in r.roles.keys) {
+      r.match.onNightPick(id, const NightPick(null));
+      if (!r.match.alive.contains(id)) break;
+    }
+    r.match.dispose();
+    final s = Rig(seed: 5);
+    for (final id in s.roles.keys) {
+      s.match.onNightPick(id, id == 3 ? const NightPick(1) : const NightPick(2));
+    }
+    s.match.dispose();
+    final q = Rig(seed: 6);
+    q.match.onNightPick(1, const NightPick(7));
+    q.match.onNightPick(7, const NightPick(7));
+    q.match.rejoin(1);
+    q.match.rejoin(7);
+    List<String> keys(int id) => (q.to(id).whereType<NightPrompt>().last.toJson().keys.toList()..sort());
+    expect(keys(1), keys(7));
+    expect(q.to(1).whereType<NightPrompt>().last.text.length, q.to(7).whereType<NightPrompt>().last.text.length);
+    q.match.dispose();
+  });
 }

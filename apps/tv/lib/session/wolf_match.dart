@@ -225,6 +225,7 @@ class WolfMatch {
       picked: t.first,
       picked2: t.second,
       special: t.special,
+      done: game.hasPicked(id),
     );
   }
 
@@ -236,6 +237,9 @@ class WolfMatch {
 
   void onNightPick(int id, NightPick m) {
     if (stage != WolfStage.night || !game.isAlive(id)) return;
+    // The first confirmation is final, for every role alike (a second one, e.g.
+    // from a phone that missed the 'Poslano', changes nothing).
+    if (game.hasPicked(id)) return;
     final t = _prompts[id]!;
     if (game.hasNightAction(id)) {
       final ok = game.pick(id, m.target, special: m.special, second: game.night == 1 ? m.second : null);
