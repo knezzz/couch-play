@@ -2,7 +2,7 @@
 <html lang="hr">
 <head>
 <meta charset="utf-8">
-<title>Host picks Vukodlak roles</title>
+<title>Host picks possible Vukodlak roles</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -15,24 +15,24 @@ body{margin:0}
 </helmet>
 <div style="width: 390px; height: 844px; box-sizing: border-box; padding: 48px 0 24px; background: #14141E; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 8px">
   <a href="V2PhoneWolfSettings.dc.html" style="margin: 0 20px; align-self: flex-start; font-size: 18px; color: #4DD9FF; text-decoration: none; height: 40px; display: flex; align-items: center">‹ Vukodlak</a>
-  <div style="margin: 0 20px; font-size: 28px; font-weight: 900">Uloge u igri</div>
-  <div style="margin: 0 20px; font-size: 16px; color: {{sumColor}}">{{summary}}</div>
+  <div style="margin: 0 20px; font-size: 28px; font-weight: 900">Moguće uloge</div>
+  <div style="margin: 0 20px; background: #1F1F2C; border-radius: 14px; padding: 12px 14px; font-size: 15px; line-height: 1.45; color: #C9C9D8">Ti biraš koje uloge smiju biti u igri. Igra sama izvlači koje će biti i koliko.<br><b style="color: #F4F4F8">{{mix}}</b></div>
   <div style="flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 0 20px">
-    <dc-import name="WolfRoles" mode="edit" on-change="{{changed}}" hint-size="350px,1400px"></dc-import>
+    <dc-import name="WolfRoles" mode="edit" on-change="{{changed}}" hint-size="350px,1300px"></dc-import>
   </div>
-  <button style="margin: 0 20px; font: inherit; font-size: 22px; font-weight: 900; color: #14141E; background: {{saveBg}}; border: 0; border-radius: 16px; height: 60px">Spremi</button>
+  <a href="V2PhoneWolfSettings.dc.html" style="margin: 0 20px; font-size: 22px; font-weight: 900; color: #14141E; background: #4DD9FF; border-radius: 16px; height: 60px; display: flex; align-items: center; justify-content: center; text-decoration: none">Spremi</a>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(p) { super(p); this.state = { total: 7 }; }
+  constructor(p) { super(p); this.state = { specials: 4 }; }
   renderVals() {
-    const players = 7, t = this.state.total, ok = t === players;
+    const players = 7, wolves = players <= 6 ? 1 : 2;
+    const slots = Math.min(this.state.specials, players - wolves - 2);
+    const vil = players - wolves - slots;
     return {
-      changed: (c) => this.setState({ total: Object.values(c).reduce((a, b) => a + b, 0) }),
-      summary: ok ? `${t} uloga za ${players} igrača ✓` : `${t} uloga za ${players} igrača. Treba točno ${players}.`,
-      sumColor: ok ? '#7FD8A8' : '#FF7A8F',
-      saveBg: ok ? '#4DD9FF' : '#2A2A3A'
+      changed: (e) => this.setState({ specials: Object.keys(e).filter((k) => e[k] && !['wolf', 'vil', 'alpha', 'lone'].includes(k)).length }),
+      mix: `Za ${players} igrača: ${wolves} vukodlaka, ${slots} posebne uloge od uključenih, ${vil} seljana. Svaka igra izvuče drugačije.`
     };
   }
 }

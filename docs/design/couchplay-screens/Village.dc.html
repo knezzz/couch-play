@@ -11,43 +11,107 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
+@keyframes vsmoke{0%{transform:translate(0,0) scale(.6);opacity:0}20%{opacity:.55}100%{transform:translate(14px,-70px) scale(1.6);opacity:0}}
+@keyframes vflick{0%,100%{opacity:1}45%{opacity:.82}50%{opacity:.95}70%{opacity:.78}}
+@keyframes vtwinkle{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes vsway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes vcloud{0%{transform:translateX(-300px)}100%{transform:translateX(2200px)}}
+@keyframes vfly{0%,100%{transform:translate(0,0)}25%{transform:translate(12px,-8px)}50%{transform:translate(-6px,-14px)}75%{transform:translate(-12px,4px)}}
+@keyframes vcrow{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.v-smoke{animation:vsmoke 4s linear infinite;transform-box:fill-box;transform-origin:center}
+.v-smoke.b{animation-delay:1.3s}.v-smoke.c{animation-delay:2.6s}
+.v-win{animation:vflick 3.2s ease-in-out infinite}
+.v-star{animation:vtwinkle 2.6s ease-in-out infinite}
+.v-tree{animation:vsway 5s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.v-cloud{animation:vcloud 60s linear infinite}
+.v-fly{animation:vfly 3s ease-in-out infinite}
+.v-crow{animation:vcrow 1.4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.v-smoke,.v-win,.v-star,.v-tree,.v-cloud,.v-fly,.v-crow{animation:none}}
 </style>
 </helmet>
 <div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: {{sky}}; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif">
   <svg style="position: absolute; left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true">
-    <ellipse cx="960" cy="560" rx="560" ry="430" fill="{{ground}}"></ellipse>
-    <ellipse cx="960" cy="560" rx="330" ry="250" fill="{{square}}"></ellipse>
-    <ellipse cx="960" cy="560" rx="330" ry="250" fill="none" stroke="{{squareEdge}}" stroke-width="6" stroke-dasharray="18 14"></ellipse>
+    <defs>
+      <radialGradient id="vglow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFD98A" stop-opacity="0.55"></stop><stop offset="100%" stop-color="#FFD98A" stop-opacity="0"></stop></radialGradient>
+      <radialGradient id="vmoon" cx="50%" cy="50%" r="50%"><stop offset="60%" stop-color="#F2E9C9" stop-opacity="0.25"></stop><stop offset="100%" stop-color="#F2E9C9" stop-opacity="0"></stop></radialGradient>
+      <linearGradient id="vgrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{{grassTop}}"></stop><stop offset="100%" stop-color="{{grassBottom}}"></stop></linearGradient>
+    </defs>
     <sc-if value="{{night}}" hint-placeholder-val="{{ false }}">
-      <circle cx="1700" cy="140" r="70" fill="#F2E9C9"></circle>
+      <circle cx="1700" cy="150" r="200" fill="url(#vmoon)"></circle>
+      <circle cx="1700" cy="150" r="70" fill="#F2E9C9"></circle>
+      <circle cx="1724" cy="128" r="12" fill="#E2D7B0"></circle><circle cx="1680" cy="176" r="8" fill="#E2D7B0"></circle>
+      <sc-for list="{{stars}}" as="s" hint-placeholder-count="20"><circle class="v-star" cx="{{s.x}}" cy="{{s.y}}" r="{{s.r}}" fill="#FFFFFF" style="animation-delay: {{s.d}}"></circle></sc-for>
     </sc-if>
+    <sc-if value="{{day}}" hint-placeholder-val="{{ true }}">
+      <circle cx="260" cy="150" r="80" fill="#FFE7A3"></circle>
+      <g class="v-cloud"><path d="M0 120 q20 -40 60 -20 q30 -40 70 -6 q40 -4 40 26 Z" fill="#FFFFFF" opacity="0.8"></path></g>
+      <g class="v-cloud" style="animation-delay: -30s"><path d="M0 220 q24 -44 70 -22 q34 -44 80 -6 q44 -4 44 28 Z" fill="#FFFFFF" opacity="0.65"></path></g>
+    </sc-if>
+    <path d="M0 330 Q480 250 960 300 T1920 320 L1920 1080 L0 1080 Z" fill="{{hill}}"></path>
+    <ellipse cx="960" cy="590" rx="900" ry="470" fill="url(#vgrass)"></ellipse>
+    <ellipse cx="960" cy="590" rx="320" ry="220" fill="{{square}}"></ellipse>
+    <ellipse cx="960" cy="590" rx="320" ry="220" fill="none" stroke="{{squareEdge}}" stroke-width="10"></ellipse>
+    <ellipse cx="960" cy="590" rx="280" ry="186" fill="none" stroke="{{squareEdge}}" stroke-width="3" stroke-dasharray="4 16"></ellipse>
+    <sc-for list="{{trees}}" as="t" hint-placeholder-count="6">
+      <g transform="{{t.at}}"><g class="v-tree" style="animation-delay: {{t.d}}">
+        <rect x="-6" y="-10" width="12" height="40" fill="{{trunk}}"></rect>
+        <circle cx="0" cy="-36" r="34" fill="{{leaf}}"></circle><circle cx="-20" cy="-18" r="24" fill="{{leaf}}"></circle><circle cx="20" cy="-18" r="24" fill="{{leaf}}"></circle>
+      </g></g>
+    </sc-for>
     <sc-for list="{{houses}}" as="h" hint-placeholder-count="7">
       <g transform="{{h.at}}">
+        <ellipse cx="0" cy="78" rx="104" ry="18" fill="#000000" opacity="0.18"></ellipse>
+        <sc-if value="{{h.lit}}" hint-placeholder-val="{{ false }}"><ellipse cx="0" cy="40" rx="140" ry="90" fill="url(#vglow)" class="v-win"></ellipse></sc-if>
         <sc-if value="{{h.dead}}" hint-placeholder-val="{{ false }}">
-          <path d="M-96 46 q-16 -6 -10 -18 q10 -6 16 6 q6 10 -6 12 Z M86 52 q14 4 10 16 q-12 6 -16 -6 q-2 -8 6 -10 Z M-60 78 q-6 14 6 18 q14 0 8 -14 q-6 -8 -14 -4 Z M40 84 q-10 10 0 18 q14 2 12 -10 q-4 -10 -12 -8 Z M-118 0 q-12 4 -6 14 q8 4 10 -4 Z M110 -8 q10 4 6 12 q-8 4 -10 -4 Z" fill="#9E1B1B"></path>
-          <circle cx="-30" cy="96" r="7" fill="#9E1B1B"></circle><circle cx="70" cy="30" r="5" fill="#9E1B1B"></circle><circle cx="-84" cy="64" r="4" fill="#9E1B1B"></circle>
+          <path d="M-104 52 q-18 -6 -12 -20 q12 -8 18 6 q6 12 -6 14 Z M92 60 q16 4 12 18 q-14 6 -18 -6 q-2 -10 6 -12 Z M-66 86 q-8 16 6 20 q16 0 10 -16 q-6 -10 -16 -4 Z M44 92 q-12 12 0 20 q16 2 14 -12 q-4 -12 -14 -8 Z M-126 4 q-14 4 -8 16 q10 4 12 -4 Z M118 -6 q12 4 8 14 q-10 4 -12 -4 Z" fill="#9E1B1B"></path>
+          <circle cx="-34" cy="104" r="8" fill="#9E1B1B"></circle><circle cx="74" cy="36" r="6" fill="#9E1B1B"></circle><circle cx="-90" cy="70" r="5" fill="#9E1B1B"></circle><circle cx="10" cy="118" r="4" fill="#9E1B1B"></circle>
         </sc-if>
-        <path d="M-80 -10 L0 -76 L80 -10 Z" fill="{{h.roof}}"></path>
-        <rect x="-66" y="-12" width="132" height="84" rx="6" fill="{{h.wall}}"></rect>
-        <rect x="-18" y="22" width="36" height="50" rx="4" fill="{{h.door}}"></rect>
-        <rect x="-54" y="6" width="26" height="24" rx="3" fill="{{h.win}}"></rect>
-        <rect x="28" y="6" width="26" height="24" rx="3" fill="{{h.win}}"></rect>
+        <rect x="38" y="-96" width="20" height="40" fill="{{h.chimney}}"></rect>
+        <sc-if value="{{h.smoke}}" hint-placeholder-val="{{ true }}">
+          <circle class="v-smoke" cx="48" cy="-104" r="10" fill="{{h.smokeC}}"></circle>
+          <circle class="v-smoke b" cx="48" cy="-104" r="10" fill="{{h.smokeC}}"></circle>
+          <circle class="v-smoke c" cx="48" cy="-104" r="10" fill="{{h.smokeC}}"></circle>
+        </sc-if>
+        <rect x="-72" y="-14" width="144" height="90" rx="4" fill="{{h.wall}}"></rect>
+        <rect x="-72" y="-14" width="144" height="12" fill="{{h.wallShade}}"></rect>
+        <path d="M-90 -6 L0 -86 L90 -6 Z" fill="{{h.roof}}"></path>
+        <path d="M-70 -24 L70 -24 M-50 -42 L50 -42 M-30 -60 L30 -60" stroke="{{h.roofLine}}" stroke-width="4"></path>
+        <path d="M-90 -6 L0 -86 L90 -6" fill="none" stroke="{{h.roofEdge}}" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"></path>
+        <rect x="-20" y="22" width="40" height="54" rx="20" ry="20" fill="{{h.door}}"></rect>
+        <rect x="-20" y="44" width="40" height="32" fill="{{h.door}}"></rect>
+        <circle cx="10" cy="52" r="3" fill="{{h.knob}}"></circle>
+        <rect class="{{h.winClass}}" x="-58" y="8" width="28" height="26" rx="3" fill="{{h.win}}"></rect>
+        <rect class="{{h.winClass}}" x="30" y="8" width="28" height="26" rx="3" fill="{{h.win}}"></rect>
+        <path d="M-44 8 L-44 34 M-58 21 L-30 21 M44 8 L44 34 M30 21 L58 21" stroke="{{h.frame}}" stroke-width="3"></path>
+        <rect x="-66" y="6" width="6" height="30" fill="{{h.shutter}}"></rect><rect x="-28" y="6" width="6" height="30" fill="{{h.shutter}}"></rect>
+        <rect x="22" y="6" width="6" height="30" fill="{{h.shutter}}"></rect><rect x="60" y="6" width="6" height="30" fill="{{h.shutter}}"></rect>
         <sc-if value="{{h.dead}}" hint-placeholder-val="{{ false }}">
-          <path d="M-58 4 L-24 32 M-24 4 L-58 32 M24 4 L58 32 M58 4 L24 32 M-22 26 L22 66 M22 26 L-22 66" stroke="#3A2A1E" stroke-width="7" stroke-linecap="round"></path>
+          <path d="M-62 4 L-26 36 M-26 4 L-62 36 M26 4 L62 36 M62 4 L26 36" stroke="#5A3E28" stroke-width="8" stroke-linecap="round"></path>
+          <path d="M-26 34 L26 54 M-26 56 L26 72" stroke="#5A3E28" stroke-width="9" stroke-linecap="round"></path>
+          <g class="v-crow" transform="translate(-30 -84)"><path d="M0 0 q10 -10 22 -4 q8 -6 14 0 l-6 4 q-8 10 -22 6 l-6 6 l-2 -6 q-4 -2 0 -6 Z" fill="#14141E"></path><circle cx="28" cy="-2" r="1.6" fill="#FFB020"></circle></g>
         </sc-if>
       </g>
     </sc-for>
+    <sc-if value="{{night}}" hint-placeholder-val="{{ false }}">
+      <sc-for list="{{flies}}" as="f" hint-placeholder-count="8"><circle class="v-fly v-star" cx="{{f.x}}" cy="{{f.y}}" r="3" fill="#F7E58A" style="animation-delay: {{f.d}}"></circle></sc-for>
+    </sc-if>
+    <g transform="translate(960 590)">
+      <rect x="-34" y="-30" width="68" height="44" rx="6" fill="{{well}}"></rect>
+      <ellipse cx="0" cy="-30" rx="34" ry="10" fill="{{wellTop}}"></ellipse>
+      <path d="M-28 -30 L-28 -70 L28 -70 L28 -30" fill="none" stroke="{{trunk}}" stroke-width="6"></path>
+      <path d="M-40 -66 L0 -90 L40 -66 Z" fill="{{wellRoof}}"></path>
+    </g>
   </svg>
   <sc-for list="{{houses}}" as="h" hint-placeholder-count="7">
     <div style="{{h.label}}">
-      <span style="{{h.faceWrap}}"><dc-import name="Face" animal="{{h.animal}}" color="{{h.color}}" size="{{s56}}" hint-size="56px,56px"></dc-import></span>
-      <span style="font-size: 32px; font-weight: 700; {{h.nameStyle}}">{{h.name}}</span>
+      <span style="{{h.faceWrap}}"><dc-import name="Face" animal="{{h.animal}}" color="{{h.color}}" size="{{s52}}" hint-size="52px,52px"></dc-import></span>
+      <span style="font-size: 30px; font-weight: 700; {{h.nameStyle}}">{{h.name}}</span>
     </div>
   </sc-for>
-  <div style="position: absolute; left: 690px; top: 380px; width: 540px; height: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center">
-    <div style="font-size: 30px; font-weight: 700; letter-spacing: 4px; color: {{kickerColor}}">{{kicker}}</div>
-    <div style="font-size: 38px; line-height: 1.3; color: {{storyColor}}">{{story}}</div>
-    <div style="font-size: 64px; font-weight: 900; color: {{storyColor}}">{{clock}}</div>
+  <div style="position: absolute; left: 660px; top: 640px; width: 600px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+    <div style="font-size: 28px; font-weight: 700; letter-spacing: 4px; color: {{kickerColor}}">{{kicker}}</div>
+    <div style="font-size: 34px; line-height: 1.3; color: {{storyColor}}; text-shadow: {{storyShadow}}">{{story}}</div>
+    <div style="font-size: 56px; font-weight: 900; color: {{storyColor}}">{{clock}}</div>
   </div>
 </div>
 </x-dc>
@@ -60,31 +124,41 @@ class Component extends DCLogic {
       ['Petra', 'cat', '#9B5CFF'], ['Josip', 'bear', '#FF7AD9'], ['Maja', 'mouse', '#F5E94B']
     ];
     const dead = night ? { Marko: 1 } : { Marko: 1, Ivana: 1 };
-    const cx = 960, cy = 560, rx = 470, ry = 360;
+    const cx = 960, cy = 590, rx = 560, ry = 330;
     const houses = people.map(([name, animal, color], i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / people.length;
       const x = Math.round(cx + rx * Math.cos(a)), y = Math.round(cy + ry * Math.sin(a));
       const d = !!dead[name];
-      const below = Math.sin(a) > 0.3;
+      const below = Math.sin(a) > 0.2;
       return {
-        name, animal, color: d ? '#6E6E7A' : color, dead: d,
+        name, animal, color: d ? '#6E6E7A' : color, dead: d, lit: night && !d, smoke: !d,
         at: `translate(${x} ${y})`,
-        roof: d ? '#3A3036' : (night ? '#3A2E46' : '#B5513C'),
-        wall: d ? '#4A4248' : (night ? '#2A2F4A' : '#EED9B4'),
-        door: d ? '#2A2024' : (night ? '#1A1E34' : '#7A4A2E'),
-        win: d ? '#2A2024' : (night ? '#F7D774' : '#9CC9E8'),
-        label: `position: absolute; left: ${x - 120}px; top: ${below ? y + 84 : y - 150}px; width: 240px; display: flex; align-items: center; justify-content: center; gap: 10px`,
+        wall: d ? '#55505A' : (night ? '#3B4466' : '#F5ECDA'), wallShade: d ? '#48434C' : (night ? '#323A58' : '#E6D9BF'),
+        roof: d ? '#3A3036' : (night ? '#5A2E36' : '#C2563E'), roofLine: d ? '#2E262B' : (night ? '#4A262D' : '#A9472F'), roofEdge: d ? '#2E262B' : (night ? '#40222A' : '#8F3A26'),
+        chimney: d ? '#3A3036' : (night ? '#4A3A40' : '#9A6B55'),
+        smokeC: night ? '#8A93B8' : '#FFFFFF',
+        door: d ? '#2A2024' : (night ? '#2A2238' : '#7A4A2E'), knob: d ? '#2A2024' : '#E7B36A',
+        win: d ? '#2A2024' : (night ? '#F7D774' : '#A9D4F0'), winClass: night && !d ? 'v-win' : '',
+        frame: d ? '#2A2024' : (night ? '#C9A64A' : '#FFFFFF'), shutter: d ? '#3A2E26' : (night ? '#2E5A46' : '#3E7A5C'),
+        label: `position: absolute; left: ${x - 130}px; top: ${below ? y + 92 : y - 156}px; width: 260px; display: flex; align-items: center; justify-content: center; gap: 10px`,
         faceWrap: d ? 'filter: grayscale(1); opacity: 0.5; display: flex' : 'display: flex',
-        nameStyle: d ? 'color: #8A8A96; text-decoration: line-through' : (night ? 'color: #C3CBEA' : 'color: #2A1E2E')
+        nameStyle: d ? 'color: #8A8A96; text-decoration: line-through' : (night ? 'color: #E3E8FA; text-shadow: 0 2px 6px #000' : 'color: #2A1E2E')
       };
     });
+    const rnd = (i, m) => ((i * 9301 + 49297) % 233280) / 233280 * m;
     return {
-      night, houses, s56: 56,
-      sky: night ? 'linear-gradient(180deg, #05060F, #0C1430)' : 'linear-gradient(180deg, #F2C98A, #E7B36A)',
-      ground: night ? '#121A30' : '#9DBF6A', square: night ? '#1B2440' : '#D9C49A', squareEdge: night ? '#2A3458' : '#BFA77A',
+      night, day: !night, houses, s52: 52,
+      stars: Array.from({ length: 22 }, (_, i) => ({ x: Math.round(rnd(i + 1, 1920)), y: Math.round(rnd(i + 50, 260)), r: 1.5 + (i % 3), d: (i % 7) * 0.4 + 's' })),
+      flies: Array.from({ length: 9 }, (_, i) => ({ x: Math.round(300 + rnd(i + 9, 1320)), y: Math.round(380 + rnd(i + 30, 560)), d: (i % 5) * 0.6 + 's' })),
+      trees: [[130, 520], [1790, 540], [380, 960], [1560, 980], [700, 230], [1240, 230]].map(([x, y], i) => ({ at: `translate(${x} ${y})`, d: (i * 0.7) + 's' })),
+      sky: night ? 'linear-gradient(180deg, #05060F, #0C1430 45%, #101A3A)' : 'linear-gradient(180deg, #9FD3F0, #E8F3F8 45%, #F6E2B8)',
+      hill: night ? '#0B1226' : '#8DBF6A', grassTop: night ? '#13203A' : '#9ACB72', grassBottom: night ? '#0C152A' : '#7CB35A',
+      square: night ? '#232C48' : '#E2D0A8', squareEdge: night ? '#323C5E' : '#C7AF82',
+      trunk: night ? '#3A2E2A' : '#7A5236', leaf: night ? '#16302A' : '#4E9A4A',
+      well: night ? '#3A4262' : '#B9B3A8', wellTop: night ? '#1A2038' : '#5A6A7A', wellRoof: night ? '#5A2E36' : '#C2563E',
       kicker: night ? 'NOĆ 2' : 'JUTRO 3', kickerColor: night ? '#8FA0D8' : '#7A3A2A',
       story: night ? 'Selo spava. Svi gledaju svoje mobitele.' : 'Ivanina vrata ostala su zatvorena. Oko kuće su tragovi krvi.',
-      storyColor: night ? '#F4F4F8' : '#2A1E2E',
+      storyColor: night ? '#F4F4F8' : '#2A1E2E', storyShadow: night ? '0 2px 8px #000' : 'none',
       clock: night ? '0:21' : '1:40'
     };
   }
