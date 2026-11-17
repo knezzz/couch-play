@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'uljez.dart';
 import 'wolf.dart';
 
-enum GameKind { quiz, curve, vukodlak, uljez }
+enum GameKind { quiz, curve, vukodlak, uljez, objasni, koliko, blef, tkobi }
 
 /// Value equality from the JSON form, so every wire type compares by content.
 mixin _JsonEq {
@@ -84,6 +84,22 @@ class GameSettings with _JsonEq {
   final String? uljezPackId;
   final int uljezDiscussion;
   final int uljezImpostors;
+
+  /// Objasni: seconds per turn (45 / 60 / 90), target score (20 / 30 / 50), word pack.
+  final int objasniSeconds, objasniTarget;
+  final String? objasniPackId;
+
+  /// Koliko?: seconds per question (20 / 30 / 45), questions (5 / 10 / 15), pack.
+  final int kolikoSeconds, kolikoQuestions;
+  final String? kolikoPackId;
+
+  /// Blef: questions (5 / 7 / 10), pack.
+  final int blefQuestions;
+  final String? blefPackId;
+
+  /// Tko bi?: prompts (5 / 10 / 15), pack.
+  final int tkobiPrompts;
+  final String? tkobiPackId;
   static const defaultWolfRoles = {
     WolfRole.wolf,
     WolfRole.villager,
@@ -105,6 +121,16 @@ class GameSettings with _JsonEq {
     this.uljezPackId,
     this.uljezDiscussion = 90,
     this.uljezImpostors = 1,
+    this.objasniSeconds = 60,
+    this.objasniTarget = 30,
+    this.objasniPackId,
+    this.kolikoSeconds = 30,
+    this.kolikoQuestions = 10,
+    this.kolikoPackId,
+    this.blefQuestions = 7,
+    this.blefPackId,
+    this.tkobiPrompts = 10,
+    this.tkobiPackId,
   });
   factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
       quizSeconds: j['quizSeconds'] as int,
@@ -122,10 +148,23 @@ class GameSettings with _JsonEq {
       wolfDiscussion: (j['wolfDiscussion'] as int?) ?? 120,
       uljezPackId: j['uljezPackId'] as String?,
       uljezDiscussion: (j['uljezDiscussion'] as int?) ?? 90,
-      uljezImpostors: (j['uljezImpostors'] as int?) ?? 1);
+      uljezImpostors: (j['uljezImpostors'] as int?) ?? 1,
+      objasniSeconds: (j['objasniSeconds'] as int?) ?? 60,
+      objasniTarget: (j['objasniTarget'] as int?) ?? 30,
+      objasniPackId: j['objasniPackId'] as String?,
+      kolikoSeconds: (j['kolikoSeconds'] as int?) ?? 30,
+      kolikoQuestions: (j['kolikoQuestions'] as int?) ?? 10,
+      kolikoPackId: j['kolikoPackId'] as String?,
+      blefQuestions: (j['blefQuestions'] as int?) ?? 7,
+      blefPackId: j['blefPackId'] as String?,
+      tkobiPrompts: (j['tkobiPrompts'] as int?) ?? 10,
+      tkobiPackId: j['tkobiPackId'] as String?);
 
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
+    // The allowed value nearest to v (the lower one on a tie).
+    int oneOf(int v, List<int> allowed) =>
+        allowed.reduce((a, b) => (a - v).abs() <= (b - v).abs() ? a : b);
     int snap(int v, int lo, int hi, int step) =>
         ((v / step).round() * step).clamp(lo, hi);
     return GameSettings(
@@ -141,6 +180,16 @@ class GameSettings with _JsonEq {
       uljezPackId: uljezPackId,
       uljezDiscussion: snap(uljezDiscussion, 30, 300, 30),
       uljezImpostors: uljezImpostors.clamp(1, 2),
+      objasniSeconds: oneOf(objasniSeconds, const [45, 60, 90]),
+      objasniTarget: oneOf(objasniTarget, const [20, 30, 50]),
+      objasniPackId: objasniPackId,
+      kolikoSeconds: oneOf(kolikoSeconds, const [20, 30, 45]),
+      kolikoQuestions: oneOf(kolikoQuestions, const [5, 10, 15]),
+      kolikoPackId: kolikoPackId,
+      blefQuestions: oneOf(blefQuestions, const [5, 7, 10]),
+      blefPackId: blefPackId,
+      tkobiPrompts: oneOf(tkobiPrompts, const [5, 10, 15]),
+      tkobiPackId: tkobiPackId,
     );
   }
 
@@ -158,6 +207,16 @@ class GameSettings with _JsonEq {
         'uljezPackId': uljezPackId,
         'uljezDiscussion': uljezDiscussion,
         'uljezImpostors': uljezImpostors,
+        'objasniSeconds': objasniSeconds,
+        'objasniTarget': objasniTarget,
+        'objasniPackId': objasniPackId,
+        'kolikoSeconds': kolikoSeconds,
+        'kolikoQuestions': kolikoQuestions,
+        'kolikoPackId': kolikoPackId,
+        'blefQuestions': blefQuestions,
+        'blefPackId': blefPackId,
+        'tkobiPrompts': tkobiPrompts,
+        'tkobiPackId': tkobiPackId,
       };
 }
 
@@ -230,6 +289,9 @@ sealed class Message with _JsonEq {
             special: m['special'] as bool, second: m['second'] as int?),
         'vote' => Vote(m['target'] as int?),
         'guess' => Guess(m['index'] as int),
+        'reshuffle' => const Reshuffle(),
+        'go' => const Go(),
+        'objasniAction' => ObjasniAction(ObjasniAct.values.byName(m['act'] as String)),
         'shoot' => Shoot(m['target'] as int?),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
@@ -240,6 +302,10 @@ sealed class Message with _JsonEq {
             packs: list('packs', PackInfo.fromJson),
             hostId: m['hostId'] as int,
             uljezPacks: m['uljezPacks'] == null ? const [] : list('uljezPacks', PackInfo.fromJson),
+            objasniPacks: m['objasniPacks'] == null ? const [] : list('objasniPacks', PackInfo.fromJson),
+            kolikoPacks: m['kolikoPacks'] == null ? const [] : list('kolikoPacks', PackInfo.fromJson),
+            blefPacks: m['blefPacks'] == null ? const [] : list('blefPacks', PackInfo.fromJson),
+            tkobiPacks: m['tkobiPacks'] == null ? const [] : list('tkobiPacks', PackInfo.fromJson),
             selected: m['selected'] == null
                 ? null
                 : GameKind.values.byName(m['selected'] as String),
@@ -294,6 +360,19 @@ sealed class Message with _JsonEq {
             seconds: m['seconds'] as int, options: [for (final e in m['options'] as List) e as String]),
         'uljezEnd' => UljezEnd(UljezWinner.values.byName(m['winner'] as String), m['village'] as String,
             m['impostor'] as String, [for (final e in m['impostors'] as List) e as int]),
+        'objasniTeams' => ObjasniTeams(
+            team: m['team'] as int,
+            teams: [
+              for (final t in m['teams'] as List) [for (final e in t as List) e as int]
+            ]),
+        'objasniTurn' => ObjasniTurn(
+            stage: ObjasniStage.values.byName(m['stage'] as String),
+            role: ObjasniRole.values.byName(m['role'] as String),
+            team: m['team'] as int,
+            explainer: m['explainer'] as int,
+            word: m['word'] as String?,
+            seconds: m['seconds'] as int,
+            scores: [for (final e in m['scores'] as List) e as int]),
         'pong' => Pong(m['t'] as int),
         'waiting' => Waiting(m['reason'] as String),
         'error' => ErrorMsg(m['message'] as String),
@@ -435,6 +514,9 @@ class LobbyState extends Message {
   /// Uljez word packs (questionCount = number of word pairs).
   final List<PackInfo> uljezPacks;
 
+  /// The packs of the party games (questionCount = words / questions / prompts).
+  final List<PackInfo> objasniPacks, kolikoPacks, blefPacks, tkobiPacks;
+
   /// The game the host has open, or null.
   final GameKind? selected;
   const LobbyState(
@@ -443,6 +525,10 @@ class LobbyState extends Message {
       required this.hostId,
       this.selected,
       this.uljezPacks = const [],
+      this.objasniPacks = const [],
+      this.kolikoPacks = const [],
+      this.blefPacks = const [],
+      this.tkobiPacks = const [],
       this.settings = const GameSettings()});
   @override
   String get type => 'lobby';
@@ -453,6 +539,10 @@ class LobbyState extends Message {
         'hostId': hostId,
         'selected': selected?.name,
         'uljezPacks': [for (final p in uljezPacks) p.toJson()],
+        'objasniPacks': [for (final p in objasniPacks) p.toJson()],
+        'kolikoPacks': [for (final p in kolikoPacks) p.toJson()],
+        'blefPacks': [for (final p in blefPacks) p.toJson()],
+        'tkobiPacks': [for (final p in tkobiPacks) p.toJson()],
         'settings': settings.toJson(),
       };
 }
@@ -781,4 +871,83 @@ class UljezEnd extends Message {
   @override
   Map<String, Object?> get fields =>
       {'winner': winner.name, 'village': villageWord, 'impostor': impostorWord, 'impostors': impostors};
+}
+
+// Objasni (explain the word in teams).
+
+enum ObjasniAct { correct, skip, foul }
+
+/// 'ready' (waiting for the explainer's Kreni), 'play', 'summary' (the 5 s after a turn).
+enum ObjasniStage { ready, play, summary }
+
+/// explain: the explainer's phone (word, Točno / Preskoči). watch: the other
+/// team (word, Prekršaj). guess: the explainer's team (no word: Pogađaj naglas!).
+enum ObjasniRole { explain, watch, guess }
+
+/// Phone -> TV, host only, in the Objasni setup: draw the teams again.
+class Reshuffle extends Message {
+  const Reshuffle();
+  @override
+  String get type => 'reshuffle';
+}
+
+/// Phone -> TV: "Kreni". The host's in the setup (start the game), the explainer's
+/// when it is their turn (start the clock).
+class Go extends Message {
+  const Go();
+  @override
+  String get type => 'go';
+}
+
+/// Phone -> TV: Točno / Preskoči (the explainer), Prekršaj (the other team).
+class ObjasniAction extends Message {
+  final ObjasniAct act;
+  const ObjasniAction(this.act);
+  @override
+  String get type => 'objasniAction';
+  @override
+  Map<String, Object?> get fields => {'act': act.name};
+}
+
+/// TV -> everyone: the teams (player ids) and which one this phone is on ([team]).
+/// Teams are public. Sent in the setup and after every Promiješaj.
+class ObjasniTeams extends Message {
+  final int team;
+  final List<List<int>> teams;
+  const ObjasniTeams({required this.team, required this.teams});
+  @override
+  String get type => 'objasniTeams';
+  @override
+  Map<String, Object?> get fields => {'team': team, 'teams': teams};
+}
+
+/// TV -> one phone: the state of the turn for ITS role. [word] is set only for
+/// the explainer and the other team, never for the explainer's own team.
+/// [team] is the team on turn; [scores] are both teams' scores.
+class ObjasniTurn extends Message {
+  final ObjasniStage stage;
+  final ObjasniRole role;
+  final int team, explainer, seconds;
+  final String? word;
+  final List<int> scores;
+  const ObjasniTurn(
+      {required this.stage,
+      required this.role,
+      required this.team,
+      required this.explainer,
+      required this.word,
+      required this.seconds,
+      required this.scores});
+  @override
+  String get type => 'objasniTurn';
+  @override
+  Map<String, Object?> get fields => {
+        'stage': stage.name,
+        'role': role.name,
+        'team': team,
+        'explainer': explainer,
+        'word': word,
+        'seconds': seconds,
+        'scores': scores,
+      };
 }

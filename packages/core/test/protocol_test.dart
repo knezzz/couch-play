@@ -288,4 +288,67 @@ void main() {
       expect(() => PackInfo.fromJson({'id': 'a', 'title': 'A', 'questionCount': 5, 'pictures': 'yes'}), throwsA(anything));
     });
   });
+
+  group('party games: objasni', () {
+    test('new messages round trip', () {
+      final ms = <Message>[
+        const StartGame(GameKind.objasni, null),
+        const StartGame(GameKind.koliko, null),
+        const StartGame(GameKind.blef, null),
+        const StartGame(GameKind.tkobi, null),
+        const SelectGame(GameKind.tkobi),
+        const Reshuffle(),
+        const Go(),
+        const ObjasniAction(ObjasniAct.correct),
+        const ObjasniAction(ObjasniAct.skip),
+        const ObjasniAction(ObjasniAct.foul),
+        const ObjasniTeams(team: 1, teams: [[1, 2], [3, 4, 5]]),
+        const ObjasniTurn(stage: ObjasniStage.play, role: ObjasniRole.explain, team: 0, explainer: 2, word: 'kuća', seconds: 60, scores: [3, -1]),
+        const ObjasniTurn(stage: ObjasniStage.play, role: ObjasniRole.guess, team: 0, explainer: 2, word: null, seconds: 40, scores: [0, 0]),
+        const ObjasniTurn(stage: ObjasniStage.summary, role: ObjasniRole.watch, team: 1, explainer: 4, word: null, seconds: 5, scores: [10, 12]),
+      ];
+      for (final m in ms) {
+        expect(Message.decode(m.encode()), m, reason: m.encode());
+      }
+    });
+
+    test('settings: defaults, an old message, and clamping to the allowed values', () {
+      const d = GameSettings();
+      expect([d.objasniSeconds, d.objasniTarget, d.objasniPackId], [60, 30, null]);
+      expect([d.kolikoSeconds, d.kolikoQuestions, d.kolikoPackId], [30, 10, null]);
+      expect([d.blefQuestions, d.blefPackId], [7, null]);
+      expect([d.tkobiPrompts, d.tkobiPackId], [10, null]);
+      final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
+      expect((old as SetSettings).settings, const GameSettings());
+      final c = const GameSettings(objasniSeconds: 70, objasniTarget: 100, kolikoSeconds: 5, kolikoQuestions: 12, blefQuestions: 8, tkobiPrompts: 1).clamped();
+      expect([c.objasniSeconds, c.objasniTarget], [60, 50]);
+      expect([c.kolikoSeconds, c.kolikoQuestions], [20, 10]);
+      expect(c.blefQuestions, 7);
+      expect(c.tkobiPrompts, 5);
+      expect(const GameSettings(objasniSeconds: 80).clamped().objasniSeconds, 90);
+      const s = GameSettings(objasniSeconds: 90, objasniTarget: 20, objasniPackId: 'a', kolikoSeconds: 45, kolikoQuestions: 15, kolikoPackId: 'b', blefQuestions: 10, blefPackId: 'c', tkobiPrompts: 15, tkobiPackId: 'd');
+      expect(Message.decode(SetSettings(s).encode()), const SetSettings(s));
+      expect(s.clamped(), s);
+    });
+
+    test('an old lobby has no party packs; the lists round trip', () {
+      final m = Message.decode('{"type":"lobby","players":[],"packs":[],"hostId":1}') as LobbyState;
+      expect([m.objasniPacks, m.kolikoPacks, m.blefPacks, m.tkobiPacks], [isEmpty, isEmpty, isEmpty, isEmpty]);
+      const l = LobbyState(
+          players: [],
+          packs: [],
+          hostId: 1,
+          objasniPacks: [PackInfo('o', 'O', 120)],
+          kolikoPacks: [PackInfo('k', 'K', 30)],
+          blefPacks: [PackInfo('b', 'B', 33)],
+          tkobiPacks: [PackInfo('t', 'T', 45)]);
+      expect(Message.decode(l.encode()), l);
+    });
+
+    test('wrong types and unknown names are null', () {
+      expect(Message.decode('{"type":"objasniAction","act":"fly"}'), isNull);
+      expect(Message.decode('{"type":"objasniTurn","stage":"x","role":"explain","team":0,"explainer":1,"word":null,"seconds":1,"scores":[0,0]}'), isNull);
+      expect(Message.decode('{"type":"objasniTeams","team":"a","teams":[]}'), isNull);
+    });
+  });
 }
