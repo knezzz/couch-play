@@ -320,7 +320,8 @@ sealed class Message with _JsonEq {
         'curve' => CurveStatus(
             alive: m['alive'] as bool,
             score: m['score'] as int,
-            target: m['target'] as int),
+            target: m['target'] as int,
+            round: m['round'] as int?),
         'results' => Results(list('placements', Placement.fromJson)),
         'effect' => Effect(m['name'] as String),
         'role' => RoleMsg(WolfRole.values.byName(m['role'] as String),
@@ -592,13 +593,16 @@ class QuizReveal extends Message {
 class CurveStatus extends Message {
   final bool alive;
   final int score, target;
+
+  /// The current round of the match, 1-based; null from an older TV.
+  final int? round;
   const CurveStatus(
-      {required this.alive, required this.score, required this.target});
+      {required this.alive, required this.score, required this.target, this.round});
   @override
   String get type => 'curve';
   @override
   Map<String, Object?> get fields =>
-      {'alive': alive, 'score': score, 'target': target};
+      {'alive': alive, 'score': score, 'target': target, 'round': round};
 }
 
 class Results extends Message {

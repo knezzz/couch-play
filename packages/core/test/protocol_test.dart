@@ -45,6 +45,7 @@ void main() {
       const QuizQuestion(1, 10, ['a', 'b', 'c', 'd'], 20),
       const QuizReveal(2, 750, 1500),
       const CurveStatus(alive: true, score: 3, target: 10),
+      const CurveStatus(alive: false, score: 12, target: 30, round: 4),
       const Results([Placement(1, 1, 7, 3)]),
       const Effect('confetti'),
       const Pong(123),
@@ -373,5 +374,12 @@ void main() {
       expect(Message.decode('{"type":"number","value":"5"}'), isNull);
       expect(Message.decode('{"type":"number"}'), isNull);
     });
+  });
+
+  test('a curve status without a round (an older TV) decodes with round null', () {
+    final m = Message.decode('{"type":"curve","alive":true,"score":3,"target":10}') as CurveStatus;
+    expect(m.round, isNull);
+    expect((Message.decode(const CurveStatus(alive: true, score: 1, target: 10, round: 2).encode()) as CurveStatus).round, 2);
+    expect(Message.decode('{"type":"curve","alive":true,"score":3,"target":10,"round":"2"}'), isNull);
   });
 }
