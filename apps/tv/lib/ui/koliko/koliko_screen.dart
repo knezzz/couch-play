@@ -156,7 +156,6 @@ class KolikoScreen extends StatelessWidget {
     lo -= pad;
     hi += pad;
     const left = 80.0, width = 1560.0; // inside the 1720 px content width
-    double x(double v) => left + (v - lo) / (hi - lo) * width;
     final byValue = [...answered]..sort((p, q) => p.value!.compareTo(q.value!));
     return Column(children: [
       _header(),
@@ -164,28 +163,7 @@ class KolikoScreen extends StatelessWidget {
       const SizedBox(height: 10),
       Text(Strings.kolikoCorrect(kolikoNum(answer), b.unit),
           key: const ValueKey('answer'), style: const TextStyle(fontSize: 76, fontWeight: FontWeight.w900, color: _green)),
-      SizedBox(
-        height: 300,
-        child: Stack(children: [
-          Positioned(left: left, top: 160, width: width, height: 8, child: const DecoratedBox(decoration: BoxDecoration(color: Color(0x55FFFFFF), borderRadius: BorderRadius.all(Radius.circular(4))))),
-          Positioned(
-            key: const ValueKey('marker-answer'),
-            left: x(answer) - 3,
-            top: 120,
-            width: 6,
-            height: 90,
-            child: const DecoratedBox(decoration: BoxDecoration(color: _green)),
-          ),
-          for (var i = 0; i < byValue.length; i++)
-            Positioned(
-              key: ValueKey('marker-${byValue[i].player.id}'),
-              left: x(byValue[i].value!) - 36,
-              // Alternate above and below, in three steps, so neighbours do not sit on each other.
-              top: i.isEven ? (i % 4 == 0 ? 20 : 0) : (i % 4 == 1 ? 190 : 210),
-              child: _face(byValue[i].player, 72),
-            ),
-        ]),
-      ),
+      KolikoLine(key: ValueKey('line-${b.number}'), answer: answer, entries: byValue, lo: lo, hi: hi, left: left, width: width),
       Expanded(
         child: Wrap(
           spacing: 40,
@@ -209,5 +187,95 @@ class KolikoScreen extends StatelessWidget {
           SizedBox(width: 130, child: Text(r.points > 0 ? '+${r.points}' : '', textAlign: TextAlign.right, style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: _green))),
           SizedBox(width: 120, child: Text(grouped(r.total), textAlign: TextAlign.right, style: const TextStyle(fontSize: 30, color: tvMuted))),
         ]),
+      );
+}
+
+const _gold = Color(0xFFFFD54A);
+
+/// The number line at the reveal. A finite animation (2.4 s, then it stops): the guesses slide in as faces
+/// from the left end to their numbers, the true answer drops in as a line, and the closest guess(es) get
+/// a gold ring. With animations off (the system setting) it shows the end state at once.
+class KolikoLine extends StatefulWidget {
+  const KolikoLine({required this.answer, required this.entries, required this.lo, required this.hi, required this.left, required this.width, super.key});
+  final double answer, lo, hi, left, width;
+  final List<KolikoRow> entries; // answered only, by value
+  static const duration = Duration(milliseconds: 2400);
+
+  @override
+  State<KolikoLine> createState() => _KolikoLineState();
+}
+
+class _KolikoLineState extends State<KolikoLine> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(vsync: this, duration: KolikoLine.duration);
+  var _started = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_started) return;
+    _started = true;
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      _c.value = 1;
+    } else {
+      _c.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  double _x(double v) => widget.left + (v - widget.lo) / (widget.hi - widget.lo) * widget.width;
+
+  Widget _face(PlayerInfo p, double size) => PlayerDot(playerColors[p.colorIndex % playerColors.length], size: size, character: p.character);
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        height: 300,
+        child: AnimatedBuilder(
+          animation: _c,
+          builder: (context, _) {
+            final t = _c.value;
+            final es = widget.entries;
+            final children = <Widget>[
+              Positioned(left: widget.left, top: 160, width: widget.width, height: 8, child: const DecoratedBox(decoration: BoxDecoration(color: Color(0x55FFFFFF), borderRadius: BorderRadius.all(Radius.circular(4))))),
+              // The true answer drops in from above between 55 % and 75 % of the time.
+              Positioned(
+                key: const ValueKey('marker-answer'),
+                left: _x(widget.answer) - 3,
+                top: -260 + 380 * Curves.easeIn.transform(((t - 0.55) / 0.2).clamp(0.0, 1.0)),
+                width: 6,
+                height: 90,
+                child: const DecoratedBox(decoration: BoxDecoration(color: _green)),
+              ),
+            ];
+            for (var i = 0; i < es.length; i++) {
+              final e = es[i];
+              final local = Curves.easeOutCubic.transform(((t - 0.04 * i) / 0.5).clamp(0.0, 1.0));
+              final x = widget.left + (_x(e.value!) - widget.left) * local;
+              // Alternate above and below, in three steps, so neighbours do not sit on each other.
+              final top = i.isEven ? (i % 4 == 0 ? 20.0 : 0.0) : (i % 4 == 1 ? 190.0 : 210.0);
+              final closest = e.rank == 1;
+              final ring = closest ? ((t - 0.8) / 0.2).clamp(0.0, 1.0) : 0.0;
+              children.add(Positioned(
+                key: ValueKey('marker-${e.player.id}'),
+                left: x - 36,
+                top: top,
+                child: Opacity(
+                  opacity: local.clamp(0.0, 1.0),
+                  child: Container(
+                    key: closest ? ValueKey('closest-${e.player.id}') : null,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: _gold.withValues(alpha: ring), width: 6)),
+                    child: _face(e.player, 64),
+                  ),
+                ),
+              ));
+            }
+            return Stack(clipBehavior: Clip.none, children: children);
+          },
+        ),
       );
 }

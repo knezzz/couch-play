@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/session/session.dart';
 import 'package:tv/ui/koliko/koliko_screen.dart';
@@ -79,6 +80,7 @@ void main() {
 
   testWidgets('the reveal: the true answer, every number on the line, ranks with points and totals', (t) async {
     await _show(t, _reveal());
+    await t.pump(const Duration(seconds: 3));
     expect(t.widget<Text>(find.byKey(const ValueKey('answer'))).data, 'Točno: 2 864 m');
     expect(find.byKey(const ValueKey('marker-answer')), findsOneWidget);
     for (final id in [0, 1, 2]) {
@@ -97,6 +99,77 @@ void main() {
       expect(t.getRect(find.byKey(ValueKey('row-$id'))).bottom, lessThanOrEqualTo(1030));
     }
     expect(t.takeException(), isNull);
+  });
+
+  testWidgets('the reveal animates and stops: guesses slide in from the left, the answer line drops, then nothing runs', (t) async {
+    await _show(t, _reveal());
+    double x(String k) => t.getCenter(find.byKey(ValueKey(k))).dx;
+    final startX = x('marker-1');
+    final answerTop0 = t.getTopLeft(find.byKey(const ValueKey('marker-answer'))).dy;
+    await t.pump(const Duration(milliseconds: 800));
+    expect(x('marker-1'), greaterThan(startX + 200), reason: 'sliding right toward its number');
+    await t.pump(const Duration(milliseconds: 2200));
+    final endX = x('marker-1');
+    expect(endX, greaterThan(x('marker-2')), reason: 'at its number: 2864 is right of 1200');
+    expect(t.getTopLeft(find.byKey(const ValueKey('marker-answer'))).dy, greaterThan(answerTop0 + 300), reason: 'the line has dropped in');
+    expect(SchedulerBinding.instance.transientCallbackCount, 0, reason: 'a finite animation: it stops');
+    await t.pump(const Duration(seconds: 5));
+    expect(x('marker-1'), endX);
+  });
+
+  testWidgets('the closest player is ringed in gold; a tie rings both; the others are not', (t) async {
+    await _show(t, _reveal());
+    await t.pump(const Duration(seconds: 3));
+    expect(find.byKey(const ValueKey('closest-1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('closest-0')), findsNothing);
+    expect(find.byKey(const ValueKey('closest-2')), findsNothing);
+    BoxDecoration ring(int id) => t.widget<Container>(find.byKey(ValueKey('closest-$id'))).decoration! as BoxDecoration;
+    expect((ring(1).border! as Border).top.color.a, closeTo(1, 0.01), reason: 'the ring has faded in');
+    final tie = KolikoBoard(
+      number: 4, total: 10, question: 'q', unit: '', players: [for (var i = 0; i < 3; i++) _p(i)], answered: const {}, secondsLeft: 0, seconds: 30, answer: 100,
+      rows: [KolikoRow(_p(0), 90, 1, 1000, false, 1000), KolikoRow(_p(1), 110, 1, 1000, false, 1000), KolikoRow(_p(2), 50, 3, 500, false, 500)]);
+    await _show(t, tie);
+    await t.pump(const Duration(seconds: 3));
+    expect(find.byKey(const ValueKey('closest-0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('closest-1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('closest-2')), findsNothing);
+  });
+
+  testWidgets('with animations off the reveal is at its end state at once', (t) async {
+    t.view
+      ..physicalSize = const Size(1920, 1080)
+      ..devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    await t.pumpWidget(MediaQuery(data: const MediaQueryData(disableAnimations: true), child: Directionality(textDirection: TextDirection.ltr, child: KolikoScreen(_reveal()))));
+    expect(SchedulerBinding.instance.transientCallbackCount, 0);
+    expect(t.getCenter(find.byKey(const ValueKey('marker-1'))).dx, greaterThan(t.getCenter(find.byKey(const ValueKey('marker-2'))).dx));
+  });
+
+  testWidgets('confetti plays once at the reveal when someone is closest', (t) async {
+    t.view
+      ..physicalSize = const Size(1920, 1080)
+      ..devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    var at = Duration.zero;
+    final s = Session(random: Random(1), clock: () => at)
+      ..kolikoTvReady = true
+      ..kolikoPacks = [KolikoPack('k', 'K', [for (var i = 0; i < 12; i++) KolikoQuestion('Pitanje $i?', 1000.0 + i, 'm', null, 'izvor')])];
+    final ps = [for (var i = 0; i < 3; i++) join(s, 'P$i', token: 't$i')];
+    ps[0].say(const StartGame(GameKind.koliko, null));
+    for (final p in ps) {
+      p.say(const NumberAnswer(1000));
+    }
+    expect(s.koliko!.reveal, isNotNull, reason: 'everyone answered: the reveal');
+    await t.pumpWidget(MaterialApp(home: EffectLayer(child: KolikoView(match: s.koliko!, players: s.playerInfos))));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 100));
+    expect(find.byType(CustomPaint), findsWidgets);
+    final running = SchedulerBinding.instance.transientCallbackCount;
+    expect(running, greaterThan(1), reason: 'the line animation and the confetti controller are both running');
+    await t.pump(const Duration(seconds: 6));
+    expect(SchedulerBinding.instance.transientCallbackCount, 0, reason: 'both end');
+    await t.pumpWidget(const SizedBox());
+    s.dispose();
   });
 
   testWidgets('all numbers equal and eight players still draw', (t) async {

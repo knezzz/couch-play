@@ -21,6 +21,7 @@ class KolikoView extends StatefulWidget {
 
 class _KolikoViewState extends State<KolikoView> {
   Timer? _clock;
+  int? _confettiFor; // the question number already celebrated
 
   @override
   void initState() {
@@ -41,6 +42,12 @@ class _KolikoViewState extends State<KolikoView> {
     final m = widget.match;
     final inGame = [for (final p in widget.players) if (m.totals.containsKey(p.id)) p];
     final rev = m.reveal;
+    if (rev != null && rev.entries.any((e) => e.rank == 1) && _confettiFor != m.number) {
+      _confettiFor = m.number;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) EffectLayer.play(context, EffectName.confetti);
+      });
+    }
     PlayerInfo? info(int id) => widget.players.where((p) => p.id == id).firstOrNull;
     return KolikoScreen(KolikoBoard(
       number: m.number,

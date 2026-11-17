@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../strings.dart';
 import '../tv_theme.dart';
 
-const _amber = Color(0xFFFFB020), _red = Color(0xFFFF4D6D), _gold = Color(0xFFFFD54A), _green = Color(0xFF2ECC71);
+const _amber = Color(0xFFFFB020), _red = Color(0xFFFF4D6D), _gold = Color(0xFFFFD54A);
 
 /// One player's result at the reveal: the votes they got and whether they are crowned. No points and no
 /// running totals on the TV: a point means "voted for the crowned", so beside each name it would say who
