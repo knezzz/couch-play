@@ -22,6 +22,7 @@ LobbyState _lobby({
     PackInfo('b', 'Međimurje', 94, pictures: true),
   ],
   uljezPacks: const [PackInfo('u', 'Crtići', 40)],
+  objasniPacks: const [PackInfo('o', 'Općenito', 120)],
   players: [
     for (var i = 0; i < n; i++)
       PlayerInfo(
@@ -47,12 +48,11 @@ void main() {
       l,
       ...more,
     ];
-    const roleMsg = RoleMsg(
+    const roleMsg = RoleMsg(WolfRole.seer, [], [
+      WolfRole.wolf,
+      WolfRole.villager,
       WolfRole.seer,
-      [],
-      [WolfRole.wolf, WolfRole.villager, WolfRole.seer],
-      hide: true,
-    );
+    ], hide: true);
     final scenes = <String, List<Message>>{
       'PhoneJoin': [],
       'PhoneCarousel': w(0, _lobby(), []),
@@ -83,7 +83,92 @@ void main() {
         roleMsg,
         const VotePrompt(day: 3, seconds: 12, ids: [0, 1, 2, 3, 4]),
       ]),
-      'V2PhoneWolfSettings': w(0, _lobby(selected: GameKind.vukodlak, n: 7), []),
+      'V2PhoneWolfSettings': w(
+        0,
+        _lobby(selected: GameKind.vukodlak, n: 7),
+        [],
+      ),
+      'ObjasniSetupHost': w(0, _lobby(), [
+        const ObjasniTeams(
+          team: 0,
+          teams: [
+            [0, 1],
+            [2, 3],
+          ],
+        ),
+      ]),
+      'ObjasniExplain': w(1, _lobby(), [
+        const ObjasniTeams(
+          team: 0,
+          teams: [
+            [0, 1],
+            [2, 3],
+          ],
+        ),
+        const ObjasniTurn(
+          stage: ObjasniStage.play,
+          role: ObjasniRole.explain,
+          team: 0,
+          explainer: 1,
+          word: 'Kišobran',
+          seconds: 47,
+          scores: [12, 9],
+        ),
+      ]),
+      'ObjasniWatch': w(2, _lobby(), [
+        const ObjasniTeams(
+          team: 1,
+          teams: [
+            [0, 1],
+            [2, 3],
+          ],
+        ),
+        const ObjasniTurn(
+          stage: ObjasniStage.play,
+          role: ObjasniRole.watch,
+          team: 0,
+          explainer: 1,
+          word: 'Kišobran',
+          seconds: 47,
+          scores: [12, 9],
+        ),
+      ]),
+      'ObjasniGuess': w(0, _lobby(), [
+        const ObjasniTeams(
+          team: 0,
+          teams: [
+            [0, 1],
+            [2, 3],
+          ],
+        ),
+        const ObjasniTurn(
+          stage: ObjasniStage.play,
+          role: ObjasniRole.guess,
+          team: 0,
+          explainer: 1,
+          word: null,
+          seconds: 47,
+          scores: [12, 9],
+        ),
+      ]),
+      'ObjasniReady': w(1, _lobby(), [
+        const ObjasniTeams(
+          team: 0,
+          teams: [
+            [0, 1],
+            [2, 3],
+          ],
+        ),
+        const ObjasniTurn(
+          stage: ObjasniStage.ready,
+          role: ObjasniRole.explain,
+          team: 0,
+          explainer: 1,
+          word: null,
+          seconds: 60,
+          scores: [12, 9],
+        ),
+      ]),
       'UljezPhone_word': w(1, _lobby(), [
         const UljezWord('Pikachu'),
         const UljezTurn(round: 2, speaker: 0, seconds: 20, stage: 'clues'),
@@ -102,7 +187,8 @@ void main() {
     };
     File(_out!).writeAsStringSync(
       jsonEncode({
-        for (final e in scenes.entries) e.key: [for (final m in e.value) m.encode()],
+        for (final e in scenes.entries)
+          e.key: [for (final m in e.value) m.encode()],
       }),
     );
   });

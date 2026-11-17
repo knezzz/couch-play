@@ -402,7 +402,7 @@ class _TurnState extends State<ObjasniTurnScreen> {
         minimumSize: const Size.fromHeight(96),
       ),
       onPressed: () => widget.onAct(act),
-      child: Text(label),
+      child: FittedBox(fit: BoxFit.scaleDown, child: Text(label, maxLines: 1)),
     ),
   );
 }

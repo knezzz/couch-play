@@ -108,6 +108,18 @@ void main() {
       expect(acts, [ObjasniAct.correct, ObjasniAct.skip]);
     });
 
+    testWidgets('the button labels stay on one line, also at 360 px', (
+      t,
+    ) async {
+      for (final w in [390.0, 360.0]) {
+        await _show(t, _turn(), width: w);
+        for (final label in [Strings.skip, Strings.right]) {
+          final h = t.getSize(find.text(label)).height;
+          expect(h, lessThan(40), reason: '$label at $w px is one line');
+        }
+      }
+    });
+
     testWidgets('the other team: the same word and Prekršaj only', (t) async {
       final acts = <ObjasniAct>[];
       await _show(t, _turn(role: ObjasniRole.watch, onAct: acts.add));
