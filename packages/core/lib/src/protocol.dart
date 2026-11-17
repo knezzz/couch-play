@@ -235,6 +235,8 @@ sealed class Message with _JsonEq {
             text: m['text'] as String,
             choices: [for (final e in m['choices'] as List) e as String],
             ids: [for (final e in m['ids'] as List) e as int],
+            choices2: [for (final e in m['choices2'] as List) e as String],
+            ids2: [for (final e in m['ids2'] as List) e as int],
             picks: m['picks'] as int,
             picked: m['picked'] as int?,
             picked2: m['picked2'] as int?,
@@ -571,13 +573,16 @@ class RoleMsg extends Message {
 /// from: [choices] are the labels, [ids] what a pick sends back. For a role
 /// with a night action the labels are the alive players; otherwise they are
 /// the five answers of a sum. [picks] is 2 on night 1 for EVERY phone (the
-/// cupid's two lovers), else 1. [picked], [picked2] and [special] restore
-/// the screen.
+/// cupid's two lovers), else 1; then [choices2]/[ids2] are the list for the
+/// second pick (the alive players again, or a second sum) and empty on every
+/// other night. [picked], [picked2] and [special] restore the screen.
 class NightPrompt extends Message {
   final int night;
   final String text;
   final List<String> choices;
   final List<int> ids;
+  final List<String> choices2;
+  final List<int> ids2;
   final int picks;
   final int? picked;
   final int? picked2;
@@ -587,6 +592,8 @@ class NightPrompt extends Message {
       required this.text,
       required this.choices,
       required this.ids,
+      this.choices2 = const [],
+      this.ids2 = const [],
       this.picks = 1,
       this.picked,
       this.picked2,
@@ -599,6 +606,8 @@ class NightPrompt extends Message {
         'text': text,
         'choices': choices,
         'ids': ids,
+        'choices2': choices2,
+        'ids2': ids2,
         'picks': picks,
         'picked': picked,
         'picked2': picked2,

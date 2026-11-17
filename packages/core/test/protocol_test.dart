@@ -184,7 +184,7 @@ void main() {
         const Vote(null),
         const Shoot(4),
         const RoleMsg(WolfRole.wolf, [2], [WolfRole.wolf, WolfRole.villager, WolfRole.seer], hide: true),
-        const NightPrompt(night: 2, text: 'x', choices: ['Ana', 'Ivo'], ids: [1, 2], picks: 2, picked: 2, picked2: 3, special: true),
+        const NightPrompt(night: 2, text: 'x', choices: ['Ana', 'Ivo'], ids: [1, 2], choices2: ['12', '40'], ids2: [0, 1], picks: 2, picked: 2, picked2: 3, special: true),
         const NightPrompt(night: 1, text: '', choices: ['12', '40'], ids: [0, 1]),
         const Morning(2, 'Vidjela si'),
         const VotePrompt(day: 1, seconds: 120, ids: [1, 2, 3], canVote: false, picked: 3),
