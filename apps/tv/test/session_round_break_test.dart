@@ -113,4 +113,13 @@ void main() {
     }
     s.dispose();
   });
+
+  testWidgets('the phones are told the round number, and it counts up', (t) async {
+    startMatch();
+    expect(a.last<CurveStatus>()!.round, 1);
+    endRound();
+    await wait(t, 4);
+    expect(a.last<CurveStatus>()!.round, 2);
+    s.dispose();
+  });
 }

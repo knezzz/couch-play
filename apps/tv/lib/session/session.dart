@@ -897,7 +897,8 @@ class Session {
     return CurveStatus(
         alive: (head?.alive ?? false) && !_gone.contains(p.id),
         score: sim.scores[sid] ?? 0,
-        target: sim.target);
+        target: sim.target,
+        round: _curveRound);
   }
 
   void _sendStatuses() {
@@ -1301,7 +1302,7 @@ class Session {
           if (status != null) {
             // The event itself says they died, whatever the head reads.
             p!.socket?.send(CurveStatus(
-                alive: false, score: status.score, target: status.target));
+                alive: false, score: status.score, target: status.target, round: status.round));
           }
           p?.socket?.send(const Effect('colorPulse')); // bots have no socket
         case RoundOver():

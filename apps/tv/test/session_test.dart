@@ -209,7 +209,7 @@ void main() {
       const LobbyState(players: [], packs: [], hostId: 1),
       const QuizQuestion(1, 10, ['a', 'b', 'c', 'd'], 20),
       const QuizReveal(0, 0, 0),
-      const CurveStatus(alive: true, score: 0, target: 10),
+      const CurveStatus(alive: true, score: 0, target: 10, round: 1),
       const Results([]),
       const Effect('confetti'),
       const Pong(1),
@@ -397,7 +397,7 @@ void main() {
     expect(s.bots, isNotNull);
     expect(s.curveRound, 1);
     for (final p in [a, b]) {
-      expect(p.last<CurveStatus>(), CurveStatus(alive: true, score: 0, target: sim.target));
+      expect(p.last<CurveStatus>(), CurveStatus(alive: true, score: 0, target: sim.target, round: 1));
     }
   });
 
