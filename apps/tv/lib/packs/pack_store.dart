@@ -62,10 +62,24 @@ class PackStore {
     return PackStore._(userDir, b, u);
   }
 
+  /// The bundled packs of Task 28 count as new, and so does any pack uploaded
+  /// since this app started (a pack on disk from an earlier run does not).
+  static const newBundledIds = {
+    'hr-umjetnost',
+    'hr-psihologija',
+    'hr-ljudsko-tijelo',
+    'hr-memeovi',
+    'hr-fizika',
+    'hr-matematika',
+  };
+  final _uploadedNow = <String>{};
+
   /// The default pack first: the phone picker preselects the first entry.
   List<PackInfo> get infos => [
         for (final p in {?defaultPack, ..._bundled.values, ..._user.values})
-          PackInfo(p.id, p.title, p.questions.length),
+          PackInfo(p.id, p.title, p.questions.length,
+              pictures: p.questions.any((q) => q.image != null),
+              isNew: newBundledIds.contains(p.id) && _bundled.containsKey(p.id) || _uploadedNow.contains(p.id)),
       ];
 
   QuizPack? get(String id) => _bundled[id] ?? _user[id];
@@ -105,6 +119,7 @@ class PackStore {
       return Strings.packSaveFailed;
     }
     _user[pack.id] = pack;
+    _uploadedNow.add(pack.id);
     return null;
   }
 }

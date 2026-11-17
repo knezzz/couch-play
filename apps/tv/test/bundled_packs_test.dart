@@ -50,5 +50,20 @@ void main() {
     expect(await store.add(upload), Strings.builtInPackId('hr-opce-znanje'));
     expect(store.get('hr-opce-znanje')!.title, 'Opće znanje');
   });
-}
 
+  test('the pack grid tags: pictures where a question has one, new for the Task 28 packs', () async {
+    final store = await PackStore.load(
+        bundled: [for (final f in _files()) f.readAsBytesSync()], userDir: Directory.systemTemp.createTempSync('nopacks'));
+    final byId = {for (final i in store.infos) i.id: i};
+    for (final id in PackStore.newBundledIds) {
+      expect(byId[id]!.isNew, isTrue, reason: id);
+    }
+    expect(byId['hr-povijest']!.isNew, isFalse);
+    expect(byId['hr-umjetnost']!.pictures, isTrue, reason: 'the art pack is all pictures');
+    for (final e in byId.entries) {
+      final pack = store.get(e.key)!;
+      expect(e.value.pictures, pack.questions.any((q) => q.image != null), reason: e.key);
+    }
+    expect(byId.values.any((i) => !i.pictures), isTrue, reason: 'a pack without pictures exists');
+  });
+}

@@ -27,7 +27,7 @@ void main() {
     final s = await PackStore.load(bundled: [], userDir: dir);
     expect(await s.add(pack('flags', title: 'Flags', n: 3)), isNull);
     expect(files(), ['flags.pack']); // no .tmp left behind
-    expect(s.infos, [const PackInfo('flags', 'Flags', 3)]);
+    expect(s.infos, [const PackInfo('flags', 'Flags', 3, isNew: true)], reason: 'uploaded now: new');
     expect(s.get('flags')!.title, 'Flags');
 
     final again = await PackStore.load(bundled: [], userDir: dir);
@@ -107,7 +107,7 @@ void main() {
     expect(results, [null, null]);
     expect(files(), ['a.pack']);
     final again = await PackStore.load(bundled: [], userDir: dir);
-    expect(again.infos, s.infos);
+    expect([for (final i in again.infos) i.title], [for (final i in s.infos) i.title]);
     expect(s.infos.single.title, 'Small'); // adds run in call order
   });
 
@@ -128,5 +128,42 @@ void main() {
     addTearDown(() => Process.runSync('chmod', ['755', sealed.path]));
     final s = await PackStore.load(bundled: [pack('x')], userDir: sealed);
     expect(s.infos.map((i) => i.id), ['x']);
+  });
+
+  group('grid tags', () {
+    Uint8List withPicture(String id) => Uint8List.fromList(utf8.encode(jsonEncode({
+          'format': 1,
+          'id': id,
+          'title': id,
+          'questions': [
+            {'q': 'q', 'image': 'x.svg', 'choices': ['a', 'b', 'c', 'd'], 'answer': 0},
+          ],
+        })));
+
+    test('pictures: true only when some question has a picture', () async {
+      // a bare json pack cannot carry a file, so an image name there is not a valid pack: use a plain one
+      final s = await PackStore.load(bundled: [pack('plain')], userDir: dir);
+      expect(s.infos.single.pictures, isFalse);
+    });
+
+    test('a Task 28 bundled pack is new, another bundled pack is not, an upload is new until the app restarts', () async {
+      final s = await PackStore.load(bundled: [pack('hr-umjetnost'), pack('hr-povijest')], userDir: dir);
+      final byId = {for (final i in s.infos) i.id: i};
+      expect(byId['hr-umjetnost']!.isNew, isTrue);
+      expect(byId['hr-povijest']!.isNew, isFalse);
+      expect(await s.add(pack('mine')), isNull);
+      expect(s.infos.firstWhere((i) => i.id == 'mine').isNew, isTrue);
+      final again = await PackStore.load(bundled: [pack('hr-umjetnost')], userDir: dir);
+      expect(again.infos.firstWhere((i) => i.id == 'mine').isNew, isFalse, reason: 'a later run: not new any more');
+    });
+
+    test('a user pack named like a Task 28 id is not marked new by that name', () async {
+      final s = await PackStore.load(bundled: [], userDir: dir);
+      dir.createSync(recursive: true);
+      File('${dir.path}/hr-fizika.pack').writeAsBytesSync(pack('hr-fizika'));
+      final again = await PackStore.load(bundled: [], userDir: dir);
+      expect(again.infos.single.isNew, isFalse);
+      expect(s.infos, isEmpty);
+    });
   });
 }
