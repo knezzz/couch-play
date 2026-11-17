@@ -11,9 +11,11 @@ import '../packs/test_pack.dart';
 import '../server/game_server.dart';
 import '../sound/sfx.dart';
 import 'bots.dart';
+import 'wolf_match.dart';
+import 'wolf_text.dart';
 import '../strings.dart';
 
-enum Phase { lobby, quiz, curve, results }
+enum Phase { lobby, quiz, curve, wolf, results }
 
 const maxPlayers = 8;
 const _staleAfter = Duration(minutes: 10);
@@ -119,6 +121,8 @@ class Session {
   void dispose() {
     _quizTimer?.cancel();
     _waitTimer?.cancel();
+    _wolf?.dispose();
+    _wolfEndTimer?.cancel();
     _changes.dispose();
   }
 
@@ -224,6 +228,15 @@ class Session {
       case Answer(:final index):
         final p = _playerOf(peer);
         if (p != null) _answer(p, index);
+      case NightPick():
+        final p = _playerOf(peer);
+        if (p != null) _wolf?.onNightPick(p.id, m);
+      case Vote():
+        final p = _playerOf(peer);
+        if (p != null) _wolf?.onVote(p.id, m);
+      case Shoot():
+        final p = _playerOf(peer);
+        if (p != null) _wolf?.onShoot(p.id, m);
       default:
         // Everything else is a TV-to-phone type; a phone has no business
         // sending it.
@@ -298,6 +311,13 @@ class Session {
       case Phase.quiz:
         if (_quizIds.contains(p.id)) _resumeQuiz();
         _quizRejoin(p);
+      case Phase.wolf:
+        // Only that player's own state again; an outsider just waits.
+        if (_wolf?.ids.contains(p.id) == true) {
+          _wolf!.rejoin(p.id);
+        } else {
+          peer.send(_waiting);
+        }
       case Phase.results:
         peer.send(_waiting);
     }
@@ -389,7 +409,17 @@ class Session {
         _startCurve(parts);
         onStart?.call(game, packId);
       case GameKind.vukodlak:
-        peer.send(const ErrorMsg(Strings.vukodlakSoon)); // Task 33 builds it
+        if (_players.any((p) => p.bot)) {
+          peer.send(const ErrorMsg(WolfText.noBots));
+          return;
+        }
+        final parts = participants(GameKind.vukodlak);
+        if (parts.length < 5 || parts.length > 8) {
+          peer.send(const ErrorMsg(WolfText.needPlayers));
+          return;
+        }
+        _startWolf(parts);
+        onStart?.call(game, packId);
     }
   }
 
@@ -565,6 +595,34 @@ class Session {
 
   /// Bumped for every round of a match; the TV makes a fresh `CurveGame` each time.
   int get curveRound => _curveRound;
+
+  // --- Vukodlak: the match holds the rules and every private message ---
+
+  WolfMatch? _wolf;
+  Timer? _wolfEndTimer;
+  WolfMatch? get wolf => _wolf;
+
+  void _startWolf(List<Player> parts) {
+    _wolf?.dispose();
+    _gameHost = hostId;
+    _selected = null;
+    _phase = Phase.wolf;
+    _wolf = WolfMatch(
+      ids: [for (final p in parts) p.id],
+      nameOf: (id) => _byId(id)?.name ?? '',
+      settings: _settings,
+      send: (id, m) => _byId(id)?.socket?.send(m),
+      clock: _clock,
+      random: _random,
+      sfx: sfx,
+      notify: _notify,
+      onOver: (_) {
+        _wolfEndTimer?.cancel();
+        _wolfEndTimer = Timer(const Duration(seconds: 10), returnToLobby);
+      },
+    )..start();
+    _notify();
+  }
 
   void _startCurve(List<Player> parts) {
     _selected = null;
@@ -1024,7 +1082,7 @@ class Session {
   /// The host's Back + Yes: abandons a running quiz or Curve match. No
   /// placement points, scores stay as they were; phones go back to the lobby.
   void endGame() {
-    if (_phase == Phase.quiz || _phase == Phase.curve) returnToLobby();
+    if (_phase == Phase.quiz || _phase == Phase.curve || _phase == Phase.wolf) returnToLobby();
   }
 
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
@@ -1035,6 +1093,9 @@ class Session {
     _stopWait();
     _placements = [];
     _stopQuiz();
+    _wolf?.dispose();
+    _wolf = null;
+    _wolfEndTimer?.cancel();
     _sim = null;
     _bots = null;
     _simIdOf.clear();

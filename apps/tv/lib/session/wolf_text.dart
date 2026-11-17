@@ -34,6 +34,8 @@ class WolfText {
   static const converted = 'Sada si u čoporu vukodlaka.';
   static String saw(String name, WolfRole r) => 'Rezultat: $name je ${roleNames[r]}.';
   static String lover(String name) => 'Tvoj par je $name. Ispadate zajedno.';
+  static const needPlayers = 'Vukodlak traži 5 do 8 igrača na mobitelima.';
+  static const noBots = 'Vukodlak se igra bez botova. Ukloni botove.';
   static const out = 'Ispao si iz igre. Gledaj dalje.';
   static const spectating = 'Gledaš selo.';
 
