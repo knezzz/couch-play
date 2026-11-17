@@ -10,3 +10,4 @@ export 'src/shape_mark.dart';
 export 'src/character_face.dart';
 export 'strings.dart';
 export 'src/characters.dart';
+export 'src/wolf.dart';
