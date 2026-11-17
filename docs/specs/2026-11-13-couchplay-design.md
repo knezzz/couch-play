@@ -188,10 +188,11 @@ the phones. Folk-game roles in our own words; no names or roles from Town of Sal
 - **TV:** the village: each player's house in a circle around the square, with their character and name; the story
   and the clock in the square. Night: dark, lit windows; morning: daylight. A player who is out: their house closes up
   (boarded, grey), with blood around it and a crow. Light animation: chimney smoke, flickering windows, stars,
-  fireflies, drifting clouds, swaying trees (off with reduced motion). The day vote shows who voted for whom.
+  fireflies, drifting clouds, swaying trees (off with reduced motion). The day vote shows who voted for whom and who is out, but no vote counts, so the Načelnik's double vote stays secret
+  (user answer, 2026-11-17).
 - **Phones:** the role is hidden by default and shows only while a finger is on the screen. At night every phone
   looks the same (grey, same layout, same button) whatever the role; only a short grey line of text differs. Everyone
-  has a night task: roles with no night action get a simple sum (e.g. 7 × 8, five answers) in the same grey list, so
+  has a night task: roles with no night action get a simple sum (e.g. 7 × 8, as many answers as players still in, so the list is the same length as everyone else's) in the same grey list, so
   every phone looks busy (user request, 2026-11-17). On the TV only the houses of players who have not finished their
   task yet are lit; when a player finishes, their light goes out, but no light goes out in the first 15 s of the night, so the
   order does not give roles away (user answer, 2026-11-17). Day vote on the phones.
