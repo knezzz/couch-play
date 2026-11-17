@@ -73,7 +73,9 @@ void main() {
       tall(t);
       final c = _Fake();
       await t.pumpWidget(
-        MaterialApp(home: JoinScreen(c, onJoined: () {}, initialCharacter: 'owl')),
+        MaterialApp(
+          home: JoinScreen(c, onJoined: () {}, initialCharacter: 'owl'),
+        ),
       );
       if (pick != null) await t.tap(find.byKey(ValueKey('char-$pick')));
       await t.enterText(find.byType(TextField), 'Ana');
@@ -81,6 +83,57 @@ void main() {
       await t.pump();
       return c;
     }
+
+    testWidgets('the preview shows the typed name and the Croatian animal', (
+      t,
+    ) async {
+      tall(t);
+      final c = _Fake();
+      await t.pumpWidget(
+        MaterialApp(
+          home: JoinScreen(c, onJoined: () {}, initialCharacter: 'owl'),
+        ),
+      );
+      final card = find.byKey(const ValueKey('character-preview'));
+      expect(
+        find.descendant(of: card, matching: find.text(Strings.animal('owl'))),
+        findsOneWidget,
+      );
+      await t.enterText(find.byType(TextField), 'Petra');
+      await t.pump();
+      expect(
+        find.descendant(of: card, matching: find.text('Petra')),
+        findsOneWidget,
+      );
+      await t.tap(find.byKey(const ValueKey('char-bear')));
+      await t.pump();
+      expect(
+        find.descendant(of: card, matching: find.text(Strings.animal('bear'))),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: card, matching: find.byType(CharacterFace)),
+        findsOneWidget,
+      );
+    });
+
+    test('every character has a Croatian name', () {
+      for (final id in characterIds) {
+        expect(Strings.animal(id), isNotEmpty, reason: id);
+      }
+      expect(Strings.animals.length, characterIds.length);
+    });
+
+    testWidgets('each grid cell is labelled with its animal', (t) async {
+      tall(t);
+      await t.pumpWidget(
+        MaterialApp(home: JoinScreen(_Fake(), onJoined: () {})),
+      );
+      final h = t.ensureSemantics();
+      expect(find.bySemanticsLabel('Lisica'), findsOneWidget);
+      expect(find.bySemanticsLabel('Majmun'), findsOneWidget);
+      h.dispose();
+    });
 
     testWidgets('the preselected character goes out with the name', (t) async {
       final c = await join(t);
@@ -105,7 +158,9 @@ void main() {
     });
 
     for (final w in [360.0, 390.0]) {
-      testWidgets('16 targets of 56 px or more fit at ${w.toInt()} px', (t) async {
+      testWidgets('16 targets of 56 px or more fit at ${w.toInt()} px', (
+        t,
+      ) async {
         t.view.physicalSize = Size(w, 1600);
         t.view.devicePixelRatio = 1;
         addTearDown(t.view.reset);

@@ -31,7 +31,8 @@ class _JoinScreenState extends State<JoinScreen> {
   StreamSubscription<Message>? _sub;
   String? _error;
   late String _character =
-      widget.initialCharacter ?? characterIds[Random().nextInt(characterIds.length)];
+      widget.initialCharacter ??
+      characterIds[Random().nextInt(characterIds.length)];
 
   @override
   void initState() {
@@ -141,7 +142,48 @@ class _JoinScreenState extends State<JoinScreen> {
                 color: accent,
                 onPick: (id) => setState(() => _character = id),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
+              // What the others will see: the face and the name.
+              Container(
+                key: const ValueKey('character-preview'),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  children: [
+                    CharacterFace(_character, 56, accent),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ValueListenableBuilder<TextEditingValue>(
+                            valueListenable: _name,
+                            builder: (_, v, _) => Text(
+                              v.text.trim(),
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            Strings.animal(_character),
+                            style: const TextStyle(fontSize: 18, color: muted),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
               FilledButton(
                 onPressed: () {
                   final name = _name.text.trim();

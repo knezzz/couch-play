@@ -9,6 +9,26 @@ abstract final class Strings {
   static const nameLabel = 'Tvoje ime';
   static const nameLimit = 'Najviše 16 znakova.';
   static const join = 'Pridruži se';
+  static const animals = {
+    'fox': 'Lisica',
+    'owl': 'Sova',
+    'frog': 'Žaba',
+    'bear': 'Medvjed',
+    'cat': 'Mačka',
+    'dog': 'Pas',
+    'rabbit': 'Zec',
+    'penguin': 'Pingvin',
+    'lion': 'Lav',
+    'panda': 'Panda',
+    'pig': 'Svinja',
+    'koala': 'Koala',
+    'mouse': 'Miš',
+    'tiger': 'Tigar',
+    'duck': 'Patka',
+    'monkey': 'Majmun',
+  };
+  static String animal(String id) => animals[id] ?? '';
+  static const taken = ' (zauzet)';
   static const pickCharacter = 'Odaberi svoj lik';
   static const changeCharacter = 'Promijeni lik';
   static const joinAgain = 'Pridruži se ponovno';

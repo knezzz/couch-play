@@ -1,6 +1,7 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
+import 'strings.dart';
 import 'theme.dart';
 
 /// The 16 characters, 4 across. [taken] ones are greyed and cannot be picked.
@@ -22,7 +23,8 @@ class CharacterGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, c) {
-      final cell = (c.maxWidth - 3 * _gap) / 4; // 72 px at 360 wide, never under 56
+      final cell =
+          (c.maxWidth - 3 * _gap) / 4; // 72 px at 360 wide, never under 56
       return Wrap(
         spacing: _gap,
         runSpacing: _gap,
@@ -30,6 +32,9 @@ class CharacterGrid extends StatelessWidget {
           for (final id in characterIds)
             Semantics(
               button: true,
+              label:
+                  Strings.animal(id) +
+                  (taken.contains(id) ? Strings.taken : ''),
               enabled: !taken.contains(id),
               child: Opacity(
                 opacity: taken.contains(id) ? 0.25 : 1,
@@ -42,11 +47,11 @@ class CharacterGrid extends StatelessWidget {
                     height: cell,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: surface,
+                      color: id == selected ? raised : surface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: id == selected ? accent : raised,
-                        width: id == selected ? 3 : 1,
+                        color: id == selected ? accent : Colors.transparent,
+                        width: 3,
                       ),
                     ),
                     child: CharacterFace(id, cell - 16, color),

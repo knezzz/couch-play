@@ -130,6 +130,8 @@ Informal "ti". `{x}` is filled in by the app.
 | fewerBots | Manje robota | Fewer bots | accessibility label of the − button |
 | moreBots | Više robota | More bots | accessibility label of the + button |
 | pickCharacter | Odaberi svoj lik | Pick your character | join screen label above the character grid; title of the change sheet |
+| animals (16) | Lisica, Sova, Žaba, Medvjed, Mačka, Pas, Zec, Pingvin, Lav, Panda, Svinja, Koala, Miš, Tigar, Patka, Majmun | Fox, Owl, Frog, Bear, Cat, Dog, Rabbit, Penguin, Lion, Panda, Pig, Koala, Mouse, Tiger, Duck, Monkey | character preview on the join screen; each grid cell's screen-reader label |
+| taken | (zauzet) | (taken) | screen-reader label of a character another player has |
 | changeCharacter | Promijeni lik | Change character | lobby, button under your chip (opens the grid) |
 | back | Natrag | Back | game details, button at the top (returns to the game carousel) |
 | play | Igraj | Play | game details, big button that starts the game |
