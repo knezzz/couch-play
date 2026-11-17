@@ -53,6 +53,7 @@ class _AppState extends State<App> {
   String? _error;
   bool _alive = true;
   int _curveScore = 0;
+  int? _curveRound;
   QuizQuestion? _question;
   QuizReveal? _reveal;
   int _quizTotal = 0; // running total, from the last reveal
@@ -125,6 +126,7 @@ class _AppState extends State<App> {
           if (_screen != _Screen.curve) _error = null;
           _alive = m.alive;
           _curveScore = m.score;
+          _curveRound = m.round;
           _screen = _Screen.curve;
         case QuizQuestion():
           _question = m;
@@ -200,6 +202,7 @@ class _AppState extends State<App> {
       character: _me?.character ?? '',
       colorIndex: _myColor,
       score: _curveScore,
+      round: _curveRound,
     ),
     _Screen.quiz => QuizScreen(
       widget.conn,

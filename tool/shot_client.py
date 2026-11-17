@@ -61,8 +61,27 @@ try:
             if m.get('id') == i: return m
 
     call(1, 'Emulation.setDeviceMetricsOverride', {'width': 390, 'height': 844, 'deviceScaleFactor': 2, 'mobile': True})
+    netlog = os.environ.get('NETLOG')  # print every request that leaves localhost
+    if netlog:
+        call(4, 'Network.enable')
     call(2, 'Page.navigate', {'url': url})
-    time.sleep(wait)
+    if netlog:
+        s.settimeout(0.5)
+        end = time.time() + wait
+        seen = set()
+        while time.time() < end:
+            try:
+                m = recv()
+            except Exception:
+                continue
+            if m.get('method') == 'Network.requestWillBeSent':
+                u = m['params']['request']['url']
+                if '127.0.0.1' not in u and u not in seen:
+                    seen.add(u)
+                    print('EXTERNAL', u)
+        s.settimeout(None)
+    else:
+        time.sleep(wait)
     r = call(3, 'Page.captureScreenshot', {'format': 'png'})
     open(out, 'wb').write(base64.b64decode(r['result']['data']))
 finally:

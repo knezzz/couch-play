@@ -6,6 +6,8 @@ import 'package:web/web.dart' as web;
 import 'app.dart';
 import 'connection.dart';
 import 'pack_upload.dart';
+import 'screens/blef_field.dart';
+import 'theme.dart';
 
 String _token() {
   const key = 'couchplay.token';
@@ -37,6 +39,10 @@ void _save(SavedJoin? j) {
 }
 
 void main() {
+  if (Uri.base.queryParameters['spike'] == 'blef') {
+    runApp(MaterialApp(theme: theme, home: const BlefSpikeScreen()));
+    return;
+  }
   final loc = Uri.parse(web.window.location.href);
   final ws = Uri(
     scheme: loc.scheme == 'https' ? 'wss' : 'ws',

@@ -17,6 +17,7 @@ class CurveScreen extends StatefulWidget {
     this.character = '',
     this.colorIndex = 0,
     this.score = 0,
+    this.round,
     super.key,
   });
   final Connection conn;
@@ -24,6 +25,9 @@ class CurveScreen extends StatefulWidget {
   /// For the header: who this phone is and its score in the match.
   final String name, character;
   final int colorIndex, score;
+
+  /// 1-based; null from an older TV, then the header shows the score only.
+  final int? round;
 
   /// False after a crash: steering is inert until the next round.
   final bool alive;
@@ -138,7 +142,12 @@ class _CurveScreenState extends State<CurveScreen> {
                       ),
                     ),
                     Text(
-                      Strings.curveScore(widget.score),
+                      widget.round == null
+                          ? Strings.curveScore(widget.score)
+                          : Strings.curveRoundScore(
+                              widget.round!,
+                              widget.score,
+                            ),
                       key: const ValueKey('curve-score'),
                       style: const TextStyle(fontSize: 18, color: muted),
                     ),

@@ -52,6 +52,11 @@ abstract final class Strings {
   static const puYou = 'na tebe';
   static const puOthers = 'na sve ostale';
   static const puAll = 'na sve';
+  static const send = 'Pošalji';
+  static const blefHint = 'Tvoj odgovor';
+  static const blefSpikeTitle = 'Blef: probno tipkanje';
+  static const blefSpikeTry =
+      'Upiši riječi sa č ć š ž đ (npr. „Čačkalica, ćevapi, šljiva, žaba, đak”), pa Pošalji. Ispod se vidi što je stiglo i kodovi znakova.';
   static const pickPack = 'Odaberi paket';
   static const addPack = 'Dodaj svoj paket…';
 
@@ -362,6 +367,8 @@ abstract final class Strings {
   static const steerLeft = 'Lijevo';
   static const steerRight = 'Desno';
   static String curveScore(int n) => '$n ${points(n)}';
+  static String curveRoundScore(int round, int n) =>
+      'Runda $round · ${curveScore(n)}';
   static const curveHint =
       'Drži za skretanje. Kad te zahvati „Obrnuto”, lijevo i desno se zamijene: na TV-u uz tvoju liniju vidiš crvene strelice.';
 

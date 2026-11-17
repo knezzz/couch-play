@@ -230,4 +230,25 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('the Curve round from the TV reaches the phone header', (
+    t,
+  ) async {
+    t.view.physicalSize = const Size(390, 1600);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    for (final m in <Message>[
+      const Welcome(0, 0, 'test'),
+      _lobby(),
+      const CurveStatus(alive: true, score: 7, target: 30, round: 4),
+    ]) {
+      c.inbox.add(m);
+      await t.pump();
+      await t.pump();
+    }
+    expect(find.text('Runda 4 · 7 bodova'), findsOneWidget);
+    await t.pumpWidget(const SizedBox());
+  });
 }

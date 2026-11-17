@@ -76,6 +76,19 @@ void main() {
     await t.pumpWidget(const SizedBox());
   });
 
+  testWidgets('the header says the round when the TV sends one', (t) async {
+    final c = _Fake();
+    await t.pumpWidget(
+      MaterialApp(home: CurveScreen(c, name: 'Ana', score: 12, round: 3)),
+    );
+    expect(find.text('Runda 3 · 12 bodova'), findsOneWidget);
+    await t.pumpWidget(
+      MaterialApp(home: CurveScreen(c, name: 'Ana', score: 12)),
+    );
+    expect(find.text('12 bodova'), findsOneWidget);
+    await t.pumpWidget(const SizedBox());
+  });
+
   testWidgets('both buttons are in the player colour, with the steering hint', (
     t,
   ) async {
