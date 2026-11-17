@@ -13,3 +13,4 @@ export 'src/characters.dart';
 export 'src/wolf.dart';
 export 'src/uljez.dart';
 export 'src/objasni.dart';
+export 'src/powerup_texts.dart';
