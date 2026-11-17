@@ -734,6 +734,47 @@ void main() {
       expect(_head(s, 1).heading, closeTo(h1 + pi / 2, 1e-9));
     });
 
+    test('a tap whose press and release both land between two ticks still turns 90 degrees', () {
+      final s = squareSim();
+      giveSquare(s);
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: false, right: true);
+      s.setInput(1, left: false, right: false); // released before the next tick
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h0 + pi / 2, 1e-9));
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h0 + pi / 2, 1e-9), reason: 'once only');
+      s.setInput(1, left: true, right: false);
+      s.setInput(1, left: false, right: false);
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h0, 1e-9), reason: 'and the left tap turns back');
+    });
+
+    test('a tap is not remembered across ticks, and a press-and-hold turns once, not twice', () {
+      final s = squareSim();
+      giveSquare(s);
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: false, right: true);
+      s.tick(); // turns
+      _ticks(s, 20);
+      expect(_head(s, 1).heading, closeTo(h0 + pi / 2, 1e-9));
+      s.setInput(1, left: false, right: false);
+      _ticks(s, 20);
+      expect(_head(s, 1).heading, closeTo(h0 + pi / 2, 1e-9), reason: 'the old press is gone');
+    });
+
+    test('without square turns a tap between ticks changes nothing, and held steering is as before', () {
+      final s = squareSim();
+      final h0 = _head(s, 1).heading;
+      s.setInput(1, left: false, right: true);
+      s.setInput(1, left: false, right: false);
+      s.tick();
+      expect(_head(s, 1).heading, closeTo(h0, 1e-9));
+      s.setInput(1, left: false, right: true);
+      _ticks(s, 10);
+      expect(_head(s, 1).heading - h0, closeTo(pi * 10 / 60, 1e-6));
+    });
+
     test('the picker keeps steering smoothly', () {
       final s = squareSim();
       giveSquare(s);

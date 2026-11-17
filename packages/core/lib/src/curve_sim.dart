@@ -145,6 +145,11 @@ class _Head {
 
   /// The steering input of the last tick (-1, 0, 1): square turns turn on a new press.
   int lastSteer = 0;
+
+  /// A press that arrived (setInput) since the last tick, even if the button
+  /// was released again before the tick: Wi-Fi can batch a tap's press and
+  /// release into one frame, and a square turn must not be lost.
+  bool pressedLeft = false, pressedRight = false;
   /// Fat pickups running on this head (0 when fat is off), 1..[maxFatStacks].
   int fatStacks = 0;
   double get widthFactor => has(PowerUpKind.fatOthers) ? 1.0 + fatStacks : 1;
@@ -256,6 +261,8 @@ class CurveSim {
   void setInput(int id, {required bool left, required bool right}) {
     final h = _heads[id];
     if (h == null) return;
+    if (left && !h.left) h.pressedLeft = true;
+    if (right && !h.right) h.pressedRight = true;
     h.left = left;
     h.right = right;
   }
@@ -317,6 +324,7 @@ class CurveSim {
       h.alive = !_gone.contains(h.id);
       h.inGap = false;
       h.lastSteer = 0;
+      h.pressedLeft = h.pressedRight = false;
       h.fx.fillRange(0, h.fx.length, 0);
       h.gapTicks = _nextGap();
       // Rejection sampling; after 100 tries accept the spot (tiny arenas).
@@ -385,11 +393,18 @@ class CurveSim {
       if (h.has(PowerUpKind.squareOthers)) {
         // Square turns: a new press (also switching sides) turns exactly 90
         // degrees at once; a held button then goes straight.
-        if (steer != 0 && steer != h.lastSteer) h.heading += turn * pi / 2;
+        // A tap whose press and release both came between two ticks still counts.
+        final pressed = h.pressedRight && !h.pressedLeft
+            ? 1
+            : h.pressedLeft && !h.pressedRight
+                ? -1
+                : (steer != 0 && steer != h.lastSteer ? steer : 0);
+        if (pressed != 0) h.heading += (h.has(PowerUpKind.reverseOthers) ? -pressed : pressed) * pi / 2;
       } else {
         h.heading += config.turnRate * dt * turn;
       }
       h.lastSteer = steer;
+      h.pressedLeft = h.pressedRight = false;
       final step = config.speed * h.speedFactor * dt;
       h.x += cos(h.heading) * step;
       h.y += sin(h.heading) * step;
