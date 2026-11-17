@@ -25,6 +25,9 @@ void main() {
   testWidgets('with a stored name, Join goes out at once and no join screen', (
     t,
   ) async {
+    t.view.physicalSize = const Size(390, 1800);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
     final c = FakeConnection();
     await t.pumpWidget(
       App(c, saved: SavedJoin('Petra', characterIds[3]), onSave: (_) {}),

@@ -43,6 +43,11 @@ abstract final class Strings {
   static const quiz = 'Kviz';
   static const curve = 'Curve';
   static const quizPack = 'Paket pitanja';
+  static String packMeta(PackInfo p) => [
+    questions(p.questionCount),
+    if (p.pictures) 'slike',
+    if (p.isNew) 'novo',
+  ].join(' · ');
   static const pickPack = 'Odaberi paket';
   static const addPack = 'Dodaj svoj paket…';
 
@@ -78,6 +83,41 @@ abstract final class Strings {
     GameKind.vukodlak => 'Selo i vukodlaci. Uloga je tajna.',
     GameKind.uljez => 'Svi imaju istu riječ, osim uljeza. Nađi ga.',
   };
+  static String watchingLabel(String? host) => '${host ?? 'Domaćin'} gleda:';
+  static String startsWhen(String? host) =>
+      'Igra počinje kad ${host ?? 'domaćin'} pritisne Igraj.';
+  static const hostTag = '★ DOMAĆIN';
+  static const youSuffix = ' (ti)';
+  static String players(int n) => 'Igrači · $n';
+  static String playerCount(int n) => '$n igrača';
+  static const curveModeBlurb = {
+    CurveMode.chaos: 'Puno pojačanja, sve odjednom',
+    CurveMode.balanced: 'Kao do sada',
+    CurveMode.peaceful: 'Bez pojačanja',
+    CurveMode.onlyYou: 'Samo zelena: usporavanje i duh',
+  };
+
+  /// The settings of [k] in one line, as on the carousel card.
+  static String settingsLine(
+    GameKind k,
+    GameSettings s,
+    List<PackInfo> packs,
+    List<PackInfo> uljezPacks,
+  ) {
+    String pack(List<PackInfo> l, String? id) =>
+        (l.where((p) => p.id == id).firstOrNull ?? l.firstOrNull)?.title ?? '';
+    return switch (k) {
+      GameKind.quiz =>
+        '${pack(packs, s.quizPackId)} · ${questions(s.quizQuestions)} · ${seconds(s.quizSeconds)}',
+      GameKind.curve =>
+        '$curveModeLabel: ${curveMode(s.curveMode)} · $curveCountdown: ${seconds(s.curveCountdown)}',
+      GameKind.vukodlak =>
+        '$possibleRoles: ${s.wolfRoles.length} · $discussion: ${minutes(s.wolfDiscussion)}',
+      GameKind.uljez =>
+        '${pack(uljezPacks, s.uljezPackId)} · $discussion: ${minutes(s.uljezDiscussion)} · ${impostors(s.uljezImpostors)}',
+    };
+  }
+
   static String watching(String? host, String game) =>
       '${host ?? 'Domaćin'} gleda: $game';
 

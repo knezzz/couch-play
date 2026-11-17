@@ -64,6 +64,7 @@ void main() {
     t,
   ) async {
     _phone(t);
+    t.view.physicalSize = const Size(360, 1800); // the card carousel is tall
     final c = FakeConnection();
     await t.pumpWidget(MaterialApp(home: LobbyScreen(c, _lobby(), 0)));
     await t.tap(find.widgetWithText(TextButton, Strings.remove).first);

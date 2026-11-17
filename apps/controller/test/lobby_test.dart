@@ -33,7 +33,8 @@ Future<FakeConnection> _pump(
 }) async {
   final c = FakeConnection();
   // Tall, so the details' Igraj button is built; 360 px tests set their own size.
-  if (t.view.physicalSize.width > 400) t.view.physicalSize = const Size(390, 1600);
+  if (t.view.physicalSize.width > 400)
+    t.view.physicalSize = const Size(390, 1600);
   t.view.devicePixelRatio = 1;
   addTearDown(t.view.reset);
   await t.pumpWidget(
@@ -143,7 +144,11 @@ void main() {
     await t.pumpAndSettle();
     await t.tap(find.byKey(const ValueKey('pack-b')));
     await t.pumpAndSettle();
-    expect(find.text(Strings.back), findsOneWidget, reason: 'back on the details');
+    expect(
+      find.text(Strings.back),
+      findsOneWidget,
+      reason: 'back on the details',
+    );
     final sent = (c.sent.last as SetSettings).settings;
     expect(sent.quizPackId, 'b');
     expect(sent.quizSeconds, 30);
@@ -163,26 +168,40 @@ void main() {
     expect(find.text(Strings.back), findsOneWidget);
     await t.pumpWidget(MaterialApp(home: LobbyScreen(c, _lobby(), 0)));
     expect(find.text(Strings.play), findsNothing);
-    expect(find.byIcon(Icons.quiz), findsOneWidget);
+    expect(find.byKey(const ValueKey('card-quiz')), findsOneWidget);
   });
 
   testWidgets('a guest has no cards to open and cannot start a game', (
     t,
   ) async {
     final c = await _pump(t, _lobby(), 1);
-    expect(find.byIcon(Icons.quiz), findsNothing);
+    expect(find.byKey(const ValueKey('card-quiz')), findsNothing);
     expect(find.text(Strings.play), findsNothing);
     expect(c.sent, isEmpty);
   });
 
-  testWidgets('a guest sees "<host> gleda: Kviz" when the TV reports a selection', (
-    t,
-  ) async {
-    await t.pumpWidget(MaterialApp(
-      home: LobbyScreen(FakeConnection(), _sel(_lobby(), GameKind.quiz), 1),
-    ));
-    expect(find.text(Strings.watching('P0', Strings.quiz)), findsOneWidget);
-  });
+  testWidgets(
+    'a guest sees "<host> gleda: Kviz" when the TV reports a selection',
+    (t) async {
+      await t.pumpWidget(
+        MaterialApp(
+          home: LobbyScreen(FakeConnection(), _sel(_lobby(), GameKind.quiz), 1),
+        ),
+      );
+      final card = find.byKey(const ValueKey('watching-card'));
+      expect(
+        find.descendant(
+          of: card,
+          matching: find.text(Strings.watchingLabel('P0')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: card, matching: find.text(Strings.quiz)),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets(
     'Remove and BOT are 18 px and a row fits at 360 px with a 16-letter name',
@@ -526,10 +545,19 @@ LobbyState _withSettings(GameSettings s, {int host = 0}) => LobbyState(
 
 void settingsTests() {
   group('game settings in the details', () {
-    final quizLabels = [Strings.quizSeconds, Strings.quizQuestions, Strings.revealSeconds];
-    Future<FakeConnection> open(WidgetTester t, GameSettings s, GameKind k) async {
+    final quizLabels = [
+      Strings.quizSeconds,
+      Strings.quizQuestions,
+      Strings.revealSeconds,
+    ];
+    Future<FakeConnection> open(
+      WidgetTester t,
+      GameSettings s,
+      GameKind k,
+    ) async {
       // Tall enough that nothing is scrolled off; the 360 px test overrides this.
-      if (t.view.physicalSize.width > 400) t.view.physicalSize = const Size(390, 1600);
+      if (t.view.physicalSize.width > 400)
+        t.view.physicalSize = const Size(390, 1600);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
       final l = _withSettings(s);
@@ -546,16 +574,29 @@ void settingsTests() {
 
     testWidgets('each game shows only its own settings', (t) async {
       await open(t, const GameSettings(), GameKind.curve);
-      expect(find.byTooltip(Strings.moreOf(Strings.curveCountdown)), findsOneWidget);
+      expect(
+        find.byTooltip(Strings.moreOf(Strings.curveCountdown)),
+        findsOneWidget,
+      );
       expect(find.byTooltip(Strings.moreOf(Strings.quizSeconds)), findsNothing);
       await t.pumpWidget(const SizedBox());
       await open(t, const GameSettings(), GameKind.quiz);
-      expect(find.byTooltip(Strings.moreOf(Strings.quizSeconds)), findsOneWidget);
+      expect(
+        find.byTooltip(Strings.moreOf(Strings.quizSeconds)),
+        findsOneWidget,
+      );
       expect(find.text(Strings.curveCountdown), findsNothing);
     });
 
-    testWidgets('a quiz tap sends the whole settings with one field changed', (t) async {
-      const s = GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3);
+    testWidgets('a quiz tap sends the whole settings with one field changed', (
+      t,
+    ) async {
+      const s = GameSettings(
+        quizSeconds: 30,
+        quizQuestions: 15,
+        revealSeconds: 6,
+        curveCountdown: 3,
+      );
       final c = await open(t, s, GameKind.quiz);
       final taps = {
         Strings.moreOf(Strings.quizSeconds): 35,
@@ -563,25 +604,54 @@ void settingsTests() {
         Strings.moreOf(Strings.revealSeconds): 7,
       };
       final want = [
-        const GameSettings(quizSeconds: 35, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3),
-        const GameSettings(quizSeconds: 30, quizQuestions: 10, revealSeconds: 6, curveCountdown: 3),
-        const GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 7, curveCountdown: 3),
+        const GameSettings(
+          quizSeconds: 35,
+          quizQuestions: 15,
+          revealSeconds: 6,
+          curveCountdown: 3,
+        ),
+        const GameSettings(
+          quizSeconds: 30,
+          quizQuestions: 10,
+          revealSeconds: 6,
+          curveCountdown: 3,
+        ),
+        const GameSettings(
+          quizSeconds: 30,
+          quizQuestions: 15,
+          revealSeconds: 7,
+          curveCountdown: 3,
+        ),
       ];
       var i = 0;
       for (final tip in taps.keys) {
         await tapTip(t, tip);
-        expect((c.sent.last as SetSettings).settings.toJson(), want[i++].toJson(), reason: tip);
+        expect(
+          (c.sent.last as SetSettings).settings.toJson(),
+          want[i++].toJson(),
+          reason: tip,
+        );
       }
     });
 
     testWidgets('a stepper keeps the chosen quiz pack', (t) async {
-      final c = await open(t, const GameSettings(quizPackId: 'b'), GameKind.quiz);
+      final c = await open(
+        t,
+        const GameSettings(quizPackId: 'b'),
+        GameKind.quiz,
+      );
       await tapTip(t, Strings.moreOf(Strings.quizSeconds));
       expect((c.sent.last as SetSettings).settings.quizPackId, 'b');
     });
 
-    testWidgets('the Curve pause sends; a mode pick sends the rest along', (t) async {
-      final c = await open(t, const GameSettings(quizSeconds: 30, curveMode: CurveMode.peaceful), GameKind.curve);
+    testWidgets('the Curve pause sends; a mode pick sends the rest along', (
+      t,
+    ) async {
+      final c = await open(
+        t,
+        const GameSettings(quizSeconds: 30, curveMode: CurveMode.peaceful),
+        GameKind.curve,
+      );
       await tapTip(t, Strings.moreOf(Strings.curveCountdown));
       var sent = (c.sent.last as SetSettings).settings;
       expect(sent.curveCountdown, 3);
@@ -596,52 +666,95 @@ void settingsTests() {
       }
     });
 
-    testWidgets('the shown values come from LobbyState, not a local copy', (t) async {
+    testWidgets('the shown values come from LobbyState, not a local copy', (
+      t,
+    ) async {
       final c = await open(t, const GameSettings(), GameKind.quiz);
       await tapTip(t, Strings.moreOf(Strings.quizSeconds));
-      expect(find.text(Strings.seconds(20)), findsOneWidget); // unchanged until the TV answers
-      await t.pumpWidget(MaterialApp(home: LobbyScreen(c, _sel(_withSettings(const GameSettings(quizSeconds: 25)), GameKind.quiz), 0)));
+      expect(
+        find.text(Strings.seconds(20)),
+        findsOneWidget,
+      ); // unchanged until the TV answers
+      await t.pumpWidget(
+        MaterialApp(
+          home: LobbyScreen(
+            c,
+            _sel(
+              _withSettings(const GameSettings(quizSeconds: 25)),
+              GameKind.quiz,
+            ),
+            0,
+          ),
+        ),
+      );
       expect(find.text(Strings.seconds(25)), findsOneWidget);
     });
 
     testWidgets('steppers stop at min and max', (t) async {
-      final lo = await open(t, const GameSettings(quizSeconds: 10, quizQuestions: 5, revealSeconds: 2), GameKind.quiz);
+      final lo = await open(
+        t,
+        const GameSettings(quizSeconds: 10, quizQuestions: 5, revealSeconds: 2),
+        GameKind.quiz,
+      );
       for (final l in quizLabels) {
         await tapTip(t, Strings.lessOf(l));
       }
       expect(lo.sent.whereType<SetSettings>(), isEmpty);
       await t.pumpWidget(const SizedBox());
-      final hi = await open(t, const GameSettings(quizSeconds: 60, quizQuestions: 30, revealSeconds: 15), GameKind.quiz);
+      final hi = await open(
+        t,
+        const GameSettings(
+          quizSeconds: 60,
+          quizQuestions: 30,
+          revealSeconds: 15,
+        ),
+        GameKind.quiz,
+      );
       for (final l in quizLabels) {
         await tapTip(t, Strings.moreOf(l));
       }
       expect(hi.sent.whereType<SetSettings>(), isEmpty);
       await t.pumpWidget(const SizedBox());
-      final cl = await open(t, const GameSettings(curveCountdown: 1), GameKind.curve);
+      final cl = await open(
+        t,
+        const GameSettings(curveCountdown: 1),
+        GameKind.curve,
+      );
       await tapTip(t, Strings.lessOf(Strings.curveCountdown));
       expect(cl.sent.whereType<SetSettings>(), isEmpty);
       await t.pumpWidget(const SizedBox());
-      final ch = await open(t, const GameSettings(curveCountdown: 10), GameKind.curve);
+      final ch = await open(
+        t,
+        const GameSettings(curveCountdown: 10),
+        GameKind.curve,
+      );
       await tapTip(t, Strings.moreOf(Strings.curveCountdown));
       expect(ch.sent.whereType<SetSettings>(), isEmpty);
     });
 
-    testWidgets('steppers and mode rows are 56 px and fit at 360 px', (t) async {
+    testWidgets('steppers and mode rows are 56 px and fit at 360 px', (
+      t,
+    ) async {
       t.view.physicalSize = const Size(360, 640);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
       await open(t, const GameSettings(), GameKind.quiz);
       for (final l in quizLabels) {
         await t.ensureVisible(find.byTooltip(Strings.moreOf(l)));
-        expect(t.getSize(find.byTooltip(Strings.moreOf(l))), const Size(56, 56));
+        expect(
+          t.getSize(find.byTooltip(Strings.moreOf(l))),
+          const Size(56, 56),
+        );
       }
       expect(t.takeException(), isNull);
       await t.pumpWidget(const SizedBox());
       await open(t, const GameSettings(), GameKind.curve);
       for (final m in CurveMode.values) {
-        await t.ensureVisible(find.text(Strings.curveMode(m)));
-        final row = find.ancestor(of: find.text(Strings.curveMode(m)), matching: find.byType(InkWell)).first;
-        expect(t.getSize(row).height, greaterThanOrEqualTo(56));
+        await t.ensureVisible(find.byKey(ValueKey('mode-${m.name}')));
+        expect(
+          t.getSize(find.byKey(ValueKey('mode-${m.name}'))).height,
+          greaterThanOrEqualTo(56),
+        );
       }
       expect(t.takeException(), isNull);
     });
@@ -665,70 +778,93 @@ void characterTests() {
       expect(find.byKey(const ValueKey('my-character-owl')), findsNothing);
     });
 
-    testWidgets('the face reads on all 8 player colors: ink disc, contrast >= 3', (
-      t,
-    ) async {
-      double lum(Color c) => c.computeLuminance();
-      double contrast(Color a, Color b) {
-        final hi = lum(a) > lum(b) ? lum(a) : lum(b);
-        final lo = lum(a) > lum(b) ? lum(b) : lum(a);
-        return (hi + 0.05) / (lo + 0.05);
-      }
-      for (var i = 0; i < playerColors.length; i++) {
-        final l = LobbyState(
-          hostId: 0,
-          packs: const [],
-          players: [PlayerInfo(0, 'P0', i, true, 0, character: 'lion')],
-        );
-        await _pump(t, l, 0);
-        final face = t.widget<CharacterFace>(find.byType(CharacterFace));
-        final disc = t.widget<Container>(
-          find.ancestor(of: find.byType(CharacterFace), matching: find.byType(Container)).first,
-        );
-        final discColor = (disc.decoration as BoxDecoration).color!;
-        final chip = playerColors[i];
-        expect(face.color, chip, reason: 'drawn in the player color #$i');
-        expect(contrast(face.color, discColor), greaterThanOrEqualTo(3), reason: 'face on disc #$i');
-        expect(contrast(discColor, chip), greaterThanOrEqualTo(3), reason: 'disc on chip #$i');
-        await t.pumpWidget(const SizedBox());
-      }
-    });
+    testWidgets(
+      'the face reads on all 8 player colors: ink disc, contrast >= 3',
+      (t) async {
+        double lum(Color c) => c.computeLuminance();
+        double contrast(Color a, Color b) {
+          final hi = lum(a) > lum(b) ? lum(a) : lum(b);
+          final lo = lum(a) > lum(b) ? lum(b) : lum(a);
+          return (hi + 0.05) / (lo + 0.05);
+        }
 
-    testWidgets('Promijeni lik: a free one sends SetCharacter, taken and own send nothing', (
-      t,
-    ) async {
-      final c = await _pump(t, _chars(), 0);
-      await t.tap(find.text(Strings.changeCharacter));
-      await t.pumpAndSettle();
-      await t.tap(find.byKey(const ValueKey('char-owl')), warnIfMissed: false); // taken by P1
-      await t.pumpAndSettle();
-      expect(c.sent.whereType<SetCharacter>(), isEmpty);
-      expect(find.text(Strings.pickCharacter), findsOneWidget); // sheet still open
-      await t.tap(find.byKey(const ValueKey('char-fox'))); // my own
-      await t.pumpAndSettle();
-      expect(c.sent.whereType<SetCharacter>(), isEmpty);
-      await t.tap(find.text(Strings.changeCharacter));
-      await t.pumpAndSettle();
-      await t.tap(find.byKey(const ValueKey('char-bear')));
-      await t.pumpAndSettle();
-      expect(c.sent.last, const SetCharacter('bear'));
-    });
+        for (var i = 0; i < playerColors.length; i++) {
+          final l = LobbyState(
+            hostId: 0,
+            packs: const [],
+            players: [PlayerInfo(0, 'P0', i, true, 0, character: 'lion')],
+          );
+          await _pump(t, l, 0);
+          final face = t.widget<CharacterFace>(find.byType(CharacterFace));
+          final disc = t.widget<Container>(
+            find
+                .ancestor(
+                  of: find.byType(CharacterFace),
+                  matching: find.byType(Container),
+                )
+                .first,
+          );
+          final discColor = (disc.decoration as BoxDecoration).color!;
+          final chip = playerColors[i];
+          expect(face.color, chip, reason: 'drawn in the player color #$i');
+          expect(
+            contrast(face.color, discColor),
+            greaterThanOrEqualTo(3),
+            reason: 'face on disc #$i',
+          );
+          expect(
+            contrast(discColor, chip),
+            greaterThanOrEqualTo(3),
+            reason: 'disc on chip #$i',
+          );
+          await t.pumpWidget(const SizedBox());
+        }
+      },
+    );
 
-    testWidgets('a refused pick shows the TV reason and keeps the old character', (
-      t,
-    ) async {
-      final c = FakeConnection();
-      await t.pumpWidget(App(c));
-      await _send(t, c, const Welcome(0, 0, 'tok', character: 'fox'));
-      await _send(t, c, _chars());
-      await t.tap(find.text(Strings.changeCharacter));
-      await t.pumpAndSettle();
-      await t.tap(find.byKey(const ValueKey('char-bear')));
-      await t.pumpAndSettle();
-      expect(c.sent.last, const SetCharacter('bear'));
-      await _send(t, c, const ErrorMsg('Taj lik je zauzet.'));
-      expect(find.text('Taj lik je zauzet.'), findsOneWidget);
-      expect(find.byKey(const ValueKey('my-character-fox')), findsOneWidget);
-    });
+    testWidgets(
+      'Promijeni lik: a free one sends SetCharacter, taken and own send nothing',
+      (t) async {
+        final c = await _pump(t, _chars(), 0);
+        await t.tap(find.text(Strings.changeCharacter));
+        await t.pumpAndSettle();
+        await t.tap(
+          find.byKey(const ValueKey('char-owl')),
+          warnIfMissed: false,
+        ); // taken by P1
+        await t.pumpAndSettle();
+        expect(c.sent.whereType<SetCharacter>(), isEmpty);
+        expect(
+          find.text(Strings.pickCharacter),
+          findsOneWidget,
+        ); // sheet still open
+        await t.tap(find.byKey(const ValueKey('char-fox'))); // my own
+        await t.pumpAndSettle();
+        expect(c.sent.whereType<SetCharacter>(), isEmpty);
+        await t.tap(find.text(Strings.changeCharacter));
+        await t.pumpAndSettle();
+        await t.tap(find.byKey(const ValueKey('char-bear')));
+        await t.pumpAndSettle();
+        expect(c.sent.last, const SetCharacter('bear'));
+      },
+    );
+
+    testWidgets(
+      'a refused pick shows the TV reason and keeps the old character',
+      (t) async {
+        final c = FakeConnection();
+        await t.pumpWidget(App(c));
+        await _send(t, c, const Welcome(0, 0, 'tok', character: 'fox'));
+        await _send(t, c, _chars());
+        await t.tap(find.text(Strings.changeCharacter));
+        await t.pumpAndSettle();
+        await t.tap(find.byKey(const ValueKey('char-bear')));
+        await t.pumpAndSettle();
+        expect(c.sent.last, const SetCharacter('bear'));
+        await _send(t, c, const ErrorMsg('Taj lik je zauzet.'));
+        expect(find.text('Taj lik je zauzet.'), findsOneWidget);
+        expect(find.byKey(const ValueKey('my-character-fox')), findsOneWidget);
+      },
+    );
   });
 }

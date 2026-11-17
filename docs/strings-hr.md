@@ -33,6 +33,18 @@ Choices that were put to the person:
 | gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | TV lobby, game card (same words as the phone) |
 | gameBlurb(curve) | Vozi svoju krivulju i ne udari u druge. | Steer your curve and do not hit the others. | TV lobby, game card (same words as the phone) |
 | watching(host, game) | {host} gleda: {game} | {host} is looking at: {game} | TV lobby, bottom right, replaces "waiting for host" while a game card is shown (same words as the phone) |
+| watchingLabel(host) | {host} gleda: | {host} is watching: | watching card, others' lobby |
+| startsWhen(host) | Igra počinje kad {host} pritisne Igraj. | The game starts when {host} presses Play. | others' lobby, bottom |
+| hostTag | ★ DOMAĆIN | ★ HOST | others' lobby list |
+| youSuffix | (ti) | (you) | your own name in the others' list |
+| players(n) | Igrači · {n} | Players · {n} | others' lobby list heading |
+| playerCount(n) | {n} igrača | {n} players | Vukodlak details under the title |
+| settingsLine | Opće znanje · 10 pitanja · 20 s / Način igre: Kaos · Pauza prije runde: 2 s / … | one line with the game's current settings | carousel card, watching card |
+| curveModeBlurb | Kaos: Puno pojačanja, sve odjednom · Uravnoteženo: Kao do sada · Mirno: Bez pojačanja · Samo za tebe: Samo zelena: usporavanje i duh | one line about each Curve mode | Curve details, mode cards |
+| settingsNote | Postavke se vide na TV-u i vrijede od sljedeće igre. TV ih pamti. | Settings show on the TV and apply from the next game. The TV remembers them. | Kviz and Curve details |
+| questions(n) | {n} pitanje / pitanja | {n} question(s) | pack row, pack grid, settings line |
+| packMeta tags | slike, novo | pictures, new | pack grid tile, after the count |
+| pickPack | Odaberi paket | Pick a pack | Kviz details row when no pack is known |
 | settingPack / settingQuestions / settingAnswerTime / settingReveal | Paket pitanja / Broj pitanja / Vrijeme za odgovor / Pauza između pitanja | Question pack / Number of questions / Time to answer / Pause between questions | TV lobby, Kviz card: label before the value (same as the phone) |
 | settingMode / settingCountdown | Način igre / Pauza prije runde | Game mode / Pause before each round | TV lobby, Curve card: label before the value (same as the phone) |
 | settingsLine(s) | Kviz: {n} pitanja · odgovor {a} s · pauza {r} s     Curve: {mode} · pauza prije runde {c} s | Quiz: {n} questions · answer {a} s · pause {r} s     Curve: {mode} · pause before each round {c} s | TV lobby, bottom right under "waiting for host": one small muted line, the host's settings; hidden while a game card is shown |
@@ -125,7 +137,7 @@ Informal "ti". `{x}` is filled in by the app.
 | quiz | Kviz | Quiz | lobby button |
 | curve | Curve | Curve (game name, not translated) | lobby button |
 | quizPack | Paket pitanja | Quiz pack | lobby, label of the pack list |
-| addPack | Dodaj paket pitanja… | Add quiz pack… | lobby button, host only |
+| addPack | Dodaj svoj paket… | Add quiz pack… | lobby button, host only |
 | bots | Roboti | Bots | lobby, stepper label |
 | fewerBots | Manje robota | Fewer bots | accessibility label of the − button |
 | moreBots | Više robota | More bots | accessibility label of the + button |

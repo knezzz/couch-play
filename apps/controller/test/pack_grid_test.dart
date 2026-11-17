@@ -10,9 +10,9 @@ import 'fake_connection.dart';
 
 const _packs = [
   PackInfo('a', 'Opće znanje', 401),
-  PackInfo('b', 'Međimurje', 94),
+  PackInfo('b', 'Međimurje', 94, pictures: true),
   PackInfo('c', 'Zastave', 1),
-  PackInfo('d', 'Oblici', 22),
+  PackInfo('d', 'Oblici', 22, pictures: true, isNew: true),
 ];
 
 LobbyState _lobby({String? pack = 'a', int host = 0}) => LobbyState(
@@ -60,7 +60,7 @@ void main() {
     await t.pumpAndSettle();
     for (final p in _packs) {
       expect(find.text(p.title), findsOneWidget);
-      expect(find.text(Strings.questions(p.questionCount)), findsOneWidget);
+      expect(find.text(Strings.packMeta(p)), findsOneWidget);
     }
     final a = t.getTopLeft(find.byKey(const ValueKey('pack-a')));
     final b = t.getTopLeft(find.byKey(const ValueKey('pack-b')));
@@ -72,6 +72,16 @@ void main() {
     expect(
       t.getSize(find.byKey(const ValueKey('pack-a'))).height,
       greaterThanOrEqualTo(64),
+    );
+  });
+
+  test('the tags follow the pack: slike, novo', () {
+    expect(Strings.packMeta(_packs[0]), '401 pitanje');
+    expect(Strings.packMeta(_packs[1]), '94 pitanja · slike');
+    expect(Strings.packMeta(_packs[3]), '22 pitanja · slike · novo');
+    expect(
+      Strings.packMeta(const PackInfo('x', 'X', 5, isNew: true)),
+      '5 pitanja · novo',
     );
   });
 

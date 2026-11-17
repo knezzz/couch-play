@@ -149,7 +149,7 @@ class _PackTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  Strings.questions(p.questionCount),
+                  Strings.packMeta(p),
                   style: TextStyle(fontSize: 18, color: on ? ink : muted),
                 ),
               ],
