@@ -251,4 +251,31 @@ void main() {
     expect(t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen)).role, isNull);
     await _close(t, g);
   });
+
+  testWidgets('the night line counts the lit houses: they go out as players finish (V2WolfNight)', (t) async {
+    _big(t);
+    final g = _Game(_roles7);
+    await t.pumpWidget(g.view());
+    expect(find.textContaining(Strings.wolfLightsLeft(7)), findsOneWidget, reason: 'seven houses are lit at the start');
+    g.match.onNightPick(7, const NightPick(null));
+    g.match.onNightPick(6, const NightPick(null));
+    await g.wait(t, 17); // the first 15 s nobody's light goes out
+    await t.pumpWidget(g.view());
+    expect(find.textContaining(Strings.wolfLightsLeft(5)), findsOneWidget, reason: 'two are done, five still decide');
+    expect(find.textContaining(Strings.wolfLightsLeft(7)), findsNothing);
+    await _close(t, g);
+  });
+
+  testWidgets('by day there is no lights line', (t) async {
+    _big(t);
+    final g = _Game(_roles7);
+    for (final id in g.match.alive) {
+      g.match.onNightPick(id, const NightPick(null));
+    }
+    await g.wait(t, 8);
+    await t.pumpWidget(g.view());
+    expect(g.match.stage, isNot(WolfStage.night));
+    expect(find.textContaining('Svjetlo gori'), findsNothing);
+    await _close(t, g);
+  });
 }

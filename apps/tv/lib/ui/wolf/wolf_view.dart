@@ -159,9 +159,13 @@ class _WolfViewState extends State<WolfView> {
     final night = m.stage == WolfStage.night || m.stage == WolfStage.dawn;
     final beat = currentBeat(m.story);
     final first = m.story.length - beat.length;
-    final story = [for (var i = 0; i < beat.length; i++) _line(first + i)]
+    var story = [for (var i = 0; i < beat.length; i++) _line(first + i)]
         .where((s) => s.isNotEmpty)
         .join(' ');
+    // At night the lit windows are the players still deciding: say how many.
+    if (m.stage == WolfStage.night && m.lit.isNotEmpty) {
+      story = '$story ${Strings.wolfLightsLeft(m.lit.length)}';
+    }
     final morning = beat.any((e) => e.key.startsWith('morning'));
     return VillageScreen(
       players: people,

@@ -106,6 +106,8 @@ abstract final class Strings {
   static String wolfVoted(int x, int y) => 'Glasalo $x od $y';
   static const wolfEndHeader = 'KRAJ IGRE';
   static const wolfRolePrefix = 'Uloga:';
+  /// At night, under the story: the lit windows are the ones still deciding.
+  static String wolfLightsLeft(int n) => 'Svjetlo gori dok netko još nije odlučio: još $n.';
   static const wolfTeamVillage = 'Selo';
   static const wolfTeamWolves = 'Vukodlaci';
   static const wolfTeamSolo = 'Sam';
