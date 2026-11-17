@@ -145,6 +145,25 @@ void main() {
     });
   });
 
+  testWidgets('the order follows the time left, not the fraction: fat lasts 1.5x so 90% of fat outlasts a full slow', (tester) async {
+    await tester.runAsync(() async {
+      final sim = _Fx();
+      sim.place(0, 800, 450, 0);
+      sim.fx
+        ..[PowerUpKind.slow] = 1.0 // 5 s of 5 s
+        ..[PowerUpKind.fatOthers] = 0.9; // 6.75 s of 7.5 s
+      var d = await _render(sim);
+      expect(_near(_at(d, 800, 450 - r0), _green), isTrue, reason: 'slow, 5 s left, is inside');
+      expect(_near(_at(d, 800, 450 - r1), red), isTrue, reason: 'fat, 6.75 s left, is outside');
+      // A little later: fat 6.0 s (0.8), slow 4.0 s (0.8): still fat outside, no jump.
+      sim.fx
+        ..[PowerUpKind.slow] = 0.8
+        ..[PowerUpKind.fatOthers] = 0.8;
+      d = await _render(sim);
+      expect(_near(_at(d, 800, 450 - r1), red), isTrue, reason: 'equal fractions: fat still has more time');
+    });
+  });
+
   testWidgets('green rings are on you, red are from others, in the power-up colours', (tester) async {
     await tester.runAsync(() async {
       for (final (kind, color) in [

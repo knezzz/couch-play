@@ -330,21 +330,26 @@ class CurveGame extends FlameGame {
     PowerUpKind.reverseOthers,
   ];
   final _ringKind = List<PowerUpKind>.filled(5, PowerUpKind.slow);
-  final _ringLeft = Float64List(5);
+  final _ringLeft = Float64List(5); // fraction left: the arc
+  final _ringTime = Float64List(5); // seconds-ish left: the order
 
   void _drawEffects(Canvas canvas, CurveHead hd) {
     var n = 0;
     for (final kind in _effectKinds) {
       final left = sim.effectLeft(hd.id, kind);
       if (left <= 0) continue;
-      // Insertion sort, shortest first: at most 5, no allocation.
+      // Insertion sort by time left, shortest first: at most 5, no allocation.
+      // Fat lasts 1.5x as long (the sim's _longFactor), so compare time, not fraction.
+      final time = left * (kind == PowerUpKind.fatOthers ? 1.5 : 1.0);
       var i = n++;
-      while (i > 0 && _ringLeft[i - 1] > left) {
+      while (i > 0 && _ringTime[i - 1] > time) {
         _ringLeft[i] = _ringLeft[i - 1];
+        _ringTime[i] = _ringTime[i - 1];
         _ringKind[i] = _ringKind[i - 1];
         i--;
       }
       _ringLeft[i] = left;
+      _ringTime[i] = time;
       _ringKind[i] = kind;
     }
     final c = Offset(hd.x, hd.y);
