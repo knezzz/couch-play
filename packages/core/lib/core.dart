@@ -14,3 +14,5 @@ export 'src/wolf.dart';
 export 'src/uljez.dart';
 export 'src/objasni.dart';
 export 'src/powerup_texts.dart';
+export 'src/power_up_icon.dart';
+export 'src/koliko.dart';
