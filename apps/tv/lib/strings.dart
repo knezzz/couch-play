@@ -18,6 +18,7 @@ abstract final class Strings {
   static String waitingForHost(String name) => 'Čekamo da $name odabere igru.';
   static String waitingForReturn(String name) => 'Čekamo da se $name vrati';
   static const waitingForPlayers = 'Čekamo da se igrači vrate';
+  static String pauseSub(int seconds) => 'Igra je zaustavljena. Još $seconds s, onda završava.';
   static const howToJoin ='Kako se pridružiti';
   static const quit = 'Izađi';
   static const howToJoinSteps = '1. Spoji mobitel na isti Wi-Fi kao i TV.\n'

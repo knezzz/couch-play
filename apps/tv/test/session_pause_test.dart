@@ -122,4 +122,28 @@ void main() {
     expect(s.curveRound, round);
     s.dispose();
   });
+
+  testWidgets('the_pause_says_how_long_is_left_and_for_whom_for_the_TV_card', (t) async {
+    var now = Duration.zero;
+    s = Session(random: Random(1), clock: () => now);
+    a = join(s, 'Ana', token: 'ta');
+    b = join(s, 'Ben', token: 'tb');
+    a.say(const StartGame(GameKind.curve, null));
+    await t.pump();
+    expect(s.pauseRemaining, isNull, reason: 'not paused');
+    expect(s.pauseWaitingFor, isNull);
+    a.close();
+    await t.pump();
+    expect(s.pauseRemaining, const Duration(seconds: 30));
+    expect(s.pauseWaitingFor!.name, 'Ana');
+    now += const Duration(seconds: 8);
+    expect(s.pauseRemaining, const Duration(seconds: 22), reason: 'the 30 s wait counts down');
+    now += const Duration(seconds: 40);
+    expect(s.pauseRemaining, Duration.zero, reason: 'never negative');
+    final a2 = back('Ana', 'ta');
+    await t.pump();
+    expect(a2.last<CurveStatus>(), isNotNull);
+    expect(s.pauseRemaining, isNull, reason: 'she is back');
+    s.dispose();
+  });
 }

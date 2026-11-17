@@ -1015,6 +1015,23 @@ class Session {
   /// waits for everyone.
   String? get curveWaitingFor => _waitingFor?.name;
 
+  Duration _waitEnds = Duration.zero;
+
+  /// How long the paused match still waits (30 s from the last time it started waiting); null
+  /// when not paused. Never negative.
+  Duration? get pauseRemaining {
+    if (!_paused) return null;
+    final left = _waitEnds - _clock();
+    return left.isNegative ? Duration.zero : left;
+  }
+
+  /// Who the pause waits for, for the TV's card; null when not paused or waiting for everyone.
+  PlayerInfo? get pauseWaitingFor {
+    final w = _waitingFor;
+    if (!_paused || w == null) return null;
+    return PlayerInfo(w.id, w.name, w.colorIndex, w.connected, _scores[w.id] ?? 0, bot: w.bot, character: w.character);
+  }
+
   /// A running game is frozen, waiting for players to return. The TV's
   /// CurveGame must not tick the sim while this is true.
   bool get paused => _paused;
@@ -1031,6 +1048,7 @@ class Session {
     _paused = true;
     _waitingFor = who;
     _waitTimer?.cancel();
+    _waitEnds = _clock() + _waitFor30;
     _waitTimer = Timer(_waitFor30, () {
       _stopWait();
       if (_phase == Phase.curve) finishGame(_gameScores());

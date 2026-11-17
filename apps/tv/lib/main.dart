@@ -17,6 +17,7 @@ import 'session/session.dart';
 import 'ui/back_guard.dart';
 import 'ui/curve/curve_game.dart';
 import 'ui/home_screen.dart';
+import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/uljez/uljez_view.dart';
@@ -208,14 +209,9 @@ class _TvAppState extends State<TvApp> {
 
   /// Over the frozen game while it waits for players to come back.
   Widget? _pauseOverlay() {
-    final text = _session.pauseText;
-    if (text == null) return null;
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
-        color: const Color(0xCC000000),
-        child: Text(text, style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w700)),
-      ),
+    if (!_session.paused) return null;
+    return Positioned.fill(
+      child: PauseCard(who: _session.pauseWaitingFor, remaining: () => _session.pauseRemaining ?? Duration.zero),
     );
   }
 
