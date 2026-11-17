@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter/scheduler.dart';
 
 /// Value at fraction [q] (0..1) of [sorted] ascending; 0 when empty.
@@ -57,6 +58,8 @@ class PerfLog {
     if (_sw.elapsed.inSeconds < 60) return;
     // ignore: avoid_print
     print('${line(_build, _raster, _total)} ${context()}');
+    // ignore: avoid_print
+    if (_tickMax > 0) print('PERF-TICKERS ${tickerOwners()}');
     reset();
     _build.clear();
     _raster.clear();
@@ -75,5 +78,22 @@ class PerfLog {
     final over = total.where((us) => us > 16000).length;
     return 'PERF frames=${total.length} ${stats('build', build)} '
         '${stats('raster', raster)} ${stats('total', total)} total_over16ms=$over';
+  }
+
+  /// Who in the widget tree owns tickers: 'StateName(tracking N tickers)'. A frame-by-frame
+  /// animation shows up here with the screen that has it. Debug aid for the PERF lines.
+  static String tickerOwners() {
+    final out = <String>[];
+    void walk(Element e) {
+      if (e is StatefulElement && e.state is TickerProvider) {
+        final t = e.state.toDiagnosticsNode().getProperties().where((n) => n.name == 'tickers').map((n) => n.toDescription()).join();
+        if (t.isNotEmpty && t != 'null') out.add('${e.state.runtimeType}($t)');
+      }
+      e.visitChildren(walk);
+    }
+
+    final root = WidgetsBinding.instance.rootElement;
+    if (root != null) walk(root);
+    return out.join(', ');
   }
 }

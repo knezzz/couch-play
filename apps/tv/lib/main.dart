@@ -22,6 +22,7 @@ import 'ui/home_screen.dart';
 import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
+import 'ui/objasni/objasni_view.dart';
 import 'ui/uljez/uljez_view.dart';
 import 'ui/wolf/wolf_view.dart';
 import 'ui/quiz_screen.dart';
@@ -30,11 +31,11 @@ import 'sound/audio_sfx.dart';
 import 'strings.dart';
 
 const _perf = bool.fromEnvironment('PERF');
-// QA/perf: pre-seeds this many bots when the first phone joins, e.g. BOTS=7.
 
 /// QA bisect: --dart-define=NOTICKERS=true mutes every ticker in the app. If the frames on an idle home
 /// then stop, an animation was the cause; if not, something asks for frames without one.
 const _noTickers = bool.fromEnvironment('NOTICKERS');
+// QA/perf: pre-seeds this many bots when the first phone joins, e.g. BOTS=7.
 // The host can still change it with the - / + buttons.
 const _botCount = int.fromEnvironment('BOTS');
 // QA only: e.g. QA_POWERUP=ghost puts that power-up just ahead of the first
@@ -244,12 +245,12 @@ class _TvAppState extends State<TvApp> {
   Widget build(BuildContext context) {
     final game = _game;
     final quiz = _session.phase == Phase.quiz ? _session.quiz : null;
-    return MaterialApp(
+    final app = MaterialApp(
       title: 'Couchplay',
       navigatorKey: _nav,
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
-        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez,
+        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni,
         changes: _session.changes,
         onEnd: _session.endGame,
         // Back on the results screen moves on at once instead of waiting out the hold.
@@ -301,6 +302,8 @@ class _TvAppState extends State<TvApp> {
               ? WolfView(match: _session.wolf!, players: _session.playerInfos)
               : _session.phase == Phase.uljez && _session.uljez != null
               ? UljezView(match: _session.uljez!, players: _session.playerInfos)
+              : _session.phase == Phase.objasni && _session.objasni != null
+              ? ObjasniView(match: _session.objasni!, players: _session.playerInfos)
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,
@@ -321,5 +324,6 @@ class _TvAppState extends State<TvApp> {
                   },
                   onPlay: _play),
     );
+    return _noTickers ? TickerMode(enabled: false, child: app) : app;
   }
 }

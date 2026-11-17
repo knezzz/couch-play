@@ -80,6 +80,18 @@ abstract final class Strings {
   static String curveBreakNext(int seconds) => 'Sljedeća runda za $seconds s';
   static const curveCountdownHint = 'Pronađi svoju točku. Strelica pokazuje kamo kreneš.';
 
+  static String objasniTeam(int t) => 'Tim ${t + 1}';
+  static String objasniTarget(int n) => 'Pobjeđuje tko prvi dosegne $n';
+  static const objasniSetupHint = 'Domaćin može promiješati ekipe na mobitelu. Onda Kreni.';
+  static const objasniNextExplains = 'Sljedeći objašnjava';
+  static const objasniExplains = 'Objašnjava';
+  static const objasniReadyHint = 'Spreman? Dodirni Kreni na svom mobitelu.';
+  static const objasniGuessAloud = 'Pogađajte naglas!';
+  static const objasniTurnOver = 'Vrijeme je isteklo';
+  static const objasniNoWords = 'Nijedna riječ ovaj put.';
+  static String objasniNextIn(int s) => 'Sljedeći krug za $s s';
+  static String objasniWins(int t) => 'Pobjeđuje ${objasniTeam(t)}!';
+  static const objasniFoul = 'prekršaj';
   static const legendTitle = 'Pojačanja';
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';

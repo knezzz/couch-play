@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/main.dart';
@@ -45,6 +46,28 @@ Future<Session> _homeWith8(WidgetTester t) async {
 }
 
 void main() {
+  // The BRAVIA's PERF lines were from an EMPTY home ('Čekamo igrače', nobody joined): 61 frames a second
+  // and ~10 tickers. Not reproduced here, so these pin that the empty and one-player homes are idle too.
+  for (final n in [0, 1]) {
+    testWidgets('an idle home with $n player(s), a join URL shown, asks for no frames', (t) async {
+      t.view
+        ..physicalSize = const Size(1920, 1080)
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      final s = Session(random: Random(1))..joinUrl = 'http://192.168.1.5:8080/';
+      await t.pumpWidget(TvApp(session: s, serve: false));
+      for (var i = 0; i < n; i++) {
+        join(s, 'Igrac${i + 1}', token: 't$i');
+      }
+      await t.pump();
+      await t.pump(const Duration(seconds: 1));
+      expect(SchedulerBinding.instance.transientCallbackCount, 0, reason: 'a ticker is running on the home');
+      expect(await framesAsked(t), lessThanOrEqualTo(2));
+      await t.pumpWidget(const SizedBox());
+      s.dispose();
+    });
+  }
+
   testWidgets('an idle home with 8 players asks for about 8 frames a second, not 60', (t) async {
     final s = await _homeWith8(t);
     final asked = await framesAsked(t);
