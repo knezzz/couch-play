@@ -36,7 +36,7 @@ class WolfText {
   static String lover(String name) => 'Tvoj par je $name. Ispadate zajedno.';
   static const needPlayers = 'Vukodlak traži 5 do 8 igrača na mobitelima.';
   static const noBots = 'Vukodlak se igra bez botova. Ukloni botove.';
-  static const out = 'Ispao si iz igre. Gledaj dalje.';
+  static const out = 'Više nisi u igri. Gledaj dalje.';
   static const spectating = 'Gledaš selo.';
 
   static String pad(String s) {

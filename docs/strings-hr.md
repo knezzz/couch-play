@@ -286,3 +286,24 @@ The TV reads one line at random per event, so a game doesn't repeat itself. Keys
 | gameOverTramp | game over, the tramp wins | Lutalica je dobila što je htjela: put pod noge i pobjedu.<br>Selo je izbacilo lutalicu, a lutalica pobjeđuje!<br>Pobjeda pripada lutalici. Selo je nasjelo. | The tramp got what they wanted: the road and the win. | yes |
 | gameOverNobody | game over, nobody is left | U selu nema više nikoga. Ova priča nema pobjednika.<br>Prazan trg i tihe kuće. Nitko ne slavi.<br>Ni seljana ni vukova. Samo gavrani ostaju na krovovima. | Nobody is left; this story has no winner. | team only |
 | endReveal | session: end of game, all roles shown | Igra je gotova. Evo tko se krio iza koje uloge!<br>Maske padaju! Pogledajte sve uloge.<br>Kraj priče. Sad smijete vidjeti tko je što bio.<br>Sve se otkriva: uloge svih igrača. | Game over: here is who was who. | no |
+
+### Vukodlak and Uljez: texts the TV sends to a phone (build-core, `apps/tv/lib/session/wolf_text.dart`, `uljez_text.dart`)
+
+Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; nothing here uses a gendered form.
+
+| key | hr | en | where |
+|---|---|---|---|
+| WolfText.hintWolves | Koga posjećujete? (+ " Luka → Ivana" for a packmate's pick) | Whom do you visit? (+ packmate's pick) | night hint, wolves |
+| WolfText.hintAlpha | Prekidač: žrtva postaje vukodlak. | The switch turns the victim into a werewolf. | night hint, Vođa čopora (appended) |
+| hintSeer / hintDoc / hintGuard | Čiju ulogu želiš vidjeti? / Koga štitiš noćas? / Koga čuvaš noćas? | Whose role do you want to see? / Whom do you protect tonight? / Whom do you guard tonight? | night hint |
+| hintHerb | Koga liječiš? Uključi prekidač za otrov. | Whom do you heal? Turn the switch on for poison. | night hint, Travarica |
+| hintCupid | Odaberi dvoje zaljubljenih. | Pick two lovers. | night 1 hint, Provodadžija |
+| sum / sum2 | Koliko je 7 × 8? / Koliko je 7 × 8? A koliko 6 × 9? | What is 7 × 8? / ... and 6 × 9? | night task for roles with no action |
+| quiet | Noć je prošla mirno. | The night passed quietly. | Morning text when nothing to tell |
+| converted | Sada si u čoporu vukodlaka. | You are in the werewolf pack now. | Morning text, converted |
+| saw(name, role) | Rezultat: Ana je Vukodlak. | Result: Ana is a Werewolf. | Morning text, Vidovnjakinja |
+| lover(name) | Tvoj par je Ana. Ispadate zajedno. | Your partner is Ana. You go out together. | Morning text, lovers |
+| out | Više nisi u igri. Gledaj dalje. | You are no longer in the game. Keep watching. | Waiting for a player who is out (Vukodlak and Uljez) |
+| WolfText.needPlayers / noBots | Vukodlak traži 5 do 8 igrača na mobitelima. / Vukodlak se igra bez botova. Ukloni botove. | Vukodlak needs 5 to 8 players on phones. / No bots in Vukodlak. Remove the bots. | error to the host |
+| UljezText.needPlayers / noBots | Uljez traži 3 do 8 igrača na mobitelima. / Uljez se igra bez botova. Ukloni botove. | Uljez needs 3 to 8 players on phones. / No bots in Uljez. Remove the bots. | error to the host |
+| Uljez guessing (Waiting) | Uljez pogađa riječ sela. | The impostor is guessing the village's word. | Waiting for everyone but the caught impostor |
