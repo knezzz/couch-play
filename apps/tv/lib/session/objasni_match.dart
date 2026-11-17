@@ -47,6 +47,9 @@ class ObjasniMatch {
   static const summaryTime = Duration(seconds: 5);
   static const pauseTime = Duration(seconds: 30);
 
+  /// The winner screen stays up this long before the results take over.
+  static const endHold = Duration(seconds: 8);
+
   /// The rules. Not for the TV to display from: it holds the current word.
   @visibleForTesting
   late ObjasniGame game;
@@ -241,7 +244,8 @@ class ObjasniMatch {
     stage = ObjasniStageTv.over;
     sfx.play(Sound.fanfare);
     notify?.call();
-    onOver?.call(game.sessionScores);
+    _stageEnd = clock() + endHold;
+    _timer = Timer(endHold, () => onOver?.call(game.sessionScores));
   }
 
   // ---- dropping out: Quiz-style, and a pause when a team is empty ----

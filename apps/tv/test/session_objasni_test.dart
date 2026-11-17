@@ -163,6 +163,9 @@ void main() {
     await wait(t, 60 + 5);
     ps.firstWhere((x) => idOf(x) == m.explainer).say(const Go());
     await wait(t, 60 + 5);
+    expect(s.phase, Phase.objasni, reason: 'the winner screen first');
+    expect(m.stage, ObjasniStageTv.over);
+    await wait(t, 8);
     expect(s.phase, Phase.results);
     expect(s.placements.length, 4);
     for (final p in s.placements) {

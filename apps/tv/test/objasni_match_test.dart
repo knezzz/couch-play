@@ -227,6 +227,10 @@ void main() {
     r.match.onGo(r.ex);
     await r.wait(t, 60 + 5);
     expect(r.match.stage, ObjasniStageTv.over);
+    expect(r.result, isNull, reason: 'the winner screen is up first');
+    await r.wait(t, 7);
+    expect(r.result, isNull);
+    await r.wait(t, 1);
     expect(r.result, {for (final id in r.match.ids) id: winners.contains(id) ? 1 : 0});
     expect(r.played, contains(Sound.fanfare));
     r.match.dispose();
@@ -277,6 +281,7 @@ void main() {
     await r.wait(t, 1);
     expect(r.match.stage, ObjasniStageTv.over);
     expect(r.match.winnerTeam, team);
+    await r.wait(t, 8);
     expect(r.result!.values.where((v) => v == 1).length, r.match.teamMembers(team).length);
     r.match.dispose();
   });
