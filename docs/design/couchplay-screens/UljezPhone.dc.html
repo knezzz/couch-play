@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Uljez on the phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 20px 32px; background: #101014; color: #E8E8EE; font-family: Roboto, system-ui, sans-serif; display: flex; flex-direction: column; gap: 14px">
+  <div style="display: flex; align-items: center"><span style="font-size: 15px; color: #8A8A96; letter-spacing: 3px; font-weight: 700; flex-grow: 1">ULJEZ · RUNDA 2</span><span style="font-size: 16px; color: #8A8A96">{{phase}}</span></div>
+  <sc-if value="{{isWord}}" hint-placeholder-val="{{ true }}">
+    <button aria-label="Drži za riječ" onPointerDown="{{down}}" onPointerUp="{{up}}" onPointerLeave="{{up}}" style="flex-grow: 1; font: inherit; color: #E8E8EE; background: #18181E; border: 2px solid #26262E; border-radius: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; cursor: pointer; touch-action: none; user-select: none; padding: 24px">
+      <sc-if value="{{hidden}}" hint-placeholder-val="{{ true }}">
+        <span style="font-size: 24px; font-weight: 700">Drži prst ovdje</span>
+        <span style="font-size: 17px; color: #8A8A96; line-height: 1.4">Tvoja riječ se vidi samo dok držiš.</span>
+      </sc-if>
+      <sc-if value="{{shown}}" hint-placeholder-val="{{ false }}">
+        <span style="font-size: 15px; color: #8A8A96; letter-spacing: 3px; font-weight: 700">TVOJA RIJEČ</span>
+        <span style="font-size: 48px; font-weight: 900">Pikachu</span>
+        <span style="font-size: 16px; color: #8A8A96; line-height: 1.4">Netko možda ima drugu riječ. Možda i ti.</span>
+      </sc-if>
+    </button>
+  </sc-if>
+  <sc-if value="{{isVote}}" hint-placeholder-val="{{ false }}">
+    <div style="font-size: 28px; font-weight: 900">Tko je uljez?</div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{people}}" as="t" hint-placeholder-count="5">
+        <button onClick="{{t.pick}}" style="{{t.style}}"><span style="font-size: 21px; font-weight: 700; flex-grow: 1; text-align: left">{{t.name}}</span><span>{{t.mark}}</span></button>
+      </sc-for>
+    </div>
+    <button style="font: inherit; font-size: 21px; font-weight: 700; color: #E8E8EE; background: #26262E; border: 0; border-radius: 16px; height: 60px; margin-top: auto">Glasaj</button>
+  </sc-if>
+  <sc-if value="{{isGuess}}" hint-placeholder-val="{{ false }}">
+    <div style="font-size: 28px; font-weight: 900">Uhvatili su te!</div>
+    <div style="font-size: 17px; color: #8A8A96; line-height: 1.4">Tvoja riječ je bila Pikachu. Pogodi riječ sela i ipak pobjeđuješ.</div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{guesses}}" as="t" hint-placeholder-count="4">
+        <button onClick="{{t.pick}}" style="{{t.style}}"><span style="font-size: 21px; font-weight: 700; flex-grow: 1; text-align: left">{{t.name}}</span><span>{{t.mark}}</span></button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #6E6E7A">Pregled:
+    <select onChange="{{setStep}}" style="font: inherit; font-size: 14px; color: #E8E8EE; background: #18181E; border: 1px solid #26262E; border-radius: 8px; height: 34px">
+      <option value="word">Riječ</option><option value="vote">Glasanje</option><option value="guess">Uljez pogađa</option>
+    </select>
+  </label>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { held: false, step: 'word', pick: '' }; }
+  renderVals() {
+    const s = this.state;
+    const row = (name) => ({
+      name, mark: s.pick === name ? '●' : '', pick: () => this.setState({ pick: name }),
+      style: 'font: inherit; color: #E8E8EE; height: 60px; border-radius: 14px; display: flex; align-items: center; padding: 0 16px; cursor: pointer; background: #18181E; ' + (s.pick === name ? 'border: 2px solid #B8B8C2;' : 'border: 2px solid #18181E;')
+    });
+    return {
+      isWord: s.step === 'word', isVote: s.step === 'vote', isGuess: s.step === 'guess',
+      phase: { word: 'Tragovi', vote: 'Glasanje · 0:20', guess: '0:15' }[s.step],
+      hidden: !s.held, shown: s.held,
+      down: () => this.setState({ held: true }), up: () => this.setState({ held: false }),
+      people: ['Luka', 'Ana', 'Marko', 'Ivana', 'Josip'].map(row),
+      guesses: ['Spužva Bob', 'Patrik', 'Garfield', 'Scooby-Doo'].map(row),
+      setStep: (e) => this.setState({ step: e.target.value, pick: '' })
+    };
+  }
+}
+</script>
+</body>
+</html>

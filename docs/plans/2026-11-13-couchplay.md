@@ -939,3 +939,18 @@ Reference: canvas page "Curve pojačanja": icons version **A** (`PuIcons.dc.html
 - [ ] **Step 2:** Replace the Task 17 indicator (icon + ring beside the head) with rings only: one ring per active effect, centred on the head, in its color (green on you, red from others), draining as time runs out; several effects as concentric rings, outer = longest left. Fat stacks: keep a small dot per stack on its ring. Wrap keeps the white border.
 - [ ] **Step 3:** Update the pixel tests that pinned the old indicator; QA on macOS release; frame times next TV session.
 - [ ] **Step 4: Commit** by path.
+
+---
+
+### Task 35: Uljez, the hidden-word game (added 2026-11-17, user request)
+
+Reference: canvas page "Uljez"; the spec's "Uljez". Same privacy rules as Vukodlak (hold to see, same screen for everyone, private messages only to their phone).
+
+- [ ] **Step 1: Core (tests first):** pairs, the draw (who is the impostor, which side of the pair), clue turn order, vote (plurality; tie = nobody out), the impostor's guess (4 options: the right word + 3 decoys from the same pack), wins, scoring into placement points.
+- [ ] **Step 2: Protocol + session:** game kind `uljez`, host settings (pack, discussion time, 1 or 2 impostors at 7–8), private word per phone.
+- [ ] **Step 3: TV:** players around a table, whose turn and the clock, vote result, both words at the end; console look (Task 30).
+- [ ] **Step 4: Phones:** hold-to-see word, vote, the impostor's guess; host settings in the game's details.
+- [ ] **Step 5: Content:** Croatian word-pair packs (similar but different pairs; at least 6 themes, 40+ pairs each; no offensive pairs).
+- [ ] **Step 6: Check:** tests in all members; QA with 3–8 browser phones; review of private messages. Commit by path.
+
+Both new games (Vukodlak, Uljez) appear on the console home (Task 30) as their own cards.

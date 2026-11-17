@@ -42,6 +42,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 32 | Sound in every game and the menus (person, 2026-11-17) | queued to lead | lead |
 | 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | queued to lead | lead + content |
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | queued to lead | lead |
+| 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | queued to lead | lead + content |
 
 ## Open questions for the person
 
@@ -276,3 +277,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   shown as a ring around the player without the icon. Canvas page "Curve pojačanja": icons A/B/C, indicators 1/2/3.
   Waiting for the choice; nothing routed.
 - 2026-11-17: Person chose power-up icons A and ring-only active effects 1. Task 34.
+- 2026-11-17: Person asked for a word game where the impostor gets a similar word without knowing (Spužva Bob vs
+  Pikachu), and both new games on the home screen. Canvas page "Uljez"; Task 35.

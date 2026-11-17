@@ -8,7 +8,7 @@ A party-games console for the living room. An Android TV shows the game; everyon
 
 ## Goals (v1)
 
-- Android TV app that hosts a lobby and three games: **Quiz**, **Curve** (Tron / Curve Fever style) and **Vukodlak** (a werewolf-style social deduction game, added 2026-11-17).
+- Android TV app that hosts a lobby and three games: **Quiz**, **Curve** (Tron / Curve Fever style) **Vukodlak** (a werewolf-style social deduction game, added 2026-11-17) and **Uljez** (a hidden-word game, added 2026-11-17).
 - Phones join by scanning a QR code on the TV and get a browser controller (Flutter Web) served by the TV itself.
 - One Dart codebase: TV app, controller, and a shared package for protocol, theme, and visual effects, so the same effects (particles, color flashes, animations) can play on TV and phone.
 - Quiz question packs in a simple, documented file format; ships with packs written by Claude, some with simple vector pictures (flags, shapes).
@@ -206,6 +206,20 @@ the phones. Folk-game roles in our own words; no names or roles from Town of Sal
   two picks on every phone (the others get a second dummy pick). Vuk samotnjak wins only as the last one alive;
   Lutalica wins alone when voted out. The other rule readings are build-core's (qitem-20261117093430-e04f231f).
 - Win: the village when no werewolves are left; the werewolves when they equal the rest; solo roles as described.
+
+### Uljez (user request, 2026-11-17)
+
+A hidden-word party game in the "odd one out" genre, our own name and words. Reference: canvas page "Uljez"
+(`UljezTv.dc.html`, `UljezPhone.dc.html`).
+
+- 3–8 people, no bots. Everyone gets the same word (e.g. "Spužva Bob"); the impostor gets a similar word ("Pikachu")
+  and does not know they are the impostor. 1 impostor for 3–6 players; for 7–8 the host picks 1 or 2.
+- The word shows on the phone only while a finger is on the screen (as in Vukodlak).
+- Clues: in turn, each player says one clue out loud; the TV shows whose turn it is (players around a table), 20 s
+  each, two rounds. Then a free discussion (host sets the time) and a vote on the phones.
+- A caught impostor has 15 s to guess the village's word from 4 options on their phone; a right guess still wins.
+- Village wins by catching the impostor; the impostor by surviving the vote or guessing. Placement points as usual.
+- Word pairs in packs by theme (cartoons, food, animals, places, famous people…); the host picks the pack. Croatian.
 
 ### Sound (user request, 2026-11-16)
 
