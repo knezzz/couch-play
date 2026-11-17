@@ -289,4 +289,21 @@ void main() {
     expect(r.match.winner, UljezWinner.village);
     r.match.dispose();
   });
+
+  testWidgets('a kick during the vote: votes for the kicked player stay counted as voted (a skip)', (t) async {
+    final r = Rig();
+    await r.toVote(t);
+    final imp = r.impostor;
+    final kicked = r.match.ids.firstWhere((i) => i != imp);
+    final others = r.match.ids.where((i) => i != kicked).toList();
+    for (final id in others.take(2)) {
+      r.match.onVote(id, Vote(kicked));
+    }
+    expect(r.match.votedCount, 2);
+    r.match.expel(kicked);
+    expect(r.match.votedCount, 2, reason: 'the voters still count');
+    r.match.onVote(others[2], Vote(kicked)); // late vote for the kicked one: a skip
+    expect(r.match.votedCount, 3);
+    r.match.dispose();
+  });
 }

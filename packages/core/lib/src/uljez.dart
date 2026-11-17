@@ -127,8 +127,8 @@ class UljezGame {
   /// [target] null = skip. False if it does not count.
   bool vote(int who, int? target) {
     if (phase != UljezPhase.vote || !alive.contains(who)) return false;
-    if (target != null && (target == who || !alive.contains(target))) return false;
-    _votes[who] = target;
+    if (target != null && (target == who || !ids.contains(target))) return false;
+    _votes[who] = target != null && !alive.contains(target) ? null : target;
     return true;
   }
 
@@ -227,7 +227,7 @@ class UljezGame {
     if (phase == UljezPhase.over || !alive.contains(id)) return false;
     _out.add(id);
     _votes.remove(id);
-    _votes.removeWhere((_, t) => t == id);
+    _votes.updateAll((_, t) => t == id ? null : t); // voted for them: now a skip
     if (isImpostor(id) && !_caught.contains(id)) {
       _caught.add(id);
       if (_caught.length == impostorCount) _end(UljezWinner.village);

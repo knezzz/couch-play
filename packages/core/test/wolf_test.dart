@@ -848,4 +848,55 @@ void main() {
       expect(h.expel(1), isEmpty);
     });
   });
+
+  group('expel and votes', () {
+    WolfGame voting(List<WolfRole> roles) {
+      final g = game(roles);
+      night(g, {});
+      g.startVote();
+      return g;
+    }
+
+    test('a kicked tramp with votes cast for him does not win', () {
+      final g = voting([w, WolfRole.tramp, v, v, v, v]);
+      for (final id in [0, 2, 3]) {
+        g.vote(id, 1);
+      }
+      g.expel(1);
+      final r = g.resolveVote();
+      expect(g.winner, isNull);
+      expect(r.out, isNull);
+      expect(g.voteOf(0), isNull, reason: 'a skip now');
+      expect(g.voteComplete, isFalse, reason: '4 and 5 have not voted');
+    });
+
+    test('those who voted for him still count as voted', () {
+      final g = voting([w, v, v, v, v, v]);
+      for (final id in [0, 2, 3, 4, 5]) {
+        g.vote(id, 1);
+      }
+      g.expel(1);
+      expect(g.voteComplete, isTrue);
+    });
+
+    test('a kicked mayor\'s double vote is void', () {
+      final g = voting([w, WolfRole.mayor, v, v, v, v]);
+      g.vote(1, 2);
+      g.vote(3, 4);
+      g.vote(4, 3);
+      g.expel(1);
+      final r = g.resolveVote();
+      expect(r.tie, isTrue, reason: '3 and 4 have one each, no mayor');
+    });
+
+    test('a vote for someone who has just left is recorded as a skip, not refused', () {
+      final g = voting([w, v, v, v, v, v]);
+      g.expel(1);
+      expect(g.vote(2, 1), isTrue);
+      expect(g.voteOf(2), isNull);
+      expect(g.voteComplete, isFalse);
+      expect(g.vote(2, 99), isFalse, reason: 'an unknown id is still refused');
+      expect(g.vote(2, 2), isFalse);
+    });
+  });
 }

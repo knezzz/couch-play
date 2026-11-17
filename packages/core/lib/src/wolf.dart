@@ -448,8 +448,9 @@ class WolfGame {
   /// vote phase, [who] cannot vote, [target] is [who] or not alive.
   bool vote(int who, int? target) {
     if (_phase != WolfPhase.vote || !canVote(who)) return false;
-    if (target != null && (target == who || !isAlive(target))) return false;
-    _votes[who] = target;
+    if (target != null && (target == who || !_roles.containsKey(target))) return false;
+    // a target who left in the meantime (the phone's list was fixed) is a skip
+    _votes[who] = target != null && !isAlive(target) ? null : target;
     return true;
   }
 
@@ -463,6 +464,10 @@ class WolfGame {
     if (_winner != null || !isAlive(id)) return const [];
     final before = {..._pendingHunters};
     final deaths = <WolfDeath>[];
+    // Votes by and for the kicked player are void: theirs go, votes for them
+    // become skips (those voters still count as having voted).
+    _votes.remove(id);
+    _votes.updateAll((_, t) => t == id ? null : t);
     _kill(id, DeathCause.left, deaths);
     _pendingHunters.removeWhere((h) => !before.contains(h));
     _pendingHunters.remove(id);

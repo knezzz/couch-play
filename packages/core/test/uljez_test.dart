@@ -343,13 +343,14 @@ void main() {
       expect(g.phase, UljezPhase.vote);
     });
 
-    test('out players cannot vote or be voted for in the second vote', () {
+    test('out players cannot vote, and a vote for one is only a skip, in the second vote', () {
       final g = two();
       final first = imps(g)[0];
       voteOut(g, first);
       g.resolveGuess();
-      expect(g.vote(first, innocent(g)), isFalse);
-      expect(g.vote(innocent(g), first), isFalse);
+      expect(g.vote(first, innocent(g)), isFalse, reason: 'an out player cannot vote');
+      expect(g.vote(innocent(g), first), isTrue, reason: 'a vote for one who is out is recorded as a skip');
+      expect(g.votes[innocent(g)], isNull);
     });
   });
 
@@ -400,7 +401,8 @@ void main() {
       expect(g.expel(innocent), isTrue);
       expect(g.alive.contains(innocent), isFalse);
       expect(g.votes.containsKey(innocent), isFalse);
-      expect(g.votes.containsKey(other), isFalse);
+      expect(g.votes[other], isNull, reason: 'the vote for the kicked one is now a skip');
+      expect(g.votes.containsKey(other), isTrue, reason: 'and still counts as voted');
       expect(g.voteComplete, isFalse);
       expect(g.expel(innocent), isFalse);
     });
@@ -436,6 +438,34 @@ void main() {
       g.expel(imp);
       g.resolveGuess();
       expect(g.winner, UljezWinner.village);
+    });
+  });
+
+  group('expel and votes', () {
+    UljezGame voting() {
+      final g = game(5);
+      clues(g);
+      g.startVote();
+      return g;
+    }
+
+    test('everyone who voted for the kicked player still counts as voted', () {
+      final g = voting();
+      for (final i in [2, 3, 4, 5]) {
+        g.vote(i, 1);
+      }
+      g.expel(1);
+      expect(g.voteComplete, isTrue, reason: '1 is out, the other four have voted');
+      expect(g.votes.length, 4);
+    });
+
+    test('a vote for someone who has just left is a skip, not refused', () {
+      final g = voting();
+      g.expel(1);
+      expect(g.vote(2, 1), isTrue);
+      expect(g.votes[2], isNull);
+      expect(g.vote(2, 99), isFalse);
+      expect(g.vote(2, 2), isFalse);
     });
   });
 }

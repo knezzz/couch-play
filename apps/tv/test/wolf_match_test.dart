@@ -513,4 +513,23 @@ void main() {
     }
     r.match.dispose();
   });
+
+  testWidgets('a kick during the vote: those who voted for the kicked player still count as voted, and a kicked tramp does not win', (t) async {
+    final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.tramp, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager});
+    r.pickAll({});
+    await r.wait(t, 4 + 120);
+    for (final id in [1, 3, 4]) {
+      r.match.onVote(id, const Vote(2));
+    }
+    expect(r.match.votedCount, 3);
+    r.match.expel(2);
+    expect(r.match.votedCount, 3, reason: 'the voters still count as voted');
+    r.match.onVote(5, const Vote(2)); // a late vote for the kicked player is a skip
+    expect(r.match.votedCount, 4);
+    r.match.onVote(6, const Vote(null));
+    await r.wait(t, 1);
+    expect(r.match.winner, isNot(WolfWinner.tramp));
+    expect(r.match.lastOut, isNull, reason: 'nobody is out of that vote');
+    r.match.dispose();
+  });
 }
