@@ -58,6 +58,7 @@ abstract final class Strings {
 
   // --- Console home ---
 
+  static const curveCountdownHint = 'Pronađi svoju točku. Strelica pokazuje kamo kreneš.';
   static String curveRound(int n, int target) => 'Runda $n · do $target';
 
   static const homeJoin = 'Skeniraj i pridruži se';

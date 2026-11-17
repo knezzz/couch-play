@@ -4,7 +4,9 @@ import 'dart:ui';
 
 import 'package:core/core.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, TextDirection, FontWeight;
+import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, TextDirection, TextAlign, FontWeight;
+
+import '../../strings.dart';
 
 class _Icon {
   const _Icon({this.fill, this.line, this.lineW = 8, this.holes = const [], this.cut, this.cutW = 6});
@@ -45,6 +47,14 @@ class CurveGame extends FlameGame {
     ..strokeCap = StrokeCap.round;
   final _head = Paint();
   double _acc = 0;
+  var _cdTicks = 0; // ticks of the countdown that have run
+
+  /// The whole seconds of the countdown that are left: 3, 2, 1, then 0 once the round runs.
+  int get countdownSeconds {
+    if (!sim.countingDown) return 0;
+    final total = (sim.config.countdown * sim.config.tickHz).round();
+    return ((total - _cdTicks) / sim.config.tickHz).ceil().clamp(0, 99);
+  }
 
   int debugSubpathCount(int id) =>
       [for (var b = 0; b < 4; b++) _paths[id * 4 + b]]
@@ -79,6 +89,7 @@ class CurveGame extends FlameGame {
       _acc -= step;
       onBeforeTick?.call();
       final events = sim.tick();
+      _cdTicks = sim.countingDown ? _cdTicks + 1 : 0;
       if (events.isNotEmpty) onEvents?.call(events);
     }
     // Clear first: segments drained after it are new trail.
@@ -122,6 +133,7 @@ class CurveGame extends FlameGame {
       _drawPowerUp(canvas, u.x, u.y, u.kind, sim.config.powerUpRadius);
     }
     final counting = sim.countingDown;
+    if (counting) _drawCountdownNumber(canvas, w, h);
     for (final hd in sim.heads) {
       if (!hd.alive) continue;
       canvas.drawCircle(Offset(hd.x, hd.y), base * (counting ? 1.6 : 0.8),
@@ -130,6 +142,7 @@ class CurveGame extends FlameGame {
       if (counting) _drawName(canvas, hd.id, hd.x, hd.y, hd.heading, base * 2, w, h);
       if (!counting) _drawEffects(canvas, hd);
     }
+    if (counting) _drawHint(canvas, w, h);
     canvas.restore();
     super.render(canvas);
   }
@@ -167,29 +180,59 @@ class CurveGame extends FlameGame {
     return top.clamp(0.0, max(0.0, arenaH - textH));
   }
 
+  /// The big faint number in the middle (TvCountdown).
+  final _digits = <int, TextPainter>{};
+  void _drawCountdownNumber(Canvas canvas, double w, double h) {
+    final n = countdownSeconds;
+    if (n <= 0) return;
+    final tp = _digits[n] ??= TextPainter(
+      text: TextSpan(text: '$n', style: const TextStyle(fontSize: 200, fontWeight: FontWeight.w900, color: Color(0xFF2A2A3A))),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset((w - tp.width) / 2, h * 0.47 - tp.height / 2));
+  }
+
+  /// What to do, at the bottom (TvCountdown).
+  TextPainter? _hint;
+  void _drawHint(Canvas canvas, double w, double h) {
+    final tp = _hint ??= TextPainter(
+      text: const TextSpan(text: Strings.curveCountdownHint, style: TextStyle(fontSize: 30, color: Color(0xFFA9A9BC))),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    )..layout(maxWidth: w - 80);
+    tp.paint(canvas, Offset((w - tp.width) / 2, h - 36 - tp.height));
+  }
+
+  /// A name on a dark pill with the player's face in it (TvCountdown: 64 px face, 44 px white
+  /// name on a 1080p screen; in arena units a little less). Above the head, or below it when
+  /// the start arrow points mostly up; kept inside the arena.
   void _drawName(Canvas canvas, int id, double x, double y, double heading, double gap,
       double arenaW, double arenaH) {
     final tp = _names[id] ??= TextPainter(
       text: TextSpan(
           text: sim.names[id] ?? 'P${id + 1}',
-          style: TextStyle(fontSize: 44, fontWeight: FontWeight.bold, color: _color(id))),
+          style: const TextStyle(fontSize: 38, fontWeight: FontWeight.w700, color: Color(0xFFF4F4F8))),
       textDirection: TextDirection.ltr,
       maxLines: 1,
       ellipsis: '…',
     )..layout(maxWidth: arenaW / 4); // keeps clamp() below valid for any name
     final face = characters[id] ?? '';
-    // The face (as tall as the text) goes before the name; the pair stays centred.
-    final lead = face.isEmpty ? 0.0 : tp.height + 8;
-    final left = (x - (lead + tp.width) / 2).clamp(0.0, arenaW - lead - tp.width);
-    final top = nameTop(y, gap, tp.height, heading, arenaH);
+    const pad = 6.0, tail = 20.0, faceSize = 56.0, between = 10.0;
+    final chipH = faceSize + 2 * pad;
+    final lead = face.isEmpty ? 0.0 : faceSize + between;
+    final chipW = pad + lead + tp.width + tail;
+    final left = (x - chipW / 2).clamp(0.0, max(0.0, arenaW - chipW)).toDouble();
+    final top = nameTop(y, gap, chipH, heading, arenaH);
+    canvas.drawRRect(RRect.fromLTRBR(left, top, left + chipW, top + chipH, Radius.circular(chipH / 2)),
+        _icon..style = PaintingStyle.fill..color = const Color(0xFF1F1F2C));
     if (face.isNotEmpty) {
       canvas
         ..save()
-        ..translate(left, top);
-      CharacterFace.paintOn(canvas, Size.square(tp.height), face, _color(id));
+        ..translate(left + pad, top + pad);
+      CharacterFace.paintOn(canvas, const Size.square(faceSize), face, _color(id));
       canvas.restore();
     }
-    tp.paint(canvas, Offset(left + lead, top));
+    tp.paint(canvas, Offset(left + pad + lead, top + (chipH - tp.height) / 2));
   }
 
   static const _green = Color(0xFF3DDC84), _red = Color(0xFFFF4D4D), _blue = Color(0xFF4DA6FF);
