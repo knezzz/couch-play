@@ -19,7 +19,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 10 | Quiz round logic | done (0a679e8, fixes e6b6d64, eae0ec9) | builder-2 |
 | 11 | Quiz screens | done on macOS (e0f899d, 4c9f22a, 8ba1b0c, a22faec); design review 2 in progress | core + app |
 | 12 | Pack store and upload | done (3e49ecb, e5fcb49, 0606039, 729b9a9, e06c9fe) | builder-2 |
-| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | approved by the person 2026-11-17 with changes (no village names in word questions, no easy words); closes with Task 38 | content |
+| 13 | Bundled packs (EN + HR) — **person reviews hr-medimurje** | done 2026-11-17: person reviewed; fixes in bbf0ff4 (94 → 84 questions) | content |
 | 14 | TV polish and release install | Steps 1–4 done (5d32880); Step 5 leftovers (3+ phones incl. Android Chrome) still with the person | lead |
 | 15 | Design pass to the reference screens (person, 2026-11-14) | done; on the TV | lead |
 | 13b | Croatian content: all HR packs verified + harder; Croatian versions of the 6 English packs (person, 2026-11-14) | built (bf474df, e8ec4ed, 617240e, 6f1fe36, a408ee1): 16 packs, 759 questions; hr-medimurje waits on the person | content |
@@ -45,7 +45,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | playable on the TV in fd838d6; QA with 3–8 phones running | lead + content |
 | 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | done; on the TV (682e883); QA release run waits for 8080 | lead |
 | 37 | Design-audit decisions: scores between Curve rounds, Večeras strip, power-up legend, fat icon, night switch (person, 2026-11-17) | in progress; audit fixes (pack grid f1d37a9, Curve art de932f6) | lead |
-| 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | queued to lead | lead + content |
+| 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | done; on the TV (682e883) | lead + content |
 | 39–42 | Party games: Objasni, Koliko?, Blef, Tko bi?, with new packs (person, 2026-11-17) | queued to lead | lead + content |
 
 ## Open questions for the person
@@ -299,3 +299,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   Prekršaj kept, Tko bi? counts. Tasks 39–42.
 - 2026-11-17: Design audit done (3 reads of every board; all gaps fixed or intended; list in the lead's hand-back).
   d378cf3 on the TV. QA visual pass waits for 8080 (the person's Mac test).
+- 2026-11-17: Task 38 accepted (PM sampled hr-medimurje: no village names left, 84 questions). Task 13 done.

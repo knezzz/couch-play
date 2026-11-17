@@ -671,7 +671,7 @@ Content rules:
 - [x] **Step 1:** Verify every question in `hr-medimurje`, `hr-geografija`, `hr-povijest` and `hr-kultura-sport` online (hr.wikipedia.org, enciklopedija.hr, official sites); a `tool/packs/<id>.sources.md` per pack lists the source for each question. Fix or drop what can't be confirmed.
 - [x] **Step 2:** Make the four Croatian packs harder for locals: at most about a third easy questions; plausible wrong answers.
 - [x] **Step 3:** Add Croatian versions of the six English packs: ids `hr-opce-znanje`, `hr-zemljopis-svijeta`, `hr-znanost`, `hr-film-glazba`, `hr-zastave`, `hr-oblici` (the flags and shapes versions reuse the same SVGs). Natural Croatian, not word-for-word; swap culture questions only where the English one makes no sense in Croatian.
-- [ ] **Step 4:** The bundled pack test covers the new ids (≥ 30 questions each). The user reviews `hr-medimurje` (and may look at the others) before this is done.
+- [x] **Step 4:** The bundled pack test covers the new ids (≥ 30 questions each). The user reviews `hr-medimurje` (and may look at the others) before this is done.
 - [x] **Step 5: Commit** by path.
 
 ---
@@ -984,9 +984,9 @@ The person: "Cheese, one where you are getting a lot of holes. 90 deg, where oth
 
 ### Task 38: The person's open answers (added 2026-11-17)
 
-- [ ] **Placement points:** 1st = N−1 … last = 0; a game where everyone scored 0 gives everyone 0. Update the session tests and the results/"Večeras" text.
-- [ ] **Back on the results screen:** closes the results and moves on (next round/game, or the home screen when the game is over). A remote test.
-- [ ] **hr-medimurje (Task 13 review):** approved. Dialect-word questions no longer name the village ("u selu X"), and the easy words go: keep only words a local would have to think about. Mark the easy ones in the sources file and drop or replace them; the pack stays ≥ 30 questions and the tests pass.
+- [x] **Placement points:** 1st = N−1 … last = 0; a game where everyone scored 0 gives everyone 0. Update the session tests and the results/"Večeras" text.
+- [x] **Back on the results screen:** closes the results and moves on (next round/game, or the home screen when the game is over). A remote test.
+- [x] **hr-medimurje (Task 13 review):** approved. Dialect-word questions no longer name the village ("u selu X"), and the easy words go: keep only words a local would have to think about. Mark the easy ones in the sources file and drop or replace them; the pack stays ≥ 30 questions and the tests pass.
 
 ---
 
