@@ -297,3 +297,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   Task 38.
 - 2026-11-17: Person approved docs/specs/2026-11-17-party-games-design.md: build all four with new packs; skip −1,
   Prekršaj kept, Tko bi? counts. Tasks 39–42.
+- 2026-11-17: Design audit done (3 reads of every board; all gaps fixed or intended; list in the lead's hand-back).
+  d378cf3 on the TV. QA visual pass waits for 8080 (the person's Mac test).
