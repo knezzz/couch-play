@@ -351,4 +351,27 @@ void main() {
       expect(Message.decode('{"type":"objasniTeams","team":"a","teams":[]}'), isNull);
     });
   });
+
+  group('party games: koliko', () {
+    test('messages round trip', () {
+      final ms = <Message>[
+        const NumberAnswer(1234567.5),
+        const NumberAnswer(0),
+        const KolikoAsk(number: 2, total: 10, seconds: 30, q: 'Koliko je visok Eiffelov toranj?', unit: 'm'),
+        const KolikoAsk(number: 3, total: 10, seconds: 12, q: 'x', unit: '', sent: 330),
+        const KolikoResult(answer: 330, value: 300, rank: 2, points: 750, total: 1750),
+        const KolikoResult(answer: 330, value: null, rank: null, points: 0, total: 0),
+      ];
+      for (final m in ms) {
+        expect(Message.decode(m.encode()), m, reason: m.encode());
+      }
+    });
+
+    test('an integer and a decimal both decode as a number; a string does not', () {
+      expect(Message.decode('{"type":"number","value":5}'), const NumberAnswer(5));
+      expect(Message.decode('{"type":"number","value":5.25}'), const NumberAnswer(5.25));
+      expect(Message.decode('{"type":"number","value":"5"}'), isNull);
+      expect(Message.decode('{"type":"number"}'), isNull);
+    });
+  });
 }

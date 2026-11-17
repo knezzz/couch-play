@@ -289,6 +289,7 @@ sealed class Message with _JsonEq {
             special: m['special'] as bool, second: m['second'] as int?),
         'vote' => Vote(m['target'] as int?),
         'guess' => Guess(m['index'] as int),
+        'number' => NumberAnswer((m['value'] as num).toDouble()),
         'reshuffle' => const Reshuffle(),
         'go' => const Go(),
         'objasniAction' => ObjasniAction(ObjasniAct.values.byName(m['act'] as String)),
@@ -360,6 +361,19 @@ sealed class Message with _JsonEq {
             seconds: m['seconds'] as int, options: [for (final e in m['options'] as List) e as String]),
         'uljezEnd' => UljezEnd(UljezWinner.values.byName(m['winner'] as String), m['village'] as String,
             m['impostor'] as String, [for (final e in m['impostors'] as List) e as int]),
+        'kolikoAsk' => KolikoAsk(
+            number: m['number'] as int,
+            total: m['total'] as int,
+            seconds: m['seconds'] as int,
+            q: m['q'] as String,
+            unit: m['unit'] as String,
+            sent: (m['sent'] as num?)?.toDouble()),
+        'kolikoResult' => KolikoResult(
+            answer: (m['answer'] as num).toDouble(),
+            value: (m['value'] as num?)?.toDouble(),
+            rank: m['rank'] as int?,
+            points: m['points'] as int,
+            total: m['total'] as int),
         'objasniTeams' => ObjasniTeams(
             team: m['team'] as int,
             teams: [
@@ -950,4 +964,54 @@ class ObjasniTurn extends Message {
         'seconds': seconds,
         'scores': scores,
       };
+}
+
+// Koliko? (guess the number).
+
+/// Phone -> TV: the player's number (>= 0). The phone groups the digits as they
+/// are typed; what travels is the plain number. The first one counts.
+class NumberAnswer extends Message {
+  final double value;
+  const NumberAnswer(this.value);
+  @override
+  String get type => 'number';
+  @override
+  Map<String, Object?> get fields => {'value': value};
+}
+
+/// TV -> every phone: a question is open. [seconds] is the time left when sent;
+/// [sent] is this phone's own number if it already answered (a reload).
+class KolikoAsk extends Message {
+  final int number, total, seconds;
+  final String q, unit;
+  final double? sent;
+  const KolikoAsk(
+      {required this.number,
+      required this.total,
+      required this.seconds,
+      required this.q,
+      required this.unit,
+      this.sent});
+  @override
+  String get type => 'kolikoAsk';
+  @override
+  Map<String, Object?> get fields =>
+      {'number': number, 'total': total, 'seconds': seconds, 'q': q, 'unit': unit, 'sent': sent};
+}
+
+/// TV -> one phone after the reveal: the true answer, this phone's own number
+/// (null: no answer), its rank, the points it got and its total. Nobody else's
+/// numbers are sent to a phone.
+class KolikoResult extends Message {
+  final double answer;
+  final double? value;
+  final int? rank;
+  final int points, total;
+  const KolikoResult(
+      {required this.answer, required this.value, required this.rank, required this.points, required this.total});
+  @override
+  String get type => 'kolikoResult';
+  @override
+  Map<String, Object?> get fields =>
+      {'answer': answer, 'value': value, 'rank': rank, 'points': points, 'total': total};
 }
