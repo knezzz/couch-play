@@ -177,6 +177,11 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | save | Spremi | Save | host: role switches |
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
+| sent | Poslano | Sent | night screen button after Potvrdi (same for every role) |
+| nightSpecial | Posebna moć | Special power | night screen switch; on every phone, used by few roles (placeholder wording, please review) |
+| farewellHint | Ispao si iz igre. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom. | You are out. If you have one more move, pick whom you take with you. | farewell screen, same for every player who is out |
+| wolfMates(names) | Drugi vukodlaci: {names} | Other werewolves: {names} | role card, werewolves only |
+| wolfWinner | Selo je pobijedilo. / Vukodlaci su pobijedili. / Vuk samotnjak je pobijedio. / Lutalica je pobijedila. / Nitko nije pobijedio. | The village won. / The werewolves won. / The lone wolf won. / The tramp won. / Nobody won. | end screen |
 
 Also shown as received from the TV (builder-2's section): error messages and "waiting" lines such as "Sljedeća igra uskoro počinje."
 Open questions for the person: keep "Curve" as the game name? "Roboti" for bots? "Domaćin" for host?
