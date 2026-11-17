@@ -108,6 +108,12 @@ abstract final class Strings {
   static const blefNobody = 'nitko';
   static String tkobiQuestionOf(int n, int total) => 'Pitanje $n od $total';
   static String tkobiVoted(int n, int total) => 'Glasalo: $n od $total';
+  static String kaosviQuestionOf(int n, int total) => 'Pitanje $n od $total';
+  static const kaosviHint = 'Odgovori kao većina.';
+  static String kaosviAnswered(int n, int total) => 'Odgovoreno: $n od $total';
+  static const kaosviMerging = 'Domaćin spaja odgovore';
+  static const kaosviMergingHint = 'Isti odgovori idu u istu skupinu.';
+  static const kaosviTie = 'Izjednačeno: nitko ne boduje';
   static const legendTitle = 'Pojačanja';
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';
