@@ -488,6 +488,7 @@ class Session {
     }
     final socket = target.socket;
     _wolf?.expel(target.id); // out of a running Vukodlak now
+    _uljez?.expel(target.id); // and of a running Uljez
     _remove(target); // bots can be kicked too
     socket?.send(const Kicked());
     socket?.close();

@@ -387,4 +387,55 @@ void main() {
       expect(game(4).scores, isEmpty);
     });
   });
+
+  group('expel (kicked)', () {
+    test('a kicked innocent is out; votes for and by them are void', () {
+      final g = game(5);
+      clues(g);
+      g.startVote();
+      final innocent = g.alive.firstWhere((i) => !g.isImpostor(i));
+      final other = g.alive.firstWhere((i) => i != innocent);
+      g.vote(other, innocent);
+      g.vote(innocent, other);
+      expect(g.expel(innocent), isTrue);
+      expect(g.alive.contains(innocent), isFalse);
+      expect(g.votes.containsKey(innocent), isFalse);
+      expect(g.votes.containsKey(other), isFalse);
+      expect(g.voteComplete, isFalse);
+      expect(g.expel(innocent), isFalse);
+    });
+
+    test('a kicked lone impostor means the village wins at once', () {
+      final g = game(5);
+      final imp = g.ids.firstWhere(g.isImpostor);
+      g.expel(imp);
+      expect(g.winner, UljezWinner.village);
+      expect(g.phase, UljezPhase.over);
+      expect(g.expel(1), isFalse);
+    });
+
+    test('with two impostors one kicked is caught; the other still has to be caught', () {
+      final g = game(7, impostors: 2);
+      final imps = g.ids.where(g.isImpostor).toList();
+      g.expel(imps[0]);
+      expect(g.winner, isNull);
+      g.expel(imps[1]);
+      expect(g.winner, UljezWinner.village);
+    });
+
+    test('a kicked guesser just has no guess', () {
+      final g = game(5);
+      clues(g);
+      g.startVote();
+      final imp = g.ids.firstWhere(g.isImpostor);
+      for (final i in g.ids) {
+        if (i != imp) g.vote(i, imp);
+      }
+      g.resolveVote();
+      expect(g.guesser, imp);
+      g.expel(imp);
+      g.resolveGuess();
+      expect(g.winner, UljezWinner.village);
+    });
+  });
 }

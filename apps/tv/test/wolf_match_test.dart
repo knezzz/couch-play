@@ -434,8 +434,83 @@ void main() {
         expect(j.contains('tally'), isFalse);
       }
     }
-    // who voted for whom is public, one arrow per voter
-    expect(r.match.lastVotes.length, 6);
+    expect(r.match.lastOut, 1, reason: 'only who is out is public');
+    r.match.dispose();
+  });
+
+  testWidgets('kick mid-night, then a pick: every phone keeps the same choice count and ids', (t) async {
+    final r = Rig();
+    final before = {for (final id in r.match.alive) id: r.to(id).whereType<NightPrompt>().last};
+    r.match.expel(6);
+    r.match.onNightPick(7, const NightPick(null));
+    for (final id in r.match.alive) {
+      final now = r.to(id).whereType<NightPrompt>().last;
+      expect(now.choices.length, before[id]!.choices.length, reason: 'player $id (${r.roles[id]})');
+      expect(now.ids, before[id]!.ids, reason: 'player $id');
+      expect(now.choices2.length, before[id]!.choices2.length);
+      expect(now.ids2, before[id]!.ids2);
+    }
+    // a reconnect shows the same list too
+    r.match.rejoin(3);
+    expect(r.to(3).whereType<NightPrompt>().last.ids, before[3]!.ids);
+    r.match.dispose();
+  });
+
+  testWidgets('a pick on the kicked player is refused, not applied', (t) async {
+    final r = Rig();
+    r.match.expel(6);
+    r.match.onNightPick(1, const NightPick(6));
+    expect(r.match.game.pickOf(1), isNull);
+    r.match.dispose();
+  });
+
+  testWidgets('kick during the vote: the vote list stays the same for a rejoin', (t) async {
+    final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.villager, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager});
+    r.pickAll({});
+    await r.wait(t, 4 + 120);
+    final first = r.to(3).whereType<VotePrompt>().last.ids;
+    r.match.expel(6);
+    r.match.rejoin(3);
+    expect(r.to(3).whereType<VotePrompt>().last.ids, first);
+    r.match.dispose();
+  });
+
+  testWidgets('nobody\'s vote is revealed: no event, no getter, no phone message shows who voted for whom', (t) async {
+    final r = Rig(roles: {
+      1: WolfRole.wolf, 2: WolfRole.mayor, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager
+    });
+    r.pickAll({});
+    await r.wait(t, 4 + 120);
+    r.match.onVote(2, const Vote(1));
+    r.match.onVote(3, const Vote(1));
+    r.match.onVote(4, const Vote(5));
+    expect(r.match.votedCount, 3);
+    r.match.rejoin(3);
+    r.match.rejoin(4);
+    for (final id in r.roles.keys) {
+      final own = {2: 1, 3: 1, 4: 5}[id];
+      for (final p in r.to(id).whereType<VotePrompt>()) {
+        expect(p.picked == null || p.picked == own, isTrue, reason: 'player $id sees only their own vote: ${p.picked}');
+      }
+    }
+    for (final id in [5, 6, 1]) {
+      r.match.onVote(id, Vote(id == 1 ? 2 : 1));
+    }
+    await r.wait(t, 1);
+    expect(r.match.lastOut, 1);
+    for (final e in r.match.story) {
+      expect(e.args.keys.toSet().intersection({'voter', 'voters', 'votes', 'target', 'for'}), isEmpty, reason: '$e');
+    }
+    // the two free-text fields phones show as received never carry anyone's vote
+    final voted = ['P2 → P1', 'P3 → P1', 'P4 → P5', 'P5 → P1', 'P6 → P1', 'P1 → P2'];
+    for (final id in r.roles.keys) {
+      for (final m in r.to(id)) {
+        final text = m is Morning ? m.text : (m is NightPrompt ? m.text : '');
+        for (final v in voted) {
+          expect(text.contains(v), isFalse, reason: 'player $id: "$text"');
+        }
+      }
+    }
     r.match.dispose();
   });
 }

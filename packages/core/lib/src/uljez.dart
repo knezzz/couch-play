@@ -217,6 +217,24 @@ class UljezGame {
     }
   }
 
+  // ---- a kicked player ----
+
+  /// [id] was kicked: out at once, votes for and by them are void. A kicked
+  /// impostor counts as caught with no guess (the village wins if that was the
+  /// last one). A kicked guesser's guess is simply missing. Returns false if
+  /// there was nothing to do.
+  bool expel(int id) {
+    if (phase == UljezPhase.over || !alive.contains(id)) return false;
+    _out.add(id);
+    _votes.remove(id);
+    _votes.removeWhere((_, t) => t == id);
+    if (isImpostor(id) && !_caught.contains(id)) {
+      _caught.add(id);
+      if (_caught.length == impostorCount) _end(UljezWinner.village);
+    }
+    return true;
+  }
+
   // ---- the end ----
 
   void _end(UljezWinner w) {

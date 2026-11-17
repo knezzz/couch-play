@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:core/core.dart';
+import 'package:flutter/foundation.dart';
 
 import '../sound/sfx.dart';
 import 'wolf_text.dart';
@@ -56,6 +57,8 @@ class WolfMatch {
   static const farewellTime = Duration(seconds: 15);
   static const voteTime = Duration(seconds: 30);
 
+  /// The rules. Not for the TV to display from: it holds every role and vote.
+  @visibleForTesting
   late WolfGame game;
   WolfStage stage = WolfStage.night;
   Duration _stageEnd = Duration.zero;
@@ -65,10 +68,18 @@ class WolfMatch {
   /// Story events for the TV, in order. Args hold player ids.
   final List<WolfEvent> story = [];
 
-  /// The last vote, who voted for whom (null: skipped), after it is counted.
-  Map<int, int?> lastVotes = {};
+  /// Who the last vote put out (null: nobody, or a spared fool). The TV shows
+  /// how many have voted ([votedCount]) and then only this: never who voted
+  /// for whom (the person's choice; it would also give the mayor away).
+  int? lastOut;
 
   final _prompts = <int, _Task>{};
+
+  /// The night's and the vote's player lists, fixed when each begins: a kick
+  /// in between must not change any phone's list (it would show who has an
+  /// action and who a sum).
+  List<int> _nightIds = [];
+  List<int> _voteIds = [];
   final _morning = <int, String>{};
   final _shots = <int, int?>{};
   final _inFarewell = <int>{};
@@ -132,6 +143,7 @@ class WolfMatch {
     _setStage(WolfStage.night, nightMax);
     _timer = Timer(nightMax, _endNight);
     _prompts.clear();
+    _nightIds = alive;
     for (final id in alive) {
       _prompts[id] =
           game.hasNightAction(id) ? _Task.actor() : _Task.sum(random, alive.length, two: game.night == 1);
@@ -187,7 +199,7 @@ class WolfMatch {
 
   NightPrompt _prompt(int id) {
     final t = _prompts[id]!;
-    final names = [for (final a in alive) nameOf(a)];
+    final names = [for (final a in _nightIds) nameOf(a)];
     final two = game.night == 1;
     List<String> c1, c2;
     List<int> i1, i2;
@@ -198,9 +210,9 @@ class WolfMatch {
       i2 = two ? [for (var k = 0; k < c2.length; k++) k] : [];
     } else {
       c1 = names;
-      i1 = alive;
+      i1 = _nightIds;
       c2 = two ? names : [];
-      i2 = two ? alive : [];
+      i2 = two ? _nightIds : [];
     }
     return NightPrompt(
       night: game.night,
@@ -344,9 +356,10 @@ class WolfMatch {
     story.add(const WolfEvent('voteStarts'));
     _setStage(WolfStage.vote, voteTime);
     _voted.clear();
+    _voteIds = alive;
     _timer = Timer(voteTime, _endVote);
     for (final id in alive) {
-      send(id, VotePrompt(day: day, seconds: voteTime.inSeconds, ids: alive, canVote: game.canVote(id)));
+      send(id, VotePrompt(day: day, seconds: voteTime.inSeconds, ids: _voteIds, canVote: game.canVote(id)));
     }
     notify?.call();
   }
@@ -363,7 +376,7 @@ class WolfMatch {
     if (stage != WolfStage.vote) return;
     final before = alive.toSet();
     final r = game.resolveVote();
-    lastVotes = r.votes;
+    lastOut = r.spared ? null : r.out;
     story.addAll(r.events);
     final out = before.difference(alive.toSet()).toList();
     if (game.winner == WolfWinner.tramp) return _finish();
@@ -430,7 +443,7 @@ class WolfMatch {
     } else if (stage == WolfStage.night) {
       send(id, _prompt(id));
     } else if (stage == WolfStage.vote) {
-      send(id, VotePrompt(day: day, seconds: remaining.inSeconds, ids: alive, canVote: game.canVote(id), picked: game.voteOf(id)));
+      send(id, VotePrompt(day: day, seconds: remaining.inSeconds, ids: _voteIds, canVote: game.canVote(id), picked: game.voteOf(id)));
     } else if (_morning.containsKey(id)) {
       send(id, Morning(day, _morning[id]!));
     }

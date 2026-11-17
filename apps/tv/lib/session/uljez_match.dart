@@ -101,6 +101,11 @@ class UljezMatch {
       stage: game.phase == UljezPhase.clues ? 'clues' : 'discussion');
 
   void _turnStart() {
+    // A kicked player has no turn: skip them.
+    while (game.phase == UljezPhase.clues && !game.alive.contains(game.speaker)) {
+      game.nextTurn();
+    }
+    if (game.phase != UljezPhase.clues) return _discussion();
     _stage(clueTime, _turnEnd);
     _broadcastTurn();
     notify?.call();
@@ -111,10 +116,14 @@ class UljezMatch {
     if (game.phase == UljezPhase.clues) {
       _turnStart();
     } else {
-      _stage(Duration(seconds: settings.uljezDiscussion), _beginVote);
-      _broadcastTurn();
-      notify?.call();
+      _discussion();
     }
+  }
+
+  void _discussion() {
+    _stage(Duration(seconds: settings.uljezDiscussion), _beginVote);
+    _broadcastTurn();
+    notify?.call();
   }
 
   // ---- vote ----
@@ -180,6 +189,30 @@ class UljezMatch {
     game.resolveGuess();
     if (game.phase == UljezPhase.over) return _finish();
     _beginVote();
+  }
+
+  // ---- a kicked player is out at once ----
+
+  /// The host kicked [id]. A kicked impostor counts as caught with no guess:
+  /// the village wins if that was the last one. Nobody waits for them.
+  void expel(int id) {
+    if (!ids.contains(id)) return;
+    // The guesser is already out (voted out): their kick just ends the guess.
+    if (game.phase == UljezPhase.guess && game.guesser == id) return _endGuess();
+    if (!game.expel(id)) return;
+    switch (game.phase) {
+      case UljezPhase.over:
+        return _finish();
+      case UljezPhase.clues:
+        if (game.speaker == id) _turnEnd();
+      case UljezPhase.vote:
+        if (game.voteComplete) _endVote();
+      case UljezPhase.guess:
+        if (game.guesser == id) _endGuess();
+      case UljezPhase.discussion:
+        break;
+    }
+    notify?.call();
   }
 
   // ---- end ----

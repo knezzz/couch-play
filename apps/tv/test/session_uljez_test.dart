@@ -148,4 +148,15 @@ void main() {
     expect(ps[0].last<ErrorMsg>()!.message, Strings.uljezSoon);
     s.dispose();
   });
+
+  test('a kicked player is out of a running Uljez', () {
+    setUpSession(4);
+    ps[0].say(const StartGame(GameKind.uljez, null));
+    final u = s.uljez!;
+    final kicked = [for (final p in ps) if (!u.game.isImpostor(p.sent.whereType<Welcome>().first.playerId) && p != ps[0]) p].first;
+    final id = kicked.sent.whereType<Welcome>().first.playerId;
+    ps[0].say(Kick(id));
+    expect(u.alive.contains(id), isFalse);
+    s.dispose();
+  });
 }

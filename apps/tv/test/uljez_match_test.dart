@@ -233,4 +233,60 @@ void main() {
     expect(r.match.phase, UljezPhase.clues);
     r.match.dispose();
   });
+
+  testWidgets('a kicked speaker is skipped; their turn is not waited for', (t) async {
+    // a seed where the impostor is neither of the two kicked speakers
+    var seed = 1;
+    Rig r = Rig(n: 4, seed: seed);
+    while ([r.match.order[1], r.match.order[2]].contains(r.impostor)) {
+      r.match.dispose();
+      r = Rig(n: 4, seed: ++seed);
+    }
+    final order = r.match.order;
+    r.match.expel(order[1]);
+    await r.wait(t, 20); // the first speaker's turn ends
+    expect(r.match.speaker, order[2], reason: 'the kicked one is skipped');
+    r.match.expel(order[2]);
+    expect(r.match.speaker, order[3], reason: 'a kick during their own turn ends it');
+    r.match.dispose();
+  });
+
+  testWidgets('a kicked player does not hold the vote up', (t) async {
+    final r = Rig();
+    await r.toVote(t);
+    final imp = r.impostor;
+    final kicked = r.match.ids.firstWhere((i) => i != imp);
+    for (final id in r.match.alive) {
+      if (id != kicked && id != imp) r.match.onVote(id, const Vote(null));
+    }
+    r.match.onVote(imp, const Vote(null));
+    expect(r.match.phase, UljezPhase.vote, reason: 'waiting for the kicked one');
+    r.match.expel(kicked);
+    expect(r.match.winner, UljezWinner.impostors, reason: 'nobody was voted out');
+    r.match.dispose();
+  });
+
+  testWidgets('a kicked impostor: the village wins at once and everyone gets the end', (t) async {
+    final r = Rig();
+    r.match.expel(r.impostor);
+    expect(r.match.winner, UljezWinner.village);
+    for (final id in r.match.ids) {
+      expect(r.to(id).last, isA<UljezEnd>());
+    }
+    expect(r.scores![r.impostor], 0);
+    r.match.dispose();
+  });
+
+  testWidgets('a kicked guesser: the guess ends at once as a wrong guess', (t) async {
+    final r = Rig();
+    await r.toVote(t);
+    for (final id in r.match.ids) {
+      if (id != r.impostor) r.match.onVote(id, Vote(r.impostor));
+    }
+    r.match.onVote(r.impostor, const Vote(null));
+    expect(r.match.phase, UljezPhase.guess);
+    r.match.expel(r.impostor);
+    expect(r.match.winner, UljezWinner.village);
+    r.match.dispose();
+  });
 }
