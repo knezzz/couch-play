@@ -364,6 +364,21 @@ sealed class Message with _JsonEq {
             seconds: m['seconds'] as int, options: [for (final e in m['options'] as List) e as String]),
         'uljezEnd' => UljezEnd(UljezWinner.values.byName(m['winner'] as String), m['village'] as String,
             m['impostor'] as String, [for (final e in m['impostors'] as List) e as int]),
+        'tkobiAsk' => TkobiAsk(
+            number: m['number'] as int,
+            total: m['total'] as int,
+            seconds: m['seconds'] as int,
+            text: m['text'] as String,
+            ids: [for (final e in m['ids'] as List) e as int],
+            picked: m['picked'] as int?),
+        'tkobiResult' => TkobiResult(
+            counts: {
+              for (final e in (m['counts'] as Map<String, dynamic>).entries) int.parse(e.key): e.value as int
+            },
+            crowned: [for (final e in m['crowned'] as List) e as int],
+            votedRight: m['votedRight'] as bool,
+            points: m['points'] as int,
+            total: m['total'] as int),
         'blefWrite' => BlefWrite(
             number: m['number'] as int,
             total: m['total'] as int,
@@ -1099,4 +1114,49 @@ class BlefResult extends Message {
   @override
   Map<String, Object?> get fields =>
       {'points': points, 'total': total, 'foundTruth': foundTruth, 'fooled': fooled};
+}
+
+// Tko bi? (who in the room). The phone votes with the existing [Vote] (any
+// player, yourself included, one tap); nobody ever receives who voted for whom.
+
+/// TV -> every phone: a prompt. [ids] are the players that can be voted for
+/// (all of them); [picked] restores a reload.
+class TkobiAsk extends Message {
+  final int number, total, seconds;
+  final String text;
+  final List<int> ids;
+  final int? picked;
+  const TkobiAsk(
+      {required this.number,
+      required this.total,
+      required this.seconds,
+      required this.text,
+      required this.ids,
+      this.picked});
+  @override
+  String get type => 'tkobiAsk';
+  @override
+  Map<String, Object?> get fields =>
+      {'number': number, 'total': total, 'seconds': seconds, 'text': text, 'ids': ids, 'picked': picked};
+}
+
+/// TV -> every phone after the reveal: how many votes each player got (public),
+/// who is crowned, and whether THIS phone's vote went to a crowned player.
+class TkobiResult extends Message {
+  final Map<int, int> counts;
+  final List<int> crowned;
+  final bool votedRight;
+  final int points, total;
+  const TkobiResult(
+      {required this.counts, required this.crowned, required this.votedRight, required this.points, required this.total});
+  @override
+  String get type => 'tkobiResult';
+  @override
+  Map<String, Object?> get fields => {
+        'counts': {for (final e in counts.entries) '${e.key}': e.value},
+        'crowned': crowned,
+        'votedRight': votedRight,
+        'points': points,
+        'total': total,
+      };
 }

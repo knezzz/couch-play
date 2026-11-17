@@ -406,4 +406,23 @@ void main() {
       expect(Message.decode('{"type":"blefList","seconds":1,"options":["a"],"ids":["x"],"picked":null}'), isNull);
     });
   });
+
+  group('party games: tko bi', () {
+    test('messages round trip', () {
+      final ms = <Message>[
+        const TkobiAsk(number: 1, total: 10, seconds: 15, text: 'Tko bi zaspao?', ids: [1, 2, 3]),
+        const TkobiAsk(number: 2, total: 10, seconds: 9, text: 'x', ids: [1, 2], picked: 2),
+        const TkobiResult(counts: {1: 0, 2: 3, 3: 1}, crowned: [2], votedRight: true, points: 1, total: 4),
+        const TkobiResult(counts: {1: 0}, crowned: [], votedRight: false, points: 0, total: 0),
+      ];
+      for (final m in ms) {
+        expect(Message.decode(m.encode()), m, reason: m.encode());
+      }
+    });
+
+    test('wrong types are null', () {
+      expect(Message.decode('{"type":"tkobiAsk","number":1,"total":1,"seconds":1,"text":5,"ids":[],"picked":null}'), isNull);
+      expect(Message.decode('{"type":"tkobiResult","counts":{"a":1},"crowned":[],"votedRight":false,"points":0,"total":0}'), isNull);
+    });
+  });
 }
