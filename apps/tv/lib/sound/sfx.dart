@@ -20,6 +20,9 @@ enum Sound {
   rooster,
   voteBell,
   drum,
+  tickUrgent,
+  heartbeat,
+  timeUp,
 }
 
 /// The session calls this on each event. Fire and forget: it must never block

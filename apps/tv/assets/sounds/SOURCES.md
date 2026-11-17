@@ -4,7 +4,7 @@ All files are made in this repo by `tool/make_sounds.py` (sine waves, a
 square wave for `wrong`, seeded noise for `crash`; Python standard library
 only). No recordings, no samples: nothing to license. Licence: the same as the
 rest of the project. 22.05 kHz (nightAmbience and howl 11.025 kHz), 16-bit, mono,
-peak at most 35 % of full scale (frequent or long ones lower). Run the
+peak at most 35 % of full scale (frequent or long ones lower; tickUrgent and heartbeat 50 %). Run the
 script to regenerate them; the names match `Sound` in `lib/sound/sfx.dart`.
 
 | File | Used for | What it is |
@@ -29,3 +29,6 @@ script to regenerate them; the names match `Sound` in `lib/sound/sfx.dart`.
 | rooster.wav | Vukodlak: morning | three-part crow, 0.9 s |
 | voteBell.wav | Vukodlak: the vote starts | 1.2 s hand bell |
 | drum.wav | Vukodlak: someone is out | 0.6 s low drum |
+| tickUrgent.wav | quiz: the fast ticking at the end of a question | 30 ms high click, 50 % |
+| heartbeat.wav | quiz: once a second in the last 5 s | low double thump (lub-dub), 50 % |
+| timeUp.wav | quiz: time runs out before everyone answered | three falling notes |

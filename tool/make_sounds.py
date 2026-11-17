@@ -142,8 +142,15 @@ SOUNDS = {
                          release=0.15)),
     'voteBell': bell(988, 1.2),
     'drum': drum(),
+    # Task 32 follow-up: the end of a quiz question
+    'tickUrgent': [math.sin(2 * math.pi * 1600 * i / RATE) * min(1.0, i / 44) * math.exp(-i / (RATE * 0.02))
+                   for i in range(int(RATE * 0.035))],  # sharp click, may play ~4 times a second
+    'heartbeat': seq([x * 1.25 for x in env(mix(tone(90, 0.1, slide=60), [x * 0.3 for x in tone(180, 0.1, slide=120)]), 4.0)], gap(0.08),
+                     [x * 0.75 for x in env(mix(tone(110, 0.09, slide=75), [x * 0.3 for x in tone(220, 0.09, slide=150)]), 4.0)]),
+    'timeUp': seq(tone(N['G5'], 0.14), tone(N['E5'], 0.14), tone(N['C5'], 0.4)),
 }
-GAIN = {'menuMove': 0.8, 'quizTick': 0.8, 'nightAmbience': 0.7}  # quieter than PEAK: frequent or long
+GAIN = {'menuMove': 0.8, 'quizTick': 0.8, 'nightAmbience': 0.7,
+        'tickUrgent': 0.5 / PEAK, 'heartbeat': 0.5 / PEAK}  # urgent end-of-question sounds may peak at 50 %  # quieter than PEAK: frequent or long
 RATES = {'nightAmbience': AMB_RATE, 'howl': AMB_RATE}
 
 
