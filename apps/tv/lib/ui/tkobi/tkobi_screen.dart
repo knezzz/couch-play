@@ -47,7 +47,9 @@ class TkobiScreen extends StatelessWidget {
   Widget _face(PlayerInfo p, double size) => PlayerDot(playerColors[p.colorIndex % playerColors.length], size: size, character: p.character);
 
   @override
-  Widget build(BuildContext context) => Material(
+  Widget build(BuildContext context) => TvCanvas(child: _canvas(context));
+
+  Widget _canvas(BuildContext context) => Material(
         type: MaterialType.transparency,
         child: Container(
           color: tvBg,

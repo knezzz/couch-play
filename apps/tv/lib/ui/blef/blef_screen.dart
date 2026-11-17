@@ -54,7 +54,9 @@ class BlefScreen extends StatelessWidget {
   Widget _face(PlayerInfo p, double size) => PlayerDot(playerColors[p.colorIndex % playerColors.length], size: size, character: p.character);
 
   @override
-  Widget build(BuildContext context) => Material(
+  Widget build(BuildContext context) => TvCanvas(child: _canvas(context));
+
+  Widget _canvas(BuildContext context) => Material(
         type: MaterialType.transparency,
         child: Container(
           color: tvBg,
@@ -119,11 +121,17 @@ class BlefScreen extends StatelessWidget {
             _header(),
             Expanded(
               child: Center(
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1720),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Text(b.question, key: const ValueKey('question'), textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 72, fontWeight: FontWeight.w800, color: tvText, height: 1.15)),
                   const SizedBox(height: 22),
                   const Text(Strings.blefWriteHint, style: TextStyle(fontSize: 40, color: tvAccent)),
-                ]),
+                    ]),
+                  ),
+                ),
               ),
             ),
             _who(b.sent, Strings.blefSent(b.sent.length, b.players.length)),
@@ -134,7 +142,11 @@ class BlefScreen extends StatelessWidget {
             const SizedBox(height: 18),
             Expanded(
               child: Center(
-                child: Wrap(alignment: WrapAlignment.center, spacing: 28, runSpacing: 20, children: [
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: SizedBox(
+                    width: 1720,
+                    child: Wrap(alignment: WrapAlignment.center, spacing: 28, runSpacing: 20, children: [
                   for (var i = 0; i < b.list.length; i++)
                     Container(
                       key: ValueKey('option-$i'),
@@ -144,6 +156,8 @@ class BlefScreen extends StatelessWidget {
                       child: Text(b.list[i], maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText)),
                     ),
                 ]),
+                  ),
+                ),
               ),
             ),
             _who(b.picked, Strings.blefPicked(b.picked.length, b.players.length)),

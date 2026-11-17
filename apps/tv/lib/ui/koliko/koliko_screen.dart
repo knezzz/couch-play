@@ -8,13 +8,15 @@ import '../tv_theme.dart';
 
 const _amber = Color(0xFFFFB020), _red = Color(0xFFFF4D6D), _green = Color(0xFF2ECC71);
 
-/// 1234567.5 -> '1 234 567,5' (no-break spaces, decimal comma).
+/// 1886 -> '1886' (years read right), 12500 -> '12.500': a dot between thousands from 10 000 up; decimals
+/// with a comma ('2,5').
 String kolikoNum(double v) {
   final whole = v == v.roundToDouble();
   final s = whole ? v.round().abs().toString() : v.abs().toString().replaceAll('.', ',');
   final parts = s.split(',');
-  final grouped = parts[0].replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => ' ');
-  return '${v < 0 ? '-' : ''}$grouped${parts.length > 1 ? ',${parts[1]}' : ''}';
+  final big = parts[0].length > 4;
+  final head = big ? parts[0].replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => '.') : parts[0];
+  return '${v < 0 ? '-' : ''}$head${parts.length > 1 ? ',${parts[1]}' : ''}';
 }
 
 /// One player's number at the reveal.
@@ -62,7 +64,9 @@ class KolikoScreen extends StatelessWidget {
   Widget _face(PlayerInfo p, double size) => PlayerDot(playerColors[p.colorIndex % playerColors.length], size: size, character: p.character);
 
   @override
-  Widget build(BuildContext context) => Material(
+  Widget build(BuildContext context) => TvCanvas(child: _canvas(context));
+
+  Widget _canvas(BuildContext context) => Material(
         type: MaterialType.transparency,
         child: Container(
           color: tvBg,
@@ -114,8 +118,16 @@ class KolikoScreen extends StatelessWidget {
         Expanded(
           child: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text(b.question,
-                  key: const ValueKey('question'), textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 76, fontWeight: FontWeight.w800, color: tvText, height: 1.15)),
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1720),
+                    child: Text(b.question,
+                        key: const ValueKey('question'), textAlign: TextAlign.center, style: const TextStyle(fontSize: 76, fontWeight: FontWeight.w800, color: tvText, height: 1.15)),
+                  ),
+                ),
+              ),
               if (b.unit.isNotEmpty) ...[
                 const SizedBox(height: 24),
                 Text(Strings.kolikoUnit(b.unit), key: const ValueKey('unit'), style: const TextStyle(fontSize: 44, color: tvAccent)),

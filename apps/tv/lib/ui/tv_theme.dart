@@ -76,3 +76,16 @@ ThemeData tvTheme() {
     filledButtonTheme: FilledButtonThemeData(style: style),
   );
 }
+
+/// Lays [child] out on the TV's 1920x1080 design canvas and scales it to the window (any 16:9 size),
+/// like the quiz and the home do.
+class TvCanvas extends StatelessWidget {
+  const TvCanvas({required this.child, super.key});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+        color: tvBg,
+        child: FittedBox(child: SizedBox(width: 1920, height: 1080, child: child)),
+      );
+}

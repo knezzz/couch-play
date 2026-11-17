@@ -44,7 +44,9 @@ class ObjasniScreen extends StatelessWidget {
   bool get _urgent => b.secondsLeft <= 5;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => TvCanvas(child: _canvas(context));
+
+  Widget _canvas(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
       child: Container(
@@ -204,7 +206,8 @@ class ObjasniScreen extends StatelessWidget {
         spacing: 16,
         runSpacing: 14,
         children: [
-          for (var i = 0; i < b.words.length; i++) _chip(i, b.words[i], big),
+          // In play only the latest five stay up beside the clock; the summary shows them all.
+          for (var i = big ? 0 : (b.words.length > 5 ? b.words.length - 5 : 0); i < b.words.length; i++) _chip(i, b.words[i], big),
         ],
       );
 

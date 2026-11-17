@@ -43,8 +43,11 @@ Future<void> _show(WidgetTester t, KolikoBoard b) async {
 
 void main() {
   test('numbers read the Croatian way', () {
-    expect(kolikoNum(2864), '2 864');
-    expect(kolikoNum(1234567.5), '1 234 567,5');
+    expect(kolikoNum(2864), '2864', reason: 'under 10 000 no grouping, so years read right');
+    expect(kolikoNum(1886), '1886');
+    expect(kolikoNum(9999), '9999');
+    expect(kolikoNum(12500), '12.500');
+    expect(kolikoNum(1234567.5), '1.234.567,5');
     expect(kolikoNum(-3), '-3');
     expect(kolikoNum(0.25), '0,25');
   });
@@ -81,7 +84,7 @@ void main() {
   testWidgets('the reveal: the true answer, every number on the line, ranks with points and totals', (t) async {
     await _show(t, _reveal());
     await t.pump(const Duration(seconds: 3));
-    expect(t.widget<Text>(find.byKey(const ValueKey('answer'))).data, 'Točno: 2 864 m');
+    expect(t.widget<Text>(find.byKey(const ValueKey('answer'))).data, 'Točno: 2864 m');
     expect(find.byKey(const ValueKey('marker-answer')), findsOneWidget);
     for (final id in [0, 1, 2]) {
       expect(find.byKey(ValueKey('marker-$id')), findsOneWidget, reason: 'player $id is on the line');
@@ -171,6 +174,44 @@ void main() {
     await t.pumpWidget(const SizedBox());
     s.dispose();
   });
+
+  for (final size in [const Size(1280, 720), const Size(1920, 1080), const Size(1272, 715)]) {
+    final longQ = 'Koje je godine u Zagrebu otvoren prvi javni park za sve građane koji su tada živjeli u gradu i okolici, a danas je jedan od najpoznatijih?';
+    final eight = [for (var i = 0; i < 8; i++) PlayerInfo(i, 'Igrac$i-duže', i, true, 0, character: characterIds[i])];
+    testWidgets('${size.width.toInt()}x${size.height.toInt()}: a 4-line question and 8 players fit on screen, ask and reveal', (t) async {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      Rect screen() => Offset.zero & size;
+      void inside(Finder f, String what) {
+        final r = t.getRect(f);
+        expect(screen().inflate(1).contains(r.topLeft) && screen().inflate(1).contains(r.bottomRight), isTrue, reason: '$what $r is outside $size');
+      }
+
+      await t.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: KolikoScreen(KolikoBoard(number: 1, total: 5, question: longQ, unit: 'm', players: eight, answered: const {0, 1, 2, 3}, secondsLeft: 20, seconds: 30))));
+      expect(t.takeException(), isNull);
+      inside(find.byKey(const ValueKey('question')), 'question');
+      inside(find.byKey(const ValueKey('count')), 'count');
+      final q = t.getRect(find.byKey(const ValueKey('question'))), faces = t.getRect(find.byKey(const ValueKey('who-0-yes')));
+      expect(q.bottom, lessThanOrEqualTo(faces.top), reason: 'the question does not run into the faces');
+
+      final rows = [for (var i = 0; i < 8; i++) KolikoRow(eight[i], 1500.0 + i * 120, i + 1, 100, i == 0, 100 * i)];
+      await t.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: KolikoScreen(KolikoBoard(number: 1, total: 5, question: longQ, unit: 'm', players: eight, answered: const {}, secondsLeft: 0, seconds: 30, answer: 1500, rows: rows))));
+      await t.pump(const Duration(seconds: 3));
+      expect(t.takeException(), isNull);
+      for (var i = 0; i < 8; i++) {
+        inside(find.byKey(ValueKey('row-$i')), 'row $i');
+        inside(find.byKey(ValueKey('marker-$i')), 'marker $i');
+      }
+      inside(find.byKey(const ValueKey('marker-answer')), 'answer line');
+      expect(t.getRect(find.byKey(const ValueKey('row-7'))).bottom, lessThanOrEqualTo(size.height * 1030 / 1080), reason: 'above the overscan edge');
+    });
+  }
 
   testWidgets('all numbers equal and eight players still draw', (t) async {
     final rows = [for (var i = 0; i < 8; i++) KolikoRow(_p(i % 8 < 8 ? i : 0), 50, i + 1, 100, true, 100)];
