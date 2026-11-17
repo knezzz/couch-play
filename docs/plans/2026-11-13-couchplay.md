@@ -912,7 +912,7 @@ Reference: canvas page "Konzola i Vukodlak", `V2Home.dc.html` (and `V2Quiz.dc.ht
 ### Task 31: Quiz ticker (added 2026-11-17, user request)
 
 Reference: `V2Quiz.dc.html`.
-- [ ] 20-segment bar along the top losing one per second (red in the last 5), no ring countdown (person, 2026-11-17), ticking sound for the whole question, faster in the last 5 s. Follows the host's time per question. Tests + QA; commit.
+- [x] 20-segment bar along the top losing one per second (red in the last 5), no ring countdown (person, 2026-11-17), ticking sound for the whole question, faster in the last 5 s. Follows the host's time per question. Tests + QA; commit.
 
 ### Task 32: Sound in every game and the menus (added 2026-11-17, user request)
 

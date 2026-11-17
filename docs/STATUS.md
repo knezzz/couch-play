@@ -38,7 +38,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 28 | Six new packs (Umjetnost, Psihologija, Ljudsko tijelo, Memeovi, Fizika, Matematika) + more picture questions (person, 2026-11-16) | done (5fa5fb3): 16 packs, ~2,000 questions, 89 new photos; most on the TV in ecf8eb9 | lead + content |
 | 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | done; on the TV since a286dc2 (chip contrast 9826952 next install); join screen does not grey taken faces | lead |
 | 30 | Console home (one game full screen, neighbours at the edges, QR top left), games full screen (person, 2026-11-17) | queued to lead | lead |
-| 31 | Quiz ticker (person, 2026-11-17) | queued to lead | lead |
+| 31 | Quiz ticker (person, 2026-11-17) | done on macOS (a9bf156 … c6cc2a0); not heard yet, goes to the TV with Task 30 | lead |
 | 32 | Sound in every game and the menus (person, 2026-11-17) | queued to lead | lead |
 | 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | queued to lead | lead + content |
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | queued to lead | lead |
@@ -281,3 +281,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   Pikachu), and both new games on the home screen. Canvas page "Uljez"; Task 35.
 - 2026-11-17: Person gave a standing yes for TV installs today whenever something new is ready (green commit,
   BRAVIA only). bd9ff83 on the TV.
+- 2026-11-17: Task 31 accepted (bar only, segment = limit/20; faster ending with urgent tick, heartbeat, time-up;
+  review clean, QA pass). Not heard yet.
