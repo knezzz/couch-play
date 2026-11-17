@@ -265,7 +265,7 @@ void main() {
     final a = join(s, 'Ana', token: 'ta');
     final b = join(s, 'Bo');
     final idA = idOf(a);
-    s.finishGame({idA: 5, idOf(b): 3}); // Ana gets 2 session points
+    s.finishGame({idA: 5, idOf(b): 3}); // Ana gets 1 session point (1st of 2 = N-1)
     s.returnToLobby();
     final colorA = s.players.first.colorIndex;
     await a.drop();
@@ -281,8 +281,8 @@ void main() {
     expect(s.players.length, 2);
     expect(s.players.first.name, 'Ana');
     expect(s.players.first.connected, isTrue);
-    expect(s.sessionScores[idA], 2);
-    expect(a2.last<LobbyState>()!.players.first.sessionScore, 2);
+    expect(s.sessionScores[idA], 1);
+    expect(a2.last<LobbyState>()!.players.first.sessionScore, 1);
   });
 
   test('a_second_socket_with_the_same_token_replaces_the_first', () async {
@@ -532,17 +532,17 @@ void main() {
     s.curveEvents([RoundOver(0), MatchOver(0)]);
     expect(s.phase, Phase.results);
     final bot = s.players.firstWhere((p) => p.bot);
-    // 1st gets N=3 points, 2nd 2, 3rd 1; the bot is on the scoreboard too.
-    expect(s.sessionScores[idOf(a)], 3);
-    expect(s.sessionScores[bot.id], 2);
-    expect(s.sessionScores[idOf(b)], 1);
+    // 1st gets N-1=2 points, 2nd 1, last 0; the bot is on the scoreboard too.
+    expect(s.sessionScores[idOf(a)], 2);
+    expect(s.sessionScores[bot.id], 1);
+    expect(s.sessionScores[idOf(b)], 0);
     final res = a.last<Results>()!;
     expect(res.placements.map((p) => p.playerId), [idOf(a), bot.id, idOf(b)]);
     expect(b.last<Results>(), isNotNull);
     s.returnToLobby();
     expect(s.phase, Phase.lobby);
     expect(s.sim, isNull);
-    expect(a.last<LobbyState>()!.players.map((p) => p.sessionScore), [3, 1, 2]);
+    expect(a.last<LobbyState>()!.players.map((p) => p.sessionScore), [2, 0, 1]);
   });
 
   test('finish_game_scores_add_up_across_games', () {
@@ -551,8 +551,8 @@ void main() {
     s.finishGame({idOf(a): 1, idOf(b): 9});
     s.returnToLobby();
     s.finishGame({idOf(a): 5, idOf(b): 5});
-    expect(s.sessionScores[idOf(a)], 1 + 2);
-    expect(s.sessionScores[idOf(b)], 2 + 2);
+    expect(s.sessionScores[idOf(a)], 0 + 1, reason: 'last of 2, then a tie for first');
+    expect(s.sessionScores[idOf(b)], 1 + 1);
   });
 
   // --- housekeeping ---
@@ -772,5 +772,13 @@ void main() {
       expect(r.ok, isFalse);
       expect(r.message, Strings.packsNotReady);
     });
+  });
+
+  test('a game where everybody scored 0 gives nobody a point', () {
+    final a = join(s, 'A');
+    final b = join(s, 'B');
+    s.finishGame({idOf(a): 0, idOf(b): 0});
+    expect(s.sessionScores.values.every((v) => v == 0), isTrue);
+    expect(a.last<Results>()!.placements.map((p) => p.sessionPoints), [0, 0]);
   });
 }
