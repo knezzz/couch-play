@@ -484,7 +484,9 @@ class WolfGame {
     final tally = <int, int>{};
     for (final e in votes.entries) {
       final t = e.value;
-      if (t == null) continue;
+      // only votes whose voter and target are both still in (a lover who went
+      // out with a kicked player, or any future chained death, counts for nothing)
+      if (t == null || !isAlive(e.key) || !isAlive(t)) continue;
       tally[t] = (tally[t] ?? 0) + (_roles[e.key] == WolfRole.mayor ? 2 : 1);
     }
     _phase = WolfPhase.day;

@@ -138,8 +138,9 @@ class UljezGame {
     if (phase != UljezPhase.vote) throw StateError('not the vote');
     final votes = Map<int, int?>.of(_votes);
     final tally = <int, int>{};
-    for (final t in votes.values) {
-      if (t != null) tally[t] = (tally[t] ?? 0) + 1;
+    for (final e in votes.entries) {
+      final t = e.value;
+      if (t != null && alive.contains(e.key) && alive.contains(t)) tally[t] = (tally[t] ?? 0) + 1;
     }
     votesLeft--;
     int? out;

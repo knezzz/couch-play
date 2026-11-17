@@ -889,6 +889,32 @@ void main() {
       expect(r.tie, isTrue, reason: '3 and 4 have one each, no mayor');
     });
 
+    test('a kicked player\'s lover goes out too: a tramp lover with votes cast for him does not win', () {
+      final g = game([w, WolfRole.cupid, WolfRole.tramp, v, v, v, v]);
+      night(g, {1: 2}, second: {1: 3}); // lovers: the tramp (2) and 3
+      g.startVote();
+      for (final id in [0, 4, 5]) {
+        g.vote(id, 2);
+      }
+      g.expel(3);
+      expect(g.isAlive(2), isFalse, reason: 'the lover went out with them');
+      final r = g.resolveVote();
+      expect(g.winner, isNull, reason: 'a tramp who is already out cannot win');
+      expect(r.out, isNull);
+    });
+
+    test('a lover who is the mayor and went out: his double vote does not count', () {
+      final g = game([w, WolfRole.cupid, WolfRole.mayor, v, v, v, v]);
+      night(g, {1: 2}, second: {1: 3});
+      g.startVote();
+      g.vote(2, 4);
+      g.vote(5, 6);
+      g.vote(0, 6);
+      g.expel(3);
+      final r = g.resolveVote();
+      expect(r.out, 6, reason: 'the mayor is out; his 2 for player 4 count for nothing');
+    });
+
     test('a vote for someone who has just left is recorded as a skip, not refused', () {
       final g = voting([w, v, v, v, v, v]);
       g.expel(1);
