@@ -2,63 +2,23 @@
 <html lang="hr">
 <head>
 <meta charset="utf-8">
-<title>Vukodlak morning</title>
+<title>Vukodlak Day</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 </style>
 </helmet>
-<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: linear-gradient(180deg, #3A2A4A 0%, #B5664A 45%, #E7B36A 100%); color: #1A1420; font-family: Roboto, system-ui, sans-serif">
-  <svg style="position: absolute; left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true">
-    <circle cx="300" cy="760" r="160" fill="#FFD98A" opacity="0.8"></circle>
-    <path d="M0 820 L140 760 L220 800 L300 740 L420 800 L560 750 L700 810 L860 760 L1000 820 L1160 770 L1300 830 L1460 770 L1620 820 L1780 780 L1920 820 L1920 1080 L0 1080 Z" fill="#2A1E2E"></path>
-  </svg>
-  <div style="position: absolute; left: 96px; top: 72px; right: 96px; display: flex; flex-direction: column; gap: 12px; color: #FFF6E6">
-    <div style="font-size: 36px; font-weight: 700; letter-spacing: 4px; opacity: 0.85">JUTRO 3</div>
-    <div style="font-family: 'Roboto Slab', Georgia, serif; font-size: 52px; line-height: 1.35; width: 1180px">Pijetao je zakukurikao, ali Ivana nije izašla iz kuće. Pred vratima su tragovi velikih šapa, a vrata su bila otvorena cijelu noć.</div>
-  </div>
-  <div style="position: absolute; right: 120px; top: 300px; width: 520px; background: rgba(26,20,32,0.82); color: #FFF6E6; border-radius: 36px; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 16px">
-    <div style="position: relative; width: 200px; height: 200px">
-      <div style="filter: grayscale(1); opacity: 0.6"><dc-import name="Face" animal="rabbit" color="#22B8F0" size="{{s200}}" hint-size="200px,200px"></dc-import></div>
-      <svg style="position: absolute; left: 0; top: 0" width="200" height="200" viewBox="0 0 200 200" aria-hidden="true"><path d="M30 30 L170 170 M170 30 L30 170" stroke="#FF4D6D" stroke-width="14" stroke-linecap="round"></path></svg>
-    </div>
-    <div style="font-size: 56px; font-weight: 900">Ivana</div>
-    <div style="font-size: 36px; opacity: 0.85">je bila</div>
-    <div style="font-size: 52px; font-weight: 900; color: #FFD98A">Vidovnjakinja</div>
-  </div>
-  <div style="position: absolute; left: 96px; bottom: 300px; font-size: 40px; color: #FFF6E6; font-weight: 700">Selo se okuplja. Razgovarajte: tko je vukodlak?</div>
-  <div style="position: absolute; left: 96px; right: 96px; bottom: 72px; display: flex; align-items: center; gap: 28px">
-    <sc-for list="{{alive}}" as="p" hint-placeholder-count="5">
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
-        <dc-import name="Face" animal="{{p.animal}}" color="{{p.color}}" size="{{s88}}" hint-size="88px,88px"></dc-import>
-        <span style="font-size: 28px; color: #FFF6E6; font-weight: 700">{{p.name}}</span>
-      </div>
-    </sc-for>
-    <div style="margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; color: #FFF6E6">
-      <span style="font-size: 30px">Glasanje za</span>
-      <span style="font-size: 96px; font-weight: 900; line-height: 1">1:40</span>
-    </div>
-  </div>
+<div style="width: 1920px; height: 1080px">
+<dc-import name="Village" night="{{night}}" hint-size="1920px,1080px"></dc-import>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
 class Component extends DCLogic {
-  renderVals() {
-    return {
-      s200: 200, s88: 88,
-      alive: [
-        { animal: 'fox', color: '#FF4D6D', name: 'Luka' }, { animal: 'owl', color: '#FFB020', name: 'Ana' },
-        { animal: 'cat', color: '#9B5CFF', name: 'Petra' }, { animal: 'bear', color: '#FF7AD9', name: 'Josip' },
-        { animal: 'mouse', color: '#F5E94B', name: 'Maja' }
-      ]
-    };
-  }
+  renderVals() { return { night: false }; }
 }
 </script>
 </body>

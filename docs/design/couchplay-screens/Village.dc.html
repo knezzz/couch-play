@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Village around the square</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: {{sky}}; color: #F4F4F8; font-family: Roboto, system-ui, sans-serif">
+  <svg style="position: absolute; left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true">
+    <ellipse cx="960" cy="560" rx="560" ry="430" fill="{{ground}}"></ellipse>
+    <ellipse cx="960" cy="560" rx="330" ry="250" fill="{{square}}"></ellipse>
+    <ellipse cx="960" cy="560" rx="330" ry="250" fill="none" stroke="{{squareEdge}}" stroke-width="6" stroke-dasharray="18 14"></ellipse>
+    <sc-if value="{{night}}" hint-placeholder-val="{{ false }}">
+      <circle cx="1700" cy="140" r="70" fill="#F2E9C9"></circle>
+    </sc-if>
+    <sc-for list="{{houses}}" as="h" hint-placeholder-count="7">
+      <g transform="{{h.at}}">
+        <sc-if value="{{h.dead}}" hint-placeholder-val="{{ false }}">
+          <path d="M-96 46 q-16 -6 -10 -18 q10 -6 16 6 q6 10 -6 12 Z M86 52 q14 4 10 16 q-12 6 -16 -6 q-2 -8 6 -10 Z M-60 78 q-6 14 6 18 q14 0 8 -14 q-6 -8 -14 -4 Z M40 84 q-10 10 0 18 q14 2 12 -10 q-4 -10 -12 -8 Z M-118 0 q-12 4 -6 14 q8 4 10 -4 Z M110 -8 q10 4 6 12 q-8 4 -10 -4 Z" fill="#9E1B1B"></path>
+          <circle cx="-30" cy="96" r="7" fill="#9E1B1B"></circle><circle cx="70" cy="30" r="5" fill="#9E1B1B"></circle><circle cx="-84" cy="64" r="4" fill="#9E1B1B"></circle>
+        </sc-if>
+        <path d="M-80 -10 L0 -76 L80 -10 Z" fill="{{h.roof}}"></path>
+        <rect x="-66" y="-12" width="132" height="84" rx="6" fill="{{h.wall}}"></rect>
+        <rect x="-18" y="22" width="36" height="50" rx="4" fill="{{h.door}}"></rect>
+        <rect x="-54" y="6" width="26" height="24" rx="3" fill="{{h.win}}"></rect>
+        <rect x="28" y="6" width="26" height="24" rx="3" fill="{{h.win}}"></rect>
+        <sc-if value="{{h.dead}}" hint-placeholder-val="{{ false }}">
+          <path d="M-58 4 L-24 32 M-24 4 L-58 32 M24 4 L58 32 M58 4 L24 32 M-22 26 L22 66 M22 26 L-22 66" stroke="#3A2A1E" stroke-width="7" stroke-linecap="round"></path>
+        </sc-if>
+      </g>
+    </sc-for>
+  </svg>
+  <sc-for list="{{houses}}" as="h" hint-placeholder-count="7">
+    <div style="{{h.label}}">
+      <span style="{{h.faceWrap}}"><dc-import name="Face" animal="{{h.animal}}" color="{{h.color}}" size="{{s56}}" hint-size="56px,56px"></dc-import></span>
+      <span style="font-size: 32px; font-weight: 700; {{h.nameStyle}}">{{h.name}}</span>
+    </div>
+  </sc-for>
+  <div style="position: absolute; left: 690px; top: 380px; width: 540px; height: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center">
+    <div style="font-size: 30px; font-weight: 700; letter-spacing: 4px; color: {{kickerColor}}">{{kicker}}</div>
+    <div style="font-size: 38px; line-height: 1.3; color: {{storyColor}}">{{story}}</div>
+    <div style="font-size: 64px; font-weight: 900; color: {{storyColor}}">{{clock}}</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"night":{"editor":"boolean","default":false},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const night = this.props.night ?? false;
+    const people = [
+      ['Luka', 'fox', '#FF4D6D'], ['Ana', 'owl', '#FFB020'], ['Marko', 'frog', '#2ECC71'], ['Ivana', 'rabbit', '#22B8F0'],
+      ['Petra', 'cat', '#9B5CFF'], ['Josip', 'bear', '#FF7AD9'], ['Maja', 'mouse', '#F5E94B']
+    ];
+    const dead = night ? { Marko: 1 } : { Marko: 1, Ivana: 1 };
+    const cx = 960, cy = 560, rx = 470, ry = 360;
+    const houses = people.map(([name, animal, color], i) => {
+      const a = -Math.PI / 2 + (i * 2 * Math.PI) / people.length;
+      const x = Math.round(cx + rx * Math.cos(a)), y = Math.round(cy + ry * Math.sin(a));
+      const d = !!dead[name];
+      const below = Math.sin(a) > 0.3;
+      return {
+        name, animal, color: d ? '#6E6E7A' : color, dead: d,
+        at: `translate(${x} ${y})`,
+        roof: d ? '#3A3036' : (night ? '#3A2E46' : '#B5513C'),
+        wall: d ? '#4A4248' : (night ? '#2A2F4A' : '#EED9B4'),
+        door: d ? '#2A2024' : (night ? '#1A1E34' : '#7A4A2E'),
+        win: d ? '#2A2024' : (night ? '#F7D774' : '#9CC9E8'),
+        label: `position: absolute; left: ${x - 120}px; top: ${below ? y + 84 : y - 150}px; width: 240px; display: flex; align-items: center; justify-content: center; gap: 10px`,
+        faceWrap: d ? 'filter: grayscale(1); opacity: 0.5; display: flex' : 'display: flex',
+        nameStyle: d ? 'color: #8A8A96; text-decoration: line-through' : (night ? 'color: #C3CBEA' : 'color: #2A1E2E')
+      };
+    });
+    return {
+      night, houses, s56: 56,
+      sky: night ? 'linear-gradient(180deg, #05060F, #0C1430)' : 'linear-gradient(180deg, #F2C98A, #E7B36A)',
+      ground: night ? '#121A30' : '#9DBF6A', square: night ? '#1B2440' : '#D9C49A', squareEdge: night ? '#2A3458' : '#BFA77A',
+      kicker: night ? 'NOĆ 2' : 'JUTRO 3', kickerColor: night ? '#8FA0D8' : '#7A3A2A',
+      story: night ? 'Selo spava. Svi gledaju svoje mobitele.' : 'Ivanina vrata ostala su zatvorena. Oko kuće su tragovi krvi.',
+      storyColor: night ? '#F4F4F8' : '#2A1E2E',
+      clock: night ? '0:21' : '1:40'
+    };
+  }
+}
+</script>
+</body>
+</html>
