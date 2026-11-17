@@ -961,13 +961,21 @@ Both new games (Vukodlak, Uljez) appear on the console home (Task 30) as their o
 
 The person: "Cheese, one where you are getting a lot of holes. 90 deg, where others can turn only in 90 deg angles. Swap speedups again: speed up is you only, slow down is others."
 
-- **Swap back:** speed up acts on the picker (green), slow down on everyone else (red). Icons keep their pictures (lightning, snail) but change disc colour; bots follow.
+- **Speed and slow, both ways (person, 2026-11-17, replacing the swap back):** four power-ups: speed up you (green), speed up others (red), slow down you (green), slow down others (red). Lightning and snail on the matching disc colour.
 - **Cheese (green, on you):** while it lasts your trail gets many gaps (much more often and longer than the normal random gaps). Icon in the version-A style: a cheese wedge with holes.
 - **Square turns (red, on everyone else):** while it lasts, their steering turns in sharp 90° steps (a held button turns 90° once, then goes straight until pressed again). Icon: a right-angle arrow. Bots cope (they steer in 90° steps too).
-- Both get the ring-only active indicator (Task 34) and spawn in Kaos/Uravnoteženo; Samo za tebe = speed up, ghost, cheese. Effect durations: the default `effectSeconds` unless it plays badly.
+- Both get the ring-only active indicator (Task 34) and spawn in Kaos/Uravnoteženo; Samo za tebe = speed up, slow down, ghost, cheese. Effect durations: the default `effectSeconds` unless it plays badly.
 
 - [ ] **Step 1: Failing tests:** speed up only on the picker, slow down only on the others; cheese gives far more trail gaps than normal and no gaps after it ends; square turns: a held button turns exactly 90° once, then straight; only the others are hit; bots don't crash immediately under square turns.
 - [ ] **Step 2: Run.** Expected: FAIL.
 - [ ] **Step 3: Implement** core, TV icons/rings, bots, mode lists.
 - [ ] **Step 4: Run.** Expected: PASS. QA on macOS release: each seen working.
 - [ ] **Step 5: Commit** by path.
+
+### Task 37: Design-audit decisions (added 2026-11-17, user choices)
+
+- [ ] Curve: after each round, show the current scores (faces, points, target) for a few seconds before the next countdown; no bar during play.
+- [ ] Home: a small "Večeras" strip with the evening's totals along the bottom after the first game.
+- [ ] Power-up legend: ▼ on the Curve card on the home and the host's Curve details on the phone: every power-up, its icon, one line.
+- [ ] Fat icon: keep the two diagonal bars.
+- [ ] Vukodlak night: keep the shared "Iskoristi posebnu moć (ako je imaš)" switch (PM).
