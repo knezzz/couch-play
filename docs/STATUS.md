@@ -302,3 +302,6 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-17: Task 38 accepted (PM sampled hr-medimurje: no village names left, 84 questions). Task 13 done.
 - 2026-11-17: Tasks 32 and 33 accepted. Watch: the night village is the heaviest scene (Mac p95 up to 44 ms).
 - 2026-11-17: Person joined QA's Mac run from their iPhone on purpose: "all works as intended". ee00641 on the TV (not launched).
+- 2026-11-17: Person allowed their Pixel 6a (28051JEGR09026) for testing, installs included ("anything for testing").
+  Lifts the CLAUDE.md "never touch the Pixel" rule for test work. PM limits: no reset, no changes to their apps,
+  accounts, settings or data; uninstall what we install. Seat configs still deny adb to it.
