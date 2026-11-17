@@ -216,6 +216,21 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
 
+### Koliko? (phone)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| questionOf(n, total) | Pitanje {n} od {total} | Question {n} of {total} | the pad, top left |
+| sentNumber + waitTv | Poslano Gledaj TV. | Sent. Watch the TV. | after Pošalji |
+| send | Pošalji | Send | Koliko? and Blef |
+| del | Obriši | Delete | the ⌫ key (screen reader) |
+| correctAnswer / yourNumber | Točan odgovor / Tvoj broj | The correct answer / Your number | result |
+| noNumber | Bez odgovora | No answer | result |
+| exactHit / closest | Točno! / Najbliže! | Exact! / Closest! | result headline |
+| place(n) | Mjesto: {n} | Place: {n} | result headline |
+| plusPoints(n) | +{n} bod / boda / bodova | +{n} points | result |
+| totalScore(n) | Ukupno: {n} | Total: {n} | result |
+
 ### Objasni (phone)
 
 | key | Croatian | English | where it shows |

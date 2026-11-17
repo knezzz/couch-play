@@ -75,6 +75,20 @@ abstract final class Strings {
   static const wordPackShort = 'Paket riječi';
   static String scoreText(int n) => '$n ${points(n)}';
 
+  // Koliko?
+  static String questionOf(int n, int total) => 'Pitanje $n od $total';
+  static const sentNumber = 'Poslano';
+  static const waitTv = 'Gledaj TV.';
+  static const correctAnswer = 'Točan odgovor';
+  static const yourNumber = 'Tvoj broj';
+  static const noNumber = 'Bez odgovora';
+  static const exactHit = 'Točno!';
+  static const closest = 'Najbliže!';
+  static String place(int n) => 'Mjesto: $n';
+  static String plusPoints(int n) => '+$n ${points(n)}';
+  static String totalScore(int n) => 'Ukupno: $n';
+  static const del = 'Obriši';
+
   static const send = 'Pošalji';
   static const blefHint = 'Tvoj odgovor';
   static const blefSpikeTitle = 'Blef: probno tipkanje';
@@ -144,6 +158,7 @@ abstract final class Strings {
     List<PackInfo> packs,
     List<PackInfo> uljezPacks, [
     List<PackInfo> objasniPacks = const [],
+    List<PackInfo> kolikoPacks = const [],
   ]) {
     String pack(List<PackInfo> l, String? id) =>
         (l.where((p) => p.id == id).firstOrNull ?? l.firstOrNull)?.title ?? '';
@@ -156,6 +171,8 @@ abstract final class Strings {
         '$possibleRoles: ${s.wolfRoles.length} · $discussion: ${minutes(s.wolfDiscussion)}',
       GameKind.uljez =>
         '${pack(uljezPacks, s.uljezPackId)} · $discussion: ${minutes(s.uljezDiscussion)} · ${impostors(s.uljezImpostors)}',
+      GameKind.koliko =>
+        '${pack(kolikoPacks, s.kolikoPackId)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
       GameKind.objasni =>
         '${pack(objasniPacks, s.objasniPackId)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
       _ => '',

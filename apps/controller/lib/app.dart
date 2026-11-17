@@ -11,6 +11,7 @@ import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
+import 'screens/koliko_flow.dart';
 import 'screens/objasni_flow.dart';
 import 'screens/uljez_flow.dart';
 import 'screens/wolf_flow.dart';
@@ -26,6 +27,7 @@ enum _Screen {
   wolf,
   uljez,
   objasni,
+  koliko,
   kicked,
 }
 
@@ -73,6 +75,7 @@ class _AppState extends State<App> {
   final _wolf = WolfInbox();
   final _uljez = UljezInbox();
   final _objasni = ObjasniInbox();
+  final _koliko = KolikoInbox();
   // Vukodlak and Uljez share VotePrompt; the game that started last owns it.
   bool _uljezOn = false;
   StreamSubscription<Message>? _sub;
@@ -154,6 +157,9 @@ class _AppState extends State<App> {
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
+        case KolikoAsk() || KolikoResult():
+          _koliko.on(m);
+          _screen = _Screen.koliko;
         case ObjasniTeams() || ObjasniTurn():
           _objasni.on(m);
           _screen = _Screen.objasni;
@@ -228,6 +234,7 @@ class _AppState extends State<App> {
       key: ValueKey(_question?.number),
     ),
     _Screen.results => ResultsScreen(_placements, _myId),
+    _Screen.koliko => KolikoFlow(widget.conn, _koliko),
     _Screen.objasni =>
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))

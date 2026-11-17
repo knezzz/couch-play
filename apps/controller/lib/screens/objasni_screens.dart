@@ -7,8 +7,8 @@ import '../strings.dart';
 import '../theme.dart';
 import 'settings_widgets.dart';
 
-/// Team colours (the TV draws its halves in the same two).
-const teamColors = [Color(0xFF4DA6FF), Color(0xFFFF8A4D)];
+/// Team colours: one source in core, shared with the TV.
+final teamColors = objasniTeamColors;
 
 /// A player in a team list.
 class TeamMember {
