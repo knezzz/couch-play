@@ -4,6 +4,7 @@ import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/session/wolf_match.dart';
+import 'package:tv/strings.dart';
 import 'package:tv/session/wolf_text.dart';
 import 'package:tv/ui/tv_theme.dart';
 import 'package:tv/ui/wolf/end_screen.dart';
@@ -188,6 +189,28 @@ void main() {
     await t.pumpWidget(g.view());
     expect(find.byType(WolfVoteScreen), findsNothing, reason: 'the result is not held for ever');
     expect(find.byType(VillageScreen), findsOneWidget);
+    await _close(t, g);
+  });
+
+  testWidgets('a held vote result shows the real x of y (someone did not vote) and no clock', (t) async {
+    _big(t);
+    final g = _Game(_roles7);
+    for (final id in g.match.alive) {
+      g.match.onNightPick(id, const NightPick(null));
+    }
+    await g.wait(t, 130);
+    expect(g.match.stage, WolfStage.vote);
+    for (final id in [1, 2, 3, 4, 5]) {
+      g.match.onVote(id, const Vote(6));
+    }
+    await t.pumpWidget(g.view());
+    await g.wait(t, 25); // 6 and 7 never vote: the vote times out (30 s after it began, ~7 s were already gone)
+    expect(g.match.lastOut, 6);
+    final v = t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen));
+    expect(v.voted, 5);
+    expect(v.expected, 7);
+    expect(v.clock, isEmpty);
+    expect(find.text(Strings.wolfVoted(5, 7)), findsOneWidget);
     await _close(t, g);
   });
 }

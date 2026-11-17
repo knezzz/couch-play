@@ -2,4 +2,4 @@
 /// refused ("soon") until its TV screen is built. builder-2 flips each flag to
 /// true in the same commit as that game's TV screens.
 const kWolfTvReady = true;
-const kUljezTvReady = false;
+const kUljezTvReady = true;

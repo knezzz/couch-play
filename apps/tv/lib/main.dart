@@ -19,6 +19,7 @@ import 'ui/curve/curve_game.dart';
 import 'ui/home_screen.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
+import 'ui/uljez/uljez_view.dart';
 import 'ui/wolf/wolf_view.dart';
 import 'ui/quiz_screen.dart';
 import 'ui/tv_theme.dart';
@@ -226,7 +227,7 @@ class _TvAppState extends State<TvApp> {
       navigatorKey: _nav,
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
-        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf,
+        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez,
         changes: _session.changes,
         onEnd: _session.endGame,
         child: EffectLayer(child: child!),
@@ -268,6 +269,8 @@ class _TvAppState extends State<TvApp> {
                 )
               : _session.phase == Phase.wolf && _session.wolf != null
               ? WolfView(match: _session.wolf!, players: _session.playerInfos)
+              : _session.phase == Phase.uljez && _session.uljez != null
+              ? UljezView(match: _session.uljez!, players: _session.playerInfos)
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,

@@ -81,7 +81,7 @@ class WolfVoteScreen extends StatelessWidget {
                 right: 96,
                 top: 96,
                 child: Text(
-                  '${Strings.wolfVoted(voted, expected)} · $clock',
+                  clock.isEmpty ? Strings.wolfVoted(voted, expected) : '${Strings.wolfVoted(voted, expected)} · $clock',
                   style: const TextStyle(fontSize: 40, color: tvMuted),
                 ),
               ),

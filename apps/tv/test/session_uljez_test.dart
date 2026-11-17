@@ -141,7 +141,7 @@ void main() {
   });
 
   test('refused with the soon text while the TV has no screens for it', () {
-    s = Session(random: Random(1));
+    s = Session(random: Random(1))..uljezTvReady = false; // the gate, whatever kUljezTvReady is now
     ps = [for (var i = 0; i < 6; i++) join(s, 'P$i', token: 't$i')];
     ps[0].say(const StartGame(GameKind.uljez, null));
     expect(s.phase, Phase.lobby);

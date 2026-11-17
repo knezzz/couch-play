@@ -37,7 +37,7 @@ class _WolfViewState extends State<WolfView> {
   Timer? _clock, _hold;
   var _seen = 0;
   int? _resultAt; // the story index of the vote's result, while it is held on the vote screen
-  var _voted = 0;
+  var _voted = 0, _expected = 0; // the last count seen while the vote ran, for the held result
 
   @override
   void initState() {
@@ -104,7 +104,10 @@ class _WolfViewState extends State<WolfView> {
       );
     }
 
-    if (m.stage == WolfStage.vote) _voted = m.votedCount;
+    if (m.stage == WolfStage.vote) {
+      _voted = m.votedCount;
+      _expected = m.alive.length;
+    }
     final held = _resultAt;
     if (m.stage == WolfStage.vote || held != null) {
       final story = m.story;
@@ -113,8 +116,9 @@ class _WolfViewState extends State<WolfView> {
         players: people,
         day: m.day,
         voted: _voted,
-        expected: held == null ? m.alive.length : max(_voted, 0),
-        clock: _clockText(m.remaining),
+        expected: held == null ? m.alive.length : _expected,
+        // While the result is held the match is already in its next stage: its clock is not the vote's.
+        clock: held == null ? _clockText(m.remaining) : '',
         outId: held == null ? null : m.lastOut,
         result: held == null ? null : _line(held),
         extra: wolves >= 0 ? _line(wolves) : null,
