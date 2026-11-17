@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../session/blef_match.dart' show BlefStageTv;
 import '../../strings.dart';
+import '../koliko/koliko_screen.dart' show kolikoNum;
 import '../tv_theme.dart';
 
 const _amber = Color(0xFFFFB020), _red = Color(0xFFFF4D6D), _green = Color(0xFF2ECC71);
@@ -100,15 +101,15 @@ class BlefScreen extends StatelessWidget {
         if (_timed) Text('${b.secondsLeft}', key: const ValueKey('seconds'), style: TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: _urgent ? _red : tvText)),
       ]);
 
-  Widget _who(Set<int> lit, String label) => Column(mainAxisSize: MainAxisSize.min, children: [
+  Widget _who(Set<int> lit, String label, {bool names = true}) => Column(mainAxisSize: MainAxisSize.min, children: [
         Wrap(alignment: WrapAlignment.center, spacing: 30, runSpacing: 12, children: [
           for (final p in b.players)
             Opacity(
               key: ValueKey('who-${p.id}-${lit.contains(p.id) ? 'yes' : 'no'}'),
               opacity: lit.contains(p.id) ? 1 : 0.3,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                _face(p, 80),
-                Text(p.name, maxLines: 1, style: const TextStyle(fontSize: 40, color: tvText)),
+                _face(p, names ? 80 : 64),
+                if (names) Text(p.name, maxLines: 1, style: const TextStyle(fontSize: 40, color: tvText)),
               ]),
             ),
         ]),
@@ -139,28 +140,23 @@ class BlefScreen extends StatelessWidget {
         BlefStageTv.pick => Column(children: [
             _header(),
             Text(b.question, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 46, color: tvMuted)),
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
+            // Every answer (up to eight fakes and the truth), two to a row, never smaller than 40 px.
             Expanded(
               child: Center(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: SizedBox(
-                    width: 1720,
-                    child: Wrap(alignment: WrapAlignment.center, spacing: 28, runSpacing: 20, children: [
+                child: Wrap(alignment: WrapAlignment.center, spacing: 24, runSpacing: 12, children: [
                   for (var i = 0; i < b.list.length; i++)
                     Container(
                       key: ValueKey('option-$i'),
-                      width: 820,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                      width: 840,
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
                       decoration: BoxDecoration(color: tvSurface, borderRadius: BorderRadius.circular(24)),
-                      child: Text(b.list[i], maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: tvText)),
+                      child: Text(b.list[i], maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w700, color: tvText)),
                     ),
                 ]),
-                  ),
-                ),
               ),
             ),
-            _who(b.picked, Strings.blefPicked(b.picked.length, b.players.length)),
+            _who(b.picked, Strings.blefPicked(b.picked.length, b.players.length), names: false),
           ]),
         BlefStageTv.reveal || BlefStageTv.over => _reveal(),
       };
@@ -169,15 +165,14 @@ class BlefScreen extends StatelessWidget {
 
   Widget _reveal() {
     final last = b.shown.length - 1;
-    // Only the latest six stay up (three rows of two): with eight players there can be nine entries.
-    final first = b.shown.length > 6 ? b.shown.length - 6 : 0;
     return Column(children: [
       _header(),
-      Text(b.question, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 42, color: tvMuted)),
-      const SizedBox(height: 14),
+      Text(b.question, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 42, color: tvMuted)),
+      const SizedBox(height: 10),
+      // Every answer stays up, one row each: the answer, whose fake (or the truth), who picked it.
       Expanded(
-        child: Wrap(alignment: WrapAlignment.center, spacing: 28, runSpacing: 14, children: [
-          for (var i = first; i < b.shown.length; i++) _card(i, b.shown[i], i == last),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          for (var i = 0; i < b.shown.length; i++) _row(i, b.shown[i], i == last),
         ]),
       ),
       if (b.points != null)
@@ -185,35 +180,36 @@ class BlefScreen extends StatelessWidget {
           for (final p in b.players)
             if ((b.points![p.id] ?? 0) > 0)
               Row(mainAxisSize: MainAxisSize.min, children: [
-                _face(p, 52),
+                _face(p, 48),
                 const SizedBox(width: 8),
-                Text('${p.name} +${b.points![p.id]}', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: _green)),
+                Text('${p.name} +${kolikoNum(b.points![p.id]!.toDouble())}', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: _green)),
               ]),
         ]),
     ]);
   }
 
-  Widget _card(int i, BlefCard c, bool newest) {
-    const big = 44.0, small = 40.0;
+  Widget _row(int i, BlefCard c, bool newest) {
     final color = c.isTruth ? _green : _red;
     return Container(
       key: ValueKey('card-$i-${c.isTruth ? 'truth' : 'fake'}'),
-      width: 820,
-      padding: EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+      height: 74,
+      margin: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
         color: color.withValues(alpha: newest ? 0.3 : 0.14),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color, width: newest ? 5 : 2),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Text(c.text, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: big, fontWeight: FontWeight.w800, color: tvText)),
-        const SizedBox(height: 2),
-        Text(c.isTruth ? Strings.blefTruth : Strings.blefAuthor(c.writers.map((p) => p.name).join(', ')), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: small, fontWeight: FontWeight.w700, color: color)),
-        Row(children: [
-          Text('${Strings.blefChoice}: ', style: TextStyle(fontSize: small, color: tvMuted)),
-          for (final p in c.pickers.take(8)) Padding(padding: const EdgeInsets.only(right: 4), child: _face(p, 40)),
-          Expanded(child: _names(c.pickers)),
-        ]),
+      child: Row(children: [
+        Expanded(flex: 9, child: Text(c.text, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: tvText))),
+        Expanded(flex: 6, child: Text(c.isTruth ? Strings.blefTruth : Strings.blefAuthor(c.writers.map((p) => p.name).join(', ')), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700, color: color))),
+        Expanded(
+          flex: 8,
+          child: Row(children: [
+            for (final p in c.pickers.take(4)) Padding(padding: const EdgeInsets.only(right: 4), child: _face(p, 44)),
+            Expanded(child: _names(c.pickers)),
+          ]),
+        ),
       ]),
     );
   }

@@ -102,7 +102,7 @@ abstract final class Strings {
   static String blefSent(int n, int total) => 'Poslano: $n od $total';
   static String blefPicked(int n, int total) => 'Odabrano: $n od $total';
   static const blefTruth = 'Točan odgovor';
-  static String blefAuthor(String names) => 'Lažni odgovor, autor: $names';
+  static String blefAuthor(String names) => 'Autor: $names';
   static const blefChoice = 'Izbor';
   static const blefNobody = 'nitko';
   static String tkobiQuestionOf(int n, int total) => 'Pitanje $n od $total';

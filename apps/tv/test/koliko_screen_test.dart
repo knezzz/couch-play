@@ -213,6 +213,58 @@ void main() {
     });
   }
 
+  test('marker spots: never two in a row closer than a face, inside the line, near-identical or far apart', () {
+    for (final xs in [
+      [for (var i = 0; i < 8; i++) 500.0 + i * 0.5], // near-identical
+      [for (var i = 0; i < 8; i++) 100.0 + i * 220], // far apart
+      [for (var i = 0; i < 8; i++) 1600.0], // identical, at the right end
+      [for (var i = 0; i < 8; i++) 100.0], // identical, at the left end
+      [100.0, 105.0, 110.0, 900.0, 905.0, 1500.0, 1590.0, 1600.0],
+    ]) {
+      final spots = kolikoMarkerSpots(xs, left: 100, right: 1640);
+      for (var row = 0; row < 2; row++) {
+        final inRow = [for (final s in spots) if (s.row == row) s.x]..sort();
+        for (var k = 1; k < inRow.length; k++) {
+          expect(inRow[k] - inRow[k - 1], greaterThanOrEqualTo(150 - 1e-6), reason: '$xs row $row');
+        }
+        for (final x in inRow) {
+          expect(x, inInclusiveRange(100, 1640));
+        }
+      }
+      expect({for (final s in spots) s.row}.length, 2, reason: 'both rows used');
+    }
+  });
+
+  for (final size in [const Size(1280, 720), const Size(1920, 1080)]) {
+    testWidgets('${size.width.toInt()}x${size.height.toInt()}: 8 players, near-identical guesses: every face and name is separate and on screen, every row shown', (t) async {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      final eight = [for (var i = 0; i < 8; i++) PlayerInfo(i, 'Igrac$i-duže', i, true, 0, character: characterIds[i])];
+      final rows = [for (var i = 0; i < 8; i++) KolikoRow(eight[i], 1886.0 + (i == 7 ? 40 : i * 0.5), i + 1, 12500 - i * 1000, i == 0, 12500 * i)];
+      await t.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: KolikoScreen(KolikoBoard(number: 1, total: 5, question: 'Koje je godine Carl Benz patentirao svoj motorni automobil?', unit: '', players: eight, answered: const {}, secondsLeft: 0, seconds: 30, answer: 1886, rows: rows))));
+      await t.pump(const Duration(seconds: 3));
+      expect(t.takeException(), isNull);
+      final rects = [for (var i = 0; i < 8; i++) t.getRect(find.byKey(ValueKey('marker-$i')))];
+      for (var i = 0; i < 8; i++) {
+        for (var j = i + 1; j < 8; j++) {
+          expect(rects[i].overlaps(rects[j]), isFalse, reason: 'marker $i and $j overlap: ${rects[i]} ${rects[j]}');
+        }
+        expect(rects[i].left, greaterThanOrEqualTo(-1));
+        expect(rects[i].right, lessThanOrEqualTo(size.width + 1));
+        expect(find.descendant(of: find.byKey(ValueKey('marker-$i')), matching: find.text('Igrac$i-duže')), findsOneWidget, reason: 'the name under/over the face');
+        final row = find.byKey(ValueKey('row-$i'));
+        expect(row, findsOneWidget, reason: 'row $i is shown');
+        expect(t.getRect(row).bottom, lessThanOrEqualTo(size.height * 1030 / 1080 + 1));
+        expect(find.descendant(of: row, matching: find.text('+${kolikoNum(12500 - i * 1000.0)}')), findsOneWidget);
+      }
+      expect(find.descendant(of: find.byKey(const ValueKey('row-1')), matching: find.text(kolikoNum(12500))), findsOneWidget, reason: 'totals use the dot from 10 000');
+    });
+  }
+
   testWidgets('all numbers equal and eight players still draw', (t) async {
     final rows = [for (var i = 0; i < 8; i++) KolikoRow(_p(i % 8 < 8 ? i : 0), 50, i + 1, 100, true, 100)];
     await _show(

@@ -55,7 +55,7 @@ void main() {
     await _show(t, _b(BlefStageTv.reveal, shown: shown));
     expect(find.byKey(const ValueKey('card-0-fake')), findsOneWidget);
     expect(find.byKey(const ValueKey('card-1-truth')), findsOneWidget);
-    expect(find.text('Lažni odgovor, autor: Ana'), findsOneWidget);
+    expect(find.text('Autor: Ana'), findsOneWidget);
     expect(find.text('Točan odgovor'), findsOneWidget);
     expect(find.text('Marko, Iva'), findsOneWidget);
     expect(find.byKey(const ValueKey('points')), findsNothing, reason: 'not before the last entry');
@@ -66,25 +66,47 @@ void main() {
     expect(t.takeException(), isNull);
   });
 
-  testWidgets('nobody picked an entry says so; a full 8-player reveal still fits above 1030 px', (t) async {
-    final eight = [for (var i = 0; i < 9; i++) BlefCard('odgovor $i s malo duljim tekstom', i == 8, i == 8 ? const [] : [_ps[0]], i == 5 ? const [] : [_ps[1]])];
-    final b8 = _b(BlefStageTv.reveal, shown: eight, points: const {0: 500});
-    await _show(
-        t,
-        BlefBoard(
-            stage: b8.stage, number: 2, total: 7, question: b8.question, players: [for (var i = 0; i < 8; i++) PlayerInfo(i, 'Igrac$i', i, true, 0, character: characterIds[i])],
-            sent: const {}, picked: const {}, secondsLeft: 0, seconds: 60, shown: eight, points: const {0: 500}));
-    expect(find.text('nitko'), findsOneWidget);
-    expect(t.takeException(), isNull);
-    expect(t.getRect(find.byKey(const ValueKey('points'))).bottom, lessThanOrEqualTo(1030));
-    for (var i = 3; i < 9; i++) {
-      expect(t.getRect(find.byKey(ValueKey('card-$i-${i == 8 ? 'truth' : 'fake'}'))).bottom, lessThanOrEqualTo(1030));
-    }
-    expect(find.byKey(const ValueKey('card-2-fake')), findsNothing, reason: 'only the latest six stay up');
-    for (final w in t.widgetList<Text>(find.byType(Text))) {
-      expect(w.style?.fontSize ?? 40, greaterThanOrEqualTo(40), reason: 'sofa-readable: ${w.data}');
-    }
-  });
+  final eight = [for (var i = 0; i < 8; i++) PlayerInfo(i, 'Igrac$i-duže', i, true, 0, character: characterIds[i])];
+  final nine = [for (var i = 0; i < 9; i++) 'odgovor $i s malo duljim tekstom, još malo']; // 8 fakes and the truth
+
+  for (final size in [const Size(1280, 720), const Size(1920, 1080)]) {
+    testWidgets('${size.width.toInt()}x${size.height.toInt()}: with 8 players the pick lists all 9 answers and the reveal keeps all 9, every text 40 px or more', (t) async {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      void fits(String what) {
+        expect(t.takeException(), isNull, reason: what);
+        for (final w in t.widgetList<Text>(find.byType(Text))) {
+          final r = t.getRect(find.byWidget(w));
+          expect(r.bottom, lessThanOrEqualTo(size.height * 1030 / 1080 + 1), reason: '$what: ${w.data} $r');
+          expect(r.right, lessThanOrEqualTo(size.width + 1), reason: '$what: ${w.data}');
+          expect(w.style?.fontSize ?? 40, greaterThanOrEqualTo(what.startsWith('pick') || what.startsWith('reveal') ? 40 : 0), reason: '$what: sofa-readable: ${w.data}');
+        }
+      }
+
+      await t.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: BlefScreen(BlefBoard(stage: BlefStageTv.pick, number: 1, total: 7, question: 'Koje je godine u Zagrebu otvoren prvi javni park za sve građane?', players: eight, sent: const {}, picked: const {1, 2}, secondsLeft: 15, seconds: 20, list: nine))));
+      for (var i = 0; i < 9; i++) {
+        expect(find.byKey(ValueKey('option-$i')), findsOneWidget, reason: 'answer $i is listed');
+        expect(find.text(nine[i]), findsOneWidget);
+      }
+      fits('pick');
+
+      final cards = [for (var i = 0; i < 9; i++) BlefCard(nine[i], i == 8, i == 8 ? const [] : [eight[i % 8]], i == 5 ? const [] : [eight[1], eight[2], eight[3]])];
+      await t.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: BlefScreen(BlefBoard(stage: BlefStageTv.reveal, number: 1, total: 7, question: 'Koje je godine u Zagrebu otvoren prvi javni park za sve građane?', players: eight, sent: const {}, picked: const {}, secondsLeft: 0, seconds: 20, shown: cards, points: const {0: 1500, 3: 12500}))));
+      for (var i = 0; i < 9; i++) {
+        expect(find.byKey(ValueKey('card-$i-${i == 8 ? 'truth' : 'fake'}')), findsOneWidget, reason: 'every answer stays up at the end: $i');
+      }
+      expect(find.text('nitko'), findsOneWidget, reason: 'nobody picked #5');
+      expect(find.text('Igrac3-duže +12.500'), findsOneWidget, reason: 'dot grouping from 10 000');
+      expect(find.text('Igrac0-duže +1500'), findsOneWidget);
+      fits('reveal');
+    });
+  }
 
   testWidgets('the view reads a live match while writing: it shows who has sent, never a fake', (t) async {
     t.view

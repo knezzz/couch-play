@@ -196,13 +196,37 @@ class KolikoScreen extends StatelessWidget {
           const SizedBox(width: 14),
           Expanded(child: Text(r.player.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 34, color: tvText))),
           Text(r.value == null ? Strings.kolikoNoAnswer : kolikoNum(r.value!), style: TextStyle(fontSize: 34, color: r.value == null ? tvMuted : tvText, fontWeight: FontWeight.w700)),
-          SizedBox(width: 130, child: Text(r.points > 0 ? '+${r.points}' : '', textAlign: TextAlign.right, style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: _green))),
-          SizedBox(width: 120, child: Text(grouped(r.total), textAlign: TextAlign.right, style: const TextStyle(fontSize: 30, color: tvMuted))),
+          SizedBox(width: 130, child: Text(r.points > 0 ? '+${kolikoNum(r.points.toDouble())}' : '', textAlign: TextAlign.right, style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: _green))),
+          SizedBox(width: 120, child: Text(kolikoNum(r.total.toDouble()), textAlign: TextAlign.right, style: const TextStyle(fontSize: 30, color: tvMuted))),
         ]),
       );
 }
 
 const _gold = Color(0xFFFFD54A);
+
+/// Where each marker (a face and a name) goes on the number line, so none hides behind another:
+/// the guesses, in order of value, alternate above and below the line; within a row each takes its own
+/// number's place or the next free one to the right ([gap] apart), and the row is pushed back left
+/// where it would run off the end. Returns centre x and row (0 above, 1 below) per entry, in the input order.
+List<({double x, int row})> kolikoMarkerSpots(List<double> trueX, {required double left, required double right, double gap = 150}) {
+  final order = [for (var i = 0; i < trueX.length; i++) i]..sort((a, b) => trueX[a].compareTo(trueX[b]));
+  final out = List<({double x, int row})>.filled(trueX.length, (x: 0, row: 0));
+  for (var row = 0; row < 2; row++) {
+    final idx = [for (var k = row; k < order.length; k += 2) order[k]];
+    final xs = <double>[];
+    for (final i in idx) {
+      xs.add(xs.isEmpty ? trueX[i].clamp(left, right) : (trueX[i] > xs.last + gap ? trueX[i] : xs.last + gap));
+    }
+    for (var k = xs.length - 1; k >= 0; k--) {
+      final limit = k == xs.length - 1 ? right : xs[k + 1] - gap;
+      if (xs[k] > limit) xs[k] = limit;
+    }
+    for (var k = 0; k < idx.length; k++) {
+      out[idx[k]] = (x: xs[k], row: row);
+    }
+  }
+  return out;
+}
 
 /// The number line at the reveal. A finite animation (2.4 s, then it stops): the guesses slide in as faces
 /// from the left end to their numbers, the true answer drops in as a line, and the closest guess(es) get
@@ -251,38 +275,43 @@ class _KolikoLineState extends State<KolikoLine> with SingleTickerProviderStateM
           builder: (context, _) {
             final t = _c.value;
             final es = widget.entries;
+            final spots = kolikoMarkerSpots([for (final e in es) _x(e.value!)], left: widget.left + 20, right: widget.left + widget.width - 20);
             final children = <Widget>[
-              Positioned(left: widget.left, top: 160, width: widget.width, height: 8, child: const DecoratedBox(decoration: BoxDecoration(color: Color(0x55FFFFFF), borderRadius: BorderRadius.all(Radius.circular(4))))),
+              Positioned(left: widget.left, top: 150, width: widget.width, height: 8, child: const DecoratedBox(decoration: BoxDecoration(color: Color(0x55FFFFFF), borderRadius: BorderRadius.all(Radius.circular(4))))),
+              // Each guess's true place on the line, joined to its face when the face had to move over.
+              Positioned.fill(child: CustomPaint(painter: _LeadPainter([for (var i = 0; i < es.length; i++) (from: _x(es[i].value!), to: spots[i].x, row: spots[i].row)], t))),
               // The true answer drops in from above between 55 % and 75 % of the time.
               Positioned(
                 key: const ValueKey('marker-answer'),
                 left: _x(widget.answer) - 3,
-                top: -260 + 380 * Curves.easeIn.transform(((t - 0.55) / 0.2).clamp(0.0, 1.0)),
+                top: -260 + 360 * Curves.easeIn.transform(((t - 0.55) / 0.2).clamp(0.0, 1.0)),
                 width: 6,
-                height: 90,
+                height: 100,
                 child: const DecoratedBox(decoration: BoxDecoration(color: _green)),
               ),
             ];
             for (var i = 0; i < es.length; i++) {
               final e = es[i];
               final local = Curves.easeOutCubic.transform(((t - 0.04 * i) / 0.5).clamp(0.0, 1.0));
-              final x = widget.left + (_x(e.value!) - widget.left) * local;
-              // Alternate above and below, in three steps, so neighbours do not sit on each other.
-              final top = i.isEven ? (i % 4 == 0 ? 20.0 : 0.0) : (i % 4 == 1 ? 190.0 : 210.0);
+              final x = widget.left + (spots[i].x - widget.left) * local;
+              final below = spots[i].row == 1;
               final closest = e.rank == 1;
               final ring = closest ? ((t - 0.8) / 0.2).clamp(0.0, 1.0) : 0.0;
+              final face = Container(
+                key: closest ? ValueKey('closest-${e.player.id}') : null,
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: _gold.withValues(alpha: ring), width: 5)),
+                child: _face(e.player, 56),
+              );
+              final name = SizedBox(width: 146, child: Text(e.player.name, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 28, color: tvText)));
               children.add(Positioned(
                 key: ValueKey('marker-${e.player.id}'),
-                left: x - 36,
-                top: top,
+                left: x - 73,
+                width: 146,
+                top: below ? 172 : 0,
                 child: Opacity(
                   opacity: local.clamp(0.0, 1.0),
-                  child: Container(
-                    key: closest ? ValueKey('closest-${e.player.id}') : null,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: _gold.withValues(alpha: ring), width: 6)),
-                    child: _face(e.player, 64),
-                  ),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: below ? [face, name] : [name, face]),
                 ),
               ));
             }
@@ -290,4 +319,25 @@ class _KolikoLineState extends State<KolikoLine> with SingleTickerProviderStateM
           },
         ),
       );
+}
+
+/// Thin lines from each face to its number on the line (only drawn when the face sits somewhere else).
+class _LeadPainter extends CustomPainter {
+  const _LeadPainter(this.leads, this.t);
+  final List<({double from, double to, int row})> leads;
+  final double t;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = const Color(0x66FFFFFF)
+      ..strokeWidth = 2;
+    for (final l in leads) {
+      final fy = l.row == 1 ? 172.0 : 100.0; // the face edge nearest the line
+      canvas.drawLine(Offset(l.from, 154), Offset(l.from + (l.to - l.from) * t, fy), p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_LeadPainter old) => old.t != t || old.leads != leads;
 }
