@@ -122,7 +122,7 @@ void main() {
     s.dispose();
   });
 
-  testWidgets('a disconnect is dropping out: the explainer leaving ends the turn; a whole team gone pauses, then the game ends', (t) async {
+  testWidgets('a disconnect is dropping out: the explainer leaving keeps the turn running and a reload resumes it; a whole team gone pauses', (t) async {
     setUpSession(4);
     ps[0].say(const StartGame(GameKind.objasni, null));
     final m = s.objasni!;
@@ -131,9 +131,13 @@ void main() {
     final exPhone = ps.firstWhere((x) => idOf(x) == ex);
     exPhone.say(const Go());
     expect(m.stage, ObjasniStageTv.play);
+    final no = m.game.wordNo;
     exPhone.close();
     await t.pump();
-    expect(m.stage, ObjasniStageTv.summary);
+    expect(m.stage, ObjasniStageTv.play, reason: 'the turn goes on');
+    final again = join(s, exPhone.sent.whereType<Welcome>().first.token.isEmpty ? 'x' : 'P', token: 't${ps.indexOf(exPhone)}');
+    final turn = again.sent.whereType<ObjasniTurn>().last;
+    expect([turn.role, turn.wordNo], [ObjasniRole.explain, no], reason: 'back with the same word number');
     // the other team all leave
     final other = ps.where((x) => m.teamOf(idOf(x)) != m.teamOf(ex) && x != exPhone).toList();
     for (final p in other) {

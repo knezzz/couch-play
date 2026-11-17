@@ -236,16 +236,45 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('the explainer dropping out ends the turn at once with the score it had', (t) async {
+  testWidgets('the explainer dropping mid-turn (a locked phone) keeps the turn running; back in time they resume with the same word and number', (t) async {
+    final r = Rig(target: 100);
+    r.begin();
+    r.match.onAction(r.ex, ObjasniAction(ObjasniAct.correct, wordNo: r.turns(r.ex).last.wordNo));
+    final ex = r.ex;
+    final no = r.turns(ex).last.wordNo, word = r.turns(ex).last.word;
+    await r.wait(t, 8);
+    r.match.setAway(ex, true);
+    expect(r.match.stage, ObjasniStageTv.play, reason: 'the turn goes on');
+    await r.wait(t, 10);
+    expect(r.match.stage, ObjasniStageTv.play);
+    r.match.setAway(ex, false);
+    r.match.rejoin(ex);
+    final back = r.turns(ex).last;
+    expect([back.role, back.stage, back.word, back.wordNo], [ObjasniRole.explain, ObjasniStage.play, word, no]);
+    expect(back.seconds, lessThan(60 - 17), reason: 'the clock kept running');
+    // a stale press after the return is still guarded; the current one works
+    r.match.onAction(ex, ObjasniAction(ObjasniAct.skip, wordNo: no - 1));
+    expect(r.match.scores[r.match.turnTeam], 1);
+    r.match.onAction(ex, ObjasniAction(ObjasniAct.correct, wordNo: no));
+    expect(r.match.scores[r.match.turnTeam], 2);
+    r.match.dispose();
+  });
+
+  testWidgets('the explainer dropping and not returning: the turn ends at time up as usual, with the score it had', (t) async {
     final r = Rig(target: 100);
     r.begin();
     r.match.onAction(r.ex, const ObjasniAction(ObjasniAct.correct));
     final team = r.match.turnTeam;
     r.match.setAway(r.ex, true);
+    await r.wait(t, 59);
+    expect(r.match.stage, ObjasniStageTv.play);
+    await r.wait(t, 1);
     expect(r.match.stage, ObjasniStageTv.summary);
     expect(r.match.scores[team], 1);
     await r.wait(t, 5);
     expect(r.match.stage, ObjasniStageTv.ready);
+    expect(r.match.explainer, isNotNull);
+    expect(r.match.teamOf(r.match.explainer!), 1 - team);
     r.match.dispose();
   });
 

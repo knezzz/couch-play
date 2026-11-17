@@ -353,13 +353,28 @@ void main() {
       expect(g.explainer, team0[2]);
     });
 
-    test('the explainer leaving ends the turn at once with the score it had', () {
+    test('the explainer dropping mid-turn does not end it, and the score so far stays', () {
       final g = game(6);
       go(g);
       g.correct(g.explainer!);
       g.setAway(g.explainer!, true);
+      expect(g.phase, ObjasniPhase.turn);
+      expect(g.score(g.turnTeam), 1);
+      g.endTurn(); // time up
       expect(g.phase, ObjasniPhase.summary);
       expect(g.score(g.turnTeam), 1);
+    });
+
+    test('the same word and number after the explainer comes back without a press', () {
+      final g = game(6);
+      go(g);
+      final ex = g.explainer!;
+      final word = g.word, no = g.wordNo;
+      g.setAway(ex, true);
+      g.setAway(ex, false);
+      expect([g.phase, g.explainer, g.word, g.wordNo], [ObjasniPhase.turn, ex, word, no]);
+      expect(g.correct(ex, word: no - 1), isFalse, reason: 'a stale press is still guarded');
+      expect(g.correct(ex, word: no), isTrue);
     });
 
     test('a team with nobody connected needs the game to pause', () {

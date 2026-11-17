@@ -10,6 +10,8 @@ import 'dart:math';
 ///  * Točno +1, Preskoči -1, Prekršaj (a player of the OTHER team) -1; each ends
 ///    the word and the next one comes up. A team's score may go below 0.
 ///  * Time up: the word on screen is lost for no points and is not listed.
+///  * An explainer who drops during a turn does not end it: the clock runs on,
+///    and if they come back they resume with the current word.
 ///  * A word does not come up twice in a game; if a very long game uses the
 ///    whole pack, the words start over (reshuffled).
 ///  * The game ends after a FULL round (both teams had the same number of
@@ -130,15 +132,15 @@ class ObjasniGame {
   /// A team has nobody connected: the session pauses (and may end the game).
   bool get teamNeedsPause => phase != ObjasniPhase.over && [0, 1].any((t) => _teams[t].every(_away.contains));
 
-  /// A player drops out or comes back. An explainer who leaves ends the turn;
-  /// one who leaves before "Kreni" is replaced.
+  /// A player drops out or comes back. An explainer who leaves in the middle of
+  /// a turn does NOT end it (a locked iPhone drops its socket): the clock runs
+  /// on, and they resume with the current word if they come back; one who
+  /// leaves before "Kreni" is replaced.
   void setAway(int id, bool away) {
     if (!ids.contains(id)) return;
     if (away) {
       _away.add(id);
-      if (phase == ObjasniPhase.turn && id == explainer) {
-        endTurn();
-      } else if (phase == ObjasniPhase.ready && id == explainer) {
+      if (phase == ObjasniPhase.ready && id == explainer) {
         _pickExplainer();
       }
     } else {

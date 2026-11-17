@@ -252,14 +252,9 @@ class ObjasniMatch {
 
   void setAway(int id, bool away) {
     if (!ids.contains(id) || stage == ObjasniStageTv.over) return;
-    final wasPlay = stage == ObjasniStageTv.play;
     game.setAway(id, away);
-    if (wasPlay && game.phase == ObjasniPhase.summary) {
-      // the explainer left: the turn ends at once
-      _tick?.cancel();
-      _toSummary();
-      return;
-    }
+    // An explainer who drops mid-turn (a locked iPhone) does not end the turn:
+    // the clock runs on and they resume with the current word on return.
     if (stage == ObjasniStageTv.ready) _sendTurn(ObjasniStageTv.ready);
     _checkPause();
     notify?.call();
