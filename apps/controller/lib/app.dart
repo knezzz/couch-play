@@ -11,10 +11,11 @@ import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
+import 'screens/uljez_flow.dart';
 import 'screens/wolf_flow.dart';
 import 'strings.dart';
 
-enum _Screen { join, lobby, wait, curve, quiz, results, wolf, kicked }
+enum _Screen { join, lobby, wait, curve, quiz, results, wolf, uljez, kicked }
 
 /// Routes the TV's messages to a screen. No web imports, so it runs in tests.
 class App extends StatefulWidget {
@@ -42,6 +43,9 @@ class _AppState extends State<App> {
   int _quizTotal = 0; // running total, from the last reveal
   List<Placement> _placements = const [];
   final _wolf = WolfInbox();
+  final _uljez = UljezInbox();
+  // Vukodlak and Uljez share VotePrompt; the game that started last owns it.
+  bool _uljezOn = false;
   StreamSubscription<Message>? _sub;
 
   @override
@@ -103,12 +107,23 @@ class _AppState extends State<App> {
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
+        case UljezWord():
+          _uljezOn = true;
+          _uljez.on(m);
+          _screen = _Screen.uljez;
+        case UljezTurn() || UljezGuess() || UljezEnd():
+          _uljez.on(m);
+          _screen = _Screen.uljez;
+        case VotePrompt() when _uljezOn:
+          _uljez.on(m);
+          _screen = _Screen.uljez;
         case RoleMsg() ||
             NightPrompt() ||
             Morning() ||
             VotePrompt() ||
             Farewell() ||
             WolfEnd():
+          if (m is RoleMsg) _uljezOn = false;
           _wolf.on(m);
           _screen = _Screen.wolf;
         case Kicked():
@@ -137,6 +152,10 @@ class _AppState extends State<App> {
       key: ValueKey(_question?.number),
     ),
     _Screen.results => ResultsScreen(_placements, _myId),
+    _Screen.uljez =>
+      _lobby == null
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          : UljezFlow(widget.conn, _lobby!, _myId, _uljez),
     _Screen.wolf =>
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))

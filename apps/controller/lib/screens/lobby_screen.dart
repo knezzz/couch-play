@@ -5,9 +5,43 @@ import '../character_grid.dart';
 import '../connection.dart';
 import '../theme.dart';
 import '../strings.dart';
+import 'uljez_screens.dart';
 import 'wolf_screens.dart';
 
 const _seats = 8;
+
+/// The settings with some fields changed, every other field kept. All the
+/// game settings live in one object the TV owns, so every change must send
+/// the whole of it; a hand-written constructor call drops new fields.
+GameSettings copySettings(
+  GameSettings s, {
+  int? quizSeconds,
+  int? quizQuestions,
+  int? revealSeconds,
+  int? curveCountdown,
+  CurveMode? curveMode,
+  String? quizPackId,
+  bool setQuizPack = false, // quizPackId may be set to null on purpose
+  Set<WolfRole>? wolfRoles,
+  bool? wolfHideRoles,
+  int? wolfDiscussion,
+  String? uljezPackId,
+  int? uljezDiscussion,
+  int? uljezImpostors,
+}) => GameSettings(
+  quizSeconds: quizSeconds ?? s.quizSeconds,
+  quizQuestions: quizQuestions ?? s.quizQuestions,
+  revealSeconds: revealSeconds ?? s.revealSeconds,
+  curveCountdown: curveCountdown ?? s.curveCountdown,
+  curveMode: curveMode ?? s.curveMode,
+  quizPackId: setQuizPack ? quizPackId : s.quizPackId,
+  wolfRoles: wolfRoles ?? s.wolfRoles,
+  wolfHideRoles: wolfHideRoles ?? s.wolfHideRoles,
+  wolfDiscussion: wolfDiscussion ?? s.wolfDiscussion,
+  uljezPackId: uljezPackId ?? s.uljezPackId,
+  uljezDiscussion: uljezDiscussion ?? s.uljezDiscussion,
+  uljezImpostors: uljezImpostors ?? s.uljezImpostors,
+);
 
 class LobbyScreen extends StatefulWidget {
   const LobbyScreen(
@@ -159,33 +193,19 @@ class _LobbyScreenState extends State<LobbyScreen> {
     if (ok == true) widget.conn.send(Kick(p.id));
   }
 
-  GameSettings _withPack(GameSettings s, String? id) => GameSettings(
-    quizSeconds: s.quizSeconds,
-    quizQuestions: s.quizQuestions,
-    revealSeconds: s.revealSeconds,
-    curveCountdown: s.curveCountdown,
-    curveMode: s.curveMode,
-    quizPackId: id,
-    wolfRoles: s.wolfRoles,
-    wolfHideRoles: s.wolfHideRoles,
-    wolfDiscussion: s.wolfDiscussion,
-  );
+  GameSettings _withPack(GameSettings s, String? id) =>
+      copySettings(s, quizPackId: id, setQuizPack: true);
 
   GameSettings _wolf(
     GameSettings s, {
     Set<WolfRole>? roles,
     bool? hide,
     int? discuss,
-  }) => GameSettings(
-    quizSeconds: s.quizSeconds,
-    quizQuestions: s.quizQuestions,
-    revealSeconds: s.revealSeconds,
-    curveCountdown: s.curveCountdown,
-    curveMode: s.curveMode,
-    quizPackId: s.quizPackId,
-    wolfRoles: roles ?? s.wolfRoles,
-    wolfHideRoles: hide ?? s.wolfHideRoles,
-    wolfDiscussion: discuss ?? s.wolfDiscussion,
+  }) => copySettings(
+    s,
+    wolfRoles: roles,
+    wolfHideRoles: hide,
+    wolfDiscussion: discuss,
   );
 
   /// Pushes a screen that follows the TV's latest LobbyState.
@@ -221,6 +241,20 @@ class _LobbyScreenState extends State<LobbyScreen> {
       onBack: () => Navigator.of(context).pop(),
     ),
   );
+
+  Widget _uljezSettings(LobbyState l, void Function(GameSettings) change) {
+    final s = l.settings;
+    return UljezSettingsView(
+      players: l.players.length,
+      packs: [for (final p in l.uljezPacks) (p.id, p.title)],
+      packId: s.uljezPackId ?? l.uljezPacks.firstOrNull?.id,
+      discussSeconds: s.uljezDiscussion,
+      impostors: s.uljezImpostors,
+      onPack: (id) => change(copySettings(s, uljezPackId: id)),
+      onDiscuss: (v) => change(copySettings(s, uljezDiscussion: v)),
+      onImpostors: (n) => change(copySettings(s, uljezImpostors: n)),
+    );
+  }
 
   Widget _wolfSettings(LobbyState l, void Function(GameSettings) change) {
     final s = l.settings;
@@ -333,6 +367,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
             ],
             if (kind == GameKind.vukodlak)
               _wolfSettings(l, change)
+            else if (kind == GameKind.uljez)
+              _uljezSettings(l, change)
             else
               _GameSettings(kind, s, onChange: change),
             const SizedBox(height: 24),
@@ -547,16 +583,13 @@ class _GameSettings extends StatelessWidget {
   final void Function(GameSettings) onChange;
 
   GameSettings _with({int? sec, int? qs, int? rev, int? cd, CurveMode? mode}) =>
-      GameSettings(
-        quizSeconds: sec ?? s.quizSeconds,
-        quizQuestions: qs ?? s.quizQuestions,
-        revealSeconds: rev ?? s.revealSeconds,
-        curveCountdown: cd ?? s.curveCountdown,
-        curveMode: mode ?? s.curveMode,
-        quizPackId: s.quizPackId,
-        wolfRoles: s.wolfRoles,
-        wolfHideRoles: s.wolfHideRoles,
-        wolfDiscussion: s.wolfDiscussion,
+      copySettings(
+        s,
+        quizSeconds: sec,
+        quizQuestions: qs,
+        revealSeconds: rev,
+        curveCountdown: cd,
+        curveMode: mode,
       );
 
   @override
@@ -709,6 +742,7 @@ class _Carousel extends StatelessWidget {
     GameKind.quiz: Icons.quiz,
     GameKind.curve: Icons.timeline,
     GameKind.vukodlak: Icons.nights_stay,
+    GameKind.uljez: Icons.help_outline,
   };
 
   @override

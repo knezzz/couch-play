@@ -38,6 +38,9 @@ class RoleHoldScreen extends StatefulWidget {
     super.key,
     required this.name,
     required this.night,
+    this.header,
+    this.heading = Strings.yourRole,
+    this.hiddenHint = Strings.holdHint,
     required this.role,
     required this.description,
     this.extra = '',
@@ -45,6 +48,11 @@ class RoleHoldScreen extends StatefulWidget {
   });
   final String name;
   final int night;
+
+  /// Replaces "NOĆ n" (Uljez shows its round); [heading] and [hiddenHint] are
+  /// the small label over the shown text and the hint on the hidden card.
+  final String? header;
+  final String heading, hiddenHint;
   final String role, description, extra;
   final VoidCallback? onRoles;
   @override
@@ -81,7 +89,7 @@ class _RoleHoldState extends State<RoleHoldScreen> {
                     ),
                   ),
                   Text(
-                    Strings.night(widget.night),
+                    widget.header ?? Strings.night(widget.night),
                     style: const TextStyle(fontSize: 18, color: _nightMuted),
                   ),
                 ],
@@ -137,21 +145,21 @@ class _RoleHoldState extends State<RoleHoldScreen> {
     );
   }
 
-  Widget _hidden() => const Column(
+  Widget _hidden() => Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(Icons.touch_app_outlined, size: 96, color: Color(0xFF5A5A66)),
-      SizedBox(height: 16),
-      Text(
+      const Icon(Icons.touch_app_outlined, size: 96, color: Color(0xFF5A5A66)),
+      const SizedBox(height: 16),
+      const Text(
         Strings.holdHere,
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
       ),
-      SizedBox(height: 16),
+      const SizedBox(height: 16),
       Text(
-        Strings.holdHint,
+        widget.hiddenHint,
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 18, color: _nightMuted, height: 1.4),
+        style: const TextStyle(fontSize: 18, color: _nightMuted, height: 1.4),
       ),
     ],
   );
@@ -159,9 +167,9 @@ class _RoleHoldState extends State<RoleHoldScreen> {
   Widget _shown() => Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      const Text(
-        Strings.yourRole,
-        style: TextStyle(
+      Text(
+        widget.heading,
+        style: const TextStyle(
           fontSize: 18,
           color: _nightMuted,
           letterSpacing: 3,
@@ -201,26 +209,36 @@ class NightScreen extends StatefulWidget {
   const NightScreen({
     super.key,
     required this.night,
+    this.header,
+    this.title = Strings.nightTitle,
+    this.confirmLabel = Strings.confirm,
     required this.hint,
     required this.targets,
     required this.onConfirm,
     this.special = false,
-    this.picks = 1,
-    this.picked = const [],
+    this.targets2 = const [],
+    this.picked,
+    this.picked2,
     this.showSpecial = true,
   });
   final int night;
+
+  /// Replaces "NOĆ n", the title and the button text (Uljez's vote and guess
+  /// use this same screen).
+  final String? header;
+  final String title, confirmLabel;
   final String hint;
   final List<NightItem> targets;
 
   /// The switch every phone carries; the TV gives the restored value.
   final bool special;
 
-  /// 2 on night 1 for every phone; the first and second pick go out together.
-  final int picks;
+  /// Night 1: a second list, a second pick on every phone; both go out
+  /// together.
+  final List<NightItem> targets2;
 
   /// Restored picks after a reload.
-  final List<int> picked;
+  final int? picked, picked2;
   final bool showSpecial;
   final void Function(int target, int? second, bool special) onConfirm;
   @override
@@ -228,15 +246,39 @@ class NightScreen extends StatefulWidget {
 }
 
 class _NightState extends State<NightScreen> {
-  late final List<int> _picked = [...widget.picked];
+  late int? _p1 = widget.picked, _p2 = widget.picked2;
   late bool _special = widget.special;
   bool _sent = false; // the same "done" look for every role
 
-  void _tap(int id) {
-    if (_picked.remove(id)) return;
-    if (_picked.length == widget.picks) _picked.removeLast();
-    _picked.add(id);
-  }
+  Widget _list(
+    List<NightItem> items,
+    int? picked,
+    String prefix,
+    void Function(int) pick,
+  ) => Column(
+    children: [
+      for (final t in items)
+        _row(
+          key: ValueKey('$prefix-${t.id}'),
+          name: t.label,
+          on: picked == t.id,
+          face: const SizedBox(
+            key: ValueKey('face'),
+            width: 44,
+            height: 44,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFF9A9AA6),
+              ),
+            ),
+          ),
+          border: const Color(0xFFB8B8C2),
+          fill: _nightCard,
+          onTap: _sent ? null : () => setState(() => pick(t.id)),
+        ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +291,7 @@ class _NightState extends State<NightScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                Strings.night(widget.night),
+                widget.header ?? Strings.night(widget.night),
                 style: const TextStyle(
                   fontSize: 18,
                   color: _nightMuted,
@@ -258,8 +300,8 @@ class _NightState extends State<NightScreen> {
                 ),
               ),
               const SizedBox(height: 14),
-              const Text(
-                Strings.nightTitle,
+              Text(
+                widget.title,
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 14),
@@ -281,29 +323,11 @@ class _NightState extends State<NightScreen> {
               Expanded(
                 child: ListView(
                   children: [
-                    for (final t in widget.targets)
-                      _row(
-                        key: ValueKey('night-${t.id}'),
-                        name: t.label,
-                        on: _picked.contains(t.id),
-                        note: widget.picks == 2 && _picked.contains(t.id)
-                            ? '${_picked.indexOf(t.id) + 1}'
-                            : '',
-                        face: const SizedBox(
-                          key: ValueKey('face'),
-                          width: 44,
-                          height: 44,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFF9A9AA6),
-                            ),
-                          ),
-                        ),
-                        border: const Color(0xFFB8B8C2),
-                        fill: _nightCard,
-                        onTap: _sent ? null : () => setState(() => _tap(t.id)),
-                      ),
+                    _list(widget.targets, _p1, 'night', (id) => _p1 = id),
+                    if (widget.targets2.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      _list(widget.targets2, _p2, 'night2', (id) => _p2 = id),
+                    ],
                   ],
                 ),
               ),
@@ -331,16 +355,13 @@ class _NightState extends State<NightScreen> {
                   ),
                   // Always looks the same; with no pick it simply does nothing.
                   onPressed: () {
-                    if (_picked.length < widget.picks || _sent) return;
+                    final two = widget.targets2.isNotEmpty;
+                    if (_p1 == null || (two && _p2 == null) || _sent) return;
                     setState(() => _sent = true);
-                    widget.onConfirm(
-                      _picked[0],
-                      widget.picks == 2 ? _picked[1] : null,
-                      _special,
-                    );
+                    widget.onConfirm(_p1!, two ? _p2 : null, _special);
                   },
                   child: Text(
-                    _sent ? Strings.sent : Strings.confirm,
+                    _sent ? Strings.sent : widget.confirmLabel,
                     style: TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -791,6 +812,54 @@ class WolfRolesInfoScreen extends StatelessWidget {
   );
 }
 
+/// "Razgovor danju" with - and + (30 s steps, 0:30 to 5:00), shared by the
+/// games that have a discussion.
+class DiscussRow extends StatelessWidget {
+  const DiscussRow({super.key, required this.seconds, required this.onChange});
+  final int seconds;
+  final void Function(int seconds) onChange;
+
+  static const min = 30, max = 300, step = 30;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
+    decoration: BoxDecoration(
+      color: surface,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Row(
+      children: [
+        const Expanded(
+          child: Text(Strings.discussion, style: TextStyle(fontSize: 19)),
+        ),
+        _btn('discuss-less', Strings.shorter, '−', seconds <= min, -step),
+        SizedBox(
+          width: 64,
+          child: Text(
+            Strings.minutes(seconds),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          ),
+        ),
+        _btn('discuss-more', Strings.longer, '+', seconds >= max, step),
+      ],
+    ),
+  );
+
+  Widget _btn(String key, String tip, String sign, bool off, int d) =>
+      IconButton(
+        key: ValueKey(key),
+        tooltip: tip,
+        onPressed: off ? null : () => onChange(seconds + d),
+        icon: Text(sign, style: const TextStyle(fontSize: 26)),
+        style: IconButton.styleFrom(
+          minimumSize: const Size(56, 56),
+          backgroundColor: raised,
+        ),
+      );
+}
+
 /// Host: Vukodlak's details. Only the switches live here; the TV owns state.
 class WolfSettingsView extends StatelessWidget {
   const WolfSettingsView({
@@ -810,8 +879,6 @@ class WolfSettingsView extends StatelessWidget {
   final void Function(bool) onHidden;
   final void Function(int seconds) onDiscuss;
   final VoidCallback onPickRoles, onShowRoles;
-
-  static const minDiscuss = 30, maxDiscuss = 300, stepDiscuss = 30;
 
   @override
   Widget build(BuildContext context) {
@@ -860,55 +927,7 @@ class WolfSettingsView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            children: [
-              const Expanded(
-                child: Text(Strings.discussion, style: TextStyle(fontSize: 19)),
-              ),
-              IconButton(
-                key: const ValueKey('discuss-less'),
-                tooltip: Strings.shorter,
-                onPressed: discussSeconds <= minDiscuss
-                    ? null
-                    : () => onDiscuss(discussSeconds - stepDiscuss),
-                icon: const Text('−', style: TextStyle(fontSize: 26)),
-                style: IconButton.styleFrom(
-                  minimumSize: const Size(56, 56),
-                  backgroundColor: raised,
-                ),
-              ),
-              SizedBox(
-                width: 64,
-                child: Text(
-                  Strings.minutes(discussSeconds),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              IconButton(
-                key: const ValueKey('discuss-more'),
-                tooltip: Strings.longer,
-                onPressed: discussSeconds >= maxDiscuss
-                    ? null
-                    : () => onDiscuss(discussSeconds + stepDiscuss),
-                icon: const Text('+', style: TextStyle(fontSize: 26)),
-                style: IconButton.styleFrom(
-                  minimumSize: const Size(56, 56),
-                  backgroundColor: raised,
-                ),
-              ),
-            ],
-          ),
-        ),
+        DiscussRow(seconds: discussSeconds, onChange: onDiscuss),
       ],
     );
   }

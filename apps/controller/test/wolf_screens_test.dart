@@ -4,6 +4,8 @@ import 'package:controller/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'look.dart';
+
 Future<void> _show(WidgetTester t, Widget w, {double width = 390}) async {
   t.view.physicalSize = Size(width, 1600);
   t.view.devicePixelRatio = 1;
@@ -17,6 +19,8 @@ const _night = [
   NightItem(3, 'Josip'),
   NightItem(4, 'Luka'),
 ];
+
+const _fiveWolf = [..._night, NightItem(5, 'Maja')];
 
 /// A sum, like 7 x 8: five answers, no faces.
 const _sum = [
@@ -33,41 +37,6 @@ const _people = [
   WolfTarget(3, 'Josip', 'bear', 2),
   WolfTarget(4, 'Luka', 'fox', 3),
 ];
-
-/// Everything that can show on screen except the one allowed text: type,
-/// position, size, colour of every box and every text. Equal strings mean
-/// two phones look the same.
-String _look(WidgetTester t, Set<String> skip) {
-  final b = StringBuffer();
-  void visit(Element e) {
-    final w = e.widget;
-    if (w is RichText && skip.contains(w.text.toPlainText())) return;
-    if (w is Text && skip.contains(w.data)) return;
-    if (w is SizedBox && w.key == const ValueKey('face')) {
-      b.writeln('face ${e.renderObject!.paintBounds}');
-      return;
-    }
-    final r = e.renderObject;
-    if (r is RenderBox && r.hasSize) {
-      b.write('${w.runtimeType} ${r.localToGlobal(Offset.zero)} ${r.size}');
-      if (w is DecoratedBox) b.write(' ${w.decoration}');
-      if (w is RichText) {
-        b.write(
-          ' ${w.text.toPlainText()} ${w.text.style?.color}'
-          ' ${w.text.style?.fontSize}',
-        );
-      }
-      if (w is ColoredBox) b.write(' ${w.color}');
-      if (w is PhysicalShape) b.write(' ${w.color}');
-      if (w is Opacity) b.write(' ${w.opacity}');
-      b.writeln();
-    }
-    e.visitChildren(visit);
-  }
-
-  visit(t.element(find.byType(MaterialApp)));
-  return b.toString();
-}
 
 void main() {
   group('hold to see', () {
@@ -140,9 +109,9 @@ void main() {
             onConfirm: (_, _, _) {},
           ),
         );
-        final look = _look(t, {h});
-        first ??= look;
-        expect(look, first, reason: h);
+        final got = look(t, {h});
+        first ??= got;
+        expect(got, first, reason: h);
         expect(find.text(h), findsOneWidget);
       }
     });
@@ -159,7 +128,7 @@ void main() {
           onConfirm: (_, _, _) {},
         ),
       );
-      final plain = _look(t, {'a'});
+      final plain = look(t, {'a'});
       await t.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -174,7 +143,7 @@ void main() {
           ),
         ),
       );
-      expect(_look(t, {'a'}), isNot(plain));
+      expect(look(t, {'a'}), isNot(plain));
     });
 
     Future<String> phone(
@@ -198,7 +167,7 @@ void main() {
         await t.tap(find.byKey(const ValueKey('night-confirm')));
         await t.pump();
       }
-      return _look(t, {hint, ...items.map((i) => i.label)});
+      return look(t, {hint, ...items.map((i) => i.label)});
     }
 
     testWidgets('a sum phone looks like a wolf phone, picking and answered', (
@@ -235,23 +204,44 @@ void main() {
             night: 1,
             hint: hint,
             targets: items,
-            picks: 2,
+            targets2: items,
             onConfirm: (_, _, _) {},
           ),
         );
         await t.tap(find.byKey(const ValueKey('night-1')));
-        await t.tap(find.byKey(const ValueKey('night-3')));
+        await t.tap(find.byKey(const ValueKey('night2-3')));
         await t.pump();
-        final before = _look(t, {hint, ...items.map((i) => i.label)});
+        final before = look(t, {hint, ...items.map((i) => i.label)});
         await t.tap(find.byKey(const ValueKey('night-confirm')));
         await t.pump();
-        return before + _look(t, {hint, ...items.map((i) => i.label)});
+        return before + look(t, {hint, ...items.map((i) => i.label)});
       }
 
       await two('x', _night); // leaves the test pointer in a known place
-      final wolf = await two('Koga posjećujete?', _night);
-      final sum = await two('Koliko je 7 × 8?', _sum.sublist(0, 4));
+      final wolf = await two('Koga posjećujete?', _fiveWolf);
+      final sum = await two('Koliko je 7 × 8?', _sum);
       expect(sum, wolf);
+    });
+
+    testWidgets('a 5-row list and a 7-row list are told apart by the check', (
+      t,
+    ) async {
+      Future<String> phone(List<NightItem> items) async {
+        await _show(
+          t,
+          NightScreen(
+            night: 2,
+            hint: 'h',
+            targets: items,
+            onConfirm: (_, _, _) {},
+          ),
+        );
+        return look(t, {'h', ...items.map((i) => i.label)});
+      }
+
+      final seven = [for (var i = 0; i < 7; i++) NightItem(i, 'P$i')];
+      expect(await phone(seven), isNot(await phone(_sum)));
+      expect(await phone(seven), await phone(seven.reversed.toList()));
     });
 
     testWidgets('after Potvrdi every role shows Poslano and locks the list', (

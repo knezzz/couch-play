@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
+import 'look.dart';
 
 LobbyState _lobby({
   int me = 0,
@@ -32,6 +33,7 @@ Future<FakeConnection> _app(WidgetTester t, {int me = 1}) async {
   t.view.devicePixelRatio = 1;
   addTearDown(t.view.reset);
   final c = FakeConnection();
+  await t.pumpWidget(const SizedBox()); // a fresh App state per phone
   await t.pumpWidget(App(c));
   await _send(t, c, Welcome(me, me, 'tok'));
   await _send(t, c, _lobby());
@@ -46,12 +48,14 @@ const _role = RoleMsg(WolfRole.seer, [], [
 
 String _pad(String s) => s.padRight(wolfTextWidth);
 
-NightPrompt _night({int night = 2, int picks = 1}) => NightPrompt(
+NightPrompt _night({int night = 2, bool two = false}) => NightPrompt(
   night: night,
   text: _pad('Čiju ulogu želiš vidjeti?'),
   choices: const ['P0', 'P2', 'P3'],
   ids: const [0, 2, 3],
-  picks: picks,
+  choices2: two ? const ['P0', 'P2', 'P3'] : const [],
+  ids2: two ? const [0, 2, 3] : const [],
+  picks: two ? 2 : 1,
 );
 
 void main() {
@@ -88,7 +92,7 @@ void main() {
   ) async {
     final c = await _app(t);
     await _send(t, c, _role);
-    await _send(t, c, _night(night: 1, picks: 2));
+    await _send(t, c, _night(night: 1, two: true));
     await t.tap(find.byKey(const ValueKey('night-0')));
     await t.tap(find.byKey(const ValueKey('night-confirm')));
     expect(
@@ -96,12 +100,51 @@ void main() {
       isEmpty,
       reason: 'one pick is not enough',
     );
-    await t.tap(find.byKey(const ValueKey('night-3')));
+    await t.tap(find.byKey(const ValueKey('night2-3')));
     await t.pump();
     await t.tap(find.byKey(const ValueKey('night-confirm')));
     final p = c.sent.last as NightPick;
     expect((p.target, p.second), (0, 3));
   });
+
+  testWidgets(
+    '7 alive: a wolf prompt and a sum prompt (7 answers) look identical',
+    (t) async {
+      Future<String> phone(NightPrompt p) async {
+        final c = await _app(t);
+        await _send(t, c, _role);
+        await _send(t, c, p);
+        return look(t, {p.text.trim(), ...p.choices});
+      }
+
+      NightPrompt prompt(String text, List<String> labels) => NightPrompt(
+        night: 2,
+        text: _pad(text),
+        choices: labels,
+        ids: [for (var i = 0; i < labels.length; i++) i],
+      );
+      final wolf = prompt('Koga posjećujete?', [
+        for (var i = 0; i < 7; i++) 'Igrač $i',
+      ]);
+      final sum = prompt('Koliko je 7 × 8?', [
+        '54',
+        '56',
+        '58',
+        '63',
+        '49',
+        '64',
+        '48',
+      ]);
+      final five = prompt('Koliko je 7 × 8?', ['54', '56', '58', '63', '49']);
+      await phone(wolf); // pointer warm-up
+      expect(await phone(sum), await phone(wolf));
+      expect(
+        await phone(five),
+        isNot(await phone(wolf)),
+        reason: 'the check can fail',
+      );
+    },
+  );
 
   testWidgets('the vote goes out as Vote; skipping sends null', (t) async {
     final c = await _app(t);

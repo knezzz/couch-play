@@ -188,6 +188,27 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | save | Spremi | Save | host: role switches |
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
+
+### Uljez (phone)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| uljezName | Uljez | Impostor | game card, details |
+| gameBlurb (Uljez) | Svi imaju istu riječ, osim uljeza. Nađi ga. | Everyone has the same word except the impostor. Find them. | game card |
+| uljezRound(n) | ULJEZ · RUNDA {n} | IMPOSTOR · ROUND {n} | word card, top right |
+| yourWord | TVOJA RIJEČ | YOUR WORD | word card, held |
+| wordHint | Tvoja riječ se vidi samo dok držiš. | Your word shows only while you hold. | word card, hidden |
+| wordNote | Netko možda ima drugu riječ. Možda i ti. | Someone may have a different word. Maybe you. | word card, held (same for everyone) |
+| uljezVoteHeader | GLASANJE | VOTE | vote |
+| whoIsImpostor | Tko je uljez? | Who is the impostor? | vote title |
+| caught | Uhvatili su te! | They caught you! | the caught impostor's guess |
+| guessHeader | POGAĐANJE | GUESSING | the guess |
+| caughtHint(w) | Tvoja riječ je bila {w}. Pogodi riječ sela i ipak pobjeđuješ. | Your word was {w}. Guess the village's word and you still win. | the guess |
+| uljezWinner | Selo je uhvatilo uljeza. / Uljez je pobijedio. | The village caught the impostor. / The impostor won. | end |
+| villageWord / impostorWord / impostorsAre | Riječ sela / Riječ uljeza / Uljez | Village word / Impostor word / Impostor | end |
+| wordPack | Paket riječi | Word pack | host settings |
+| impostorCount | Broj uljeza | Number of impostors | host settings, 7-8 players |
+| impostors(n) | 1 uljez / 2 uljeza | 1 impostor / 2 impostors | host settings |
 | sent | Poslano | Sent | night screen button after Potvrdi (same for every role) |
 | nightSpecial | Iskoristi posebnu moć (ako je imaš) | Use your special power (if you have one) | night screen switch; the same on every phone, used by few roles |
 | farewellHint | Više nisi u igri. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom. | You are no longer in the game. If you have one more move, pick whom you take with you. | farewell screen, same for every player who is out |

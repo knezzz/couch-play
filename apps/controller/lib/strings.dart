@@ -224,6 +224,13 @@ abstract final class Strings {
   static const guessHeader = 'POGAĐANJE';
   static String caughtHint(String word) =>
       'Tvoja riječ je bila $word. Pogodi riječ sela i ipak pobjeđuješ.';
+  static String uljezWinner(UljezWinner w) => switch (w) {
+    UljezWinner.village => 'Selo je uhvatilo uljeza.',
+    UljezWinner.impostors => 'Uljez je pobijedio.',
+  };
+  static const villageWord = 'Riječ sela';
+  static const impostorWord = 'Riječ uljeza';
+  static const impostorsAre = 'Uljez';
   static const wordPack = 'Paket riječi';
   static const impostorCount = 'Broj uljeza';
   static String impostors(int n) => n == 1 ? '1 uljez' : '$n uljeza';
