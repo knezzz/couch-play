@@ -176,8 +176,8 @@ Reference: the design canvas, page "Konzola i Vukodlak" (copy in `docs/design/co
   game, OK plays, ▼ opens its settings, Back exits. The QR code and the join address sit in the top-left corner; the
   players' characters top right. The remote and the host's phone drive the same choice. Replaces the lobby layout.
 - **Games full screen:** no frame or side panels; the quiz uses the whole screen.
-- **Quiz ticker:** a 20-segment bar along the top edge loses one segment per second (red for the last 5), a large ring
-  countdown shows the seconds, and the TV ticks for the whole question, faster at the end.
+- **Quiz ticker:** a 20-segment bar along the top edge loses one segment per second (red for the last 5), and the TV
+  ticks for the whole question, faster at the end. Only the bar: no ring countdown (user choice, 2026-11-17).
 
 ### Vukodlak (user request, 2026-11-17)
 
