@@ -121,7 +121,7 @@ void main() {
       expect(supportedGames, contains(GameKind.objasni));
       expect(supportedGames, contains(GameKind.blef));
       expect(supportedGames, contains(GameKind.tkobi));
-      expect(supportedGames.length, 8);
+      expect(supportedGames.length, GameKind.values.length);
       double w(int i) => t.getSize(dots.at(i)).width;
       expect(w(0), 32); // 24 + the 4 px margins
       expect(w(1), 16);

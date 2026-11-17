@@ -104,6 +104,23 @@ abstract final class Strings {
   static const tkobiWrong = 'Ovaj put bez pogotka.';
   static const crowned = 'Pobjednik';
 
+  // Kao svi
+  static const kaosviTitle = 'Odgovori kao većina';
+  static const kaosviSentLabel = 'Tvoj odgovor je poslan.';
+  static const mergeTitle = 'Spoji slične odgovore';
+  static const mergeHint =
+      'Dodirni dva odgovora da ih spojiš (jabuka + jabuke).';
+  static const mergeWait = 'Domaćin spaja slične odgovore. Gledaj TV.';
+  static const done = 'Gotovo';
+  static const yourAnswer = 'Tvoj odgovor';
+  static const noAnswer = 'Bez odgovora';
+  static String groupSize(int n) =>
+      n == 1 ? 'Sam s tim odgovorom' : 'Tvoja skupina: $n';
+  static const largestGroup = 'Najveća skupina!';
+  static const loneAnswer = 'Jedini takav odgovor';
+  static String signedPoints(int n) =>
+      n > 0 ? '+${scoreText(n)}' : (n < 0 ? '−${scoreText(-n)}' : scoreText(0));
+
   static const send = 'Pošalji';
   static const blefHint = 'Tvoj odgovor';
   static const blefSpikeTitle = 'Blef: probno tipkanje';
@@ -198,7 +215,8 @@ abstract final class Strings {
         '${pack(kolikoPacks, s.kolikoPackId)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
       GameKind.objasni =>
         '${pack(objasniPacks, s.objasniPackId)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
-      GameKind.kaosvi => '${questions(s.kaosviQuestions)} · ${s.kaosviTarget} bodova',
+      GameKind.kaosvi =>
+        '${questions(s.kaosviQuestions)} · ${s.kaosviTarget} bodova',
     };
   }
 

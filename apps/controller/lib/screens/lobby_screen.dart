@@ -7,6 +7,7 @@ import '../theme.dart';
 import '../strings.dart';
 import 'game_cards.dart';
 import 'blef_screens.dart';
+import 'kaosvi_screens.dart';
 import 'koliko_screens.dart';
 import 'objasni_screens.dart';
 import 'pack_grid.dart';
@@ -45,6 +46,9 @@ GameSettings copySettings(
   String? blefPackId,
   int? tkobiPrompts,
   String? tkobiPackId,
+  int? kaosviQuestions,
+  int? kaosviTarget,
+  String? kaosviPackId,
 }) => GameSettings(
   quizSeconds: quizSeconds ?? s.quizSeconds,
   quizQuestions: quizQuestions ?? s.quizQuestions,
@@ -68,6 +72,9 @@ GameSettings copySettings(
   blefPackId: blefPackId ?? s.blefPackId,
   tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
   tkobiPackId: tkobiPackId ?? s.tkobiPackId,
+  kaosviQuestions: kaosviQuestions ?? s.kaosviQuestions,
+  kaosviTarget: kaosviTarget ?? s.kaosviTarget,
+  kaosviPackId: kaosviPackId ?? s.kaosviPackId,
 );
 
 class LobbyScreen extends StatefulWidget {
@@ -262,6 +269,19 @@ class _LobbyScreenState extends State<LobbyScreen> {
       onBack: () => Navigator.of(context).pop(),
     ),
   );
+
+  Widget _kaosviSettings(LobbyState l, void Function(GameSettings) change) {
+    final s = l.settings;
+    return KaosviSettingsView(
+      questions: s.kaosviQuestions,
+      target: s.kaosviTarget,
+      packs: [for (final p in l.kaosviPacks) (p.id, p.title)],
+      packId: s.kaosviPackId ?? l.kaosviPacks.firstOrNull?.id,
+      onQuestions: (v) => change(copySettings(s, kaosviQuestions: v)),
+      onTarget: (v) => change(copySettings(s, kaosviTarget: v)),
+      onPack: (id) => change(copySettings(s, kaosviPackId: id)),
+    );
+  }
 
   Widget _tkobiSettings(LobbyState l, void Function(GameSettings) change) {
     final s = l.settings;
@@ -463,6 +483,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     _blefSettings(l, change)
                   else if (kind == GameKind.tkobi)
                     _tkobiSettings(l, change)
+                  else if (kind == GameKind.kaosvi)
+                    _kaosviSettings(l, change)
                   else if (kind == GameKind.quiz || kind == GameKind.curve)
                     _GameSettings(kind, s, onChange: change),
                   if (kind == GameKind.curve) ...[

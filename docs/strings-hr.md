@@ -216,6 +216,22 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
 
+### Kao svi (phone)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| kaosviTitle | Odgovori kao većina | Answer like the majority | above the field |
+| kaosviSentLabel | Tvoj odgovor je poslan. | Your answer is sent. | after the TV accepted it (the answer stays visible) |
+| mergeTitle | Spoji slične odgovore | Merge similar answers | host's merge screen |
+| mergeHint | Dodirni dva odgovora da ih spojiš (jabuka + jabuke). | Tap two answers to merge them. | host's merge screen |
+| mergeWait | Domaćin spaja slične odgovore. Gledaj TV. | The host is merging similar answers. Watch the TV. | the other phones |
+| done | Gotovo | Done | host's merge screen |
+| yourAnswer / noAnswer | Tvoj odgovor / Bez odgovora | Your answer / No answer | result |
+| groupSize(n) | Tvoja skupina: {n} / Sam s tim odgovorom | Your group: {n} / Alone with that answer | result |
+| largestGroup | Najveća skupina! | The largest group! | result |
+| loneAnswer | Jedini takav odgovor | The only such answer | result, the lone -1 case |
+| signedPoints(n) | +1 bod / −1 bod / 0 bodova | +1 / −1 / 0 points | result |
+
 ### Tko bi? (phone)
 
 | key | Croatian | English | where it shows |

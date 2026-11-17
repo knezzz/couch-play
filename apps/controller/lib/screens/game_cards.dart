@@ -143,6 +143,7 @@ const supportedGames = [
   GameKind.koliko,
   GameKind.blef,
   GameKind.tkobi,
+  GameKind.kaosvi,
 ];
 
 /// The host's game picker: one card per game and page dots.
