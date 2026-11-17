@@ -12,6 +12,7 @@ import '../server/game_server.dart';
 import '../sound/sfx.dart';
 import 'bots.dart';
 import 'game_ready.dart';
+import 'party_text.dart';
 import 'uljez_match.dart';
 import 'uljez_text.dart';
 import 'wolf_match.dart';
@@ -468,6 +469,19 @@ class Session {
         final pack = uljezPack(_settings.uljezPackId);
         if (pack == null) return Strings.packUnavailable;
         _startUljez(parts, pack);
+      // The party games: their TV screens are not built yet (the flags in game_ready.dart).
+      case GameKind.objasni:
+        if (!objasniTvReady) return PartyText.soon;
+        return PartyText.soon; // the session wiring follows
+      case GameKind.koliko:
+        if (!kolikoTvReady) return PartyText.soon;
+        return PartyText.soon;
+      case GameKind.blef:
+        if (!blefTvReady) return PartyText.soon;
+        return PartyText.soon;
+      case GameKind.tkobi:
+        if (!tkobiTvReady) return PartyText.soon;
+        return PartyText.soon;
     }
     onStart?.call(game, packId);
     return null;
@@ -696,6 +710,10 @@ class Session {
   /// of the session itself switch these on.
   bool wolfTvReady = kWolfTvReady;
   bool uljezTvReady = kUljezTvReady;
+  bool objasniTvReady = kObjasniTvReady;
+  bool kolikoTvReady = kKolikoTvReady;
+  bool blefTvReady = kBlefTvReady;
+  bool tkobiTvReady = kTkobiTvReady;
   WolfMatch? _wolf;
   Timer? _wolfEndTimer;
   WolfMatch? get wolf => _wolf;
