@@ -71,6 +71,9 @@ abstract final class Strings {
 
   // --- Console home ---
 
+  static String curveBreakTitle(int round) => 'Rezultat nakon runde $round';
+  static String curveBreakTarget(int target) => 'Pobjeđuje tko prvi dosegne $target';
+  static String curveBreakNext(int seconds) => 'Sljedeća runda za $seconds s';
   static const curveCountdownHint = 'Pronađi svoju točku. Strelica pokazuje kamo kreneš.';
 
   static const homeJoin = 'Skeniraj i pridruži se';

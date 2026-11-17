@@ -16,6 +16,7 @@ import 'server/lan_address.dart';
 import 'session/session.dart';
 import 'ui/back_guard.dart';
 import 'ui/curve/curve_game.dart';
+import 'ui/curve/round_break_card.dart';
 import 'ui/home_screen.dart';
 import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
@@ -203,6 +204,25 @@ class _TvAppState extends State<TvApp> {
     // The next round starts by itself after the scores break (Session.roundBreak).
   }
 
+  /// The scores for a few seconds after each Curve round (Task 37), in place of the field.
+  Widget? _breakOverlay() {
+    final sim = _gameSim;
+    if (!_session.roundBreak || sim == null) return null;
+    final infos = {for (final p in _session.playerInfos) p.colorIndex: p};
+    return Positioned.fill(
+      child: RoundBreakCard(
+        round: _session.curveRound,
+        target: sim.target,
+        remaining: () => _session.roundBreakRemaining,
+        players: [
+          for (final h in sim.heads)
+            if (infos[h.id] case final p?)
+              BreakPlayer(name: p.name, colorIndex: p.colorIndex, character: p.character, score: sim.scores[h.id] ?? 0),
+        ],
+      ),
+    );
+  }
+
   /// Over the frozen game while it waits for players to come back.
   Widget? _pauseOverlay() {
     if (!_session.paused) return null;
@@ -264,6 +284,7 @@ class _TvAppState extends State<TvApp> {
               ? Scaffold(
                   body: Stack(children: [
                     GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false),
+                    ?_breakOverlay(),
                     ?_pauseOverlay(),
                   ]),
                 )
