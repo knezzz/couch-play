@@ -41,7 +41,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 31 | Quiz ticker (person, 2026-11-17) | done on macOS (a9bf156 … c6cc2a0); not heard yet, goes to the TV with Task 30 | lead |
 | 32 | Sound in every game and the menus (person, 2026-11-17) | queued to lead | lead |
 | 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | queued to lead | lead + content |
-| 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | queued to lead | lead |
+| 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | queued to lead | lead + content |
 
 ## Open questions for the person
@@ -283,3 +283,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   BRAVIA only). bd9ff83 on the TV.
 - 2026-11-17: Task 31 accepted (bar only, segment = limit/20; faster ending with urgent tick, heartbeat, time-up;
   review clean, QA pass). Not heard yet.
+- 2026-11-17: fd838d6 on the TV (console home, ticker, new icons + rings, Vukodlak and Uljez playable but not yet
+  QA'd with 5-8 phones). Task 34 accepted (review clean, QA pass).

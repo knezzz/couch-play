@@ -935,10 +935,10 @@ Reference: canvas page "Konzola i Vukodlak" (`Village.dc.html`, `V2WolfNight/Day
 
 Reference: canvas page "Curve pojačanja": icons version **A** (`PuIcons.dc.html`), active effects option **1** (`PuActive.dc.html`).
 
-- [ ] **Step 1:** Redraw the 7 power-up glyphs in `curve_game.dart` as version A (snail, ghost, lightning, thin-over-thick, opposite arrows, broom, arrow through the edge), ink on the green/red/blue disc, readable at board size from the couch. Same in the power-up sheet if one exists in the app.
-- [ ] **Step 2:** Replace the Task 17 indicator (icon + ring beside the head) with rings only: one ring per active effect, centred on the head, in its color (green on you, red from others), draining as time runs out; several effects as concentric rings, outer = longest left. Fat stacks: keep a small dot per stack on its ring. Wrap keeps the white border.
-- [ ] **Step 3:** Update the pixel tests that pinned the old indicator; QA on macOS release; frame times next TV session.
-- [ ] **Step 4: Commit** by path.
+- [x] **Step 1:** Redraw the 7 power-up glyphs in `curve_game.dart` as version A (snail, ghost, lightning, thin-over-thick, opposite arrows, broom, arrow through the edge), ink on the green/red/blue disc, readable at board size from the couch. Same in the power-up sheet if one exists in the app.
+- [x] **Step 2:** Replace the Task 17 indicator (icon + ring beside the head) with rings only: one ring per active effect, centred on the head, in its color (green on you, red from others), draining as time runs out; several effects as concentric rings, outer = longest left. Fat stacks: keep a small dot per stack on its ring. Wrap keeps the white border.
+- [x] **Step 3:** Update the pixel tests that pinned the old indicator; QA on macOS release; frame times next TV session.
+- [x] **Step 4: Commit** by path.
 
 ---
 
