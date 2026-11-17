@@ -27,9 +27,13 @@ class WolfTarget {
 /// One choice on the night screen: a player's name or a sum answer. Both are
 /// drawn in the same row, with the same grey disc.
 class NightItem {
-  const NightItem(this.id, this.label);
+  const NightItem(this.id, this.label, {this.enabled = true, this.note = ''});
   final int id;
   final String label;
+
+  /// False greys the row out and ignores taps (your own name in a vote).
+  final bool enabled;
+  final String note;
 }
 
 /// The role card: hidden until a finger is down.
@@ -258,24 +262,30 @@ class _NightState extends State<NightScreen> {
   ) => Column(
     children: [
       for (final t in items)
-        _row(
-          key: ValueKey('$prefix-${t.id}'),
-          name: t.label,
-          on: picked == t.id,
-          face: const SizedBox(
-            key: ValueKey('face'),
-            width: 44,
-            height: 44,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF9A9AA6),
+        Opacity(
+          opacity: t.enabled ? 1 : 0.5,
+          child: _row(
+            key: ValueKey('$prefix-${t.id}'),
+            name: t.label,
+            on: picked == t.id,
+            face: const SizedBox(
+              key: ValueKey('face'),
+              width: 44,
+              height: 44,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF9A9AA6),
+                ),
               ),
             ),
+            border: const Color(0xFFB8B8C2),
+            fill: _nightCard,
+            note: t.note,
+            onTap: _sent || !t.enabled
+                ? null
+                : () => setState(() => pick(t.id)),
           ),
-          border: const Color(0xFFB8B8C2),
-          fill: _nightCard,
-          onTap: _sent ? null : () => setState(() => pick(t.id)),
         ),
     ],
   );
@@ -714,7 +724,9 @@ class WolfRolesPickScreen extends StatelessWidget {
       (r) =>
           !r.$5 && enabled.contains(r.$1) && r.$1 != 'alpha' && r.$1 != 'lone',
     );
-    final slots = on.length.clamp(0, players - wolves - 2);
+    final slots = (players - wolves - 2) <= 0
+        ? 0
+        : on.length.clamp(0, players - wolves - 2);
     return (wolves, slots, players - wolves - slots);
   }
 

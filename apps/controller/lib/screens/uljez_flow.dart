@@ -58,7 +58,15 @@ class UljezFlow extends StatelessWidget {
         final v = inbox.vote!;
         return UljezVoteScreen(
           key: ValueKey('uljez-vote-${v.day}'),
-          targets: [for (final id in v.ids) NightItem(id, _name(id))],
+          targets: [
+            for (final id in v.ids)
+              NightItem(
+                id,
+                _name(id),
+                enabled: id != myId, // the core refuses a self-vote silently
+                note: id == myId ? Strings.you : '',
+              ),
+          ],
           picked: v.picked,
           onVote: (t) => conn.send(Vote(t)),
         );

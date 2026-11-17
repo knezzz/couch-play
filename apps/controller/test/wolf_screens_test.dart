@@ -525,6 +525,30 @@ void main() {
       expect(sent, ['hunter']);
     });
 
+    test('the mix does not throw with few players', () {
+      for (var n = 0; n <= 4; n++) {
+        expect(
+          () => WolfRolesPickScreen.mix(n, {'seer', 'doc', 'hunter'}),
+          returnsNormally,
+          reason: '$n players',
+        );
+      }
+      expect(WolfRolesPickScreen.mix(2, {'seer'}).$2, 0);
+    });
+
+    testWidgets('the roles pick screen opens with two players', (t) async {
+      await _show(
+        t,
+        WolfRolesPickScreen(
+          players: 2,
+          enabled: const {'seer', 'doc'},
+          onToggle: (_) {},
+          onBack: () {},
+        ),
+      );
+      expect(t.takeException(), isNull);
+    });
+
     test('the mix: 1 wolf up to 6 players, 2 from 7, specials capped', () {
       expect(WolfRolesPickScreen.mix(5, {'seer', 'doc', 'hunter'}), (1, 2, 2));
       expect(WolfRolesPickScreen.mix(6, {'seer'}), (1, 1, 4));

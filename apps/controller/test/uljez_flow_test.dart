@@ -107,6 +107,58 @@ void main() {
     expect(c.sent.last, const Vote(3));
   });
 
+  testWidgets('you cannot vote for yourself: the row is greyed and refuses', (
+    t,
+  ) async {
+    final c = await _app(t, me: 1);
+    await _send(t, c, const UljezWord('Pikachu'));
+    await _send(t, c, const VotePrompt(day: 1, seconds: 20, ids: [0, 1, 2]));
+    expect(find.text(Strings.you), findsOneWidget);
+    await t.tap(find.byKey(const ValueKey('night-1')));
+    await t.pump();
+    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    expect(c.sent.whereType<Vote>(), isEmpty, reason: 'nothing picked');
+    final dim = t.widget<Opacity>(
+      find
+          .ancestor(
+            of: find.byKey(const ValueKey('night-1')),
+            matching: find.byType(Opacity),
+          )
+          .first,
+    );
+    expect(dim.opacity, lessThan(1));
+    await t.tap(find.byKey(const ValueKey('night-2')));
+    await t.pump();
+    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    expect(c.sent.last, const Vote(2));
+  });
+
+  testWidgets('you cannot vote for yourself: the row is greyed and refuses', (
+    t,
+  ) async {
+    final c = await _app(t, me: 1);
+    await _send(t, c, const UljezWord('Pikachu'));
+    await _send(t, c, const VotePrompt(day: 1, seconds: 20, ids: [0, 1, 2]));
+    expect(find.text(Strings.you), findsOneWidget);
+    await t.tap(find.byKey(const ValueKey('night-1')));
+    await t.pump();
+    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    expect(c.sent.whereType<Vote>(), isEmpty, reason: 'nothing picked');
+    final dim = t.widget<Opacity>(
+      find
+          .ancestor(
+            of: find.byKey(const ValueKey('night-1')),
+            matching: find.byType(Opacity),
+          )
+          .first,
+    );
+    expect(dim.opacity, lessThan(1));
+    await t.tap(find.byKey(const ValueKey('night-2')));
+    await t.pump();
+    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    expect(c.sent.last, const Vote(2));
+  });
+
   testWidgets('the next turn after a vote brings the word card back', (
     t,
   ) async {
