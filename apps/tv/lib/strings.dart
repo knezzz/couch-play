@@ -58,6 +58,8 @@ abstract final class Strings {
 
   // --- Console home ---
 
+  static String curveRound(int n, int target) => 'Runda $n · do $target';
+
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';
   static String playerCount(int n) => n == 1 ? '1 igrač' : '$n igrača';

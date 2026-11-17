@@ -16,6 +16,7 @@ import 'server/lan_address.dart';
 import 'session/session.dart';
 import 'ui/back_guard.dart';
 import 'ui/curve/curve_game.dart';
+import 'ui/curve/curve_hud.dart';
 import 'ui/home_screen.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
@@ -167,6 +168,18 @@ class _TvAppState extends State<TvApp> {
     });
   }
 
+  /// Who is in the running Curve match and their score (the sim's head ids are the colour indices).
+  List<CurveHudPlayer> _hudPlayers() {
+    final sim = _gameSim;
+    if (sim == null) return const [];
+    final infos = {for (final p in _session.playerInfos) p.colorIndex: p};
+    return [
+      for (final h in sim.heads)
+        if (infos[h.id] case final p?)
+          CurveHudPlayer(name: p.name, colorIndex: p.colorIndex, character: p.character, score: sim.scores[h.id] ?? 0, away: !p.connected),
+    ];
+  }
+
   void _newGame(CurveSim sim) {
     if (_qaPowerUp.isNotEmpty) {
       final human = _session.players.where((p) => !p.bot).firstOrNull;
@@ -264,7 +277,15 @@ class _TvAppState extends State<TvApp> {
           : game != null
               ? Scaffold(
                   body: Stack(children: [
-                    GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false),
+                    Column(children: [
+                      CurveHud(
+                        round: _session.curveRound,
+                        target: _gameSim?.target ?? 0,
+                        modeName: Strings.curveModeName(_session.settings.curveMode),
+                        players: _hudPlayers(),
+                      ),
+                      Expanded(child: GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false)),
+                    ]),
                     ?_pauseOverlay(),
                   ]),
                 )
