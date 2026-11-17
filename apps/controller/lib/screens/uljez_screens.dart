@@ -37,7 +37,9 @@ class UljezVoteScreen extends StatelessWidget {
     super.key,
     required this.targets,
     required this.onVote,
+    this.picked,
   });
+  final int? picked;
   final List<NightItem> targets;
   final void Function(int target) onVote;
 
@@ -49,6 +51,7 @@ class UljezVoteScreen extends StatelessWidget {
     confirmLabel: Strings.vote,
     hint: '',
     showSpecial: false,
+    picked: picked,
     targets: targets,
     onConfirm: (t, _, _) => onVote(t),
   );

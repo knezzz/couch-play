@@ -435,10 +435,14 @@ class VoteScreen extends StatefulWidget {
     required this.onVote,
     required this.onSkip,
     this.canVote = true,
+    this.picked,
   });
 
   /// False for a fool the village spared: he may not vote.
   final bool canVote;
+
+  /// The vote the TV already has from this phone (after a reload).
+  final int? picked;
   final int day, secondsLeft, selfId;
   final List<WolfTarget> targets;
   final void Function(int target) onVote;
@@ -448,7 +452,7 @@ class VoteScreen extends StatefulWidget {
 }
 
 class _VoteState extends State<VoteScreen> {
-  int? _pick;
+  late int? _pick = widget.picked;
   late int _left = widget.secondsLeft;
   late final Timer _tick = Timer.periodic(const Duration(seconds: 1), (_) {
     if (_left > 0) setState(() => _left--);

@@ -99,6 +99,7 @@ class WolfFlow extends StatelessWidget {
           secondsLeft: v.seconds,
           selfId: myId,
           canVote: v.canVote,
+          picked: v.picked,
           targets: [
             for (final id in v.ids)
               if (lobby.players.any((p) => p.id == id))

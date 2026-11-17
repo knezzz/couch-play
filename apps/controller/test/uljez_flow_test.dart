@@ -93,6 +93,20 @@ void main() {
     expect(c.sent.whereType<Vote>().length, 1);
   });
 
+  testWidgets('after a reload the vote shows the pick the TV already has', (
+    t,
+  ) async {
+    final c = await _app(t);
+    await _send(t, c, const UljezWord('Pikachu'));
+    await _send(
+      t,
+      c,
+      const VotePrompt(day: 1, seconds: 20, ids: [0, 2, 3], picked: 3),
+    );
+    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    expect(c.sent.last, const Vote(3));
+  });
+
   testWidgets('the next turn after a vote brings the word card back', (
     t,
   ) async {

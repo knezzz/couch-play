@@ -59,6 +59,7 @@ class UljezFlow extends StatelessWidget {
         return UljezVoteScreen(
           key: ValueKey('uljez-vote-${v.day}'),
           targets: [for (final id in v.ids) NightItem(id, _name(id))],
+          picked: v.picked,
           onVote: (t) => conn.send(Vote(t)),
         );
       case 'guess':

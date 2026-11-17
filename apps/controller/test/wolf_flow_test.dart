@@ -158,6 +158,20 @@ void main() {
     expect(c.sent.last, const Vote(null));
   });
 
+  testWidgets('after a reload the vote shows the pick the TV already has', (
+    t,
+  ) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(
+      t,
+      c,
+      const VotePrompt(day: 1, seconds: 40, ids: [0, 2, 3], picked: 3),
+    );
+    await t.tap(find.byKey(const ValueKey('vote-go')));
+    expect(c.sent.last, const Vote(3));
+  });
+
   testWidgets('a spared fool cannot vote', (t) async {
     final c = await _app(t);
     await _send(t, c, _role);
