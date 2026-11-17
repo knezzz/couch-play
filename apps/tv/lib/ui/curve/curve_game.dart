@@ -258,13 +258,13 @@ class CurveGame extends FlameGame {
     ),
     // Lightning bolt.
     PowerUpKind.speedOthers: _Icon(fill: _poly([60, 10, 26, 56, 47, 56, 38, 90, 74, 42, 53, 42])),
-    // A thin line beside a thick one.
+    // A thin trail beside a thick one: two solid diagonal bars (a rectangle read as a door).
     PowerUpKind.fatOthers: _Icon(
-      fill: _poly([46, 20, 74, 20, 74, 80, 46, 80]),
+      fill: _poly([22.8, 70.6, 29.2, 73.5, 49.2, 29.5, 42.8, 26.6]),
       line: _strokes([
-        [28, 20, 28, 80],
+        [54, 72, 72, 30],
       ]),
-      lineW: 6,
+      lineW: 20,
     ),
     // Two arrows the opposite way round.
     PowerUpKind.reverseOthers: _Icon(
