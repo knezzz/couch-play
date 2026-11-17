@@ -10,6 +10,7 @@ import 'blef_screens.dart';
 import 'koliko_screens.dart';
 import 'objasni_screens.dart';
 import 'pack_grid.dart';
+import 'tkobi_screens.dart';
 import 'power_up_legend.dart';
 import 'uljez_screens.dart';
 import 'wolf_screens.dart';
@@ -262,6 +263,17 @@ class _LobbyScreenState extends State<LobbyScreen> {
     ),
   );
 
+  Widget _tkobiSettings(LobbyState l, void Function(GameSettings) change) {
+    final s = l.settings;
+    return TkobiSettingsView(
+      prompts: s.tkobiPrompts,
+      packs: [for (final p in l.tkobiPacks) (p.id, p.title)],
+      packId: s.tkobiPackId ?? l.tkobiPacks.firstOrNull?.id,
+      onPrompts: (v) => change(copySettings(s, tkobiPrompts: v)),
+      onPack: (id) => change(copySettings(s, tkobiPackId: id)),
+    );
+  }
+
   Widget _blefSettings(LobbyState l, void Function(GameSettings) change) {
     final s = l.settings;
     return BlefSettingsView(
@@ -449,6 +461,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     _kolikoSettings(l, change)
                   else if (kind == GameKind.blef)
                     _blefSettings(l, change)
+                  else if (kind == GameKind.tkobi)
+                    _tkobiSettings(l, change)
                   else if (kind == GameKind.quiz || kind == GameKind.curve)
                     _GameSettings(kind, s, onChange: change),
                   if (kind == GameKind.curve) ...[
@@ -621,6 +635,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     l.objasniPacks,
                     l.kolikoPacks,
                     l.blefPacks,
+                    l.tkobiPacks,
                   ),
                 ),
               if (l.selected == GameKind.vukodlak)

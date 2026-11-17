@@ -205,12 +205,13 @@ class _ListState extends State<BlefListScreen> {
                         child: InkWell(
                           key: ValueKey('option-${widget.ids[i]}'),
                           borderRadius: BorderRadius.circular(16),
-                          onTap: _open
-                              ? () {
-                                  setState(() => _picked = widget.ids[i]);
-                                  widget.onPick(widget.ids[i]);
-                                }
-                              : null,
+                          // Checked when tapped, not when built: two quick taps
+                          // must not send two picks.
+                          onTap: () {
+                            if (!_open) return;
+                            setState(() => _picked = widget.ids[i]);
+                            widget.onPick(widget.ids[i]);
+                          },
                           child: Container(
                             constraints: const BoxConstraints(minHeight: 64),
                             alignment: Alignment.centerLeft,

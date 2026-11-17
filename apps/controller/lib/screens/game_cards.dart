@@ -140,6 +140,7 @@ const supportedGames = [
   GameKind.objasni,
   GameKind.koliko,
   GameKind.blef,
+  GameKind.tkobi,
 ];
 
 /// The host's game picker: one card per game and page dots.
@@ -261,6 +262,7 @@ class _GameCarouselState extends State<GameCarousel> {
                   l.objasniPacks,
                   l.kolikoPacks,
                   l.blefPacks,
+                  l.tkobiPacks,
                 ),
                 key: ValueKey('line-${k.name}'),
                 maxLines: 2,

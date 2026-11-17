@@ -155,6 +155,22 @@ void main() {
       expect(find.byKey(const ValueKey('blef-picked')), findsOneWidget);
     });
 
+    testWidgets('two quick taps send one pick', (t) async {
+      final picks = <int>[];
+      await _show(
+        t,
+        BlefListScreen(
+          seconds: 20,
+          options: const ['a', 'b'],
+          ids: const [1, 2],
+          onPick: picks.add,
+        ),
+      );
+      await t.tap(find.byKey(const ValueKey('option-1')));
+      await t.tap(find.byKey(const ValueKey('option-2')));
+      expect(picks, [1]);
+    });
+
     testWidgets('after a reload the pick is shown and the list is shut', (
       t,
     ) async {
@@ -275,7 +291,7 @@ void main() {
         );
         await t.tap(find.byKey(const ValueKey('blef-send')));
         await t.pump();
-      expect(c.sent.last, const BlefFake('39 minuta'));
+        expect(c.sent.last, const BlefFake('39 minuta'));
         expect(
           find.byKey(const ValueKey('blef-error')),
           findsNothing,

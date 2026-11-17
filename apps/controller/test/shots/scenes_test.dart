@@ -169,6 +169,113 @@ void main() {
           scores: [12, 9],
         ),
       ]),
+      'KolikoAsk': w(1, _lobby(), [
+        const KolikoAsk(
+          number: 2,
+          total: 10,
+          seconds: 24,
+          q: 'Koliko je visok Eiffelov toranj?',
+          unit: 'm',
+        ),
+      ]),
+      'KolikoSent': w(1, _lobby(), [
+        const KolikoAsk(
+          number: 2,
+          total: 10,
+          seconds: 12,
+          q: 'Koliko je visok Eiffelov toranj?',
+          unit: 'm',
+          sent: 1234567,
+        ),
+      ]),
+      'KolikoResult': w(1, _lobby(), [
+        const KolikoAsk(
+          number: 2,
+          total: 10,
+          seconds: 12,
+          q: 'Koliko je visok Eiffelov toranj?',
+          unit: 'm',
+        ),
+        const KolikoResult(
+          answer: 330,
+          value: 320,
+          rank: 1,
+          points: 1000,
+          total: 1750,
+        ),
+      ]),
+      'BlefWrite': w(1, _lobby(), [
+        const BlefWrite(
+          number: 3,
+          total: 7,
+          seconds: 48,
+          q: 'Koliko je trajao najkraći rat u povijesti?',
+          sent: null,
+        ),
+      ]),
+      'BlefSent': w(1, _lobby(), [
+        const BlefWrite(
+          number: 3,
+          total: 7,
+          seconds: 31,
+          q: 'Koliko je trajao najkraći rat u povijesti?',
+          sent: '38 minuta',
+        ),
+      ]),
+      'BlefList': w(1, _lobby(), [
+        const BlefWrite(
+          number: 3,
+          total: 7,
+          seconds: 31,
+          q: 'Koliko je trajao najkraći rat u povijesti?',
+          sent: '38 minuta',
+        ),
+        const BlefList(
+          seconds: 17,
+          options: ['2 sata', '45 minuta', '3 dana', '1 tjedan'],
+          ids: [5, 8, 2, 9],
+        ),
+      ]),
+      'BlefResult': w(1, _lobby(), [
+        const BlefWrite(
+          number: 3,
+          total: 7,
+          seconds: 31,
+          q: 'Q',
+          sent: '38 minuta',
+        ),
+        const BlefResult(
+          points: 1500,
+          total: 2500,
+          foundTruth: true,
+          fooled: 1,
+        ),
+      ]),
+      'TkobiAsk': w(1, _lobby(n: 5), [
+        const TkobiAsk(
+          number: 4,
+          total: 10,
+          seconds: 12,
+          text: 'Tko bi najvjerojatnije zaspao na vlastitom rođendanu?',
+          ids: [0, 1, 2, 3, 4],
+        ),
+      ]),
+      'TkobiResult': w(1, _lobby(n: 5), [
+        const TkobiAsk(
+          number: 4,
+          total: 10,
+          seconds: 12,
+          text: 'Q',
+          ids: [0, 1, 2, 3, 4],
+        ),
+        const TkobiResult(
+          counts: {0: 1, 1: 3, 2: 0, 3: 1, 4: 0},
+          crowned: [1],
+          votedRight: true,
+          points: 1,
+          total: 4,
+        ),
+      ]),
       'UljezPhone_word': w(1, _lobby(), [
         const UljezWord('Pikachu'),
         const UljezTurn(round: 2, speaker: 0, seconds: 20, stage: 'clues'),

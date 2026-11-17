@@ -216,6 +216,14 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
 
+### Tko bi? (phone)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| tkobiVoted | Glas je poslan. Gledaj TV. | Vote sent. Watch the TV. | after the tap |
+| tkobiRight / tkobiWrong | Tvoj glas je išao pobjedniku. / Tvoj glas nije išao pobjedniku. | Your vote went to the winner. / Your vote did not go to the winner. | result |
+| tkobiNoVote | Bez glasa. | No vote. | (reserved) |
+
 ### Blef (phone)
 
 | key | Croatian | English | where it shows |
