@@ -146,6 +146,129 @@ void main() {
     },
   );
 
+  testWidgets(
+    'a reload after confirming shows Poslano with the picks, locked',
+    (t) async {
+      final c = await _app(t);
+      await _send(t, c, _role);
+      await _send(
+        t,
+        c,
+        NightPrompt(
+          night: 2,
+          text: _pad('Čiju ulogu želiš vidjeti?'),
+          choices: const ['P0', 'P2', 'P3'],
+          ids: const [0, 2, 3],
+          picked: 2,
+          special: true,
+          done: true,
+        ),
+      );
+      expect(find.text(Strings.sent), findsOneWidget);
+      expect(find.text('●'), findsOneWidget);
+      expect(
+        t
+            .widget<SwitchListTile>(find.byKey(const ValueKey('night-special')))
+            .value,
+        isTrue,
+      );
+      c.sent.clear();
+      await t.tap(find.byKey(const ValueKey('night-3')));
+      await t.pump();
+      await t.tap(find.byKey(const ValueKey('night-confirm')));
+      await t.tap(find.byKey(const ValueKey('night-special')));
+      await t.pump();
+      expect(c.sent, isEmpty, reason: 'the first confirm is final');
+      expect(
+        t
+            .widget<SwitchListTile>(find.byKey(const ValueKey('night-special')))
+            .value,
+        isTrue,
+      );
+    },
+  );
+
+  testWidgets(
+    'confirming, then the TV sending the prompt again with done, stays locked',
+    (t) async {
+      final c = await _app(t);
+      await _send(t, c, _role);
+      await _send(t, c, _night());
+      await t.tap(find.byKey(const ValueKey('night-2')));
+      await t.pump();
+      await t.tap(find.byKey(const ValueKey('night-confirm')));
+      await t.pump();
+      await _send(
+        t,
+        c,
+        NightPrompt(
+          night: 2,
+          text: _pad('Čiju ulogu želiš vidjeti?'),
+          choices: const ['P0', 'P2', 'P3'],
+          ids: const [0, 2, 3],
+          picked: 2,
+          done: true,
+        ),
+      );
+      expect(find.text(Strings.sent), findsOneWidget);
+      c.sent.clear();
+      await t.tap(find.byKey(const ValueKey('night-confirm')));
+      expect(c.sent, isEmpty);
+    },
+  );
+
+  testWidgets('the same prompt resent with done=true locks a form left open', (
+    t,
+  ) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, _night());
+    expect(find.text(Strings.confirm), findsOneWidget);
+    await _send(
+      t,
+      c,
+      NightPrompt(
+        night: 2,
+        text: _pad('Čiju ulogu želiš vidjeti?'),
+        choices: const ['P0', 'P2', 'P3'],
+        ids: const [0, 2, 3],
+        picked: 3,
+        done: true,
+      ),
+    );
+    expect(find.text(Strings.sent), findsOneWidget);
+    expect(find.text('●'), findsOneWidget);
+  });
+
+  testWidgets('a done wolf phone and a done sum phone look the same', (
+    t,
+  ) async {
+    Future<String> phone(String text, List<String> labels) async {
+      final c = await _app(t);
+      await _send(t, c, _role);
+      await _send(
+        t,
+        c,
+        NightPrompt(
+          night: 2,
+          text: _pad(text),
+          choices: labels,
+          ids: [for (var i = 0; i < labels.length; i++) i],
+          picked: 1,
+          done: true,
+        ),
+      );
+      return look(t, {text, ...labels});
+    }
+
+    final names = [for (var i = 0; i < 5; i++) 'Igrač $i'];
+    await phone('x', names);
+    expect(
+      await phone('Koga posjećujete?', names),
+      await phone('Koliko je 7 × 8?', ['54', '56', '58', '63', '49']),
+    );
+  });
+
   testWidgets('the vote goes out as Vote; skipping sends null', (t) async {
     final c = await _app(t);
     await _send(t, c, _role);

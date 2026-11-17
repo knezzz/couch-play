@@ -74,13 +74,14 @@ class WolfFlow extends StatelessWidget {
         return NightScreen(
           // A new prompt is a new screen: nothing carries over between nights.
           key: ValueKey(
-            'night-${n.night}-${n.ids.join(',')}-${n.ids2.join(',')}',
+            'night-${n.night}-${n.ids.join(',')}-${n.ids2.join(',')}-${n.done}',
           ),
           night: n.night,
           hint: n.text,
           special: n.special,
           picked: n.picked,
           picked2: n.picked2,
+          done: n.done,
           targets: [
             for (var i = 0; i < n.ids.length; i++)
               NightItem(n.ids[i], n.choices[i]),

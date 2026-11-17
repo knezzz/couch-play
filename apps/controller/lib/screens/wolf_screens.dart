@@ -224,6 +224,7 @@ class NightScreen extends StatefulWidget {
     this.targets2 = const [],
     this.picked,
     this.picked2,
+    this.done = false,
     this.showSpecial = true,
   });
   final int night;
@@ -247,6 +248,9 @@ class NightScreen extends StatefulWidget {
 
   /// Restored picks after a reload.
   final int? picked, picked2;
+
+  /// The TV already has this phone's confirm (a reload): shown as sent.
+  final bool done;
   final bool showSpecial;
   final void Function(int target, int? second, bool special) onConfirm;
   @override
@@ -258,7 +262,7 @@ class _NightState extends State<NightScreen> {
   late bool _special = widget.special;
   late int _left = widget.seconds ?? 0;
   Timer? _tick;
-  bool _sent = false; // the same "done" look for every role
+  late bool _sent = widget.done; // the same "done" look for every role
 
   @override
   void initState() {
