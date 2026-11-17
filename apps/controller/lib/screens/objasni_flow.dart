@@ -45,7 +45,9 @@ class ObjasniFlow extends StatelessWidget {
         seconds: t.seconds,
         scores: t.scores,
         onGo: () => conn.send(const Go()),
-        onAct: (a) => conn.send(ObjasniAction(a)),
+        // The word number says which word the press is about, so a double tap
+        // or a racing foul never lands on the next word.
+        onAct: (a) => conn.send(ObjasniAction(a, wordNo: t.wordNo)),
       );
     }
     final teams = inbox.teams;

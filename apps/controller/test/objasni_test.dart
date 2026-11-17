@@ -285,11 +285,12 @@ void main() {
           word: 'Sir',
           seconds: 60,
           scores: [0, 0],
+          wordNo: 7,
         ),
       );
       expect(find.text('Sir'), findsOneWidget);
       await t.tap(find.byKey(const ValueKey('act-correct')));
-      expect(c.sent.last, const ObjasniAction(ObjasniAct.correct));
+      expect(c.sent.last, const ObjasniAction(ObjasniAct.correct, wordNo: 7));
       await send(
         t,
         c,
@@ -306,6 +307,32 @@ void main() {
       expect(find.text('Med'), findsOneWidget);
       expect(find.text('Sir'), findsNothing);
       expect(find.text('Tim 1 · 1'), findsOneWidget);
+    });
+
+    testWidgets('every press echoes the number of the word on screen', (
+      t,
+    ) async {
+      final c = await app(t, 1);
+      await send(t, c, teams);
+      ObjasniTurn turn(String w, int n, ObjasniRole r) => ObjasniTurn(
+        stage: ObjasniStage.play,
+        role: r,
+        team: 0,
+        explainer: 1,
+        word: w,
+        seconds: 50,
+        scores: const [0, 0],
+        wordNo: n,
+      );
+      await send(t, c, turn('Sir', 3, ObjasniRole.explain));
+      await t.tap(find.byKey(const ValueKey('act-skip')));
+      expect(c.sent.last, const ObjasniAction(ObjasniAct.skip, wordNo: 3));
+      await send(t, c, turn('Med', 4, ObjasniRole.explain));
+      await t.tap(find.byKey(const ValueKey('act-correct')));
+      expect(c.sent.last, const ObjasniAction(ObjasniAct.correct, wordNo: 4));
+      await send(t, c, turn('Jaje', 5, ObjasniRole.watch));
+      await t.tap(find.byKey(const ValueKey('act-foul')));
+      expect(c.sent.last, const ObjasniAction(ObjasniAct.foul, wordNo: 5));
     });
 
     testWidgets('a new draw goes back to the setup', (t) async {
