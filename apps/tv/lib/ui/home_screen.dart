@@ -540,8 +540,14 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingImpostors, '${settings.uljezImpostors}'),
           ],
         ],
-      // The four party games have no settings on the TV yet.
-      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi || GameKind.kaosvi => <List<(String, String)>>[],
+      GameKind.kaosvi => [
+          [
+            (Strings.settingQuestions, '${settings.kaosviQuestions}'),
+            (Strings.settingTarget, '${settings.kaosviTarget}'),
+          ],
+        ],
+      // The other party games have no settings on the TV yet.
+      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String)>>[],
     };
     Widget item((String, String) it) => Text.rich(
       TextSpan(
@@ -826,12 +832,21 @@ class _ArtPainter extends CustomPainter {
           canvas.restore();
         }
       case GameKind.tkobi:
-      case GameKind.kaosvi: // stand-in art (builder-2 draws the herd)
         // Everybody in the room, round a ring.
         for (var i = 0; i < 8; i++) {
           final a = -pi / 2 + i * 2 * pi / 8;
           canvas.drawCircle(Offset(960 + 760 * cos(a), 640 + 380 * sin(a)), 56, Paint()..color = playerColors[i].withValues(alpha: 0.4));
         }
+      case GameKind.kaosvi:
+        // A herd: one big flock in the middle, a pair to one side and one that went its own way. Dots only.
+        const flock = [Offset(900, 700), Offset(990, 660), Offset(1070, 730), Offset(940, 790), Offset(1030, 820), Offset(860, 640)];
+        for (var i = 0; i < flock.length; i++) {
+          canvas.drawCircle(flock[i], 62, Paint()..color = playerColors[i % playerColors.length].withValues(alpha: 0.5));
+        }
+        for (var i = 0; i < 2; i++) {
+          canvas.drawCircle(Offset(400.0 + i * 100, 780 - i * 40), 52, Paint()..color = playerColors[6 + i].withValues(alpha: 0.4));
+        }
+        canvas.drawCircle(const Offset(1620, 640), 52, Paint()..color = const Color(0x66FF4D6D));
     }
     canvas.restore();
   }

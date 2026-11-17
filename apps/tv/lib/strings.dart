@@ -63,6 +63,7 @@ abstract final class Strings {
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
   static const settingPack = 'Paket pitanja';
   static const settingQuestions = 'Broj pitanja';
+  static const settingTarget = 'Bodova do pobjede';
   static const settingAnswerTime = 'Vrijeme za odgovor';
   static const settingReveal = 'Pauza između pitanja';
   static const settingMode = 'Način igre';
