@@ -215,6 +215,24 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | save | Spremi | Save | host: role switches |
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
+
+### Objasni (phone)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| gameBlurb (4 new games) | Objasni riječ svojoj ekipi, a da je ne izgovoriš. / Pogodi broj. Tko je najbliže, nosi bodove. / Izmisli lažan odgovor i pronađi pravi. / Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi. | (same as the TV's) | carousel card, details, watching card |
+| team1 / team2 | Tim 1 / Tim 2 | Team 1 / Team 2 | setup, scores |
+| teamsTitle | Ekipe | Teams | setup title |
+| yourTeam(t) | Tvoj tim: Tim 2 | Your team: Team 2 | setup |
+| reshuffle | Promiješaj | Shuffle | setup, host |
+| ready / go | Spreman? / Kreni | Ready? / Go | before a turn; the explainer's button |
+| onTurn(name) | {name} je na redu. | It is {name}'s turn. | before a turn, other phones |
+| explainsNow(name) | {name} objašnjava. | {name} is explaining. | the explainer's team |
+| right / skip / foul | Točno / Preskoči / Prekršaj | Correct / Skip / Foul | the turn's buttons |
+| guessAloud | Pogađaj naglas! | Guess out loud! | the explainer's team |
+| explainTitle / watchTitle | Objasni riječ / Pazi na pravila | Explain the word / Watch the rules | above the word |
+| turnOver | Kraj poteza | End of the turn | between turns |
+| turnSeconds / targetScore / wordPackShort | Vrijeme po potezu / Cilj / Paket riječi | Time per turn / Target / Word pack | host settings |
 | rolesPickIntroLead | Ti biraš koje uloge smiju biti u igri. Igra sama izvlači koje će biti i koliko. | You choose which roles may be in the game. The game draws which and how many. | host: role switches, grey box |
 | rolesPickMix | Za {n} igrača: {a} vukodlaka, {b} posebne uloge od uključenih, {c} seljana. Svaka igra izvuče drugačije. | For {n} players: {a} werewolves, {b} special roles from those on, {c} villagers. Every game draws differently. | host: role switches, bold line (plurals: 1 vukodlak, 1 posebna uloga, 1 seljanin) |
 | rolesInfoIntro | 2 vukodlaka i do 3 posebne uloge s ovog popisa. Ne mora svaka biti u igri. Ostali su Seljani. Svi vide isti popis. | 2 werewolves and up to 3 special roles from this list. Not every one has to be in play. The rest are Villagers. Everyone sees the same list. | everyone's roles list, grey box |

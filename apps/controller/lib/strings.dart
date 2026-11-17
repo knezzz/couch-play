@@ -52,6 +52,29 @@ abstract final class Strings {
   static const puYou = 'na tebe';
   static const puOthers = 'na sve ostale';
   static const puAll = 'na sve';
+  // Objasni
+  static const team1 = 'Tim 1';
+  static const team2 = 'Tim 2';
+  static String teamName(int t) => t == 0 ? team1 : team2;
+  static const teamsTitle = 'Ekipe';
+  static String yourTeam(int t) => 'Tvoj tim: ${teamName(t)}';
+  static const reshuffle = 'Promiješaj';
+  static const ready = 'Spreman?';
+  static const go = 'Kreni';
+  static String explainsNow(String name) => '$name objašnjava.';
+  static String onTurn(String name) => '$name je na redu.';
+  static const right = 'Točno';
+  static const skip = 'Preskoči';
+  static const foul = 'Prekršaj';
+  static const guessAloud = 'Pogađaj naglas!';
+  static const explainTitle = 'Objasni riječ';
+  static const watchTitle = 'Pazi na pravila';
+  static const turnOver = 'Kraj poteza';
+  static const turnSeconds = 'Vrijeme po potezu';
+  static const targetScore = 'Cilj';
+  static const wordPackShort = 'Paket riječi';
+  static String scoreText(int n) => '$n ${points(n)}';
+
   static const send = 'Pošalji';
   static const blefHint = 'Tvoj odgovor';
   static const blefSpikeTitle = 'Blef: probno tipkanje';
@@ -95,10 +118,10 @@ abstract final class Strings {
     GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
     GameKind.vukodlak => 'Selo i vukodlaci. Uloga je tajna.',
     GameKind.uljez => 'Svi imaju istu riječ, osim uljeza. Nađi ga.',
-    GameKind.objasni => 'Dva tima. Objasni riječ, ali je ne izgovori.',
-    GameKind.koliko => 'Pogodi broj. Tko je najbliže?',
-    GameKind.blef => 'Smisli lažni odgovor. Nađi pravi.',
-    GameKind.tkobi => 'Glasaj za nekoga u sobi.',
+    GameKind.objasni => 'Objasni riječ svojoj ekipi, a da je ne izgovoriš.',
+    GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
+    GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
+    GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
   };
   static String watchingLabel(String? host) => '${host ?? 'Domaćin'} gleda:';
   static String startsWhen(String? host) =>
@@ -119,8 +142,9 @@ abstract final class Strings {
     GameKind k,
     GameSettings s,
     List<PackInfo> packs,
-    List<PackInfo> uljezPacks,
-  ) {
+    List<PackInfo> uljezPacks, [
+    List<PackInfo> objasniPacks = const [],
+  ]) {
     String pack(List<PackInfo> l, String? id) =>
         (l.where((p) => p.id == id).firstOrNull ?? l.firstOrNull)?.title ?? '';
     return switch (k) {
@@ -132,6 +156,8 @@ abstract final class Strings {
         '$possibleRoles: ${s.wolfRoles.length} · $discussion: ${minutes(s.wolfDiscussion)}',
       GameKind.uljez =>
         '${pack(uljezPacks, s.uljezPackId)} · $discussion: ${minutes(s.uljezDiscussion)} · ${impostors(s.uljezImpostors)}',
+      GameKind.objasni =>
+        '${pack(objasniPacks, s.objasniPackId)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
       _ => '',
     };
   }

@@ -6,6 +6,7 @@ import '../connection.dart';
 import '../theme.dart';
 import '../strings.dart';
 import 'game_cards.dart';
+import 'objasni_screens.dart';
 import 'pack_grid.dart';
 import 'power_up_legend.dart';
 import 'uljez_screens.dart';
@@ -259,6 +260,19 @@ class _LobbyScreenState extends State<LobbyScreen> {
     ),
   );
 
+  Widget _objasniSettings(LobbyState l, void Function(GameSettings) change) {
+    final s = l.settings;
+    return ObjasniSettingsView(
+      seconds: s.objasniSeconds,
+      target: s.objasniTarget,
+      packs: [for (final p in l.objasniPacks) (p.id, p.title)],
+      packId: s.objasniPackId ?? l.objasniPacks.firstOrNull?.id,
+      onSeconds: (v) => change(copySettings(s, objasniSeconds: v)),
+      onTarget: (v) => change(copySettings(s, objasniTarget: v)),
+      onPack: (id) => change(copySettings(s, objasniPackId: id)),
+    );
+  }
+
   Widget _uljezSettings(LobbyState l, void Function(GameSettings) change) {
     final s = l.settings;
     return UljezSettingsView(
@@ -403,6 +417,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     _wolfSettings(l, change)
                   else if (kind == GameKind.uljez)
                     _uljezSettings(l, change)
+                  else if (kind == GameKind.objasni)
+                    _objasniSettings(l, change)
                   else if (kind == GameKind.quiz || kind == GameKind.curve)
                     _GameSettings(kind, s, onChange: change),
                   if (kind == GameKind.curve) ...[
@@ -572,6 +588,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     l.settings,
                     l.packs,
                     l.uljezPacks,
+                    l.objasniPacks,
                   ),
                 ),
               if (l.selected == GameKind.vukodlak)

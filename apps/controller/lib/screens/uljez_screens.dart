@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../strings.dart';
-import '../theme.dart';
+import 'settings_widgets.dart';
 import 'wolf_screens.dart';
 
 // Uljez on the phone. Built from the Vukodlak pieces: the word is the hold
@@ -117,80 +117,24 @@ class UljezSettingsView extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      const Text(
-        Strings.wordPack,
-        style: TextStyle(fontSize: 18, color: muted),
-      ),
-      const SizedBox(height: 8),
-      Container(
-        constraints: const BoxConstraints(minHeight: 56),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: DropdownButton<String>(
-          key: const ValueKey('uljez-pack'),
-          isExpanded: true,
-          underline: const SizedBox.shrink(),
-          value: packs.any((p) => p.$1 == packId) ? packId : null,
-          dropdownColor: surface,
-          style: const TextStyle(fontSize: 20, color: textColor),
-          items: [
-            for (final p in packs)
-              DropdownMenuItem(
-                value: p.$1,
-                child: Text(p.$2, overflow: TextOverflow.ellipsis),
-              ),
-          ],
-          onChanged: (v) {
-            if (v != null) onPack(v);
-          },
-        ),
+      PackDropdown(
+        title: Strings.wordPack,
+        fieldKey: const ValueKey('uljez-pack'),
+        packs: packs,
+        packId: packId,
+        onPick: onPack,
       ),
       const SizedBox(height: 8),
       DiscussRow(seconds: discussSeconds, onChange: onDiscuss),
       if (players >= 7) ...[
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(Strings.impostorCount, style: TextStyle(fontSize: 19)),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  for (final n in const [1, 2])
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: n == 1 ? 0 : 8),
-                        child: ChoiceChip(
-                          key: ValueKey('impostors-$n'),
-                          showCheckmark: false,
-                          label: SizedBox(
-                            width: double.infinity,
-                            child: Text(
-                              Strings.impostors(n),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ),
-                          selected: impostors == n,
-                          onSelected: (_) => onImpostors(n),
-                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                          visualDensity: const VisualDensity(vertical: 4),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
+        ChoiceRow(
+          label: Strings.impostorCount,
+          keyPrefix: 'impostors',
+          values: const [1, 2],
+          value: impostors,
+          text: Strings.impostors,
+          onPick: onImpostors,
         ),
       ],
     ],

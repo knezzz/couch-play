@@ -137,6 +137,7 @@ const supportedGames = [
   GameKind.curve,
   GameKind.vukodlak,
   GameKind.uljez,
+  GameKind.objasni,
 ];
 
 /// The host's game picker: one card per game and page dots.
@@ -250,7 +251,13 @@ class _GameCarouselState extends State<GameCarousel> {
               ),
               const SizedBox(height: 8),
               Text(
-                Strings.settingsLine(k, l.settings, l.packs, l.uljezPacks),
+                Strings.settingsLine(
+                  k,
+                  l.settings,
+                  l.packs,
+                  l.uljezPacks,
+                  l.objasniPacks,
+                ),
                 key: ValueKey('line-${k.name}'),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

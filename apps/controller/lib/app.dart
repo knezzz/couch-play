@@ -11,11 +11,23 @@ import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
+import 'screens/objasni_flow.dart';
 import 'screens/uljez_flow.dart';
 import 'screens/wolf_flow.dart';
 import 'strings.dart';
 
-enum _Screen { join, lobby, wait, curve, quiz, results, wolf, uljez, kicked }
+enum _Screen {
+  join,
+  lobby,
+  wait,
+  curve,
+  quiz,
+  results,
+  wolf,
+  uljez,
+  objasni,
+  kicked,
+}
 
 /// What the browser keeps after a join, so a reload rejoins by itself.
 class SavedJoin {
@@ -60,6 +72,7 @@ class _AppState extends State<App> {
   List<Placement> _placements = const [];
   final _wolf = WolfInbox();
   final _uljez = UljezInbox();
+  final _objasni = ObjasniInbox();
   // Vukodlak and Uljez share VotePrompt; the game that started last owns it.
   bool _uljezOn = false;
   StreamSubscription<Message>? _sub;
@@ -141,6 +154,9 @@ class _AppState extends State<App> {
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
+        case ObjasniTeams() || ObjasniTurn():
+          _objasni.on(m);
+          _screen = _Screen.objasni;
         case UljezWord():
           _uljezOn = true;
           _uljez.on(m);
@@ -212,6 +228,10 @@ class _AppState extends State<App> {
       key: ValueKey(_question?.number),
     ),
     _Screen.results => ResultsScreen(_placements, _myId),
+    _Screen.objasni =>
+      _lobby == null
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          : ObjasniFlow(widget.conn, _lobby!, _myId, _objasni),
     _Screen.uljez =>
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
