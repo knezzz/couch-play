@@ -19,6 +19,7 @@ class WolfVoteScreen extends StatelessWidget {
     required this.clock,
     this.outId,
     this.result,
+    this.role,
     this.extra,
     super.key,
   });
@@ -26,7 +27,7 @@ class WolfVoteScreen extends StatelessWidget {
   final int day, voted, expected;
   final String clock;
   final int? outId;
-  final String? result, extra;
+  final String? result, role, extra;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,9 @@ class WolfVoteScreen extends StatelessWidget {
                 right: 96,
                 top: 96,
                 child: Text(
-                  clock.isEmpty ? Strings.wolfVoted(voted, expected) : '${Strings.wolfVoted(voted, expected)} · $clock',
+                  clock.isEmpty
+                      ? Strings.wolfVoted(voted, expected)
+                      : '${Strings.wolfVoted(voted, expected)} · $clock',
                   style: const TextStyle(fontSize: 40, color: tvMuted),
                 ),
               ),
@@ -118,28 +121,61 @@ class WolfVoteScreen extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(28),
                     ),
+                    // Three parts (V2WolfVote): who is out, their role in red, how many wolves are left.
                     child: Row(
                       children: [
-                        Expanded(
+                        Flexible(
+                          flex: 5,
                           child: Text(
                             result!,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 44,
+                              fontSize: 52,
                               fontWeight: FontWeight.w900,
                               color: tvText,
                             ),
                           ),
                         ),
-                        if (extra != null) ...[
+                        if (role != null) ...[
                           const SizedBox(width: 32),
                           Flexible(
-                            child: Text(
-                              extra!,
+                            flex: 3,
+                            child: Text.rich(
+                              key: const ValueKey('result-role'),
+                              TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: '${Strings.wolfRolePrefix} ',
+                                  ),
+                                  TextSpan(
+                                    text: role,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xFFFF4D6D),
+                                    ),
+                                  ),
+                                  const TextSpan(text: '.'),
+                                ],
+                              ),
                               maxLines: 2,
                               style: const TextStyle(
-                                fontSize: 34,
+                                fontSize: 44,
+                                color: Color(0xFFE7B36A),
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (extra != null) ...[
+                          const SizedBox(width: 32),
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              extra!,
+                              textAlign: TextAlign.right,
+                              maxLines: 2,
+                              style: const TextStyle(
+                                fontSize: 36,
                                 color: tvMuted,
                               ),
                             ),

@@ -102,6 +102,7 @@ abstract final class Strings {
   static const wolfVoteQuestion = 'Koga selo izbacuje?';
   static String wolfVoted(int x, int y) => 'Glasalo $x od $y';
   static const wolfEndHeader = 'KRAJ IGRE';
+  static const wolfRolePrefix = 'Uloga:';
   static const wolfTeamVillage = 'Selo';
   static const wolfTeamWolves = 'Vukodlaci';
   static const wolfTeamSolo = 'Sam';

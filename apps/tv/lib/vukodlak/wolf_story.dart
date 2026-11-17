@@ -24,13 +24,13 @@ List<WolfEvent> currentBeat(List<WolfEvent> story) {
 /// One Croatian line for [e], picked at random from [storyHr]. Plain string
 /// replace; an event that carries a role uses its `Role` twin (the engine only
 /// sends a role when it may be shown). An unknown key gives ''.
-String wolfStoryLine(WolfEvent e, String Function(int id) nameOf, Random random) {
+String wolfStoryLine(WolfEvent e, String Function(int id) nameOf, Random random, {bool showRole = true}) {
   var key = e.key;
   if (key == 'gameOver') {
     final w = '${e.args['winner'] ?? ''}';
     key = 'gameOver${w.isEmpty ? '' : w[0].toUpperCase() + w.substring(1)}';
   }
-  final role = e.args['role'];
+  final role = showRole ? e.args['role'] : null;
   if (role != null && storyHr.containsKey('${key}Role')) key = '${key}Role';
   final lines = storyHr[key];
   if (lines == null || lines.isEmpty) return '';

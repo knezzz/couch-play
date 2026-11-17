@@ -19,9 +19,9 @@ void _big(WidgetTester t) {
   addTearDown(t.view.reset);
 }
 
-Widget _vote(List<VillagePlayer> p, {int voted = 4, int expected = 5, int? outId, String? result, String? extra}) => MaterialApp(
+Widget _vote(List<VillagePlayer> p, {int voted = 4, int expected = 5, int? outId, String? result, String? extra, String? role}) => MaterialApp(
       theme: tvTheme(),
-      home: WolfVoteScreen(players: p, day: 3, voted: voted, expected: expected, clock: '0:12', outId: outId, result: result, extra: extra),
+      home: WolfVoteScreen(players: p, day: 3, voted: voted, expected: expected, clock: '0:12', outId: outId, result: result, extra: extra, role: role),
     );
 
 Finder _face(String id) => find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);
@@ -64,6 +64,39 @@ void main() {
       expect(find.text('Glasovi su podijeljeni. Nitko ne ispada.'), findsOneWidget);
       await t.pumpWidget(_vote(_people(5)));
       expect(find.byKey(const ValueKey('result')), findsNothing, reason: 'no result while the vote runs');
+    });
+
+    testWidgets('the banner has three parts (V2WolfVote): who is out, their role in red, how many wolves are left', (t) async {
+      _big(t);
+      await t.pumpWidget(_vote(_people(5, out: {3}), outId: 3, result: 'Selo je izbacilo Ime3.', role: 'Vukodlak', extra: 'Ostao je još 1 vukodlak.'));
+      final banner = find.byKey(const ValueKey('result'));
+      expect(find.descendant(of: banner, matching: find.text('Selo je izbacilo Ime3.')), findsOneWidget);
+      final role = find.descendant(of: banner, matching: find.byKey(const ValueKey('result-role')));
+      expect(role, findsOneWidget);
+      expect(t.widget<Text>(role).textSpan!.toPlainText(), 'Uloga: Vukodlak.');
+      final span = t.widget<Text>(role).textSpan!;
+      final red = <Color?>[];
+      span.visitChildren((c) {
+        if (c is TextSpan && c.text == 'Vukodlak') red.add(c.style?.color);
+        return true;
+      });
+      expect(red, [const Color(0xFFFF4D6D)], reason: 'the role word is red');
+      final left = find.descendant(of: banner, matching: find.text('Ostao je još 1 vukodlak.'));
+      expect(left, findsOneWidget);
+      expect(t.getRect(left).right, greaterThan(t.getRect(role).right), reason: 'the third part is at the right end');
+    });
+
+    testWidgets('no role part while roles are hidden', (t) async {
+      _big(t);
+      await t.pumpWidget(_vote(_people(5, out: {3}), outId: 3, result: 'Selo je izbacilo Ime3.'));
+      expect(find.byKey(const ValueKey('result-role')), findsNothing);
+    });
+
+    testWidgets('the grid is only the players still in the vote', (t) async {
+      _big(t);
+      // 8 started, 3 are out of the game already: 5 cards, in the roomy layout.
+      await t.pumpWidget(_vote(_people(5), expected: 5));
+      expect(find.byWidgetPredicate((w) => w is CharacterFace && w.size == 160), findsNWidgets(5));
     });
 
     for (final n in [5, 8]) {

@@ -213,4 +213,42 @@ void main() {
     expect(find.text(Strings.wolfVoted(5, 7)), findsOneWidget);
     await _close(t, g);
   });
+
+  testWidgets('the vote screen lists only the players still in the game; the one just voted out stays for the result', (t) async {
+    _big(t);
+    final g = _Game(_roles7, hide: false);
+    for (final id in g.match.alive) {
+      g.match.onNightPick(id, id <= 2 ? const NightPick(7) : const NightPick(null));
+    }
+    await g.wait(t, 30); // morning: 7 is out; farewell
+    await g.wait(t, 130);
+    await t.pumpWidget(g.view());
+    expect(g.match.stage, WolfStage.vote);
+    var v = t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen));
+    expect(v.players.map((p) => p.id), isNot(contains(7)), reason: 'player 7 went out in the night');
+    expect(v.players.length, 6);
+    for (final id in g.match.alive) {
+      g.match.onVote(id, Vote(id == 6 ? 1 : 6));
+    }
+    await t.pumpWidget(g.view());
+    v = t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen));
+    expect(v.players.map((p) => p.id), contains(6), reason: 'the one voted out is still on the result');
+    expect(v.role, WolfText.roleNames[WolfRole.herb], reason: 'roles are shown in this game');
+    await _close(t, g);
+  });
+
+  testWidgets('hidden roles: the vote result has no role part', (t) async {
+    _big(t);
+    final g = _Game(_roles7);
+    for (final id in g.match.alive) {
+      g.match.onNightPick(id, const NightPick(null));
+    }
+    await g.wait(t, 130);
+    for (final id in g.match.alive) {
+      g.match.onVote(id, Vote(id == 6 ? 1 : 6));
+    }
+    await t.pumpWidget(g.view());
+    expect(t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen)).role, isNull);
+    await _close(t, g);
+  });
 }

@@ -5,6 +5,7 @@ import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 import '../../session/wolf_match.dart';
+import '../../session/wolf_text.dart';
 import '../../strings.dart';
 import '../../vukodlak/wolf_story.dart';
 import 'end_screen.dart';
@@ -29,7 +30,14 @@ class WolfView extends StatefulWidget {
 }
 
 class _WolfViewState extends State<WolfView> {
-  static const _resultKeys = {'voteOut', 'voteOutRole', 'voteTie', 'voteNobody', 'foolSpared', 'trampWins'};
+  static const _resultKeys = {
+    'voteOut',
+    'voteOutRole',
+    'voteTie',
+    'voteNobody',
+    'foolSpared',
+    'trampWins',
+  };
   static const _holdFor = Duration(seconds: 7);
 
   final _random = Random();
@@ -37,7 +45,9 @@ class _WolfViewState extends State<WolfView> {
   Timer? _clock, _hold;
   var _seen = 0;
   int? _resultAt; // the story index of the vote's result, while it is held on the vote screen
-  var _voted = 0, _expected = 0; // the last count seen while the vote ran, for the held result
+  var _voted = 0,
+      _expected =
+          0; // the last count seen while the vote ran, for the held result
 
   @override
   void initState() {
@@ -54,9 +64,11 @@ class _WolfViewState extends State<WolfView> {
     super.dispose();
   }
 
-  String _name(int id) => widget.players.where((p) => p.id == id).firstOrNull?.name ?? '';
+  String _name(int id) =>
+      widget.players.where((p) => p.id == id).firstOrNull?.name ?? '';
 
-  String _line(int i) => _lines[i] ??= wolfStoryLine(widget.match.story[i], _name, _random);
+  String _line(int i) =>
+      _lines[i] ??= wolfStoryLine(widget.match.story[i], _name, _random);
 
   /// The vote's result stays on the vote screen for a few seconds, even though
   /// the match has already moved on (a night starts at once after a tie).
@@ -88,8 +100,12 @@ class _WolfViewState extends State<WolfView> {
         VillagePlayer(
           id: id,
           name: _name(id),
-          colorIndex: widget.players.where((p) => p.id == id).firstOrNull?.colorIndex ?? 0,
-          character: widget.players.where((p) => p.id == id).firstOrNull?.character ?? '',
+          colorIndex:
+              widget.players.where((p) => p.id == id).firstOrNull?.colorIndex ??
+              0,
+          character:
+              widget.players.where((p) => p.id == id).firstOrNull?.character ??
+              '',
           out: !m.isAlive(id),
           lit: m.lit.contains(id),
         ),
@@ -99,7 +115,10 @@ class _WolfViewState extends State<WolfView> {
       final i = m.story.lastIndexWhere((e) => e.key == 'gameOver');
       return WolfEndScreen(
         players: people,
-        roles: {for (final id in m.ids) if (m.publicRole(id) != null) id: m.publicRole(id)!},
+        roles: {
+          for (final id in m.ids)
+            if (m.publicRole(id) != null) id: m.publicRole(id)!,
+        },
         headline: i >= 0 ? _line(i) : '',
       );
     }
@@ -111,16 +130,28 @@ class _WolfViewState extends State<WolfView> {
     final held = _resultAt;
     if (m.stage == WolfStage.vote || held != null) {
       final story = m.story;
-      final wolves = held == null ? -1 : story.indexWhere((e) => e.key == 'wolvesLeft', held);
+      final wolves = held == null
+          ? -1
+          : story.indexWhere((e) => e.key == 'wolvesLeft', held);
+      final out = held == null ? null : m.lastOut;
+      final role = out == null ? null : m.publicRole(out);
       return WolfVoteScreen(
-        players: people,
+        // Only the players still in the game; the one just voted out stays for the result.
+        players: [
+          for (final p in people)
+            if (!p.out || p.id == out) p,
+        ],
         day: m.day,
         voted: _voted,
         expected: held == null ? m.alive.length : _expected,
         // While the result is held the match is already in its next stage: its clock is not the vote's.
         clock: held == null ? _clockText(m.remaining) : '',
-        outId: held == null ? null : m.lastOut,
-        result: held == null ? null : _line(held),
+        outId: out,
+        // The first part never names the role: that is the banner's second part, and only when it may be shown.
+        result: held == null
+            ? null
+            : wolfStoryLine(m.story[held], _name, _random, showRole: false),
+        role: role == null ? null : WolfText.roleNames[role],
         extra: wolves >= 0 ? _line(wolves) : null,
       );
     }
@@ -128,12 +159,16 @@ class _WolfViewState extends State<WolfView> {
     final night = m.stage == WolfStage.night || m.stage == WolfStage.dawn;
     final beat = currentBeat(m.story);
     final first = m.story.length - beat.length;
-    final story = [for (var i = 0; i < beat.length; i++) _line(first + i)].where((s) => s.isNotEmpty).join(' ');
+    final story = [for (var i = 0; i < beat.length; i++) _line(first + i)]
+        .where((s) => s.isNotEmpty)
+        .join(' ');
     final morning = beat.any((e) => e.key.startsWith('morning'));
     return VillageScreen(
       players: people,
       night: night,
-      kicker: night ? Strings.wolfNight(m.night) : (morning ? Strings.wolfMorning(m.day) : Strings.wolfDay(m.day)),
+      kicker: night
+          ? Strings.wolfNight(m.night)
+          : (morning ? Strings.wolfMorning(m.day) : Strings.wolfDay(m.day)),
       story: story,
       clock: _clockText(m.remaining),
     );
