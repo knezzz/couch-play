@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'packs/pack_store.dart';
+import 'packs/uljez_packs.dart';
 import 'server/controller_files.dart';
 import 'server/game_server.dart';
 import 'server/lan_address.dart';
@@ -99,6 +100,7 @@ class _TvAppState extends State<TvApp> {
       await extractControllerZip(zip.buffer.asUint8List(), web);
       _session.packStore = await PackStore.load(
           bundled: await loadBundledPacks(rootBundle), userDir: Directory('${support.path}/packs'));
+      _session.uljezPacks = await loadUljezPacks(rootBundle);
       _session.loadSettings(File('${support.path}/settings.json'));
       final server = await GameServer.start(
         webRoot: web,
