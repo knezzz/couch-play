@@ -7,10 +7,14 @@ import 'package:flame/game.dart';
 import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, TextDirection, FontWeight;
 
 class _Icon {
-  const _Icon({this.fill, this.line, this.lineW = 8, this.thin, this.holes = const []});
-  final Path? fill, line, thin;
+  const _Icon({this.fill, this.line, this.lineW = 8, this.holes = const [], this.cut, this.cutW = 6});
+  final Path? fill, line;
   final double lineW;
   final List<Offset> holes;
+
+  /// Lines drawn in the disc's colour over the ink: a spiral, the gaps between bristles.
+  final Path? cut;
+  final double cutW;
 }
 
 /// Runs [sim] on a fixed 60 Hz accumulator and draws trails and heads.
@@ -212,15 +216,30 @@ class CurveGame extends FlameGame {
     return p;
   }
 
+  /// A spiral from the middle out, about two turns, for the snail's shell.
+  static Path _spiral(double cx, double cy) {
+    final p = Path()..moveTo(cx, cy);
+    for (var i = 1; i <= 40; i++) {
+      final a = i * pi / 10; // 2 turns in 40 steps
+      final r = 1.6 * a;
+      p.lineTo(cx + r * cos(a), cy + r * sin(a));
+    }
+    return p;
+  }
+
   static final Map<PowerUpKind, _Icon> _icons = {
-    // Snail: shell on a body, feelers.
+    // Snail: a big spiral shell on a thick body with a head and a feeler.
     PowerUpKind.slow: _Icon(
-      fill: _poly([12, 78, 14, 66, 28, 62, 76, 62, 90, 68, 90, 78])..addOval(Rect.fromCircle(center: const Offset(86, 54), radius: 8)),
-      line: Path()
-        ..addOval(Rect.fromCircle(center: const Offset(46, 42), radius: 19))
-        ..addOval(Rect.fromCircle(center: const Offset(46, 42), radius: 6))
-        ..addPath(_strokes([[86, 50, 82, 30], [86, 50, 96, 34]]), Offset.zero),
+      fill: Path()
+        ..addOval(Rect.fromCircle(center: const Offset(44, 40), radius: 25))
+        ..addRRect(RRect.fromLTRBR(20, 64, 80, 82, const Radius.circular(9)))
+        ..addOval(Rect.fromCircle(center: const Offset(72, 56), radius: 10)),
+      line: _strokes([
+        [74, 50, 80, 32],
+      ]),
       lineW: 7,
+      cut: _spiral(44, 40),
+      cutW: 6,
     ),
     // Ghost: a sheet with a wavy hem; the eyes are holes.
     PowerUpKind.ghost: _Icon(
@@ -239,11 +258,13 @@ class CurveGame extends FlameGame {
     ),
     // Lightning bolt.
     PowerUpKind.speedOthers: _Icon(fill: _poly([60, 10, 26, 56, 47, 56, 38, 90, 74, 42, 53, 42])),
-    // A thin line over a thick bar.
+    // A thin line beside a thick one.
     PowerUpKind.fatOthers: _Icon(
-      fill: _poly([16, 50, 84, 50, 84, 82, 16, 82]),
-      line: _strokes([[16, 28, 84, 28]]),
-      lineW: 7,
+      fill: _poly([46, 20, 74, 20, 74, 80, 46, 80]),
+      line: _strokes([
+        [28, 20, 28, 80],
+      ]),
+      lineW: 6,
     ),
     // Two arrows the opposite way round.
     PowerUpKind.reverseOthers: _Icon(
@@ -253,20 +274,30 @@ class CurveGame extends FlameGame {
       ]),
       lineW: 8,
     ),
-    // Broom: handle and bristles.
+    // Broom: a long handle and a head whose bristles fan out.
     PowerUpKind.clear: _Icon(
-      fill: _poly([28, 52, 52, 66, 42, 88, 14, 80]),
-      line: _strokes([[74, 14, 40, 58]]),
-      lineW: 8,
-    ),
-    // An arrow through the edge: dashed walls either side of it.
-    PowerUpKind.wrap: _Icon(
-      line: _strokes([[8, 50, 88, 50], [74, 38, 88, 50, 74, 62]]),
-      lineW: 8,
-      thin: _strokes([
-        for (final x in [22.0, 78.0])
-          for (final y in [18.0, 38.0, 58.0, 78.0]) [x, y, x, y + 12],
+      fill: _poly([40, 52, 62, 52, 76, 82, 26, 82]),
+      line: _strokes([
+        [51, 52, 69, 18],
       ]),
+      lineW: 10,
+      cut: _strokes([
+        [46, 64, 40, 82],
+        [51, 64, 51, 82],
+        [56, 64, 62, 82],
+      ]),
+      cutW: 4,
+    ),
+    // Out of one edge and in at the other: an arrow runs into the right wall, another
+    // starts at the left wall.
+    PowerUpKind.wrap: _Icon(
+      line: _strokes([
+        [18, 34, 18, 66], // left wall
+        [82, 34, 82, 66], // right wall
+        [24, 50, 44, 50], [34, 40, 44, 50, 34, 60], // the arrow coming in at the left
+        [54, 50, 74, 50], [64, 40, 74, 50, 64, 60], // the arrow running out at the right
+      ]),
+      lineW: 8,
     ),
   };
 
@@ -300,9 +331,11 @@ class CurveGame extends FlameGame {
       _icon.strokeWidth = ic.lineW;
       canvas.drawPath(ic.line!, _icon);
     }
-    if (ic.thin != null) {
-      _icon.strokeWidth = 5;
-      canvas.drawPath(ic.thin!, _icon);
+    if (ic.cut != null) {
+      _icon
+        ..color = disc
+        ..strokeWidth = ic.cutW;
+      canvas.drawPath(ic.cut!, _icon);
     }
     if (ic.holes.isNotEmpty) {
       _icon

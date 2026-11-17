@@ -244,6 +244,28 @@ void main() {
     });
   });
 
+  testWidgets('no icon glyph touches the rim of its disc (ink is the background colour: it would look cut off)', (tester) async {
+    await tester.runAsync(() async {
+      for (final kind in PowerUpKind.values) {
+        final sim = _Fx();
+        sim.place(0, 100, 100, 0);
+        sim.placePowerUp(kind, 800, 450);
+        final d = await _render(sim);
+        final disc = switch (kind) {
+          PowerUpKind.slow || PowerUpKind.ghost => _green,
+          PowerUpKind.speedOthers || PowerUpKind.fatOthers || PowerUpKind.reverseOthers => const Color(0xFFFF4D4D),
+          _ => const Color(0xFF4DA6FF),
+        };
+        for (var i = 0; i < 72; i++) {
+          final a = i * pi / 36;
+          // 93% of the disc's radius: just inside its edge.
+          final p = Offset(800 + 24 * 0.93 * cos(a), 450 + 24 * 0.93 * sin(a));
+          expect(_near(_at(d, p.dx, p.dy), disc), isTrue, reason: '$kind at ${(a * 180 / pi).round()} degrees');
+        }
+      }
+    });
+  });
+
   testWidgets('a trail is as wide as the stacks it was painted with (x1 to x4)', (tester) async {
     await tester.runAsync(() async {
       for (final mult in [1, 2, 3, 4]) {
