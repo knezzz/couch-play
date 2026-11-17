@@ -10,7 +10,8 @@ class _EscapeIntent extends Intent {
 /// [onEnd]. The remote's Back reaches Android apps as a pop-route, not a key,
 /// so this listens for that; Escape does the same for macOS. With the dialog
 /// open, Back or Escape closes it (No). Outside a game ([active] false) Back is
-/// left to the system. Put it in `MaterialApp.builder`.
+/// left to [onIdleBack] if it handles it (it returns true), else to the system.
+/// Put it in `MaterialApp.builder`.
 class BackGuard extends StatefulWidget {
   const BackGuard({
     required this.navigatorKey,
@@ -18,6 +19,7 @@ class BackGuard extends StatefulWidget {
     required this.changes,
     required this.onEnd,
     required this.child,
+    this.onIdleBack,
     super.key,
   });
   final GlobalKey<NavigatorState> navigatorKey;
@@ -27,6 +29,10 @@ class BackGuard extends StatefulWidget {
   /// game is closed.
   final Listenable changes;
   final VoidCallback onEnd;
+
+  /// Back (or Escape) while no game is active: true if it did something (e.g.
+  /// closed the results screen), false to leave Back to the system.
+  final bool Function()? onIdleBack;
   final Widget child;
 
   @override
@@ -67,7 +73,8 @@ class _BackGuardState extends State<BackGuard> with WidgetsBindingObserver {
   /// only sees Back when nothing was open.
   @override
   Future<bool> didPopRoute() async {
-    if (!widget.active() || _open) return false;
+    if (_open) return false;
+    if (!widget.active()) return widget.onIdleBack?.call() ?? false;
     _ask();
     return true;
   }
@@ -77,6 +84,8 @@ class _BackGuardState extends State<BackGuard> with WidgetsBindingObserver {
       widget.navigatorKey.currentState?.pop();
     } else if (widget.active()) {
       _ask();
+    } else {
+      widget.onIdleBack?.call();
     }
   }
 

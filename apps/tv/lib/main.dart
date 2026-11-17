@@ -223,6 +223,12 @@ class _TvAppState extends State<TvApp> {
         active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez,
         changes: _session.changes,
         onEnd: _session.endGame,
+        // Back on the results screen moves on at once instead of waiting out the hold.
+        onIdleBack: () {
+          if (_session.phase != Phase.results) return false;
+          _session.returnToLobby();
+          return true;
+        },
         child: EffectLayer(child: child!),
       ),
       theme: tvTheme(),
