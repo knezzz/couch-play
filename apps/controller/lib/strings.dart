@@ -141,6 +141,7 @@ abstract final class Strings {
     GameKind.koliko => 'Koliko?',
     GameKind.blef => 'Blef',
     GameKind.tkobi => 'Tko bi?',
+    GameKind.kaosvi => 'Kao svi',
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
@@ -151,6 +152,7 @@ abstract final class Strings {
     GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
     GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
     GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
+    GameKind.kaosvi => 'Odgovori isto kao većina u sobi.',
   };
   static String watchingLabel(String? host) => '${host ?? 'Domaćin'} gleda:';
   static String startsWhen(String? host) =>
@@ -196,6 +198,7 @@ abstract final class Strings {
         '${pack(kolikoPacks, s.kolikoPackId)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
       GameKind.objasni =>
         '${pack(objasniPacks, s.objasniPackId)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
+      GameKind.kaosvi => '${questions(s.kaosviQuestions)} · ${s.kaosviTarget} bodova',
     };
   }
 

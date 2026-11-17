@@ -565,6 +565,9 @@ class Session {
         final pack = tkobiPack(_settings.tkobiPackId);
         if (pack == null) return Strings.packUnavailable;
         _startTkobi(parts, pack);
+      case GameKind.kaosvi:
+        if (!kaosviTvReady) return PartyText.soon;
+        return PartyText.soon; // the session wiring follows
     }
     onStart?.call(game, packId);
     return null;
@@ -941,6 +944,7 @@ class Session {
   bool kolikoTvReady = kKolikoTvReady;
   bool blefTvReady = kBlefTvReady;
   bool tkobiTvReady = kTkobiTvReady;
+  bool kaosviTvReady = kKaosviTvReady;
   WolfMatch? _wolf;
   Timer? _wolfEndTimer;
   WolfMatch? get wolf => _wolf;

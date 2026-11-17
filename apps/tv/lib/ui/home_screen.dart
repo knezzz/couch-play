@@ -18,6 +18,7 @@ const homeGames = [
   GameKind.koliko,
   GameKind.blef,
   GameKind.tkobi,
+  GameKind.kaosvi,
 ];
 
 /// The console home (docs/design/couchplay-screens/V2Home.dc.html), on a 1920x1080
@@ -540,7 +541,7 @@ class _SettingsPanel extends StatelessWidget {
           ],
         ],
       // The four party games have no settings on the TV yet.
-      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String)>>[],
+      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi || GameKind.kaosvi => <List<(String, String)>>[],
     };
     Widget item((String, String) it) => Text.rich(
       TextSpan(
@@ -708,6 +709,7 @@ class _Backdrop extends StatelessWidget {
           GameKind.koliko => const [Color(0xFF0B1F1A), Color(0xFF12304A)],
           GameKind.blef => const [Color(0xFF3A2008), Color(0xFF2A0E0E)],
           GameKind.tkobi => const [Color(0xFF2A1030), Color(0xFF3A1430)],
+          GameKind.kaosvi => const [Color(0xFF0E2A1E), Color(0xFF1A3A2A)],
         },
       ),
     ),
@@ -824,6 +826,7 @@ class _ArtPainter extends CustomPainter {
           canvas.restore();
         }
       case GameKind.tkobi:
+      case GameKind.kaosvi: // stand-in art (builder-2 draws the herd)
         // Everybody in the room, round a ring.
         for (var i = 0; i < 8; i++) {
           final a = -pi / 2 + i * 2 * pi / 8;

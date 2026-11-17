@@ -70,6 +70,7 @@ class GameLook {
       Color(0xFFE6DAFF),
       null,
     ),
+    GameKind.kaosvi => const GameLook(Color(0xFF3DDC84), ink, ink, null),
   };
 }
 
@@ -113,6 +114,7 @@ Widget _art(GameKind k) => switch (k) {
   ),
   GameKind.blef => const Icon(Icons.theater_comedy, size: 96, color: ink),
   GameKind.tkobi => const Icon(Icons.how_to_vote, size: 96, color: textColor),
+  GameKind.kaosvi => const Icon(Icons.groups, size: 96, color: ink),
   GameKind.uljez => const Text(
     '?',
     style: TextStyle(
