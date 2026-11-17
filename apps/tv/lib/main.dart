@@ -126,6 +126,7 @@ class _TvAppState extends State<TvApp> {
       _session.kolikoPacks = await loadKolikoPacks(rootBundle);
       _session.blefPacks = await loadBlefPacks(rootBundle);
       _session.tkobiPacks = await loadTkobiPacks(rootBundle);
+      _session.kaosviPacks = await loadKaosviPacks(rootBundle);
       _session.loadSettings(File('${support.path}/settings.json'));
       final server = await GameServer.start(
         webRoot: web,
