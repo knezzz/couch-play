@@ -301,10 +301,10 @@ void main() {
         const Reshuffle(),
         const Go(),
         const ObjasniAction(ObjasniAct.correct),
-        const ObjasniAction(ObjasniAct.skip),
-        const ObjasniAction(ObjasniAct.foul),
+        const ObjasniAction(ObjasniAct.skip, wordNo: 7),
+        const ObjasniAction(ObjasniAct.foul, wordNo: 12),
         const ObjasniTeams(team: 1, teams: [[1, 2], [3, 4, 5]]),
-        const ObjasniTurn(stage: ObjasniStage.play, role: ObjasniRole.explain, team: 0, explainer: 2, word: 'kuća', seconds: 60, scores: [3, -1]),
+        const ObjasniTurn(stage: ObjasniStage.play, role: ObjasniRole.explain, team: 0, explainer: 2, word: 'kuća', wordNo: 5, seconds: 60, scores: [3, -1]),
         const ObjasniTurn(stage: ObjasniStage.play, role: ObjasniRole.guess, team: 0, explainer: 2, word: null, seconds: 40, scores: [0, 0]),
         const ObjasniTurn(stage: ObjasniStage.summary, role: ObjasniRole.watch, team: 1, explainer: 4, word: null, seconds: 5, scores: [10, 12]),
       ];
@@ -424,5 +424,13 @@ void main() {
       expect(Message.decode('{"type":"tkobiAsk","number":1,"total":1,"seconds":1,"text":5,"ids":[],"picked":null}'), isNull);
       expect(Message.decode('{"type":"tkobiResult","counts":{"a":1},"crowned":[],"votedRight":false,"points":0,"total":0}'), isNull);
     });
+  });
+
+  test('Objasni word numbers: absent means 0 / null (older phones and TVs)', () {
+    final a = Message.decode('{"type":"objasniAction","act":"foul"}') as ObjasniAction;
+    expect(a.wordNo, isNull);
+    final t = Message.decode('{"type":"objasniTurn","stage":"play","role":"watch","team":0,"explainer":1,"word":"x","seconds":5,"scores":[0,0]}') as ObjasniTurn;
+    expect(t.wordNo, 0);
+    expect(Message.decode('{"type":"objasniAction","act":"foul","wordNo":"3"}'), isNull);
   });
 }

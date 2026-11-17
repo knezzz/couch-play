@@ -294,7 +294,7 @@ sealed class Message with _JsonEq {
         'blefPick' => BlefPick(m['index'] as int),
         'reshuffle' => const Reshuffle(),
         'go' => const Go(),
-        'objasniAction' => ObjasniAction(ObjasniAct.values.byName(m['act'] as String)),
+        'objasniAction' => ObjasniAction(ObjasniAct.values.byName(m['act'] as String), wordNo: m['wordNo'] as int?),
         'shoot' => Shoot(m['target'] as int?),
         'ping' => Ping(m['t'] as int),
         'welcome' =>
@@ -419,6 +419,7 @@ sealed class Message with _JsonEq {
             team: m['team'] as int,
             explainer: m['explainer'] as int,
             word: m['word'] as String?,
+            wordNo: (m['wordNo'] as int?) ?? 0,
             seconds: m['seconds'] as int,
             scores: [for (final e in m['scores'] as List) e as int]),
         'pong' => Pong(m['t'] as int),
@@ -953,11 +954,16 @@ class Go extends Message {
 /// Phone -> TV: Točno / Preskoči (the explainer), Prekršaj (the other team).
 class ObjasniAction extends Message {
   final ObjasniAct act;
-  const ObjasniAction(this.act);
+
+  /// The [ObjasniTurn.wordNo] of the word the press is about. The TV ignores a
+  /// press for a word that is no longer on screen (two phones racing for the
+  /// same word, a double tap). Null from an older phone: no check.
+  final int? wordNo;
+  const ObjasniAction(this.act, {this.wordNo});
   @override
   String get type => 'objasniAction';
   @override
-  Map<String, Object?> get fields => {'act': act.name};
+  Map<String, Object?> get fields => {'act': act.name, 'wordNo': wordNo};
 }
 
 /// TV -> everyone: the teams (player ids) and which one this phone is on ([team]).
@@ -980,6 +986,9 @@ class ObjasniTurn extends Message {
   final ObjasniRole role;
   final int team, explainer, seconds;
   final String? word;
+
+  /// Counts the words of the game; echo it in [ObjasniAction.wordNo].
+  final int wordNo;
   final List<int> scores;
   const ObjasniTurn(
       {required this.stage,
@@ -987,6 +996,7 @@ class ObjasniTurn extends Message {
       required this.team,
       required this.explainer,
       required this.word,
+      this.wordNo = 0,
       required this.seconds,
       required this.scores});
   @override
@@ -998,6 +1008,7 @@ class ObjasniTurn extends Message {
         'team': team,
         'explainer': explainer,
         'word': word,
+        'wordNo': wordNo,
         'seconds': seconds,
         'scores': scores,
       };
