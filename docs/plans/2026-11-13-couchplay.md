@@ -928,3 +928,14 @@ Reference: canvas page "Konzola i Vukodlak" (`Village.dc.html`, `V2WolfNight/Day
 - [ ] **Step 4: Phones:** hold-to-see role; one grey night screen for every role (roles with no night action get a simple sum in the same list; added 2026-11-17); vote; host settings with the possible-roles screen; everyone's "possible roles" list.
 - [ ] **Step 5: Check:** tests in all members; QA on macOS release with 5–8 browser phones: a full game for several role mixes; nothing on a phone (colour, layout, timing) reveals a role; review checks that no private message reaches the wrong phone.
 - [ ] **Step 6: Commit** by path.
+
+---
+
+### Task 34: New power-up icons and ring-only active effects (added 2026-11-17, user choice)
+
+Reference: canvas page "Curve pojačanja": icons version **A** (`PuIcons.dc.html`), active effects option **1** (`PuActive.dc.html`).
+
+- [ ] **Step 1:** Redraw the 7 power-up glyphs in `curve_game.dart` as version A (snail, ghost, lightning, thin-over-thick, opposite arrows, broom, arrow through the edge), ink on the green/red/blue disc, readable at board size from the couch. Same in the power-up sheet if one exists in the app.
+- [ ] **Step 2:** Replace the Task 17 indicator (icon + ring beside the head) with rings only: one ring per active effect, centred on the head, in its color (green on you, red from others), draining as time runs out; several effects as concentric rings, outer = longest left. Fat stacks: keep a small dot per stack on its ring. Wrap keeps the white border.
+- [ ] **Step 3:** Update the pixel tests that pinned the old indicator; QA on macOS release; frame times next TV session.
+- [ ] **Step 4: Commit** by path.

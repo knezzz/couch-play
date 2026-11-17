@@ -150,6 +150,11 @@ Lobby (QR, players, running scoreboard) → host picks Quiz or Curve → game �
 
   Effects stack by restarting their timer. Exact timings, spawn rate and icons are left to the builder. The TV
   draws them; phones need nothing new.
+- **Power-up look (user choice, 2026-11-17):** icons are version A on the canvas page "Curve pojačanja"
+  (`PuIcons.dc.html`): snail (slow), ghost, lightning (speed others), thin-over-thick line (fat), opposite arrows
+  (reverse), broom (clear), arrow through the edge (wrap), drawn in ink on the green/red/blue disc. Active effects on a
+  player are option 1 (`PuActive.dc.html`): no icon, one ring per active effect around the head in its color, draining
+  as time runs out; several effects are concentric rings. Wrap keeps the shrinking white border.
 - **Curve modes (user request, 2026-11-16):** the host picks a mode in the lobby settings:
   - Kaos: power-ups spawn often, many on the board at once
   - Uravnoteženo: today's rate (the default)
