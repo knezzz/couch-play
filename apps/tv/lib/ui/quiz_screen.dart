@@ -29,6 +29,7 @@ class QuizScreen extends StatelessWidget {
     required this.total,
     required this.remaining,
     this.limitSeconds = 20,
+    this.answeredIds = const {},
     required this.answered,
     required this.expected,
     required this.players,
@@ -50,6 +51,9 @@ class QuizScreen extends StatelessWidget {
   final String pictureName;
   final List<String> choices;
   final int number, total, answered, expected;
+
+  /// Who has answered this question (not what): their faces sit beside the count.
+  final Set<int> answeredIds;
 
   /// Countdown, 1 down to 0.
   final double remaining;
@@ -75,20 +79,37 @@ class QuizScreen extends StatelessWidget {
       child: SizedBox(
         width: 1920,
         height: 1080,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(96, 56, 96, 72),
-              // A photo that will not decode falls back to the text layout.
-              child: picture == null
-                  ? _layout(false, () {})
-                  : _PictureGuard(
-                      picture!,
-                      (broken, report) => _layout(!broken, report),
-                    ),
-            ),
-            if (correctIndex == null) _ticker(),
-          ],
+        // The question screen has its own gradient (V2Quiz); the reveal stays flat.
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: correctIndex == null
+                ? const LinearGradient(
+                    begin: Alignment(-0.34, -1),
+                    end: Alignment(0.34, 1),
+                    colors: [
+                      Color(0xFF0B0B18),
+                      Color(0xFF161232),
+                      Color(0xFF0B0B18),
+                    ],
+                    stops: [0, 0.6, 1],
+                  )
+                : null,
+          ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(96, 56, 96, 72),
+                // A photo that will not decode falls back to the text layout.
+                child: picture == null
+                    ? _layout(false, () {})
+                    : _PictureGuard(
+                        picture!,
+                        (broken, report) => _layout(!broken, report),
+                      ),
+              ),
+              if (correctIndex == null) _ticker(),
+            ],
+          ),
         ),
       ),
     ),
@@ -104,7 +125,9 @@ class QuizScreen extends StatelessWidget {
 
   /// Whole seconds left. The small tolerance keeps 14.000000000000002 from
   /// counting as 15.
-  int get _secondsLeft => (remaining.clamp(0.0, 1.0) * limitSeconds - 1e-6).ceil().clamp(0, limitSeconds);
+  int get _secondsLeft => (remaining.clamp(0.0, 1.0) * limitSeconds - 1e-6)
+      .ceil()
+      .clamp(0, limitSeconds);
 
   bool get _urgent => _secondsLeft <= 5;
   Color get _tickColor => _urgent ? _red : _amber;
@@ -127,7 +150,9 @@ class QuizScreen extends StatelessWidget {
                   key: ValueKey('tick-$i'),
                   decoration: BoxDecoration(
                     color: i < lit ? _tickColor : const Color(0x14FFFFFF),
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(6)),
+                    borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(6),
+                    ),
                   ),
                 ),
               ),
@@ -162,6 +187,13 @@ class QuizScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 32),
+        for (final p in players)
+          if (answeredIds.contains(p.id))
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: PlayerDot(_color(p), size: 52, character: p.character),
+            ),
+        if (answeredIds.isNotEmpty) const SizedBox(width: 8),
         Text(
           Strings.answered(answered, expected),
           style: const TextStyle(fontSize: 40, color: tvMuted),
@@ -300,15 +332,15 @@ class QuizScreen extends StatelessWidget {
     final long = choices[i].length > (compact ? 20 : 24);
     return Container(
       key: ValueKey('tile-$i'),
-      height: compact ? 112 : 168,
-      padding: EdgeInsets.symmetric(horizontal: compact ? 28 : 40),
+      height: compact ? 112 : 200,
+      padding: EdgeInsets.symmetric(horizontal: compact ? 28 : 44),
       decoration: BoxDecoration(
         color: _tileColors[i],
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(compact ? 24 : 32),
       ),
       child: Row(
         children: [
-          ShapeMark(i, compact ? 40 : 48, tvInk),
+          ShapeMark(i, compact ? 40 : 60, tvInk),
           SizedBox(width: compact ? 20 : 32),
           Expanded(
             child: Text(
@@ -317,8 +349,8 @@ class QuizScreen extends StatelessWidget {
               maxLines: compact ? 2 : 3,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: compact ? (long ? 36 : 44) : (long ? 40 : 52),
-                fontWeight: FontWeight.w700,
+                fontSize: compact ? (long ? 36 : 44) : (long ? 44 : 64),
+                fontWeight: compact ? FontWeight.w700 : FontWeight.w900,
                 height: 1.1,
                 color: tvInk,
               ),
@@ -342,7 +374,12 @@ class QuizScreen extends StatelessWidget {
       for (final p in _voters(i))
         Padding(
           padding: const EdgeInsets.only(left: 12),
-          child: PlayerDot(_color(p), size: size, ring: true, character: p.character),
+          child: PlayerDot(
+            _color(p),
+            size: size,
+            ring: true,
+            character: p.character,
+          ),
         ),
     ],
   );
@@ -465,7 +502,10 @@ class QuizScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: SizedBox(width: double.infinity, child: _picture(onBroken)),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: _picture(onBroken),
+                ),
               ),
               const SizedBox(height: 16),
               _correctTile(right, 140),
@@ -506,7 +546,10 @@ class QuizScreen extends StatelessWidget {
         ShapeMark(i, 30, _tileColors[i]),
         const SizedBox(width: 16),
         Expanded(child: _wrongAnswer(choices[i])),
-        _Voters([for (final p in _voters(i)) _color(p)], [for (final p in _voters(i)) p.character]),
+        _Voters(
+          [for (final p in _voters(i)) _color(p)],
+          [for (final p in _voters(i)) p.character],
+        ),
       ],
     ),
   );
@@ -664,7 +707,12 @@ class _Voters extends StatelessWidget {
             for (var i = 0; i < shown; i++)
               Positioned(
                 left: i * _step,
-                child: PlayerDot(colors[i], size: _dot, ring: true, character: characters[i]),
+                child: PlayerDot(
+                  colors[i],
+                  size: _dot,
+                  ring: true,
+                  character: characters[i],
+                ),
               ),
             if (more)
               Positioned(

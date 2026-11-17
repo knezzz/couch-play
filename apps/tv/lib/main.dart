@@ -245,6 +245,7 @@ class _TvAppState extends State<TvApp> {
                     remaining: _session.quizRemaining,
                     limitSeconds: quiz.limit.inSeconds,
                     answered: _session.quizAnswered,
+                    answeredIds: _session.quizAnsweredIds,
                     expected: _session.quizExpected,
                     correctIndex:
                         quiz.step == QuizStep.asking ? null : quiz.current.correctIndex,

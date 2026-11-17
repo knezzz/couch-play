@@ -131,7 +131,7 @@ void main() {
     expect(t.takeException(), isNull);
     expect(find.byKey(const ValueKey('picture')), findsNothing);
     for (var i = 0; i < 4; i++) {
-      expect(t.getSize(find.byKey(ValueKey('tile-$i'))).height, 168, reason: 'text layout');
+      expect(t.getSize(find.byKey(ValueKey('tile-$i'))).height, 200, reason: 'text layout');
     }
     expect(find.text('Koji je ovo grad?'), findsOneWidget);
   });

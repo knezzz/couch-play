@@ -782,6 +782,12 @@ class Session {
   int get quizAnswered =>
       _picks.keys.where((id) => _byId(id)?.connected ?? false).length;
 
+  /// Who has answered this question (never what): for the faces on the TV.
+  Set<int> get quizAnsweredIds => {
+        for (final id in _picks.keys)
+          if (_byId(id)?.connected ?? false) id,
+      };
+
   /// Players the round is still waiting for or has: in the round and connected.
   int get quizExpected => _quizIds.where((id) => _byId(id)?.connected ?? false).length;
 

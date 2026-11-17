@@ -18,8 +18,9 @@ void _big(WidgetTester t) {
   addTearDown(t.view.reset);
 }
 
-QuizScreen _quiz({int? correct, bool svg = true, Map<int, int>? picks, Map<int, int>? points, double remaining = 0.6}) =>
+QuizScreen _quiz({int? correct, bool svg = true, Map<int, int>? picks, Map<int, int>? points, double remaining = 0.6, Set<int> answeredIds = const {}}) =>
     QuizScreen(
+      answeredIds: answeredIds,
       question: 'Which of these is the capital of the country in the picture? ' * 2,
       packTitle: 'World Flags',
       picture: svg ? Uint8List.fromList(utf8.encode(_svg)) : null,
@@ -77,20 +78,24 @@ void main() {
       expect(find.byKey(const ValueKey('picture')), findsNothing);
     });
 
-    testWidgets('four 168 px tiles in a 2x2 grid; long answers wrap to 3 lines inside the tile', (t) async {
+    testWidgets('four 200 px tiles (V2Quiz) in a 2x2 grid; long answers wrap to 3 lines inside the tile', (t) async {
       await _pump(t, _quiz(svg: false));
       for (var i = 0; i < 4; i++) {
-        expect(t.getSize(find.byKey(ValueKey('tile-$i'))).height, 168);
+        expect(t.getSize(find.byKey(ValueKey('tile-$i'))).height, 200);
       }
       expect(t.getTopLeft(find.byKey(const ValueKey('tile-0'))).dy, t.getTopLeft(find.byKey(const ValueKey('tile-1'))).dy);
       expect(t.getTopLeft(find.byKey(const ValueKey('tile-2'))).dy, greaterThan(t.getTopLeft(find.byKey(const ValueKey('tile-0'))).dy));
       for (final e in find.text(_long).evaluate()) {
         final h = t.getSize(find.byWidget(e.widget)).height;
-        expect(h, lessThanOrEqualTo(168));
+        expect(h, lessThanOrEqualTo(200));
         expect((e.widget as Text).maxLines, 3);
         expect((e.widget as Text).style!.fontSize, greaterThanOrEqualTo(28));
       }
-      expect(_fs(t, find.text('Split')), 52, reason: 'short answers are big');
+      expect(_fs(t, find.text('Split')), 64, reason: 'short answers are big (V2Quiz: 64 px, weight 900)');
+      expect(t.widget<Text>(find.text('Split')).style!.fontWeight, FontWeight.w900);
+      final deco = t.widget<Container>(find.byKey(const ValueKey('tile-1'))).decoration! as BoxDecoration;
+      expect((deco.borderRadius! as BorderRadius).topLeft.x, 32, reason: 'radius 32');
+      expect(t.getSize(find.descendant(of: find.byKey(const ValueKey('tile-1')), matching: find.byType(ShapeMark)).first).width, 60, reason: 'the shape is 60 px');
     });
 
     testWidgets('the tile shapes are drawn, not typed', (t) async {
@@ -232,4 +237,31 @@ void main() {
         expect(find.descendant(of: find.byKey(ValueKey('tile-$i')), matching: find.textContaining('+')), findsNothing);
       }
     });
+
+  group('V2Quiz look', () {
+    testWidgets('the faces of the players who have answered sit beside the count; nobody else\'s', (t) async {
+      await _pump(t, _quiz(svg: false, answeredIds: const {0, 2}));
+      Finder inHeader(String id) => find.byWidgetPredicate((w) => w is CharacterFace && w.id == id && w.size == 52);
+      expect(inHeader(characterIds[0]), findsOneWidget);
+      expect(inHeader(characterIds[2]), findsOneWidget);
+      expect(inHeader(characterIds[1]), findsNothing);
+      expect(inHeader(characterIds[3]), findsNothing);
+      expect(find.text(Strings.answered(2, 4)), findsOneWidget);
+    });
+
+    testWidgets('no faces before anybody has answered, and none in the reveal', (t) async {
+      await _pump(t, _quiz(svg: false, answeredIds: const {}));
+      expect(find.byWidgetPredicate((w) => w is CharacterFace && w.size == 52), findsNothing);
+      await _pump(t, _quiz(svg: false, answeredIds: const {0}, correct: 1));
+      expect(find.byWidgetPredicate((w) => w is CharacterFace && w.size == 52), findsNothing, reason: 'the reveal has its own header');
+    });
+
+    testWidgets('the question screen has the gradient background #0B0B18 to #161232', (t) async {
+      await _pump(t, _quiz(svg: false));
+      final box = t.widgetList<DecoratedBox>(find.byType(DecoratedBox)).firstWhere((b) => b.decoration is BoxDecoration && (b.decoration as BoxDecoration).gradient != null);
+      final g = (box.decoration as BoxDecoration).gradient! as LinearGradient;
+      expect(g.colors.first, const Color(0xFF0B0B18));
+      expect(g.colors[1], const Color(0xFF161232));
+    });
+  });
 }

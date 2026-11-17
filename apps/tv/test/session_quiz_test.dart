@@ -331,4 +331,22 @@ void main() {
     expect(b.all<Effect>().where((e) => e.name == 'confetti'), isEmpty);
     s.dispose();
   });
+
+  testWidgets('the_TV_knows_WHO_has_answered_never_what', (t) async {
+    final s = Session(random: Random(1));
+    final a = join(s, 'Ana', token: 'ta');
+    final b = join(s, 'Ben', token: 'tb');
+    a.say(const StartGame(GameKind.quiz, null));
+    await t.pump();
+    expect(s.quizAnsweredIds, isEmpty);
+    final aid = idOf(a), bid = idOf(b);
+    a.say(const Answer(1));
+    await t.pump();
+    expect(s.quizAnsweredIds, {aid});
+    expect(s.quizAnswered, 1);
+    b.say(const Answer(2));
+    await t.pump();
+    expect(s.quizAnsweredIds, {aid, bid});
+    s.dispose();
+  });
 }
