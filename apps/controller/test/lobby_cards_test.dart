@@ -353,4 +353,72 @@ void main() {
       expect((label.dy - less.dy).abs(), lessThan(20));
     });
   });
+  group('the power-up legend in the Curve details', () {
+    Future<void> openLegend(WidgetTester t, {double width = 390}) async {
+      await _show(
+        t,
+        _lobby(selected: GameKind.curve),
+        0,
+        width: width,
+        height: 2600,
+      );
+    }
+
+    testWidgets('shut by default; opens to every power-up from core', (
+      t,
+    ) async {
+      await openLegend(t);
+      expect(find.byKey(const ValueKey('pu-speed')), findsNothing);
+      expect(
+        t.getSize(find.byKey(const ValueKey('legend-toggle'))).height,
+        greaterThanOrEqualTo(56),
+      );
+      await t.tap(find.byKey(const ValueKey('legend-toggle')));
+      await t.pumpAndSettle();
+      for (final k in PowerUpKind.values) {
+        final row = find.byKey(ValueKey('pu-${k.name}'));
+        expect(row, findsOneWidget, reason: k.name);
+        final text = powerUpTexts[k]!;
+        for (final s in [text.name, text.what, text.time]) {
+          expect(
+            find.descendant(of: row, matching: find.text(s)),
+            findsOneWidget,
+            reason: '${k.name}: $s',
+          );
+        }
+        expect(
+          find.descendant(of: row, matching: find.byType(PowerUpIcon)),
+          findsOneWidget,
+        );
+      }
+      await t.tap(find.byKey(const ValueKey('legend-toggle')));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('pu-speed')), findsNothing);
+    });
+
+    testWidgets('grouped by whom they act on: you, the others, all', (t) async {
+      await openLegend(t);
+      await t.tap(find.byKey(const ValueKey('legend-toggle')));
+      await t.pumpAndSettle();
+      double y(PowerUpKind k) =>
+          t.getTopLeft(find.byKey(ValueKey('pu-${k.name}'))).dy;
+      expect(y(PowerUpKind.cheese), lessThan(y(PowerUpKind.speedOthers)));
+      expect(y(PowerUpKind.squareOthers), lessThan(y(PowerUpKind.clear)));
+      expect(find.text(Strings.puYou), findsOneWidget);
+      expect(find.text(Strings.puOthers), findsOneWidget);
+      expect(find.text(Strings.puAll), findsOneWidget);
+    });
+
+    testWidgets('fits 360 px with the longest line open', (t) async {
+      await openLegend(t, width: 360);
+      await t.tap(find.byKey(const ValueKey('legend-toggle')));
+      await t.pumpAndSettle();
+      expect(t.takeException(), isNull);
+    });
+
+    testWidgets('the Kviz details have no legend', (t) async {
+      await _show(t, _lobby(selected: GameKind.quiz), 0);
+      expect(find.byKey(const ValueKey('legend-toggle')), findsNothing);
+    });
+  });
 }

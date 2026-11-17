@@ -7,6 +7,7 @@ import '../theme.dart';
 import '../strings.dart';
 import 'game_cards.dart';
 import 'pack_grid.dart';
+import 'power_up_legend.dart';
 import 'uljez_screens.dart';
 import 'wolf_screens.dart';
 
@@ -404,6 +405,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     _uljezSettings(l, change)
                   else if (kind == GameKind.quiz || kind == GameKind.curve)
                     _GameSettings(kind, s, onChange: change),
+                  if (kind == GameKind.curve) ...[
+                    const SizedBox(height: 4),
+                    const PowerUpLegend(),
+                  ],
                   if (kind == GameKind.quiz || kind == GameKind.curve) ...[
                     const SizedBox(height: 14),
                     const Text(
