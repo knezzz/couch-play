@@ -42,10 +42,12 @@ abstract final class Strings {
   static String gameName(GameKind k) => switch (k) {
     GameKind.quiz => quiz,
     GameKind.curve => curve,
+    GameKind.vukodlak => wolfName,
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
     GameKind.curve => 'Vozi svoju krivulju i ne udari u druge.',
+    GameKind.vukodlak => 'Selo i vukodlaci. Uloga je tajna.',
   };
   static String watching(String? host, String game) =>
       '${host ?? 'Domaćin'} gleda: $game';
@@ -65,6 +67,148 @@ abstract final class Strings {
   static String seconds(int n) => '$n s';
   static String lessOf(String label) => 'Manje: $label';
   static String moreOf(String label) => 'Više: $label';
+
+  // Vukodlak
+  static const wolfName = 'Vukodlak';
+  static const holdHere = 'Drži prst ovdje';
+  static const holdHint = 'Uloga se vidi samo dok držiš.\nPusti i nestaje.';
+  static const yourRole = 'TVOJA ULOGA';
+  static String night(int n) => 'NOĆ $n';
+  static const nightTitle = 'Noćna odluka';
+  static const confirm = 'Potvrdi';
+  static const sent = 'Poslano';
+  static const farewellHint =
+      'Ispao si iz igre. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom.';
+  static String wolfMates(String names) => 'Drugi vukodlaci: $names';
+  static String wolfWinner(WolfWinner w) => switch (w) {
+    WolfWinner.village => 'Selo je pobijedilo.',
+    WolfWinner.wolves => 'Vukodlaci su pobijedili.',
+    WolfWinner.lone => 'Vuk samotnjak je pobijedio.',
+    WolfWinner.tramp => 'Lutalica je pobijedila.',
+    WolfWinner.nobody => 'Nitko nije pobijedio.',
+  };
+  static const nightSpecial = 'Posebna moć';
+  static String voteHeader(int day) => 'DAN $day · GLASANJE';
+  static const voteTitle = 'Koga izbacujete?';
+  static const skipVote = 'Preskoči glasanje';
+  static const vote = 'Glasaj';
+  static const you = 'ti';
+  static const possibleRoles = 'Moguće uloge';
+  static String possibleRolesCount(int n) => 'Moguće uloge · $n uključeno';
+  static const rolesInThisGame = 'Uloge u ovoj igri';
+  static const rolesLocked = ' (uvijek u igri)';
+  static const hiddenRoles = 'Skrivene uloge';
+  static const hiddenRolesHint =
+      'Kad netko ispadne, uloga se ne otkriva. Sve uloge se vide tek na kraju igre.';
+  static const discussion = 'Razgovor danju';
+  static const shorter = 'Kraće';
+  static const longer = 'Duže';
+  static const save = 'Spremi';
+  static const rulesHeader = 'Pravila';
+  static String minutes(int s) =>
+      '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
+  static const drawnByGame = 'Igra izvlači koje će biti.';
+  static const howPlayersSeeIt = 'Kako to vide igrači';
+  static String rolesPickIntro(
+    int players,
+    int wolves,
+    int specials,
+    int villagers,
+  ) =>
+      'Za $players igrača, vukodlaka: $wolves · posebnih uloga: $specials · seljana: $villagers. Svaka igra izvuče drugačije.';
+  static const groupWolves = 'VUKODLACI';
+  static const groupVillage = 'SELO';
+  static const groupSolo = 'SAMI ZA SEBE';
+
+  /// id, name, description, group (0 wolves, 1 village, 2 solo), always on.
+  static const wolfRoles = <(String, String, String, int, bool)>[
+    (
+      'wolf',
+      'Vukodlak',
+      'Noću s ostalim vukodlacima bira jednu žrtvu. Danju glumi seljana.',
+      0,
+      true,
+    ),
+    (
+      'alpha',
+      'Vođa čopora',
+      'Vukodlak. Jednom u igri može žrtvu pretvoriti u vukodlaka umjesto da je ubije.',
+      0,
+      false,
+    ),
+    (
+      'lone',
+      'Vuk samotnjak',
+      'Ubija s čoporom, ali pobjeđuje samo ako ostane zadnji živ.',
+      0,
+      false,
+    ),
+    (
+      'villager',
+      'Seljanin',
+      'Nema noćnu moć. Danju sluša, pita i glasa.',
+      1,
+      true,
+    ),
+    (
+      'seer',
+      'Vidovnjakinja',
+      'Svake noći sazna ulogu jednog igrača.',
+      1,
+      false,
+    ),
+    (
+      'doc',
+      'Ljekarnik',
+      'Svake noći štiti jednog igrača od vukodlaka. Ne isti dvije noći zaredom.',
+      1,
+      false,
+    ),
+    (
+      'guard',
+      'Tjelohranitelj',
+      'Čuva jednog igrača. Ako ga vukodlaci napadnu, strada tjelohranitelj umjesto njega.',
+      1,
+      false,
+    ),
+    (
+      'herb',
+      'Travarica',
+      'Ima jedan lijek (spašava žrtvu noći) i jedan otrov (ubija nekoga). Svaki jednom u igri.',
+      1,
+      false,
+    ),
+    (
+      'hunter',
+      'Lovac',
+      'Kad ispadne, odmah izbacuje još jednog igrača po izboru.',
+      1,
+      false,
+    ),
+    ('elder', 'Starješina', 'Preživi prvi napad vukodlaka.', 1, false),
+    (
+      'mayor',
+      'Načelnik',
+      'Glas mu se broji dvostruko. Ako je izjednačeno, on odlučuje.',
+      1,
+      false,
+    ),
+    (
+      'cupid',
+      'Provodadžija',
+      'Prve noći spoji dvoje zaljubljenih. Ako jedno ispadne, ispada i drugo.',
+      1,
+      false,
+    ),
+    (
+      'fool',
+      'Seoska budala',
+      'Ako ga selo izglasa, ostaje u igri, ali više ne smije glasati.',
+      1,
+      false,
+    ),
+    ('tramp', 'Lutalica', 'Pobjeđuje sam ako ga selo izglasa van.', 2, false),
+  ];
 
   // Pack upload
   static const tvProblem = 'TV ima problem. Pokušaj ponovno.';
