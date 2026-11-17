@@ -916,18 +916,18 @@ Reference: `V2Quiz.dc.html`.
 
 ### Task 32: Sound in every game and the menus (added 2026-11-17, user request)
 
-- [ ] Menu move/confirm clicks on the TV home; quiz ticking (Task 31); Curve as Task 26; Vukodlak: night ambience, howl, rooster, vote bell, drum. Self-made or CC0, listed in `apps/tv/assets/sounds/SOURCES.md`; never stalls the game loop; mixed below talking volume. Tests through the fake player; QA by ear on the TV.
+- [x] Menu move/confirm clicks on the TV home; quiz ticking (Task 31); Curve as Task 26; Vukodlak: night ambience, howl, rooster, vote bell, drum. Self-made or CC0, listed in `apps/tv/assets/sounds/SOURCES.md`; never stalls the game loop; mixed below talking volume. Tests through the fake player; QA by ear on the TV.
 
 ### Task 33: Vukodlak (added 2026-11-17, user request)
 
 Reference: canvas page "Konzola i Vukodlak" (`Village.dc.html`, `V2WolfNight/Day/Vote`, `V2PhoneRole`, `V2PhoneNight`, `V2PhoneVote`, `V2PhoneWolfSettings`, `V2PhoneWolfRolesPick`, `V2PhoneRolesInfo`, `WolfRoles.dc.html`), and the spec's "Vukodlak".
 
-- [ ] **Step 1: Core (pure Dart, tests first):** roles and teams; the mix draw from the enabled roles and player count (seeded); night resolution (wolf choice by agreement/majority, protection, bodyguard, herbalist cure/poison, elder, alpha conversion, lovers); day vote (mayor double, fool, hunter's shot, tramp win); win checks; hidden-roles option. A test per role rule.
-- [ ] **Step 2: Protocol + session:** game kind `vukodlak`, host settings (possible roles, hidden roles, discussion time), private per-phone messages (role, night prompt, results) that never go to other phones; 5–8 humans, no bots.
-- [ ] **Step 3: TV:** the animated village (houses in a circle, story and clock in the square, closed house with blood and a crow for players who are out), night/morning/vote/end screens (at night only the houses of players still on their task are lit; added 2026-11-17); story lines in Croatian (a content seat writes varied lines for each event).
-- [ ] **Step 4: Phones:** hold-to-see role; one grey night screen for every role (roles with no night action get a simple sum in the same list; added 2026-11-17); vote; host settings with the possible-roles screen; everyone's "possible roles" list.
-- [ ] **Step 5: Check:** tests in all members; QA on macOS release with 5–8 browser phones: a full game for several role mixes; nothing on a phone (colour, layout, timing) reveals a role; review checks that no private message reaches the wrong phone.
-- [ ] **Step 6: Commit** by path.
+- [x] **Step 1: Core (pure Dart, tests first):** roles and teams; the mix draw from the enabled roles and player count (seeded); night resolution (wolf choice by agreement/majority, protection, bodyguard, herbalist cure/poison, elder, alpha conversion, lovers); day vote (mayor double, fool, hunter's shot, tramp win); win checks; hidden-roles option. A test per role rule.
+- [x] **Step 2: Protocol + session:** game kind `vukodlak`, host settings (possible roles, hidden roles, discussion time), private per-phone messages (role, night prompt, results) that never go to other phones; 5–8 humans, no bots.
+- [x] **Step 3: TV:** the animated village (houses in a circle, story and clock in the square, closed house with blood and a crow for players who are out), night/morning/vote/end screens (at night only the houses of players still on their task are lit; added 2026-11-17); story lines in Croatian (a content seat writes varied lines for each event).
+- [x] **Step 4: Phones:** hold-to-see role; one grey night screen for every role (roles with no night action get a simple sum in the same list; added 2026-11-17); vote; host settings with the possible-roles screen; everyone's "possible roles" list.
+- [x] **Step 5: Check:** tests in all members; QA on macOS release with 5–8 browser phones: a full game for several role mixes; nothing on a phone (colour, layout, timing) reveals a role; review checks that no private message reaches the wrong phone.
+- [x] **Step 6: Commit** by path.
 
 ---
 

@@ -39,8 +39,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 29 | Player characters: ~16 drawn animals, one each, shown on the TV (person, 2026-11-16) | done; on the TV since a286dc2 (chip contrast 9826952 next install); join screen does not grey taken faces | lead |
 | 30 | Console home (one game full screen, neighbours at the edges, QR top left), games full screen (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 31 | Quiz ticker (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
-| 32 | Sound in every game and the menus (person, 2026-11-17) | built (58ac542, 9de1471); on the TV in fd838d6; not heard yet | lead |
-| 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | playable on the TV in fd838d6; review clean; full QA with 5–8 phones running; vote shows only who is out | lead + content |
+| 32 | Sound in every game and the menus (person, 2026-11-17) | done; on the TV; not heard by QA | lead |
+| 33 | Vukodlak: werewolf-style game, village on the TV, roles on phones (person, 2026-11-17) | done (QA pass with 5/6/8 phones, privacy side by side); rejoin "Poslano" fix in progress; night village cost on the BRAVIA to measure | lead + content |
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | playable on the TV in fd838d6; QA with 3–8 phones running | lead + content |
 | 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | done; on the TV (682e883); QA release run waits for 8080 | lead |
@@ -300,3 +300,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-17: Design audit done (3 reads of every board; all gaps fixed or intended; list in the lead's hand-back).
   d378cf3 on the TV. QA visual pass waits for 8080 (the person's Mac test).
 - 2026-11-17: Task 38 accepted (PM sampled hr-medimurje: no village names left, 84 questions). Task 13 done.
+- 2026-11-17: Tasks 32 and 33 accepted. Watch: the night village is the heaviest scene (Mac p95 up to 44 ms).
