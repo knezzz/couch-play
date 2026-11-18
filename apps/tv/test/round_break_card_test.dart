@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/main.dart';
 import 'package:tv/session/session.dart';
@@ -121,5 +122,21 @@ void main() {
     expect(find.byKey(const ValueKey('round-break')), findsNothing, reason: 'the next round runs');
     await t.pumpWidget(const SizedBox());
     s.dispose();
+  });
+
+  testWidgets('the title never truncates, even a long round number on a small window', (t) async {
+    for (final size in [const Size(1280, 720), const Size(1920, 1080)]) {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      await t.pumpWidget(MaterialApp(
+          theme: tvTheme(),
+          home: RoundBreakCard(round: 12, target: 30, players: _four(), remaining: () => const Duration(seconds: 3))));
+      final p = t.renderObject<RenderParagraph>(find.byKey(const ValueKey('break-title')));
+      expect(p.didExceedMaxLines, isFalse, reason: 'no ellipsis at $size');
+      expect(find.text(Strings.curveBreakTitle(12)), findsOneWidget);
+      expect(t.takeException(), isNull);
+    }
   });
 }

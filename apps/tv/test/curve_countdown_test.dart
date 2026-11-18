@@ -99,4 +99,16 @@ void main() {
       expect(_count(d, const Color(0xFFFF4D6D), x0: 380, y0: 280, x1: 560, y1: 320), greaterThan(20));
     });
   });
+
+  testWidgets('a name never goes into the hint band at the bottom, wherever the player starts', (t) async {
+    await t.runAsync(() async {
+      for (final heading in [pi / 2, -pi / 2, 0.0]) {
+        final g = _game();
+        g.sim.place(0, 800, 880, heading); // right at the bottom
+        final d = await _render(g);
+        expect(_count(d, _pill, x0: 0, y0: 900 - 80, x1: 1600, y1: 900), 0, reason: 'heading $heading: the pill is clear of the hint band');
+        expect(_count(d, _muted, x0: 0, y0: 800, x1: 1600, y1: 900), greaterThan(200), reason: 'the hint is still drawn');
+      }
+    });
+  });
 }

@@ -72,23 +72,16 @@ class _RoundBreakCardState extends State<RoundBreakCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Flexible(
-                        child: Text(Strings.curveBreakTitle(widget.round),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: tvText)),
-                      ),
-                      const SizedBox(width: 32),
-                      Flexible(
-                        child: Text(Strings.curveBreakTarget(widget.target),
-                            maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 36, color: tvMuted)),
-                      ),
-                    ],
+                  // The title never truncates: it scales down if it must; the target goes under it.
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(Strings.curveBreakTitle(widget.round), key: const ValueKey('break-title'), maxLines: 1, style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: tvText)),
+                    ),
                   ),
+                  Text(Strings.curveBreakTarget(widget.target), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 36, color: tvMuted)),
                   SizedBox(height: many ? 20 : 32),
                   for (final p in sorted) _row(p, rowH),
                   SizedBox(height: many ? 16 : 28),

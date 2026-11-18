@@ -185,6 +185,7 @@ class CurveGame extends FlameGame {
   }
 
   /// What to do, at the bottom (TvCountdown).
+  static const hintBand = 82.0; // its line, the 36 below it and a little air
   TextPainter? _hint;
   void _drawHint(Canvas canvas, double w, double h) {
     final tp = _hint ??= TextPainter(
@@ -214,7 +215,8 @@ class CurveGame extends FlameGame {
     final lead = face.isEmpty ? 0.0 : faceSize + between;
     final chipW = pad + lead + tp.width + tail;
     final left = (x - chipW / 2).clamp(0.0, max(0.0, arenaW - chipW)).toDouble();
-    final top = nameTop(y, gap, chipH, heading, arenaH);
+    // The hint sits along the bottom: a name never goes into its band.
+    final top = nameTop(y, gap, chipH, heading, arenaH - hintBand);
     canvas.drawRRect(RRect.fromLTRBR(left, top, left + chipW, top + chipH, Radius.circular(chipH / 2)),
         _icon..style = PaintingStyle.fill..color = const Color(0xFF1F1F2C));
     if (face.isNotEmpty) {
