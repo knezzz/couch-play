@@ -974,11 +974,11 @@ The person: "Cheese, one where you are getting a lot of holes. 90 deg, where oth
 
 ### Task 37: Design-audit decisions (added 2026-11-17, user choices)
 
-- [ ] Curve: after each round, show the current scores (faces, points, target) for a few seconds before the next countdown; no bar during play.
-- [ ] Home: a small "Večeras" strip with the evening's totals along the bottom after the first game.
-- [ ] Power-up legend: ▼ on the Curve card on the home and the host's Curve details on the phone: every power-up, its icon, one line.
-- [ ] Fat icon: keep the two diagonal bars.
-- [ ] Vukodlak night: keep the shared "Iskoristi posebnu moć (ako je imaš)" switch (PM).
+- [x] Curve: after each round, show the current scores (faces, points, target) for a few seconds before the next countdown; no bar during play.
+- [x] Home: a small "Večeras" strip with the evening's totals along the bottom after the first game.
+- [x] Power-up legend: ▼ on the Curve card on the home and the host's Curve details on the phone: every power-up, its icon, one line.
+- [x] Fat icon: keep the two diagonal bars.
+- [x] Vukodlak night: keep the shared "Iskoristi posebnu moć (ako je imaš)" switch (PM).
 
 ---
 
@@ -994,10 +994,10 @@ The person: "Cheese, one where you are getting a lot of holes. 90 deg, where oth
 
 Spec: `docs/specs/2026-11-17-party-games-design.md` (all rules there). Each game: core rules + pack parser (tests first), protocol + session, TV screens on the console look, phone screens, content packs, sounds from the existing set, a card on the home. QA with real phone counts; review of private messages.
 
-- [ ] **Task 39: Objasni** (4–8, two teams; −1 skip; the other team sees the word with Prekršaj). Packs: several themes, ≥ 100 words each, Croatian, incl. Međimurje.
-- [ ] **Task 40: Koliko?** (2–8, number pad, number line reveal). Packs: verified number questions with sources; convert suitable quiz questions after re-checking each.
-- [ ] **Task 41: Blef** (3–8, typed fake answers). **First:** prove typing works in Flutter Web on a real iPhone Safari and Android Chrome (keyboard, č ć š ž đ, autocorrect) before building the screens. Packs: strange but true facts with short answers and sources.
-- [ ] **Task 42: Tko bi?** (3–8, vote for someone in the room; counts on the session board). Packs: "Blago" and "Ljuto", ≥ 30 prompts each, kind (no looks, weight, health, money, relationships).
+- [x] **Task 39: Objasni** (4–8, two teams; −1 skip; the other team sees the word with Prekršaj). Packs: several themes, ≥ 100 words each, Croatian, incl. Međimurje.
+- [x] **Task 40: Koliko?** (2–8, number pad, number line reveal). Packs: verified number questions with sources; convert suitable quiz questions after re-checking each.
+- [x] **Task 41: Blef** (3–8, typed fake answers). **First:** prove typing works in Flutter Web on a real iPhone Safari and Android Chrome (keyboard, č ć š ž đ, autocorrect) before building the screens. Packs: strange but true facts with short answers and sources.
+- [x] **Task 42: Tko bi?** (3–8, vote for someone in the room; counts on the session board). Packs: "Blago" and "Ljuto", ≥ 30 prompts each, kind (no looks, weight, health, money, relationships).
 
 ### Task 43: Kao svi, match the herd (added 2026-11-17, person: build straight away)
 

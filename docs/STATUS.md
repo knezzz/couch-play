@@ -44,10 +44,10 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 34 | Power-up icons version A, active effects as rings only (person, 2026-11-17) | done; on the TV in fd838d6 | lead |
 | 35 | Uljez: hidden-word game, impostor gets a similar word without knowing (person, 2026-11-17) | done (QA pass 3/6/8 phones); right-guess + 10 s end screen in QA batch 2 | lead + content |
 | 36 | Power-ups: cheese (your line gets holes), square turns for others, speed up yours / slow down others again (person, 2026-11-17) | done; on the TV (682e883); QA release run waits for 8080 | lead |
-| 37 | Design-audit decisions: scores between Curve rounds, Večeras strip, power-up legend, fat icon, night switch (person, 2026-11-17) | in progress; audit fixes (pack grid f1d37a9, Curve art de932f6) | lead |
+| 37 | Design-audit decisions: scores between Curve rounds, Večeras strip, power-up legend, fat icon, night switch (person, 2026-11-17) | done; on the TV | lead |
 | 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | done; on the TV (682e883) | lead + content |
-| 39–42 | Party games: Objasni, Koliko?, Blef, Tko bi?, with new packs (person, 2026-11-17) | queued to lead | lead + content |
-| 43 | Kao svi: match the herd (person, 2026-11-17) | queued to lead | lead + content |
+| 39–42 | Party games: Objasni, Koliko?, Blef, Tko bi?, with new packs (person, 2026-11-17) | done (QA pass with real browser phones; Blef typing proven on Android + iPhone); on the TV in ee00641 | lead + content |
+| 43 | Kao svi: match the herd (person, 2026-11-17) | built; review clean; QA running | lead + content |
 | 44 | Difficulty: Oblici harder, Matematika/Fizika easier, pub-quiz level (person, 2026-11-17) | done (0713aa3, e430b0e): Oblici 36 new; Matematika 113, Fizika 107; next TV install | content |
 
 ## Open questions for the person
@@ -311,3 +311,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-17: Person confirmed Blef typing with Croatian letters works on the iPhone too. Typing risk closed.
 - 2026-11-17: Person (via product-pm@web-editor): Oblici too easy, Matematika/Fizika too hard; middle spot, pub-quiz level. Task 44.
   Another rig (web-editor) is building a Mac pack editor; it tells the PM before writing pack files.
+- 2026-11-18: Tasks 37, 39–42 and the play feedback (Oblici labels, Koliko?/Blef reveals) accepted; QA pass on 36 and
+  38 too. Kao svi: review clean, QA running.
