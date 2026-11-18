@@ -146,7 +146,23 @@ class Session {
 
   void _notify() {
     _kaosvi?.refreshHost(); // a host change in the middle of the merge
+    _tellHost();
     _changes.value++;
+  }
+
+  int? _hostTold;
+
+  /// In a game the lobby state is not resent, so the phones are told on their
+  /// own whenever the host changes (kick, drop, return). In the lobby the
+  /// lobby state carries it.
+  void _tellHost() {
+    final h = hostId;
+    if (h == null || h == _hostTold) return;
+    _hostTold = h;
+    if (_phase == Phase.lobby) return;
+    for (final p in _players) {
+      p.socket?.send(HostIs(h));
+    }
   }
 
   // --- who is here ---
@@ -357,6 +373,8 @@ class Session {
     peer.send(Welcome(p.id, p.colorIndex, p.token, character: p.character));
     // The (public) lobby too: a reloaded phone needs the names and colours.
     if (_phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi || _phase == Phase.kaosvi) peer.send(_lobbyMsg());
+    final host = hostId;
+    if (_phase != Phase.lobby && host != null) peer.send(HostIs(host)); // after the lobby state
     switch (_phase) {
       case Phase.lobby:
         _broadcastLobby();

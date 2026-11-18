@@ -251,6 +251,7 @@ void main() {
         const Guess(2),
         const UljezWord('Pikachu'),
         const UljezDone(),
+        const HostIs(3),
         const ReadyToVote(true),
         const VoteWish(open: true, ready: false, want: 2, needed: 3),
         const UljezTurn(round: 1, speaker: 3, seconds: 20, stage: 'clues'),

@@ -334,6 +334,7 @@ sealed class Message with _JsonEq {
             special: m['special'] as bool, second: m['second'] as int?),
         'vote' => Vote(m['target'] as int?),
         'uljezDone' => const UljezDone(),
+        'hostIs' => HostIs(m['host'] as int),
         'readyToVote' => ReadyToVote(m['on'] as bool),
         'guess' => Guess(m['index'] as int),
         'number' => NumberAnswer((m['value'] as num).toDouble()),
@@ -811,6 +812,21 @@ class UljezDone extends Message {
   String get type => 'uljezDone';
   @override
   Map<String, Object?> get fields => const {};
+}
+
+/// TV -> every phone: [host] is the player who is host now. Sent whenever the
+/// host changes during a game (kick, the host's phone dropping, a return) and
+/// to a phone that (re)connects in a game, right after the lobby. The lobby
+/// state is not resent mid-game (it would send the phones back to the lobby),
+/// so a phone keeps this id in place of `LobbyState.hostId` until the next
+/// lobby state.
+class HostIs extends Message {
+  final int host;
+  const HostIs(this.host);
+  @override
+  String get type => 'hostIs';
+  @override
+  Map<String, Object?> get fields => {'host': host};
 }
 
 /// Phone -> TV, "Idemo glasati" (Uljez from the end of round 1, Vukodlak by
