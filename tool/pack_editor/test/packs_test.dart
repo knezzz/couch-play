@@ -124,9 +124,58 @@ void main() {
     final before = File(p.ref.path).readAsBytesSync();
     (p.json['questions'] as List).removeRange(29, 50);
     final r = savePack(root, Game.kviz, 'hr-oblici', p.json, p.stamp);
-    expect(r, isA<SaveError>());
+    expect((r as SaveError).message, 'Kviz treba barem 30 pitanja (sada 29)');
     expect(File(p.ref.path).readAsBytesSync(), before);
   });
+
+  // Rules of the TV pack tests (party_packs, uljez_packs, kaosvi_packs, pack_duplicates):
+  // an accepted save must keep them green. Each case is refused, the file unchanged.
+  void refused(String what, Game g, String id, void Function(Map<String, dynamic> json) edit, String text) {
+    test('refuses_$what', () {
+      final p = loadPack(root, g, id);
+      final before = File(p.ref.path).readAsBytesSync();
+      edit(p.json);
+      final r = savePack(root, g, id, p.json, p.stamp);
+      expect(r, isA<SaveError>());
+      expect(r, isNot(isA<SaveStale>()));
+      expect((r as SaveError).message, contains(text));
+      expect(File(p.ref.path).readAsBytesSync(), before);
+    });
+  }
+
+  List qs(Map<String, dynamic> j) => j['questions'] as List;
+  String otherFirst(Game g, String id, [String key = 'questions']) {
+    final j = loadPack(root, g, id).json[key] as List;
+    return j.first is Map ? j.first['q'] as String : j.first as String;
+  }
+
+  refused('koliko_29', Game.koliko, 'hr-koliko-opcenito', (j) => qs(j).removeLast(), 'Koliko? treba barem 30 pitanja (sada 29)');
+  refused('blef_29', Game.blef, 'hr-blef-priroda', (j) => qs(j).removeLast(), 'Blef treba barem 30 pitanja (sada 29)');
+  refused('blef_source_not_http', Game.blef, 'hr-blef-priroda', (j) => qs(j)[0]['source'] = 'knjiga', 'počinjati s http (sada „knjiga“)');
+  refused('blef_answer_over_40', Game.blef, 'hr-blef-priroda', (j) => qs(j)[0]['answer'] = 'x' * 41, 'najviše 40 znakova (sada 41)');
+  refused('koliko_repeat_in_another_pack', Game.koliko, 'hr-koliko-opcenito', (j) {
+    qs(j)[0]['q'] = '${otherFirst(Game.koliko, 'hr-koliko-godine').toUpperCase()}!';
+  }, 'ponavlja se');
+  refused('blef_repeat_in_another_pack', Game.blef, 'hr-blef-priroda', (j) {
+    qs(j)[0]['q'] = otherFirst(Game.blef, 'hr-blef-svijet');
+  }, 'ponavlja se');
+  refused('uljez_39', Game.uljez, 'uljez-osobe', (j) => (j['pairs'] as List).removeRange(39, (j['pairs'] as List).length), 'Uljez treba barem 40 parova (sada 39)');
+  refused('uljez_word_over_24', Game.uljez, 'uljez-osobe', (j) => (j['pairs'] as List)[0] = ['a' * 25, 'b'], 'najviše 24 znaka (sada 25)');
+  refused('uljez_word_twice', Game.uljez, 'uljez-osobe', (j) {
+    final pairs = j['pairs'] as List;
+    pairs[1] = [pairs[0][0], 'zzz'];
+  }, 'ponavlja se');
+  refused('kaosvi_59', Game.kaosvi, 'kaosvi-pop', (j) => qs(j).removeRange(59, qs(j).length), 'Kao svi treba barem 60 pitanja (sada 59)');
+  refused('kaosvi_no_question_mark', Game.kaosvi, 'kaosvi-pop', (j) => qs(j)[0] = 'Bez znaka na kraju', '?');
+  refused('kaosvi_repeat_in_another_pack', Game.kaosvi, 'kaosvi-pop', (j) {
+    qs(j)[0] = '  ${otherFirst(Game.kaosvi, 'kaosvi-hrana').toUpperCase()}';
+  }, 'ponavlja se');
+  refused('quiz_repeat_in_another_pack', Game.kviz, 'hr-oblici', (j) {
+    qs(j).add({'q': otherFirst(Game.kviz, 'hr-opce-znanje').toUpperCase(), 'choices': ['a', 'b', 'c', 'd'], 'answer': 0});
+  }, 'ponavlja se');
+  refused('quiz_repeat_in_the_pack', Game.kviz, 'hr-opce-znanje', (j) {
+    qs(j).add({...qs(j)[0] as Map});
+  }, 'ponavlja se');
 
   test('save_stale', () {
     final p = loadPack(root, Game.blef, 'hr-blef-priroda');

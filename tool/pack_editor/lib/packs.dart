@@ -150,13 +150,110 @@ void _copyDir(Directory from, Directory to) {
   }
 }
 
-void _atomicWrite(String path, List<int> bytes) {
-  final tmp = File('$path.tmp')..writeAsBytesSync(bytes);
-  tmp.renameSync(path);
+/// Writes next to the target, then renames; the tmp file never outlives a failure.
+/// [still] runs right before the rename and can veto it (false is returned).
+bool _atomicWrite(String path, List<int> bytes, {bool Function()? still}) {
+  final tmp = File('$path.tmp');
+  try {
+    tmp.writeAsBytesSync(bytes);
+    if (still != null && !still()) return false;
+    tmp.renameSync(path);
+    return true;
+  } finally {
+    if (tmp.existsSync()) tmp.deleteSync();
+  }
 }
 
-String? _checkOther(Game game, Map<String, dynamic> json) {
+String _few(String name, int min, int n, String unit) => '$name treba barem $min $unit (sada $n)';
+String _again(String name, String text) => '$name: ponavlja se „$text“ (u ovom ili drugom paketu).';
+
+// The rules below mirror the TV pack tests, so a saved pack keeps them green:
+// party_packs_test _norm (Koliko, Blef), kaosvi_packs_test _norm, pack_duplicates_test _normal.
+String _normParty(String s) => s.toLowerCase().replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ').trim();
+String _normKaosvi(String s) => s.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim();
+String _normQuiz(String q) =>
+    q.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim().replaceAll(RegExp(r'[\s.,;:!?…]+$'), '');
+
+/// The list items of the other packs of the same game, as the files have them.
+Iterable<Object?> _others(String root, Game game, String id) sync* {
+  for (final r in listPacks(root)) {
+    if (r.game == game && r.id != id) yield* (jsonDecode(File(r.path).readAsStringSync())[_listKey(game)] as List);
+  }
+}
+
+String _qkey(QuizPack p, PackQuestion q) {
+  final img = q.image;
+  return '${_normQuiz(q.q)}|${img == null ? '' : base64.encode(p.images[img] ?? utf8.encode(img))}';
+}
+
+/// pack_duplicates_test: a question repeats another (picture questions: with the same picture)
+/// in this pack or in the other bundled packs in apps/tv/assets/packs.
+String? _quizRepeat(String root, QuizPack mine) {
+  final seen = <String>{};
+  final dir = Directory('$root/apps/tv/assets/packs');
+  if (dir.existsSync()) {
+    for (final f in dir.listSync().whereType<File>()) {
+      if (_base(f.path).split('.').first == mine.id) continue;
+      final r = parsePack(f.readAsBytesSync());
+      if (r is PackOk) seen.addAll(r.pack.questions.map((q) => _qkey(r.pack, q)));
+    }
+  }
+  for (final q in mine.questions) {
+    if (!seen.add(_qkey(mine, q))) return _again('Kviz', q.q);
+  }
+  return null;
+}
+
+/// What party_packs_test, uljez_packs_test and kaosvi_packs_test ask beyond the parsers.
+String? _rules(String root, Game game, String id, Map<String, dynamic> j) {
+  switch (game) {
+    case Game.koliko:
+    case Game.blef:
+      final blef = game == Game.blef;
+      final name = blef ? 'Blef' : 'Koliko?';
+      final qs = (j['questions'] as List).cast<Map>();
+      if (qs.length < 30) return _few(name, 30, qs.length, 'pitanja');
+      final seen = {for (final o in _others(root, game, id)) _normParty((o as Map)['q'] as String)};
+      for (final q in qs) {
+        final source = q['source'] as String;
+        if (blef && !source.startsWith('http')) {
+          return 'Blef: izvor mora počinjati s http (sada „$source“) – pitanje „${q['q']}“.';
+        }
+        if (!seen.add(_normParty(q['q'] as String))) return _again(name, q['q'] as String);
+      }
+    case Game.uljez:
+      final pairs = (j['pairs'] as List).cast<List>();
+      if (pairs.length < 40) return _few('Uljez', 40, pairs.length, 'parova');
+      final words = <String>{};
+      for (final w in [for (final p in pairs) ...p.cast<String>()]) {
+        if (w.length > 24) return 'Uljez: riječ „$w“ smije imati najviše 24 znaka (sada ${w.length}).';
+        if (!words.add(w)) return 'Uljez: ponavlja se riječ „$w“.';
+      }
+    case Game.kaosvi:
+      final qs = (j['questions'] as List).cast<String>();
+      if (qs.length < 60) return _few('Kao svi', 60, qs.length, 'pitanja');
+      final seen = {for (final o in _others(root, game, id)) _normKaosvi(o as String)};
+      for (final q in qs) {
+        if (!q.endsWith('?') && !q.endsWith('.')) return 'Kao svi: pitanje mora završiti s ? ili . (sada „$q“).';
+        if (!seen.add(_normKaosvi(q))) return _again('Kao svi', q);
+      }
+    case Game.kviz:
+    case Game.objasni:
+    case Game.tkobi:
+      break; // quiz is checked on its bytes; Objasni and Tko bi: the parsers already match the tests
+  }
+  return null;
+}
+
+String? _checkOther(String root, Game game, String id, Map<String, dynamic> json) {
   try {
+    // Before the parser, which refuses this too but without the count.
+    if (game == Game.blef && json['questions'] is List) {
+      for (final q in json['questions'] as List) {
+        final a = q is Map ? q['answer'] : null;
+        if (a is String && a.length > 40) return 'Blef: odgovor smije imati najviše 40 znakova (sada ${a.length}) – pitanje „${q['q']}“.';
+      }
+    }
     switch (game) {
       case Game.objasni:
         ObjasniPack.fromJson(json);
@@ -173,7 +270,7 @@ String? _checkOther(Game game, Map<String, dynamic> json) {
       case Game.kviz:
         break;
     }
-    return null;
+    return _rules(root, game, id, json);
   } catch (e) {
     return e is FormatException ? e.message : '$e';
   }
@@ -206,15 +303,17 @@ SaveResult savePack(String repoRoot, Game game, String id, Map<String, dynamic> 
       }
       final r = parsePack(bytes);
       if (r is PackError) return SaveError(r.message);
-      if (r is PackOk && r.pack.questions.length < _minQuiz) {
-        return const SaveError('Kviz paket mora imati barem $_minQuiz pitanja.');
-      }
+      final pack = (r as PackOk).pack;
+      if (pack.questions.length < _minQuiz) return SaveError(_few('Kviz', _minQuiz, pack.questions.length, 'pitanja'));
+      final again = _quizRepeat(repoRoot, pack);
+      if (again != null) return SaveError(again);
     } else {
-      final err = _checkOther(game, json);
+      final err = _checkOther(repoRoot, game, id, json);
       if (err != null) return SaveError(err);
     }
 
-    _atomicWrite(path, utf8.encode(text));
+    // The stamp is checked again right before the rename: a seat writing during the check wins.
+    if (!_atomicWrite(path, utf8.encode(text), still: () => _stamp(file) == stamp)) return const SaveStale();
     String? note;
     if (game == Game.kviz) {
       final out = Directory('$repoRoot/apps/tv/assets/packs')..createSync(recursive: true);
