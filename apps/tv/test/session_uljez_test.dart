@@ -57,14 +57,13 @@ void main() {
     s.dispose();
   });
 
-  test('the host\'s pack, discussion time and impostors are kept, a missing pack falls back, wolf settings survive', () {
+  test('the host\'s pack is kept, a missing pack falls back and the other settings survive', () {
     setUpSession(3);
-    ps[0].say(const SetSettings(GameSettings(uljezPackId: 'two', uljezDiscussion: 60, wolfDiscussion: 60)));
+    ps[0].say(const SetSettings(GameSettings(uljezPackId: 'two', kolikoSeconds: 45)));
     expect(s.settings.uljezPackId, 'two');
-    ps[0].say(const SetSettings(GameSettings(uljezPackId: 'gone', uljezDiscussion: 60, wolfDiscussion: 60)));
+    ps[0].say(const SetSettings(GameSettings(uljezPackId: 'gone', kolikoSeconds: 45)));
     expect(s.settings.uljezPackId, isNull);
-    expect(s.settings.uljezDiscussion, 60);
-    expect(s.settings.wolfDiscussion, 60, reason: 'dropping a missing pack keeps the other settings');
+    expect(s.settings.kolikoSeconds, 45, reason: 'dropping a missing pack keeps the other settings');
     ps[0].say(const SetSettings(GameSettings(uljezPackId: 'two')));
     ps[0].say(const StartGame(GameKind.uljez, null));
     expect(s.uljez!.pack.id, 'two');

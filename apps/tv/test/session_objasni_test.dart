@@ -74,11 +74,11 @@ void main() {
 
   test('the host\'s pack is used; a missing saved pack falls back and keeps the other settings', () {
     setUpSession(4);
-    ps[0].say(const SetSettings(GameSettings(objasniPackId: 'two', objasniSeconds: 90, wolfDiscussion: 60)));
+    ps[0].say(const SetSettings(GameSettings(objasniPackId: 'two', objasniSeconds: 90, kolikoSeconds: 45)));
     expect(s.settings.objasniPackId, 'two');
-    ps[0].say(const SetSettings(GameSettings(objasniPackId: 'gone', objasniSeconds: 90, wolfDiscussion: 60)));
+    ps[0].say(const SetSettings(GameSettings(objasniPackId: 'gone', objasniSeconds: 90, kolikoSeconds: 45)));
     expect(s.settings.objasniPackId, isNull);
-    expect([s.settings.objasniSeconds, s.settings.wolfDiscussion], [90, 60]);
+    expect([s.settings.objasniSeconds, s.settings.kolikoSeconds], [90, 45]);
     ps[0].say(const SetSettings(GameSettings(objasniPackId: 'two')));
     ps[0].say(const StartGame(GameKind.objasni, null));
     expect(s.objasni!.pack.id, 'two');

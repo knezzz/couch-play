@@ -22,7 +22,7 @@ class _Game {
     match = UljezMatch(
       ids: [for (var i = 1; i <= n; i++) i],
       pack: _pack,
-      settings: GameSettings(uljezDiscussion: 30, uljezImpostors: impostors),
+      settings: GameSettings(uljezImpostors: impostors),
       send: (_, _) {},
       clock: () => at,
       random: Random(2),

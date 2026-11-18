@@ -191,7 +191,7 @@ void main() {
         const VotePrompt(day: 1, seconds: 120, ids: [1, 2, 3], canVote: false, picked: 3),
         const Farewell(seconds: 15, ids: [1, 2]),
         const WolfEnd(WolfWinner.lone, {1: WolfRole.lone, 2: WolfRole.seer}),
-        const SetSettings(GameSettings(wolfRoles: {WolfRole.wolf, WolfRole.villager, WolfRole.cupid}, wolfHideRoles: false, wolfDiscussion: 60)),
+        const SetSettings(GameSettings(wolfRoles: {WolfRole.wolf, WolfRole.villager, WolfRole.cupid}, wolfHideRoles: false)),
       ];
       for (final m in ms) {
         expect(Message.decode(m.encode()), m, reason: m.encode());
@@ -202,14 +202,12 @@ void main() {
       const d = GameSettings();
       expect(d.wolfRoles, GameSettings.defaultWolfRoles);
       expect(d.wolfHideRoles, isTrue);
-      expect(d.wolfDiscussion, 120);
       final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
       expect((old as SetSettings).settings, const GameSettings());
-      final c = const GameSettings(wolfRoles: {WolfRole.seer}, wolfDiscussion: 1000).clamped();
+      final c = const GameSettings(wolfRoles: {WolfRole.seer}).clamped();
       expect(c.wolfRoles, {WolfRole.seer, WolfRole.wolf, WolfRole.villager}, reason: 'wolf and villager are always on');
-      expect(c.wolfDiscussion, 300);
-      expect(const GameSettings(wolfDiscussion: 10).clamped().wolfDiscussion, 30);
-      expect(const GameSettings(wolfDiscussion: 100).clamped().wolfDiscussion, 90);
+      final oldKeys = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"wolfDiscussion":60,"uljezDiscussion":120}');
+      expect((oldKeys as SetSettings).settings, const GameSettings(), reason: 'old discussion times are ignored');
     });
 
     test('the roles come out in the canvas order whatever the set order', () {
@@ -241,7 +239,7 @@ void main() {
         const UljezTurn(round: 2, speaker: null, seconds: 90, stage: 'discussion'),
         const UljezGuess(seconds: 15, options: ['a', 'b', 'c', 'd']),
         const UljezEnd(UljezWinner.village, 'Spužva Bob', 'Pikachu', [2, 5]),
-        const SetSettings(GameSettings(uljezPackId: 'uljez-hrana', uljezDiscussion: 60, uljezImpostors: 2)),
+        const SetSettings(GameSettings(uljezPackId: 'uljez-hrana', uljezImpostors: 2)),
         const LobbyState(players: [], packs: [], hostId: 1, uljezPacks: [PackInfo('uljez-hrana', 'Hrana', 40)]),
       ];
       for (final m in ms) {
@@ -251,13 +249,12 @@ void main() {
 
     test('uljez settings: defaults, an old message, clamping', () {
       const d = GameSettings();
-      expect([d.uljezPackId, d.uljezDiscussion, d.uljezImpostors], [null, 90, 1]);
+      expect([d.uljezPackId, d.uljezImpostors], [null, 1]);
       final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
       expect((old as SetSettings).settings, const GameSettings());
-      final c = const GameSettings(uljezDiscussion: 1000, uljezImpostors: 5).clamped();
-      expect([c.uljezDiscussion, c.uljezImpostors], [300, 2]);
-      final f = const GameSettings(uljezDiscussion: 10, uljezImpostors: 0).clamped();
-      expect([f.uljezDiscussion, f.uljezImpostors], [30, 1]);
+      final c = const GameSettings(uljezImpostors: 5).clamped();
+      expect(c.uljezImpostors, 2);
+      expect(const GameSettings(uljezImpostors: 0).clamped().uljezImpostors, 1);
     });
 
     test('an old lobby has no uljez packs', () {

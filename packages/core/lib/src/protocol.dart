@@ -73,17 +73,14 @@ class GameSettings with _JsonEq {
   final String? quizPackId;
 
   /// Vukodlak: the roles that may be drawn (Vukodlak and Seljanin are always
-  /// in), whether a player who is out stays unrevealed until the end, and the
-  /// day discussion in seconds (30-300 in steps of 30).
+  /// in) and whether a player who is out stays unrevealed until the end. (The
+  /// day has no clock; old settings messages with a discussion time still decode.)
   final Set<WolfRole> wolfRoles;
   final bool wolfHideRoles;
-  final int wolfDiscussion;
 
-  /// Uljez: the word pack (null = the TV's first pack), the free discussion
-  /// in seconds (30-300 in steps of 30) and 1 or 2 impostors (2 only counts
-  /// with 7-8 players).
+  /// Uljez: the word pack (null = the TV's first pack) and 1 or 2 impostors (2
+  /// only counts with 7-8 players).
   final String? uljezPackId;
-  final int uljezDiscussion;
   final int uljezImpostors;
 
   /// Objasni: seconds per turn (45 / 60 / 90), target score (20 / 30 / 50), word pack.
@@ -122,9 +119,7 @@ class GameSettings with _JsonEq {
     this.quizPackId,
     this.wolfRoles = defaultWolfRoles,
     this.wolfHideRoles = true,
-    this.wolfDiscussion = 120,
     this.uljezPackId,
-    this.uljezDiscussion = 90,
     this.uljezImpostors = 1,
     this.objasniSeconds = 60,
     this.objasniTarget = 30,
@@ -153,9 +148,7 @@ class GameSettings with _JsonEq {
           ? defaultWolfRoles
           : {for (final n in j['wolfRoles'] as List) WolfRole.values.byName(n as String)},
       wolfHideRoles: (j['wolfHideRoles'] as bool?) ?? true,
-      wolfDiscussion: (j['wolfDiscussion'] as int?) ?? 120,
       uljezPackId: j['uljezPackId'] as String?,
-      uljezDiscussion: (j['uljezDiscussion'] as int?) ?? 90,
       uljezImpostors: (j['uljezImpostors'] as int?) ?? 1,
       objasniSeconds: (j['objasniSeconds'] as int?) ?? 60,
       objasniTarget: (j['objasniTarget'] as int?) ?? 30,
@@ -187,9 +180,7 @@ class GameSettings with _JsonEq {
       quizPackId: quizPackId,
       wolfRoles: {...wolfRoles, ...wolfAlwaysOn},
       wolfHideRoles: wolfHideRoles,
-      wolfDiscussion: snap(wolfDiscussion, 30, 300, 30),
       uljezPackId: uljezPackId,
-      uljezDiscussion: snap(uljezDiscussion, 30, 300, 30),
       uljezImpostors: uljezImpostors.clamp(1, 2),
       objasniSeconds: oneOf(objasniSeconds, const [45, 60, 90]),
       objasniTarget: oneOf(objasniTarget, const [20, 30, 50]),
@@ -217,9 +208,7 @@ class GameSettings with _JsonEq {
         'quizPackId': quizPackId,
         'wolfRoles': [for (final r in WolfRole.values) if (wolfRoles.contains(r)) r.name],
         'wolfHideRoles': wolfHideRoles,
-        'wolfDiscussion': wolfDiscussion,
         'uljezPackId': uljezPackId,
-        'uljezDiscussion': uljezDiscussion,
         'uljezImpostors': uljezImpostors,
         'objasniSeconds': objasniSeconds,
         'objasniTarget': objasniTarget,
@@ -979,7 +968,7 @@ class UljezWord extends Message {
 }
 
 /// TV -> everyone: whose turn it is to give a clue ([stage] 'clues', [speaker]
-/// the player id) or the free discussion ([stage] 'discussion', no speaker).
+/// the player id). [stage] is always 'clues' now (no discussion stage).
 /// Public: it carries no private information.
 class UljezTurn extends Message {
   final int round, seconds;
