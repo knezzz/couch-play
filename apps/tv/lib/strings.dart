@@ -192,6 +192,9 @@ abstract final class Strings {
   // --- Back during a game ---
 
   static const endGameTitle = 'Prekinuti igru i vratiti se na početni zaslon?';
+  static const kickPlayer = 'Ukloni igrača';
+  static String kickConfirm(String name) => 'Ukloniti $name?';
+  static const kickOffline = 'bez veze';
   static const no = 'Ne';
   static const yes = 'Da';
 

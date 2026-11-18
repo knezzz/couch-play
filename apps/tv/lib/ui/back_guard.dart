@@ -1,6 +1,8 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../strings.dart';
+import 'tv_theme.dart';
 
 class _EscapeIntent extends Intent {
   const _EscapeIntent();
@@ -20,6 +22,8 @@ class BackGuard extends StatefulWidget {
     required this.onEnd,
     required this.child,
     this.onIdleBack,
+    this.players,
+    this.onKick,
     super.key,
   });
   final GlobalKey<NavigatorState> navigatorKey;
@@ -34,6 +38,11 @@ class BackGuard extends StatefulWidget {
   /// closed the results screen), false to leave Back to the system.
   final bool Function()? onIdleBack;
   final Widget child;
+
+  /// With both set, the Back menu also offers "Ukloni igrača": the players to pick
+  /// from (in join order, the same for everyone) and what a confirmed pick calls.
+  final List<PlayerInfo> Function()? players;
+  final void Function(int playerId)? onKick;
 
   @override
   State<BackGuard> createState() => _BackGuardState();
@@ -64,9 +73,21 @@ class _BackGuardState extends State<BackGuard> with WidgetsBindingObserver {
     final ctx = widget.navigatorKey.currentState?.overlay?.context;
     if (ctx == null) return;
     _open = true;
-    final yes = await showDialog<bool>(context: ctx, builder: (_) => const _EndGameDialog());
+    final canKick = widget.players != null && widget.onKick != null;
+    final r = await showDialog<_Choice>(context: ctx, builder: (_) => _EndGameDialog(canKick: canKick));
+    if (r == _Choice.kick && mounted) await _kick(ctx);
     _open = false;
-    if (yes == true && mounted) widget.onEnd();
+    if (r == _Choice.end && mounted) widget.onEnd();
+  }
+
+  Future<void> _kick(BuildContext ctx) async {
+    final people = widget.players!();
+    final id = await showDialog<int>(context: ctx, builder: (_) => _KickDialog(people));
+    if (id == null || !mounted) return;
+    final name = people.where((p) => p.id == id).firstOrNull?.name ?? '';
+    if (!ctx.mounted) return;
+    final yes = await showDialog<bool>(context: ctx, builder: (_) => _KickConfirm(name));
+    if (yes == true && mounted) widget.onKick!(id);
   }
 
   /// The navigator's own observer runs first and closes an open dialog; this
@@ -104,8 +125,11 @@ class _BackGuardState extends State<BackGuard> with WidgetsBindingObserver {
       );
 }
 
+enum _Choice { end, kick }
+
 class _EndGameDialog extends StatelessWidget {
-  const _EndGameDialog();
+  const _EndGameDialog({required this.canKick});
+  final bool canKick;
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -114,13 +138,66 @@ class _EndGameDialog extends StatelessWidget {
         actions: [
           FilledButton(
             autofocus: true,
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(context),
             child: const Text(Strings.no),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(context, _Choice.end),
             child: const Text(Strings.yes),
           ),
+          if (canKick)
+            FilledButton(
+              onPressed: () => Navigator.pop(context, _Choice.kick),
+              child: const Text(Strings.kickPlayer),
+            ),
+        ],
+      );
+}
+
+/// The players, as buttons. Only names and whether a phone has no connection (a connection
+/// is not a role): never who has finished a night task, never a role.
+class _KickDialog extends StatelessWidget {
+  const _KickDialog(this.people);
+  final List<PlayerInfo> people;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: const Text(Strings.kickPlayer, style: TextStyle(fontSize: 44)),
+        content: SizedBox(
+          width: 1100,
+          child: SingleChildScrollView(
+            child: Wrap(
+              spacing: 20,
+              runSpacing: 16,
+              children: [
+                for (var i = 0; i < people.length; i++)
+                  FilledButton(
+                    autofocus: i == 0,
+                    onPressed: () => Navigator.pop(context, people[i].id),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      PlayerDot(playerColors[people[i].colorIndex % playerColors.length], size: 44, character: people[i].character),
+                      const SizedBox(width: 14),
+                      Text(people[i].connected ? people[i].name : '${people[i].name} · ${Strings.kickOffline}', style: const TextStyle(fontSize: 36)),
+                    ]),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+}
+
+class _KickConfirm extends StatelessWidget {
+  const _KickConfirm(this.name);
+  final String name;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: Text(Strings.kickConfirm(name), style: const TextStyle(fontSize: 44)),
+        actionsAlignment: MainAxisAlignment.start,
+        actions: [
+          FilledButton(autofocus: true, onPressed: () => Navigator.pop(context, false), child: const Text(Strings.no)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text(Strings.yes)),
         ],
       );
 }

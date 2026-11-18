@@ -103,6 +103,7 @@ Choices that were put to the person:
 | uljezNow / uljezSaidClue | Sad ti! / trag dan | Your turn! / clue given | Uljez TV, seat notes |
 | wishLabel / wishCount | Idemo glasati / 3 od 5 | Let's vote / 3 of 5 | Uljez TV (from round 2) and Vukodlak village (day): how many want to vote, count only |
 | settingPack / packsAll / packsLine | Paketi / Svi paketi / 3 od 9 paketa | Packs / All packs / 3 of 9 packs | Home settings panel of every game with packs, and Kviz meta line (replaces the single pack title) |
+| kickPlayer / kickConfirm / kickOffline | Ukloni igrača / Ukloniti Ana? / bez veze | Remove a player / Remove Ana? / no connection | TV Back menu during a game (remote kick); the list shows names and 'bez veze' only |
 | uljezVoteKicker / uljezVoted | GLASANJE / Glasalo 4 od 6 | VOTE / 4 of 6 have voted | Uljez TV, vote |
 | uljezCaught / uljezGuesses / uljezNotImpostor / uljezNobodyOut | Uhvatili ste uljeza: Petra! / Petra pogađa vašu riječ / Petra ispada, ali nije uljez. / Nitko ne ispada. | You caught the impostor: Petra! / Petra guesses your word / Petra is out but was not the impostor. / Nobody is out. | Uljez TV, vote result |
 | uljezEndKicker / uljezVillageWins / uljezImpostorWins / uljezVillageWord / uljezImpostorWord / uljezTag | KRAJ IGRE / Selo je pobijedilo! / Pobjeda uljeza! / Riječ sela / Uljezova riječ / Uljez | GAME OVER / The village won! / The impostor won! / The village's word / The impostor's word / Impostor | Uljez TV, end |

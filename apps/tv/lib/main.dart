@@ -262,6 +262,9 @@ class _TvAppState extends State<TvApp> {
         active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef || _session.phase == Phase.tkobi || _session.phase == Phase.kaosvi,
         changes: _session.changes,
         onEnd: _session.endGame,
+        // Back also offers "Ukloni igrača" (the way out when a phone has left mid-game).
+        players: () => _session.playerInfos,
+        onKick: _session.kickFromTv,
         // Back on the results screen moves on at once instead of waiting out the hold.
         onIdleBack: () {
           if (_session.phase != Phase.results) return false;
