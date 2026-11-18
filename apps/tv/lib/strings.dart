@@ -61,7 +61,10 @@ abstract final class Strings {
       };
   /// Bottom of the lobby while the host has a game's card open (the phones say the same).
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
-  static const settingPack = 'Paket pitanja';
+  static const settingPack = 'Paketi';
+  static const packsAll = 'Svi paketi';
+  /// Which packs a game draws from: all of them, or how many are ticked.
+  static String packsLine(int ticked, int total) => ticked >= total ? packsAll : '$ticked od $total paketa';
   static const settingQuestions = 'Broj pitanja';
   static const settingTarget = 'Bodova do pobjede';
   static const settingAnswerTime = 'Vrijeme za odgovor';

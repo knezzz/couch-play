@@ -38,7 +38,7 @@ class HomeScreen extends StatefulWidget {
     required this.onSelect,
     required this.onPlay,
     this.selected,
-    this.packTitle,
+    this.packs = const {},
     this.quizPacks = 0,
     this.quizQuestions = 0,
     this.notice,
@@ -52,8 +52,13 @@ class HomeScreen extends StatefulWidget {
   final GameSettings settings;
   final GameKind? selected;
 
-  /// Title of the pack Igraj would start (Kviz).
-  final String? packTitle;
+  /// Per game with packs: how many are ticked of how many there are (Task 46).
+  final Map<GameKind, PackCount> packs;
+
+  String? _packsLine(GameKind k) {
+    final c = packs[k];
+    return c == null ? null : Strings.packsLine(c.ticked, c.total);
+  }
 
   /// How many packs and questions the Kviz has, for its line (0: not known).
   final int quizPacks, quizQuestions;
@@ -210,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Strings.homeMeta(
                                 g,
                                 widget.settings,
-                                widget.packTitle,
+                                widget._packsLine(g),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -233,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: _SettingsPanel(
                             g,
                             widget.settings,
-                            widget.packTitle,
+                            widget._packsLine(g),
                           ),
                         ),
                       )
@@ -503,19 +508,24 @@ class _Help extends StatelessWidget {
   }
 }
 
+/// How many of a game's packs are ticked, of how many there are.
+typedef PackCount = ({int ticked, int total});
+
 /// The game's current settings (the host sets them on the phone).
 class _SettingsPanel extends StatelessWidget {
-  const _SettingsPanel(this.kind, this.settings, this.packTitle);
+  const _SettingsPanel(this.kind, this.settings, this.packsLine);
   final GameKind kind;
   final GameSettings settings;
-  final String? packTitle;
+  final String? packsLine;
 
   @override
   Widget build(BuildContext context) {
     // Rows of one or two items; the pack name is long, so it gets a row of its own.
-    final rows = switch (kind) {
+    final rows = <List<(String, String)>>[
+      if (packsLine != null && kind != GameKind.quiz) [(Strings.settingPack, packsLine!)],
+      ...switch (kind) {
       GameKind.quiz => [
-        [(Strings.settingPack, packTitle ?? '–')],
+        [(Strings.settingPack, packsLine ?? '–')],
         [
           (Strings.settingQuestions, '${settings.quizQuestions}'),
           (Strings.settingAnswerTime, '${settings.quizSeconds} s'),
@@ -546,7 +556,8 @@ class _SettingsPanel extends StatelessWidget {
         ],
       // The other party games have no settings on the TV yet.
       GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String)>>[],
-    };
+      },
+    ];
     Widget item((String, String) it) => Text.rich(
       TextSpan(
         children: [

@@ -331,7 +331,10 @@ class _TvAppState extends State<TvApp> {
                   players: _session.playerInfos,
                   settings: _session.settings,
                   selected: _session.selectedGame ?? _homeGame,
-                  packTitle: _session.selectedPackTitle,
+                  packs: {
+                    for (final k in const [GameKind.quiz, GameKind.uljez, GameKind.objasni, GameKind.koliko, GameKind.blef, GameKind.tkobi, GameKind.kaosvi])
+                      k: _session.packSelection(k),
+                  },
                   quizPacks: _session.packStore?.infos.length ?? 0,
                   quizQuestions: _session.packStore?.infos.fold<int>(0, (a, p) => a + p.questionCount) ?? 0,
                   notice: _notice,

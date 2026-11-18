@@ -24,7 +24,7 @@ Future<_Probe> _pump(
   String? url = 'http://192.168.1.5:8080/',
   List<PlayerInfo>? players,
   GameSettings settings = const GameSettings(),
-  String? packTitle,
+  Map<GameKind, ({int ticked, int total})> packs = const {},
   int quizPacks = 0,
   int quizQuestions = 0,
   String? notice,
@@ -47,7 +47,7 @@ Future<_Probe> _pump(
         players: players ?? _four,
         settings: settings,
         selected: selected,
-        packTitle: packTitle,
+        packs: packs,
         quizPacks: quizPacks,
         quizQuestions: quizQuestions,
         notice: notice,
@@ -106,11 +106,11 @@ void main() {
       await _pump(
         t,
         selected: GameKind.quiz,
-        packTitle: 'Hrvatska - kultura i sport',
+        packs: const {GameKind.quiz: (ticked: 3, total: 9)},
       );
       expect(_title('Kviz'), findsOneWidget);
       expect(_title('Curve'), findsNothing);
-      expect(find.textContaining('Hrvatska - kultura i sport'), findsOneWidget);
+      expect(find.textContaining('3 od 9 paketa'), findsOneWidget);
       expect(find.textContaining('10 pitanja'), findsOneWidget);
     },
   );
@@ -211,7 +211,7 @@ void main() {
     await _pump(
       t,
       selected: GameKind.quiz,
-      packTitle: 'Hrvatska - kultura i sport',
+      packs: const {GameKind.quiz: (ticked: 3, total: 9)},
       settings: const GameSettings(quizQuestions: 12, quizSeconds: 30),
     );
     expect(find.byKey(const ValueKey('game-card')), findsNothing);
@@ -219,7 +219,7 @@ void main() {
     await t.pump();
     final card = find.byKey(const ValueKey('game-card'));
     expect(card, findsOneWidget);
-    for (final s in ['Hrvatska - kultura i sport', '12', '30 s']) {
+    for (final s in ['3 od 9 paketa', '12', '30 s']) {
       expect(
         find.descendant(of: card, matching: find.textContaining(s)),
         findsWidgets,
@@ -330,7 +330,7 @@ void main() {
         t,
         players: eight,
         selected: GameKind.quiz,
-        packTitle: 'Hrvatska - kultura i sport',
+        packs: const {GameKind.quiz: (ticked: 3, total: 9)},
       );
       expect(t.takeException(), isNull);
       final qrPanel = t.getRect(find.byKey(const ValueKey('join-panel')));
@@ -419,7 +419,7 @@ void main() {
     await _pump(
       t,
       selected: GameKind.quiz,
-      packTitle: 'Hrvatska - kultura i sport',
+      packs: const {GameKind.quiz: (ticked: 3, total: 9)},
     );
     await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await t.pump();
@@ -443,6 +443,56 @@ void main() {
     await t.pump();
     expect(find.descendant(of: card, matching: find.text('Vrijeme razgovora')), findsNothing);
     expect(find.descendant(of: card, matching: find.textContaining(Strings.settingImpostors)), findsOneWidget);
+  });
+
+  group('pack line (Task 46)', () {
+    testWidgets('all ticked reads Svi paketi, else the count; per game, in the settings panel', (t) async {
+      const all = (ticked: 9, total: 9);
+      await _pump(t, selected: GameKind.uljez, games: homeGames, packs: const {GameKind.uljez: all, GameKind.blef: (ticked: 3, total: 9)});
+      await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await t.pump();
+      final card = find.byKey(const ValueKey('game-card'));
+      expect(find.descendant(of: card, matching: find.textContaining(Strings.packsAll)), findsOneWidget);
+      await _pump(t, selected: GameKind.blef, games: homeGames, packs: const {GameKind.uljez: all, GameKind.blef: (ticked: 3, total: 9)});
+      await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await t.pump();
+      expect(find.descendant(of: card, matching: find.textContaining('3 od 9 paketa')), findsOneWidget);
+      expect(find.descendant(of: card, matching: find.textContaining(Strings.packsAll)), findsNothing);
+    });
+
+    testWidgets('games without packs (Curve, Vukodlak) show no pack line', (t) async {
+      await _pump(t, selected: GameKind.vukodlak, games: homeGames, packs: const {GameKind.quiz: (ticked: 1, total: 2)});
+      await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await t.pump();
+      expect(find.textContaining('paket'), findsNothing);
+    });
+
+    for (final size in const [Size(1272, 715), Size(960, 540)]) {
+      testWidgets('the pack line fits at ${size.width.toInt()}x${size.height.toInt()}', (t) async {
+        t.view
+          ..physicalSize = size
+          ..devicePixelRatio = 1;
+        addTearDown(t.view.reset);
+        await t.pumpWidget(MaterialApp(
+          theme: tvTheme(),
+          home: HomeScreen(
+            joinUrl: 'http://192.168.1.5:8080/',
+            players: _four,
+            settings: const GameSettings(),
+            selected: GameKind.kaosvi,
+            games: homeGames,
+            packs: const {GameKind.kaosvi: (ticked: 12, total: 14)},
+            onSelect: (_) {},
+            onPlay: (_) {},
+          ),
+        ));
+        await t.pump();
+        await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await t.pump();
+        expect(find.textContaining('12 od 14 paketa'), findsOneWidget);
+        expect(t.takeException(), isNull);
+      });
+    }
   });
 
   group('the power-up legend (▼ on the Curve card)', () {
