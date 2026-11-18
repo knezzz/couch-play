@@ -276,6 +276,88 @@ void main() {
           total: 4,
         ),
       ]),
+      'KaosviAsk': w(1, _lobby(), [
+        const KaosviAsk(
+          number: 3,
+          total: 12,
+          seconds: 22,
+          q: 'Navedi voće.',
+          sent: null,
+        ),
+      ]),
+      'KaosviSent': w(1, _lobby(), [
+        const KaosviAsk(
+          number: 3,
+          total: 12,
+          seconds: 14,
+          q: 'Navedi voće.',
+          sent: 'jabuka',
+        ),
+      ]),
+      'KaosviMergeHost': w(0, _lobby(), [
+        const KaosviAsk(
+          number: 3,
+          total: 12,
+          seconds: 14,
+          q: 'Navedi voće.',
+          sent: 'jabuka',
+        ),
+        const KaosviMerging(
+          seconds: 11,
+          host: true,
+          groups: [
+            KaosviMergeItem(1, 'jabuka'),
+            KaosviMergeItem(2, 'jabuke'),
+            KaosviMergeItem(3, 'kruška'),
+            KaosviMergeItem(4, 'banana'),
+            KaosviMergeItem(5, 'ananas'),
+          ],
+        ),
+      ]),
+      'KaosviWait': w(1, _lobby(), [
+        const KaosviAsk(
+          number: 3,
+          total: 12,
+          seconds: 14,
+          q: 'Navedi voće.',
+          sent: 'jabuka',
+        ),
+        const KaosviMerging(seconds: 11, host: false, groups: []),
+      ]),
+      'KaosviResult': w(1, _lobby(), [
+        const KaosviAsk(
+          number: 3,
+          total: 12,
+          seconds: 14,
+          q: 'Navedi voće.',
+          sent: 'jabuka',
+        ),
+        const KaosviResult(
+          answer: 'jabuka',
+          size: 3,
+          points: 1,
+          total: 4,
+          largest: true,
+          lone: false,
+        ),
+      ]),
+      'KaosviLone': w(1, _lobby(), [
+        const KaosviAsk(
+          number: 3,
+          total: 12,
+          seconds: 14,
+          q: 'Navedi voće.',
+          sent: 'ananas',
+        ),
+        const KaosviResult(
+          answer: 'ananas',
+          size: 1,
+          points: -1,
+          total: 2,
+          largest: false,
+          lone: true,
+        ),
+      ]),
       'UljezPhone_word': w(1, _lobby(), [
         const UljezWord('Pikachu'),
         const UljezTurn(round: 2, speaker: 0, seconds: 20, stage: 'clues'),
