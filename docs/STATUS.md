@@ -318,3 +318,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   standing yes was for 2026-11-17).
 - 2026-11-18: c5d194d installed on the TV, not opened (person: will play later today); lead's log capture running.
 - 2026-11-18: Person (via product-pm@update-and-simplify): no fixed timers in Uljez, a hint button passes the turn, majority vote ends the rounds after round 1; same for Vukodlak. Task 45.
+- 2026-11-18: Choppy home found from the person's play logs: the sound player (audioplayers, low latency) never reports done on Android, so its ticker redraws the home every frame (~27 ms) all session. Fix in builder-2's row tv-sfx-frames; confirm at the next TV install. Games smooth (p95 5-10 ms, quiz ~22 ms).
