@@ -58,13 +58,12 @@ void main() {
 
   test('the host\'s pack, question count and target are used; a missing saved pack falls back and keeps the other settings', () {
     setUpSession(3);
-    ps[0].say(const SetSettings(GameSettings(kaosviPackId: 'two', kaosviQuestions: 8, kaosviTarget: 5, tkobiPrompts: 15)));
-    expect(s.settings.kaosviOffPacks, {'one'}, reason: 'an old single id means only that pack');
-    expect(s.settings.kaosviPackId, isNull);
-    ps[0].say(const SetSettings(GameSettings(kaosviPackId: 'gone', kaosviQuestions: 8, kaosviTarget: 5, tkobiPrompts: 15)));
-    expect(s.settings.kaosviPackId, isNull);
+    ps[0].say(const SetSettings(GameSettings(kaosviOffPacks: {'one'}, kaosviQuestions: 8, kaosviTarget: 5, tkobiPrompts: 15)));
+    expect(s.settings.kaosviOffPacks, {'one'});
+    ps[0].say(const SetSettings(GameSettings(kaosviOffPacks: {'gone'}, kaosviQuestions: 8, kaosviTarget: 5, tkobiPrompts: 15)));
+    expect(s.tickedPackIds(GameKind.kaosvi), ['one', 'two'], reason: 'an id the TV does not have switches nothing off');
     expect([s.settings.kaosviQuestions, s.settings.kaosviTarget, s.settings.tkobiPrompts], [8, 5, 15]);
-    ps[0].say(const SetSettings(GameSettings(kaosviPackId: 'two', kaosviQuestions: 8, kaosviTarget: 5)));
+    ps[0].say(const SetSettings(GameSettings(kaosviOffPacks: {'one'}, kaosviQuestions: 8, kaosviTarget: 5)));
     ps[0].say(const StartGame(GameKind.kaosvi, null));
     expect(s.kaosvi!.total, 8);
     expect(s.kaosvi!.target, 5);

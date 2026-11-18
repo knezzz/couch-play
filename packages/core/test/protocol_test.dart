@@ -17,7 +17,7 @@ void main() {
       const SelectGame(null),
       const SelectGame(GameKind.quiz),
       const SelectGame(GameKind.curve),
-      const SetSettings(GameSettings(quizPackId: 'hr-povijest')),
+      const SetSettings(GameSettings(quizOffPacks: {'hr-povijest'})),
       const SetSettings(GameSettings(quizSeconds: 30, quizQuestions: 15, revealSeconds: 6, curveCountdown: 3, curveMode: CurveMode.chaos)),
       const Ping(123),
       const Welcome(1, 2, 'tok'),
@@ -40,7 +40,7 @@ void main() {
         packs: [],
         hostId: 1,
         selected: GameKind.curve,
-        settings: GameSettings(quizPackId: 'flags'),
+        settings: GameSettings(quizOffPacks: {'flags'}),
       ),
       const QuizQuestion(1, 10, ['a', 'b', 'c', 'd'], 20),
       const QuizReveal(2, 750, 1500),
@@ -147,13 +147,13 @@ void main() {
     });
 
     test('the_pack_is_part_of_the_settings_and_survives_clamping', () {
-      expect(const GameSettings().quizPackId, isNull);
-      expect(const GameSettings(quizPackId: 'x', quizSeconds: 999).clamped().quizPackId, 'x');
-      final m = Message.decode(const SetSettings(GameSettings(quizPackId: 'x')).encode());
-      expect((m as SetSettings).settings.quizPackId, 'x');
+      expect(const GameSettings().quizOffPacks, isEmpty);
+      expect(const GameSettings(quizOffPacks: {'x'}, quizSeconds: 999).clamped().quizOffPacks, {'x'});
+      final m = Message.decode(const SetSettings(GameSettings(quizOffPacks: {'x'})).encode());
+      expect((m as SetSettings).settings.quizOffPacks, {'x'});
       expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}'),
           const SetSettings(GameSettings()));
-      expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"quizPackId":5}'), isNull);
+      expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"quizOffPacks":5}'), isNull);
     });
 
     test('selection_defaults_to_none_and_a_bad_game_name_is_null', () {
@@ -210,8 +210,9 @@ void main() {
       expect(back.clamped().offPacks(GameKind.uljez), {'u1'}, reason: 'clamping keeps the selection');
       expect(s.toJson()['quizOffPacks'], ['a', 'b'], reason: 'sorted: equal sets are equal messages');
       final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"quizPackId":"x","uljezPackId":"y"}');
+      // the old single ids are gone: the keys are ignored and every pack stays ticked
       final o = (old as SetSettings).settings;
-      expect([o.quizPackId, o.uljezPackId, o.quizOffPacks, o.blefOffPacks], ['x', 'y', isEmpty, isEmpty]);
+      expect([o.quizOffPacks, o.uljezOffPacks], [isEmpty, isEmpty]);
       expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"quizOffPacks":[1]}'), isNull);
     });
 
@@ -256,7 +257,7 @@ void main() {
         const UljezTurn(round: 2, speaker: null, seconds: 90, stage: 'discussion'),
         const UljezGuess(seconds: 15, options: ['a', 'b', 'c', 'd']),
         const UljezEnd(UljezWinner.village, 'Spužva Bob', 'Pikachu', [2, 5]),
-        const SetSettings(GameSettings(uljezPackId: 'uljez-hrana', uljezImpostors: 2)),
+        const SetSettings(GameSettings(uljezOffPacks: {'uljez-hrana'}, uljezImpostors: 2)),
         const LobbyState(players: [], packs: [], hostId: 1, uljezPacks: [PackInfo('uljez-hrana', 'Hrana', 40)]),
       ];
       for (final m in ms) {
@@ -266,7 +267,7 @@ void main() {
 
     test('uljez settings: defaults, an old message, clamping', () {
       const d = GameSettings();
-      expect([d.uljezPackId, d.uljezImpostors], [null, 1]);
+      expect([d.uljezOffPacks, d.uljezImpostors], [isEmpty, 1]);
       final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
       expect((old as SetSettings).settings, const GameSettings());
       final c = const GameSettings(uljezImpostors: 5).clamped();
@@ -332,10 +333,10 @@ void main() {
 
     test('settings: defaults, an old message, and clamping to the allowed values', () {
       const d = GameSettings();
-      expect([d.objasniSeconds, d.objasniTarget, d.objasniPackId], [60, 30, null]);
-      expect([d.kolikoSeconds, d.kolikoQuestions, d.kolikoPackId], [30, 10, null]);
-      expect([d.blefQuestions, d.blefPackId], [7, null]);
-      expect([d.tkobiPrompts, d.tkobiPackId], [10, null]);
+      expect([d.objasniSeconds, d.objasniTarget, d.objasniOffPacks], [60, 30, isEmpty]);
+      expect([d.kolikoSeconds, d.kolikoQuestions, d.kolikoOffPacks], [30, 10, isEmpty]);
+      expect([d.blefQuestions, d.blefOffPacks], [7, isEmpty]);
+      expect([d.tkobiPrompts, d.tkobiOffPacks], [10, isEmpty]);
       final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
       expect((old as SetSettings).settings, const GameSettings());
       final c = const GameSettings(objasniSeconds: 70, objasniTarget: 100, kolikoSeconds: 5, kolikoQuestions: 12, blefQuestions: 8, tkobiPrompts: 1).clamped();
@@ -344,7 +345,7 @@ void main() {
       expect(c.blefQuestions, 7);
       expect(c.tkobiPrompts, 5);
       expect(const GameSettings(objasniSeconds: 80).clamped().objasniSeconds, 90);
-      const s = GameSettings(objasniSeconds: 90, objasniTarget: 20, objasniPackId: 'a', kolikoSeconds: 45, kolikoQuestions: 15, kolikoPackId: 'b', blefQuestions: 10, blefPackId: 'c', tkobiPrompts: 15, tkobiPackId: 'd');
+      const s = GameSettings(objasniSeconds: 90, objasniTarget: 20, objasniOffPacks: {'a'}, kolikoSeconds: 45, kolikoQuestions: 15, kolikoOffPacks: {'b'}, blefQuestions: 10, blefOffPacks: {'c'}, tkobiPrompts: 15, tkobiOffPacks: {'d'});
       expect(Message.decode(SetSettings(s).encode()), const SetSettings(s));
       expect(s.clamped(), s);
     });
@@ -475,7 +476,7 @@ void main() {
         const KaosviMerging(seconds: 15, groups: [], host: false),
         const KaosviResult(answer: 'jabuka', size: 3, points: 1, total: 4, largest: true, lone: false),
         const KaosviResult(answer: null, size: 0, points: 0, total: 0, largest: false, lone: false),
-        const SetSettings(GameSettings(kaosviQuestions: 16, kaosviTarget: 10, kaosviPackId: 'k')),
+        const SetSettings(GameSettings(kaosviQuestions: 16, kaosviTarget: 10, kaosviOffPacks: {'k'})),
         const LobbyState(players: [], packs: [], hostId: 1, kaosviPacks: [PackInfo('k', 'K', 60)]),
       ];
       for (final m in ms) {
@@ -485,7 +486,7 @@ void main() {
 
     test('settings: defaults, an old message, clamping to the allowed values', () {
       const d = GameSettings();
-      expect([d.kaosviQuestions, d.kaosviTarget, d.kaosviPackId], [12, 8, null]);
+      expect([d.kaosviQuestions, d.kaosviTarget, d.kaosviOffPacks], [12, 8, isEmpty]);
       final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
       expect((old as SetSettings).settings, const GameSettings());
       final c = const GameSettings(kaosviQuestions: 13, kaosviTarget: 1).clamped();

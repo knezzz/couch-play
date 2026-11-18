@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:core/core.dart';
@@ -75,27 +73,16 @@ void main() {
   testWidgets('igraj_starts_the_selected_game_with_its_settings_and_clears_the_selection', (t) async {
     setUpSession();
     a.say(const SelectGame(GameKind.quiz));
-    a.say(const SetSettings(GameSettings(quizPackId: 'big', quizQuestions: 5)));
+    a.say(const SetSettings(GameSettings(quizQuestions: 5)));
     a.say(const StartGame(GameKind.quiz, null));
     await t.pump();
     expect(s.phase, Phase.quiz);
-    expect(s.quizTitle, 'Veliki');
+    expect(s.quizTitle, 'Zadani');
     expect(s.quiz!.total, 5);
     expect(s.selectedGame, isNull);
     s.finishGame({for (final p in s.players) p.id: 0});
     s.returnToLobby();
     expect(s.selectedGame, isNull);
-    s.dispose();
-  });
-
-  test('no_pack_chosen_means_the_default_and_one_that_does_not_exist_is_dropped', () {
-    setUpSession();
-    expect(s.selectedPackTitle, 'Zadani');
-    a.say(const SetSettings(GameSettings(quizPackId: 'big')));
-    expect(s.selectedPackTitle, 'Veliki');
-    a.say(const SetSettings(GameSettings(quizPackId: 'gone')));
-    expect(s.settings.quizPackId, isNull);
-    expect(s.selectedPackTitle, 'Zadani');
     s.dispose();
   });
 
@@ -105,28 +92,6 @@ void main() {
     await t.pump();
     a.say(const SelectGame(GameKind.quiz));
     expect(s.selectedGame, isNull);
-    s.dispose();
-  });
-
-  testWidgets('a_saved_pack_the_tv_no_longer_has_falls_back_to_the_default_at_load_and_at_igraj', (t) async {
-    final dir = Directory.systemTemp.createTempSync('sel');
-    addTearDown(() => dir.deleteSync(recursive: true));
-    final file = File('${dir.path}/settings.json')
-      ..writeAsStringSync(jsonEncode(const GameSettings(quizPackId: 'gone').toJson()));
-    setUpSession();
-    s.loadSettings(file);
-    expect(s.settings.quizPackId, isNull, reason: 'dropped at load');
-    // Removed after it was chosen: Igraj still starts the default.
-    var have = true;
-    final lookup = s.packLookup;
-    s.packLookup = (id) => id == 'tmp' ? (have ? pack('tmp', 'Privremeni') : null) : lookup(id);
-    a.say(const SetSettings(GameSettings(quizPackId: 'tmp')));
-    expect(s.settings.quizPackId, 'tmp');
-    have = false;
-    a.say(const StartGame(GameKind.quiz, null));
-    await t.pump();
-    expect(s.phase, Phase.quiz);
-    expect(s.quizTitle, 'Zadani');
     s.dispose();
   });
 

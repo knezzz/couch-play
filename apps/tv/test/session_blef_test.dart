@@ -66,13 +66,12 @@ void main() {
 
   test('the host\'s pack and question count are used; a missing saved pack falls back and keeps the other settings', () {
     setUpSession(3);
-    ps[0].say(const SetSettings(GameSettings(blefPackId: 'two', blefQuestions: 5, kolikoQuestions: 15)));
-    expect(s.settings.blefOffPacks, {'one'}, reason: 'an old single id means only that pack');
-    expect(s.settings.blefPackId, isNull);
-    ps[0].say(const SetSettings(GameSettings(blefPackId: 'gone', blefQuestions: 5, kolikoQuestions: 15)));
-    expect(s.settings.blefPackId, isNull);
+    ps[0].say(const SetSettings(GameSettings(blefOffPacks: {'one'}, blefQuestions: 5, kolikoQuestions: 15)));
+    expect(s.settings.blefOffPacks, {'one'});
+    ps[0].say(const SetSettings(GameSettings(blefOffPacks: {'gone'}, blefQuestions: 5, kolikoQuestions: 15)));
+    expect(s.tickedPackIds(GameKind.blef), ['one', 'two'], reason: 'an id the TV does not have switches nothing off');
     expect([s.settings.blefQuestions, s.settings.kolikoQuestions], [5, 15]);
-    ps[0].say(const SetSettings(GameSettings(blefPackId: 'two', blefQuestions: 5)));
+    ps[0].say(const SetSettings(GameSettings(blefOffPacks: {'one'}, blefQuestions: 5)));
     ps[0].say(const StartGame(GameKind.blef, null));
     expect(s.blef!.total, 5);
     expect(ps[1].last<LobbyState>()!.blefPacks.map((p) => p.id), ['one', 'two']);

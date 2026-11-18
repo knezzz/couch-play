@@ -69,9 +69,6 @@ class GameSettings with _JsonEq {
   /// Curve power-up mode.
   final CurveMode curveMode;
 
-  /// The quiz pack the host picked; null means the TV's default pack.
-  final String? quizPackId;
-
   /// Vukodlak: the roles that may be drawn (Vukodlak and Seljanin are always
   /// in) and whether a player who is out stays unrevealed until the end. (The
   /// day has no clock; old settings messages with a discussion time still decode.)
@@ -80,33 +77,28 @@ class GameSettings with _JsonEq {
 
   /// Uljez: the word pack (null = the TV's first pack) and 1 or 2 impostors (2
   /// only counts with 7-8 players).
-  final String? uljezPackId;
   final int uljezImpostors;
 
-  /// Objasni: seconds per turn (45 / 60 / 90), target score (20 / 30 / 50), word pack.
+  /// Objasni: seconds per turn (45 / 60 / 90), target score (20 / 30 / 50).
   final int objasniSeconds, objasniTarget;
-  final String? objasniPackId;
 
-  /// Koliko?: seconds per question (20 / 30 / 45), questions (5 / 10 / 15), pack.
+  /// Koliko?: seconds per question (20 / 30 / 45), questions (5 / 10 / 15).
   final int kolikoSeconds, kolikoQuestions;
-  final String? kolikoPackId;
 
-  /// Blef: questions (5 / 7 / 10), pack.
+  /// Blef: questions (5 / 7 / 10).
   final int blefQuestions;
-  final String? blefPackId;
 
-  /// Tko bi?: prompts (5 / 10 / 15), pack.
+  /// Tko bi?: prompts (5 / 10 / 15).
   final int tkobiPrompts;
-  final String? tkobiPackId;
 
-  /// Kao svi: questions (8 / 12 / 16), target score (5 / 8 / 10), pack.
+  /// Kao svi: questions (8 / 12 / 16), target score (5 / 8 / 10).
   final int kaosviQuestions, kaosviTarget;
-  final String? kaosviPackId;
+
   /// Packs are multi-select in every game: the ids of the packs that are
   /// switched OFF, per game. Empty (the default) = every pack is ticked, so a
   /// pack that appears later starts ticked. The session keeps at least one
-  /// pack ticked. The single `<game>PackId` above is the old way: an old
-  /// message with one is turned into "only that pack" by the session.
+  /// pack ticked. (The old single `<game>PackId` is gone; a message carrying
+  /// one still decodes, the key is ignored and every pack stays ticked.)
   final Set<String> quizOffPacks, uljezOffPacks, objasniOffPacks, kolikoOffPacks, blefOffPacks, tkobiOffPacks, kaosviOffPacks;
 
   /// The off-set of [game] (empty for a game without packs).
@@ -135,24 +127,17 @@ class GameSettings with _JsonEq {
     this.revealSeconds = 4,
     this.curveCountdown = 2,
     this.curveMode = CurveMode.balanced,
-    this.quizPackId,
     this.wolfRoles = defaultWolfRoles,
     this.wolfHideRoles = true,
-    this.uljezPackId,
     this.uljezImpostors = 1,
     this.objasniSeconds = 60,
     this.objasniTarget = 30,
-    this.objasniPackId,
     this.kolikoSeconds = 30,
     this.kolikoQuestions = 10,
-    this.kolikoPackId,
     this.blefQuestions = 7,
-    this.blefPackId,
     this.tkobiPrompts = 10,
-    this.tkobiPackId,
     this.kaosviQuestions = 12,
     this.kaosviTarget = 8,
-    this.kaosviPackId,
     this.quizOffPacks = const {},
     this.uljezOffPacks = const {},
     this.objasniOffPacks = const {},
@@ -169,26 +154,19 @@ class GameSettings with _JsonEq {
       curveMode: j['curveMode'] == null
           ? CurveMode.balanced
           : CurveMode.values.byName(j['curveMode'] as String),
-      quizPackId: j['quizPackId'] as String?,
       wolfRoles: j['wolfRoles'] == null
           ? defaultWolfRoles
           : {for (final n in j['wolfRoles'] as List) WolfRole.values.byName(n as String)},
       wolfHideRoles: (j['wolfHideRoles'] as bool?) ?? true,
-      uljezPackId: j['uljezPackId'] as String?,
       uljezImpostors: (j['uljezImpostors'] as int?) ?? 1,
       objasniSeconds: (j['objasniSeconds'] as int?) ?? 60,
       objasniTarget: (j['objasniTarget'] as int?) ?? 30,
-      objasniPackId: j['objasniPackId'] as String?,
       kolikoSeconds: (j['kolikoSeconds'] as int?) ?? 30,
       kolikoQuestions: (j['kolikoQuestions'] as int?) ?? 10,
-      kolikoPackId: j['kolikoPackId'] as String?,
       blefQuestions: (j['blefQuestions'] as int?) ?? 7,
-      blefPackId: j['blefPackId'] as String?,
       tkobiPrompts: (j['tkobiPrompts'] as int?) ?? 10,
-      tkobiPackId: j['tkobiPackId'] as String?,
       kaosviQuestions: (j['kaosviQuestions'] as int?) ?? 12,
       kaosviTarget: (j['kaosviTarget'] as int?) ?? 8,
-      kaosviPackId: j['kaosviPackId'] as String?,
       quizOffPacks: _ids(j['quizOffPacks']),
       uljezOffPacks: _ids(j['uljezOffPacks']),
       objasniOffPacks: _ids(j['objasniOffPacks']),
@@ -199,32 +177,24 @@ class GameSettings with _JsonEq {
 
   static Set<String> _ids(Object? v) => v == null ? const {} : {for (final e in v as List) e as String};
 
-  /// The same settings with the off-sets of the games in [off] replaced (and
-  /// their old single pack id cleared: the selection is now the off-set).
+  /// The same settings with the off-sets of the games in [off] replaced.
   GameSettings withOffPacks(Map<GameKind, Set<String>> off) => GameSettings(
       quizSeconds: quizSeconds,
       quizQuestions: quizQuestions,
       revealSeconds: revealSeconds,
       curveCountdown: curveCountdown,
       curveMode: curveMode,
-      quizPackId: off.containsKey(GameKind.quiz) ? null : quizPackId,
       wolfRoles: wolfRoles,
       wolfHideRoles: wolfHideRoles,
-      uljezPackId: off.containsKey(GameKind.uljez) ? null : uljezPackId,
       uljezImpostors: uljezImpostors,
       objasniSeconds: objasniSeconds,
       objasniTarget: objasniTarget,
-      objasniPackId: off.containsKey(GameKind.objasni) ? null : objasniPackId,
       kolikoSeconds: kolikoSeconds,
       kolikoQuestions: kolikoQuestions,
-      kolikoPackId: off.containsKey(GameKind.koliko) ? null : kolikoPackId,
       blefQuestions: blefQuestions,
-      blefPackId: off.containsKey(GameKind.blef) ? null : blefPackId,
       tkobiPrompts: tkobiPrompts,
-      tkobiPackId: off.containsKey(GameKind.tkobi) ? null : tkobiPackId,
       kaosviQuestions: kaosviQuestions,
       kaosviTarget: kaosviTarget,
-      kaosviPackId: off.containsKey(GameKind.kaosvi) ? null : kaosviPackId,
       quizOffPacks: off[GameKind.quiz] ?? quizOffPacks,
       uljezOffPacks: off[GameKind.uljez] ?? uljezOffPacks,
       objasniOffPacks: off[GameKind.objasni] ?? objasniOffPacks,
@@ -246,24 +216,17 @@ class GameSettings with _JsonEq {
       revealSeconds: snap(revealSeconds, 2, 15, 1),
       curveCountdown: snap(curveCountdown, 1, 10, 1),
       curveMode: curveMode,
-      quizPackId: quizPackId,
       wolfRoles: {...wolfRoles, ...wolfAlwaysOn},
       wolfHideRoles: wolfHideRoles,
-      uljezPackId: uljezPackId,
       uljezImpostors: uljezImpostors.clamp(1, 2),
       objasniSeconds: oneOf(objasniSeconds, const [45, 60, 90]),
       objasniTarget: oneOf(objasniTarget, const [20, 30, 50]),
-      objasniPackId: objasniPackId,
       kolikoSeconds: oneOf(kolikoSeconds, const [20, 30, 45]),
       kolikoQuestions: oneOf(kolikoQuestions, const [5, 10, 15]),
-      kolikoPackId: kolikoPackId,
       blefQuestions: oneOf(blefQuestions, const [5, 7, 10]),
-      blefPackId: blefPackId,
       tkobiPrompts: oneOf(tkobiPrompts, const [5, 10, 15]),
-      tkobiPackId: tkobiPackId,
       kaosviQuestions: oneOf(kaosviQuestions, const [8, 12, 16]),
       kaosviTarget: oneOf(kaosviTarget, const [5, 8, 10]),
-      kaosviPackId: kaosviPackId,
       quizOffPacks: quizOffPacks,
       uljezOffPacks: uljezOffPacks,
       objasniOffPacks: objasniOffPacks,
@@ -281,24 +244,17 @@ class GameSettings with _JsonEq {
         'revealSeconds': revealSeconds,
         'curveCountdown': curveCountdown,
         'curveMode': curveMode.name,
-        'quizPackId': quizPackId,
         'wolfRoles': [for (final r in WolfRole.values) if (wolfRoles.contains(r)) r.name],
         'wolfHideRoles': wolfHideRoles,
-        'uljezPackId': uljezPackId,
         'uljezImpostors': uljezImpostors,
         'objasniSeconds': objasniSeconds,
         'objasniTarget': objasniTarget,
-        'objasniPackId': objasniPackId,
         'kolikoSeconds': kolikoSeconds,
         'kolikoQuestions': kolikoQuestions,
-        'kolikoPackId': kolikoPackId,
         'blefQuestions': blefQuestions,
-        'blefPackId': blefPackId,
         'tkobiPrompts': tkobiPrompts,
-        'tkobiPackId': tkobiPackId,
         'kaosviQuestions': kaosviQuestions,
         'kaosviTarget': kaosviTarget,
-        'kaosviPackId': kaosviPackId,
         'quizOffPacks': (quizOffPacks.toList()..sort()),
         'uljezOffPacks': (uljezOffPacks.toList()..sort()),
         'objasniOffPacks': (objasniOffPacks.toList()..sort()),

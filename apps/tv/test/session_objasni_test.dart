@@ -74,13 +74,12 @@ void main() {
 
   test('the host\'s pack is used; a missing saved pack falls back and keeps the other settings', () {
     setUpSession(4);
-    ps[0].say(const SetSettings(GameSettings(objasniPackId: 'two', objasniSeconds: 90, kolikoSeconds: 45)));
-    expect(s.settings.objasniOffPacks, {'one'}, reason: 'an old single id means only that pack');
-    expect(s.settings.objasniPackId, isNull);
-    ps[0].say(const SetSettings(GameSettings(objasniPackId: 'gone', objasniSeconds: 90, kolikoSeconds: 45)));
-    expect(s.settings.objasniPackId, isNull);
+    ps[0].say(const SetSettings(GameSettings(objasniOffPacks: {'one'}, objasniSeconds: 90, kolikoSeconds: 45)));
+    expect(s.settings.objasniOffPacks, {'one'});
+    ps[0].say(const SetSettings(GameSettings(objasniOffPacks: {'gone'}, objasniSeconds: 90, kolikoSeconds: 45)));
+    expect(s.tickedPackIds(GameKind.objasni), ['one', 'two'], reason: 'an id the TV does not have switches nothing off');
     expect([s.settings.objasniSeconds, s.settings.kolikoSeconds], [90, 45]);
-    ps[0].say(const SetSettings(GameSettings(objasniPackId: 'two')));
+    ps[0].say(const SetSettings(GameSettings(objasniOffPacks: {'one'})));
     ps[0].say(const StartGame(GameKind.objasni, null));
     expect(s.objasni!.pack.id, 'two');
     s.dispose();

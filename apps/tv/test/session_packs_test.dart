@@ -100,28 +100,11 @@ void main() {
     s.dispose();
   });
 
-  test('old settings with one pack id mean "only that pack"; an id the TV does not have means all', () {
+  test('a pack id the TV does not have in the off-set switches nothing off', () {
     setUpSession();
-    ps[0].say(const SetSettings(GameSettings(uljezPackId: 'two')));
-    expect(s.settings.uljezPackId, isNull);
-    expect(s.settings.uljezOffPacks, {'one', 'three'});
-    expect(s.tickedPackIds(GameKind.uljez), ['two']);
-    ps[0].say(const SetSettings(GameSettings(uljezPackId: 'gone', kolikoSeconds: 45)));
-    expect(s.settings.uljezOffPacks, isEmpty);
-    expect(s.settings.kolikoSeconds, 45, reason: 'the other settings are kept');
-    s.dispose();
-    // an old file read before the packs were loaded is decided once they are
-    final dir = Directory.systemTemp.createTempSync('oldsel');
-    addTearDown(() => dir.deleteSync(recursive: true));
-    final file = File('${dir.path}/s.json')
-      ..writeAsStringSync(jsonEncode(const GameSettings(uljezPackId: 'three').toJson()));
-    s = Session(random: Random(1))..uljezTvReady = true;
-    s.loadSettings(file);
-    s.uljezPacks = [uljez('one'), uljez('two', prefix: 'x'), uljez('three', prefix: 'y')];
-    expect(s.tickedPackIds(GameKind.uljez), ['three'], reason: 'decided at the first use after the packs load');
-    ps = [for (var i = 0; i < 3; i++) join(s, 'P$i', token: 't$i')];
-    ps[0].say(const StartGame(GameKind.uljez, null));
-    expect(s.uljez!.pack.id, 'three');
+    ps[0].say(const SetSettings(GameSettings(uljezOffPacks: {'gone'}, kolikoSeconds: 45)));
+    expect(s.tickedPackIds(GameKind.uljez), ['one', 'two', 'three']);
+    expect(s.settings.kolikoSeconds, 45);
     s.dispose();
   });
 

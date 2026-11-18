@@ -66,13 +66,12 @@ void main() {
 
   test('the host\'s pack and prompt count are used; a missing saved pack falls back and keeps the other settings', () {
     setUpSession(3);
-    ps[0].say(const SetSettings(GameSettings(tkobiPackId: 'two', tkobiPrompts: 5, blefQuestions: 10)));
-    expect(s.settings.tkobiOffPacks, {'one'}, reason: 'an old single id means only that pack');
-    expect(s.settings.tkobiPackId, isNull);
-    ps[0].say(const SetSettings(GameSettings(tkobiPackId: 'gone', tkobiPrompts: 5, blefQuestions: 10)));
-    expect(s.settings.tkobiPackId, isNull);
+    ps[0].say(const SetSettings(GameSettings(tkobiOffPacks: {'one'}, tkobiPrompts: 5, blefQuestions: 10)));
+    expect(s.settings.tkobiOffPacks, {'one'});
+    ps[0].say(const SetSettings(GameSettings(tkobiOffPacks: {'gone'}, tkobiPrompts: 5, blefQuestions: 10)));
+    expect(s.tickedPackIds(GameKind.tkobi), ['one', 'two'], reason: 'an id the TV does not have switches nothing off');
     expect([s.settings.tkobiPrompts, s.settings.blefQuestions], [5, 10]);
-    ps[0].say(const SetSettings(GameSettings(tkobiPackId: 'two', tkobiPrompts: 5)));
+    ps[0].say(const SetSettings(GameSettings(tkobiOffPacks: {'one'}, tkobiPrompts: 5)));
     ps[0].say(const StartGame(GameKind.tkobi, null));
     expect(s.tkobi!.total, 5);
     expect(s.tkobi!.text, startsWith('two:'));

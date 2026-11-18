@@ -671,9 +671,6 @@ class Session {
   GameKind? _selected;
   int? _selectedBy; // the host who chose it
 
-  /// The title of the pack Igraj would start: the chosen one or the default.
-  String? get selectedPackTitle => packLookup(_settings.quizPackId)?.title;
-
   void _selectGame(PeerSocket peer, GameKind? game) {
     final from = _playerOf(peer);
     if (from == null || _phase != Phase.lobby) return;
@@ -742,41 +739,19 @@ class Session {
   ({int ticked, int total}) packSelection(GameKind game) =>
       (ticked: tickedPackIds(game).length, total: _packIds(game).length);
 
-  /// Turns an old single pack id into "only that pack" and keeps at least one
-  /// pack ticked in every game: a change that would untick them all is undone
-  /// for that game (the [previous] selection stays). Ids of packs the TV does
-  /// not have (yet) stay in the off-set: harmless, and an upload may return.
+  /// Keeps at least one pack ticked in every game: a change that would untick
+  /// them all is undone for that game (the [previous] selection stays). Ids of
+  /// packs the TV does not have (yet) stay in the off-set: harmless, and an
+  /// upload may return.
   void _normalizePacks([GameSettings? previous]) {
     final changes = <GameKind, Set<String>>{};
     for (final g in _packGames) {
       final all = _packIds(g);
       if (all.isEmpty) continue; // not loaded yet: decide later
-      final legacy = switch (g) {
-        GameKind.quiz => _settings.quizPackId,
-        GameKind.uljez => _settings.uljezPackId,
-        GameKind.objasni => _settings.objasniPackId,
-        GameKind.koliko => _settings.kolikoPackId,
-        GameKind.blef => _settings.blefPackId,
-        GameKind.tkobi => _settings.tkobiPackId,
-        _ => _settings.kaosviPackId,
-      };
-      if (g == GameKind.quiz && packStore == null) {
-        // The test pack only (no store): a saved id stays while packLookup knows it.
-        if (legacy != null && packLookup(legacy) == null) changes[g] = _settings.offPacks(g);
-        continue;
-      }
-      var off = _settings.offPacks(g);
-      var changed = false;
-      if (legacy != null) {
-        off = all.contains(legacy) ? all.toSet().difference({legacy}) : <String>{};
-        changed = true;
-      }
-      if (all.every(off.contains)) {
-        final before = previous?.offPacks(g) ?? const <String>{};
-        off = all.every(before.contains) ? <String>{} : before;
-        changed = true;
-      }
-      if (changed) changes[g] = off;
+      final off = _settings.offPacks(g);
+      if (!all.every(off.contains)) continue;
+      final before = previous?.offPacks(g) ?? const <String>{};
+      changes[g] = all.every(before.contains) ? <String>{} : before;
     }
     if (changes.isNotEmpty) _settings = _settings.withOffPacks(changes);
   }
@@ -795,7 +770,7 @@ class Session {
 
   QuizPack? _quizUnion() {
     _normalizePacks();
-    if (packStore == null) return packLookup(_settings.quizPackId);
+    if (packStore == null) return packLookup(null);
     final chosen = [
       for (final id in tickedPackIds(GameKind.quiz))
         if (packLookup(id) != null) packLookup(id)!
