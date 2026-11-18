@@ -305,6 +305,8 @@ sealed class Message with _JsonEq {
         'nightPick' => NightPick(m['target'] as int?,
             special: m['special'] as bool, second: m['second'] as int?),
         'vote' => Vote(m['target'] as int?),
+        'uljezDone' => const UljezDone(),
+        'readyToVote' => ReadyToVote(m['on'] as bool),
         'guess' => Guess(m['index'] as int),
         'number' => NumberAnswer((m['value'] as num).toDouble()),
         'kaosviAnswer' => KaosviAnswer(m['text'] as String),
@@ -377,6 +379,8 @@ sealed class Message with _JsonEq {
               int.parse(e.key): WolfRole.values.byName(e.value as String)
           }),
         'uljezWord' => UljezWord(m['word'] as String),
+        'voteWish' => VoteWish(
+            open: m['open'] as bool, ready: m['ready'] as bool, want: m['want'] as int, needed: m['needed'] as int),
         'uljezTurn' => UljezTurn(
             round: m['round'] as int,
             speaker: m['speaker'] as int?,
@@ -769,6 +773,44 @@ class Vote extends Message {
   String get type => 'vote';
   @override
   Map<String, Object?> get fields => {'target': target};
+}
+
+/// Phone -> TV, Uljez: the speaker's "Dao sam trag". Passes the turn; from
+/// anyone else, or out of turn, it is ignored.
+class UljezDone extends Message {
+  const UljezDone();
+  @override
+  String get type => 'uljezDone';
+  @override
+  Map<String, Object?> get fields => const {};
+}
+
+/// Phone -> TV, "Idemo glasati" (Uljez from the end of round 1, Vukodlak by
+/// day): [on] is the phone's wish, not a toggle, so a double send changes
+/// nothing. Ignored when the wish is not open for that player.
+class ReadyToVote extends Message {
+  final bool on;
+  const ReadyToVote(this.on);
+  @override
+  String get type => 'readyToVote';
+  @override
+  Map<String, Object?> get fields => {'on': on};
+}
+
+/// TV -> one phone (Uljez; Vukodlak day, living players only): the state of
+/// "Idemo glasati". [open] false = hide the button (Uljez round 1); [ready] is
+/// this phone's own wish; [want] of the connected players still in want to
+/// vote and the vote starts at [needed] (more than half). The same shape for
+/// every phone; it carries nothing private. Sent again on every change and on
+/// reconnect. Never sent at night.
+class VoteWish extends Message {
+  final bool open, ready;
+  final int want, needed;
+  const VoteWish({required this.open, required this.ready, required this.want, required this.needed});
+  @override
+  String get type => 'voteWish';
+  @override
+  Map<String, Object?> get fields => {'open': open, 'ready': ready, 'want': want, 'needed': needed};
 }
 
 /// Phone -> TV: the farewell pick of a player who just went out (only a
