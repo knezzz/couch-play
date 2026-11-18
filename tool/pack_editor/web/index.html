@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uređivač paketa</title>
+<style>
+  :root { --bg:#f4f5f7; --card:#fff; --line:#d9dce2; --ink:#1d2330; --mute:#667085; --accent:#2f6fed;
+          --ok:#1a7f4b; --bad:#c62828; --warn:#8a5a00; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.4 system-ui, sans-serif; color:var(--ink); background:var(--bg); display:flex; height:100vh; }
+  nav { width:270px; flex:none; overflow-y:auto; background:var(--card); border-right:1px solid var(--line); padding:8px 0; }
+  nav h3 { margin:14px 14px 4px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mute); }
+  nav button { display:flex; justify-content:space-between; width:100%; border:0; background:none; text-align:left;
+               padding:6px 14px; font:inherit; cursor:pointer; color:inherit; }
+  nav button:hover { background:#eef2fb; }
+  nav button.on { background:var(--accent); color:#fff; }
+  nav .n { opacity:.65; }
+  main { flex:1; display:flex; flex-direction:column; min-width:0; }
+  header { display:flex; align-items:center; gap:12px; padding:10px 18px; background:var(--card); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header h1 { font-size:18px; margin:0; margin-right:auto; }
+  #msg { font-size:14px; max-width:46ch; }
+  #msg.err { color:var(--bad); } #msg.ok { color:var(--ok); } #msg.note { color:var(--warn); }
+  #msg { white-space:pre-wrap; }
+  button.primary { background:var(--accent); color:#fff; border:0; border-radius:6px; padding:8px 18px; font:inherit; font-weight:600; cursor:pointer; }
+  button.primary:disabled { background:#aab4c8; cursor:default; }
+  #find { padding:6px 10px; border:1px solid var(--line); border-radius:6px; font:inherit; width:200px; }
+  #rows { flex:1; overflow-y:auto; padding:12px 18px 60px; }
+  .row { display:flex; gap:10px; align-items:flex-start; background:var(--card); border:1px solid var(--line);
+         border-radius:8px; padding:8px 10px; margin-bottom:6px; }
+  .row.new { border-color:var(--accent); }
+  .row.gone { opacity:.5; }
+  .row.gone input, .row.gone textarea { text-decoration:line-through; }
+  .row.hide { display:none; }
+  .no { width:34px; flex:none; text-align:right; color:var(--mute); padding-top:7px; font-variant-numeric:tabular-nums; }
+  .fields { flex:1; display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .line { display:flex; gap:6px; align-items:center; }
+  .line > label { color:var(--mute); font-size:12px; width:54px; flex:none; }
+  input[type=text], input[type=number], textarea { font:inherit; padding:5px 8px; border:1px solid var(--line); border-radius:5px; width:100%; min-width:0; background:#fff; color:inherit; }
+  textarea { resize:vertical; }
+  input.small { width:140px; flex:none; }
+  .choices { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+  .choice { display:flex; gap:6px; align-items:center; padding:2px 6px; border-radius:6px; }
+  .choice.right { background:#e3f4ea; }
+  .choice input[type=text] { flex:1; }
+  img.pic { max-height:90px; max-width:160px; align-self:flex-start; background:#fff; border:1px solid var(--line); border-radius:5px; }
+  .del { flex:none; border:1px solid var(--line); background:#fff; border-radius:6px; padding:5px 10px; cursor:pointer; font:inherit; color:var(--bad); }
+  #add { margin-top:10px; padding:10px 18px; border:2px dashed var(--accent); background:none; color:var(--accent); border-radius:8px; font:inherit; font-weight:600; cursor:pointer; }
+  .empty { color:var(--mute); padding:40px; text-align:center; }
+</style>
+</head>
+<body>
+<nav id="nav"></nav>
+<main>
+  <header>
+    <h1 id="title">Odaberi paket</h1>
+    <input id="find" type="search" placeholder="Traži u paketu…" hidden>
+    <span id="msg"></span>
+    <button id="save" class="primary" disabled>Spremi</button>
+  </header>
+  <div id="rows"><div class="empty">Odaberi paket s lijeve strane.</div></div>
+</main>
+<script>
+const GAMES = [['kviz','Kviz'],['objasni','Objasni'],['koliko','Koliko?'],['blef','Blef'],['tkobi','Tko bi?'],['kaosvi','Kao svi'],['uljez','Uljez']];
+// Which json key holds the list, and what a new empty item looks like.
+const SHAPE = {
+  kviz:    ['questions', () => ({q:'', choices:['','','',''], answer:0})],
+  objasni: ['words',     () => ''],
+  koliko:  ['questions', () => ({q:'', answer:0, unit:'', source:''})],
+  blef:    ['questions', () => ({q:'', answer:'', source:''})],
+  tkobi:   ['prompts',   () => ''],
+  kaosvi:  ['questions', () => ''],
+  uljez:   ['pairs',     () => ['','']],
+};
+const $ = id => document.getElementById(id);
+let packs = [];
+let cur = null;   // {game, id, json, stamp, items:[{orig, data, gone}]}
+let dirty = false;
+
+function el(tag, props, ...kids) {
+  const e = Object.assign(document.createElement(tag), props || {});
+  for (const k of kids) e.append(k);
+  return e;
+}
+function setMsg(text, cls) { const m = $('msg'); m.textContent = text || ''; m.className = cls || ''; }
+function setDirty(v) { dirty = v; $('save').disabled = !cur || !v; }
+function ok2leave() { return !dirty || confirm('Imaš nespremljene izmjene. Odbaciti ih?'); }
+
+async function loadList() {
+  packs = await (await fetch('/api/packs')).json();
+  drawNav();
+}
+function drawNav() {
+  const nav = $('nav'); nav.textContent = '';
+  for (const [g, label] of GAMES) {
+    const list = packs.filter(p => p.game === g);
+    if (!list.length) continue;
+    nav.append(el('h3', {textContent: label}));
+    for (const p of list) {
+      const b = el('button', {className: cur && cur.game === g && cur.id === p.id ? 'on' : '', onclick: () => openPack(g, p.id)},
+        el('span', {textContent: p.title || p.id}), el('span', {className: 'n', textContent: p.count}));
+      nav.append(b);
+    }
+  }
+}
+
+async function openPack(game, id) {
+  if (cur && cur.game === game && cur.id === id) return;
+  if (!ok2leave()) return;
+  setMsg('Učitavam…');
+  const r = await fetch(`/api/pack/${game}/${encodeURIComponent(id)}`);
+  if (!r.ok) { setMsg('Ne mogu učitati paket.', 'err'); return; }
+  const {json, stamp} = await r.json();
+  const arr = json[SHAPE[game][0]];
+  cur = {game, id, json, stamp, items: arr.map((data, i) => ({orig: i + 1, data, gone: false}))};
+  setDirty(false); setMsg('');
+  $('find').hidden = false; $('find').value = '';
+  $('rows').scrollTop = 0; drawNav(); drawRows();
+}
+
+function textInput(get, set, extra) {
+  const i = el('input', Object.assign({type: 'text', value: get()}, extra || {}));
+  i.oninput = () => { set(i.value); setDirty(true); };
+  return i;
+}
+function areaInput(get, set) {
+  const t = el('textarea', {rows: 2, value: get()});
+  t.oninput = () => { set(t.value); setDirty(true); };
+  return t;
+}
+function line(label, input) { return el('div', {className: 'line'}, el('label', {textContent: label}), input); }
+
+function fieldsFor(item) {
+  const d = item.data, g = cur.game, box = el('div', {className: 'fields'});
+  if (g === 'kviz') {
+    box.append(areaInput(() => d.q, v => d.q = v));
+    const ch = el('div', {className: 'choices'});
+    const radios = [];
+    d.choices.forEach((c, i) => {
+      const rb = el('input', {type: 'radio', name: 'ans-' + cur.items.indexOf(item), checked: d.answer === i});
+      const wrap = el('div', {className: 'choice' + (d.answer === i ? ' right' : '')});
+      rb.onchange = () => { d.answer = i; radios.forEach((w, j) => w.className = 'choice' + (j === i ? ' right' : '')); setDirty(true); };
+      radios.push(wrap);
+      wrap.append(rb, textInput(() => c, v => d.choices[i] = v));
+      ch.append(wrap);
+    });
+    box.append(ch);
+  } else if (g === 'koliko') {
+    box.append(areaInput(() => d.q, v => d.q = v));
+    const n = textInput(() => String(d.answer), v => { const x = Number(v); d.answer = v.trim() === '' || isNaN(x) ? v : x; }, {className: 'small'});
+    const u = textInput(() => d.unit, v => d.unit = v, {className: 'small'});
+    box.append(el('div', {className: 'line'}, el('label', {textContent: 'Broj'}), n, el('label', {textContent: 'Jedinica'}), u));
+    box.append(line('Izvor', textInput(() => d.source || '', v => d.source = v)));
+  } else if (g === 'blef') {
+    box.append(areaInput(() => d.q, v => d.q = v));
+    box.append(line('Odgovor', textInput(() => d.answer, v => d.answer = v)));
+    box.append(line('Izvor', textInput(() => d.source || '', v => d.source = v)));
+  } else if (g === 'uljez') {
+    box.append(el('div', {className: 'line'},
+      textInput(() => d[0], v => d[0] = v), textInput(() => d[1], v => d[1] = v)));
+  } else {
+    // objasni, tkobi, kaosvi: a plain string at this position
+    box.append(textInput(() => item.data, v => item.data = v));
+  }
+  return box;
+}
+
+function drawRows() {
+  const rows = $('rows'), top = rows.scrollTop; rows.textContent = '';
+  setTimeout(() => rows.scrollTop = top);
+  $('title').textContent = (packs.find(p => p.game === cur.game && p.id === cur.id) || {}).title || cur.id;
+  cur.items.forEach((item, idx) => {
+    const row = el('div', {className: 'row' + (item.orig ? '' : ' new') + (item.gone ? ' gone' : '')});
+    row.append(el('div', {className: 'no', textContent: idx + 1}), fieldsFor(item));
+    if (cur.game === 'kviz' && item.data.image)
+      row.append(el('img', {className: 'pic', src: `/api/image/${encodeURIComponent(cur.id)}/${item.data.image.split('/').map(encodeURIComponent).join('/')}`}));
+    row.append(el('button', {className: 'del', textContent: item.gone ? 'Vrati' : 'Obriši', onclick: () => {
+      if (!item.orig) cur.items.splice(cur.items.indexOf(item), 1); else item.gone = !item.gone;
+      setDirty(true); drawRows(); applyFind();
+    }}));
+    row.dataset.text = rowText(item).toLowerCase();
+    rows.append(row);
+  });
+  rows.append(el('button', {id: 'add', textContent: 'Dodaj pitanje', onclick: () => {
+    cur.items.push({orig: 0, data: SHAPE[cur.game][1](), gone: false});
+    setDirty(true); drawRows(); applyFind();
+    const last = $('rows').querySelectorAll('.row'); last[last.length - 1].querySelector('input[type=text],textarea').focus();
+  }}));
+}
+function rowText(item) { return JSON.stringify(item.data); }
+function applyFind() {
+  const q = $('find').value.trim().toLowerCase();
+  for (const r of $('rows').querySelectorAll('.row')) r.classList.toggle('hide', !!q && !r.dataset.text.includes(q));
+}
+$('find').oninput = applyFind;
+
+async function save() {
+  if (!cur || !dirty) return;
+  const [key] = SHAPE[cur.game];
+  const kept = cur.items.filter(i => !i.gone);
+  const body = {
+    json: Object.assign({}, cur.json, {[key]: kept.map(i => i.data)}),
+    stamp: cur.stamp,
+    deleted: cur.items.filter(i => i.gone && i.orig).map(i => i.orig),
+    added: kept.filter(i => !i.orig).length,
+  };
+  $('save').disabled = true; setMsg('Spremam…');
+  let r, out = {};
+  try {
+    r = await fetch(`/api/pack/${cur.game}/${encodeURIComponent(cur.id)}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    out = await r.json().catch(() => ({}));
+  } catch (e) { setMsg('Server ne odgovara.', 'err'); setDirty(true); return; }
+  if (r.ok) {
+    cur.json = body.json; cur.stamp = out.stamp;
+    cur.items = kept.map((i, n) => ({orig: n + 1, data: i.data, gone: false}));
+    const p = packs.find(p => p.game === cur.game && p.id === cur.id); if (p) p.count = kept.length;
+    setDirty(false); drawNav(); drawRows(); applyFind();
+    out.note ? setMsg('Spremljeno. ' + out.note, 'note') : setMsg('Spremljeno.', 'ok');
+  } else if (r.status === 409) {
+    setDirty(true); setMsg('Paket se promijenio, učitaj ponovno', 'err');
+  } else {
+    setDirty(true); setMsg(out.message || ('Greška ' + r.status), 'err');
+  }
+}
+$('save').onclick = save;
+addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); save(); } });
+addEventListener('beforeunload', e => { if (dirty) e.preventDefault(); });
+loadList();
+</script>
+</body>
+</html>
