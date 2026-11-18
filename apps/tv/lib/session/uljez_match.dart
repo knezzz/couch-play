@@ -44,9 +44,10 @@ class UljezMatch {
   /// before the results take over, like Vukodlak's end.
   static const endHold = Duration(seconds: 10);
 
-  /// Nobody connected this long: the match is given up (the TV would wait
-  /// forever otherwise, as no phase has a clock).
-  static const emptyHold = Duration(minutes: 2);
+  /// Nobody still in is connected this long: the match is given up (the TV
+  /// would wait forever otherwise, as no phase has a clock). Phones that are
+  /// locked count as away, so this is long.
+  static const emptyHold = Duration(minutes: 10);
 
   late UljezGame game;
   Timer? _timer; // only the end hold
@@ -56,7 +57,7 @@ class UljezMatch {
   final _away = <int>{};
   final _wish = WishBox();
 
-  /// Called once when nobody has been connected for [emptyHold].
+  /// Called once when nobody still in has been connected for [emptyHold].
   void Function()? onAbandon;
 
   /// The last counted vote, and who it put out (null: nobody).
@@ -82,8 +83,9 @@ class UljezMatch {
     return r.isNegative ? Duration.zero : r;
   }
 
-  /// Connected players still in: the ones waited for and counted.
-  List<int> get present => [for (final i in game.alive) if (!_away.contains(i)) i];
+  /// Everyone still in the game, connected or not (a locked phone drops its
+  /// socket): the players waited for and counted. Only a kick removes one.
+  List<int> get present => game.alive;
 
   /// "Idemo glasati": open from the end of round 1 until the vote starts.
   bool get wishOpen => phase == UljezPhase.clues && game.voteMayStart;
@@ -124,7 +126,7 @@ class UljezMatch {
     }
   }
 
-  bool _canSpeak(int id) => game.alive.contains(id) && !_away.contains(id);
+  bool _canSpeak(int id) => game.alive.contains(id);
 
   /// Skips a speaker who is out or away (a full circle of skips stops: nobody
   /// is here), then tells everyone.
@@ -217,8 +219,6 @@ class UljezMatch {
       send(id, id == g ? UljezGuess(seconds: 0, options: game.guessOptions) : const Waiting(_guessing));
     }
     notify?.call();
-    // No clock on the guess, but a guesser who is gone is not waited for.
-    if (_away.contains(g)) _endGuess();
   }
 
   static const _guessing = 'Uljez pogađa riječ sela.';
@@ -268,36 +268,19 @@ class UljezMatch {
 
   // ---- phones leaving and coming back ----
 
-  /// [id] lost its connection (or came back). A speaker who is away is
-  /// skipped; the vote and the majority are counted without them; a guesser
-  /// who is away has no guess. Their "Idemo glasati" stays set and counts
-  /// again if they return.
+  /// [id] lost its connection (or came back). Nothing is waited for any
+  /// differently: a sleeping phone keeps its turn, its vote, its wish and its
+  /// guess. Only the host's kick moves on. This only feeds the empty-room hold.
   void setAway(int id, bool away) {
     if (!ids.contains(id) || phase == UljezPhase.over) return;
     if (away ? !_away.add(id) : !_away.remove(id)) return;
-    switch (phase) {
-      case UljezPhase.clues:
-        if (away && game.speaker == id) {
-          game.nextTurn();
-          _turnStart();
-        } else {
-          _afterWishChange();
-        }
-      case UljezPhase.vote:
-        _checkVoteDone();
-      case UljezPhase.guess:
-        if (away && game.guesser == id) _endGuess();
-      default:
-        break;
-    }
     _checkEmpty();
-    notify?.call();
   }
 
   void _checkEmpty() {
     _emptyTimer?.cancel();
     _emptyTimer = null;
-    if (phase != UljezPhase.over && present.isEmpty) _emptyTimer = Timer(emptyHold, () => onAbandon?.call());
+    if (phase != UljezPhase.over && game.alive.every(_away.contains)) _emptyTimer = Timer(emptyHold, () => onAbandon?.call());
   }
 
   // ---- end ----

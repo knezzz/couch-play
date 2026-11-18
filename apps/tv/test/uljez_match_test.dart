@@ -116,18 +116,18 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('a speaker who drops is skipped, a returning one just waits for their next turn', (t) async {
+  testWidgets('a sleeping speaker keeps the turn: only the host\'s kick skips them', (t) async {
     final r = Rig(n: 4);
     final order = r.match.order;
-    r.match.setAway(order[0], true); // the one speaking now
-    expect(r.match.speaker, order[1]);
-    r.match.setAway(order[2], true); // the next but one
-    r.match.onDone(order[1]);
-    expect(r.match.speaker, order[3]);
+    r.match.setAway(order[0], true); // the phone locks on their turn
+    await r.wait(t, 3600);
+    expect(r.match.speaker, order[0], reason: 'the turn waits for them');
     r.match.setAway(order[0], false);
-    expect(r.match.speaker, order[3], reason: 'coming back does not take the turn');
-    r.match.onDone(order[3]);
-    expect(r.match.speaker, order[0]);
+    r.match.onDone(order[0]);
+    expect(r.match.speaker, order[1]);
+    r.match.setAway(order[1], true);
+    r.match.expel(order[1]);
+    expect(r.match.speaker, order[2], reason: 'the kick clears the wait');
     r.match.dispose();
   });
 
@@ -156,74 +156,28 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('a drop-out lowers the bar, their wish stops counting, and counts again when they return', (t) async {
+  testWidgets('the bar is over everyone still in, locked phones included; their wishes keep counting; only a kick lowers it', (t) async {
     final r = Rig(n: 5);
     for (var i = 0; i < 5; i++) {
       r.match.onDone(r.match.speaker!);
     }
     r.match.onReady(1, const ReadyToVote(true));
     r.match.onReady(2, const ReadyToVote(true));
-    r.match.setAway(1, true);
-    expect(r.match.wishCount, 1, reason: 'the wish of the one away does not count');
-    expect(r.match.wishNeeded, 3, reason: '4 connected: more than half is 3');
-    r.match.setAway(5, true);
-    expect(r.match.wishNeeded, 2, reason: '3 connected');
-    expect(r.match.phase, UljezPhase.clues);
-    r.match.onReady(3, const ReadyToVote(true));
-    expect(r.match.phase, UljezPhase.vote, reason: '2 and 3 are 2 of the 3 connected');
-    r.match.dispose();
-    final q = Rig(n: 5);
-    for (var i = 0; i < 5; i++) {
-      q.match.onDone(q.match.speaker!);
+    for (final id in [3, 4, 5]) {
+      r.match.setAway(id, true); // three villagers' phones sleep
     }
-    q.match.onReady(1, const ReadyToVote(true));
-    q.match.onReady(2, const ReadyToVote(true));
-    q.match.setAway(1, true);
-    q.match.setAway(4, true);
-    q.match.setAway(5, true);
-    expect(q.match.phase, UljezPhase.clues, reason: 'only 2 is connected and on: 1 of 2 is not more than half');
-    q.match.dispose();
+    expect(r.match.wishNeeded, 3, reason: 'still 3 of 5');
+    expect(r.match.phase, UljezPhase.clues, reason: '2 of 5: the sleepers are not outvoted');
+    r.match.setAway(1, true);
+    expect(r.match.wishCount, 2, reason: 'a locked phone\'s wish still counts');
+    r.match.setAway(1, false);
+    r.match.expel(r.match.ids.firstWhere((i) => i != r.impostor && i > 2));
+    expect(r.match.wishNeeded, 3, reason: '4 left: more than half is 3');
+    r.match.onReady(r.match.ids.firstWhere((i) => i > 2 && r.match.alive.contains(i)), const ReadyToVote(true));
+    expect(r.match.phase, UljezPhase.vote);
+    r.match.dispose();
   });
 
-  testWidgets('a drop-out can tip the majority; the wish of a returner counts again at once', (t) async {
-    final r = Rig(n: 5);
-    for (var i = 0; i < 5; i++) {
-      r.match.onDone(r.match.speaker!);
-    }
-    r.match.onReady(1, const ReadyToVote(true));
-    r.match.onReady(2, const ReadyToVote(true));
-    r.match.setAway(4, true);
-    expect(r.match.phase, UljezPhase.clues, reason: '2 of 4');
-    r.match.setAway(5, true);
-    expect(r.match.phase, UljezPhase.vote, reason: '2 of 3 now');
-    r.match.dispose();
-    final q = Rig(n: 5);
-    for (var i = 0; i < 5; i++) {
-      q.match.onDone(q.match.speaker!);
-    }
-    q.match.onReady(1, const ReadyToVote(true));
-    q.match.setAway(1, true);
-    q.match.onReady(2, const ReadyToVote(true));
-    q.match.onReady(3, const ReadyToVote(true));
-    q.match.setAway(4, true);
-    q.match.setAway(5, true);
-    expect(q.match.phase, UljezPhase.vote, reason: '2 and 3 are 2 of 3 connected');
-    q.match.dispose();
-    final u = Rig(n: 5);
-    for (var i = 0; i < 5; i++) {
-      u.match.onDone(u.match.speaker!);
-    }
-    u.match.onReady(1, const ReadyToVote(true));
-    u.match.onReady(2, const ReadyToVote(true));
-    u.match.setAway(1, true);
-    u.match.setAway(2, true);
-    u.match.setAway(3, true);
-    expect(u.match.wishCount, 0);
-    u.match.setAway(1, false);
-    u.match.setAway(2, false);
-    expect(u.match.wishCount, 2, reason: 'their wishes were kept');
-    u.match.dispose();
-  });
 
   testWidgets('a wish from someone who is out is ignored, and the wishes go when the vote starts', (t) async {
     final r = Rig(n: 5);
@@ -514,62 +468,70 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('the vote ends when every connected player has voted; the away are not waited for', (t) async {
+  testWidgets('the vote waits for every player still in, sleeping ones too; a kick ends the wait', (t) async {
     final r = Rig();
     await r.toVote(t);
     r.match.setAway(5, true);
-    for (final id in [1, 2, 3]) {
+    for (final id in [1, 2, 3, 4]) {
       r.match.onVote(id, const Vote(null));
     }
-    expect(r.match.phase, UljezPhase.vote);
-    r.match.onVote(4, const Vote(null));
-    expect(r.match.phase, UljezPhase.over, reason: 'all four connected voted; 5 is away');
+    await r.wait(t, 3600);
+    expect(r.match.phase, UljezPhase.vote, reason: '5 is asleep: not decided without them');
+    r.match.setAway(5, false);
+    r.match.onVote(5, const Vote(null));
+    expect(r.match.phase, UljezPhase.over);
     r.match.dispose();
     final q = Rig();
     await q.toVote(t);
+    q.match.setAway(5, true);
     for (final id in [1, 2, 3, 4]) {
       q.match.onVote(id, const Vote(null));
     }
-    expect(q.match.phase, UljezPhase.vote);
-    q.match.setAway(5, true);
-    expect(q.match.phase, UljezPhase.over, reason: 'the last one dropping ends the wait');
+    q.match.expel(5);
+    expect(q.match.phase, UljezPhase.over, reason: 'the kick clears the wait');
     q.match.dispose();
-    final u = Rig();
-    await u.toVote(t);
-    u.match.setAway(5, true);
-    u.match.setAway(5, false);
-    for (final id in [1, 2, 3, 4]) {
-      u.match.onVote(id, const Vote(null));
-    }
-    expect(u.match.phase, UljezPhase.vote, reason: 'back in: waited for again');
-    u.match.dispose();
   });
 
-  testWidgets('a guesser who is away has no guess: not waited for', (t) async {
+  testWidgets('the guess waits for the guesser even asleep; the kick moves on', (t) async {
     final r = Rig();
     await r.toVote(t);
-    r.match.setAway(r.impostor, true);
     for (final id in r.match.ids) {
       if (id != r.impostor) r.match.onVote(id, Vote(r.impostor));
     }
-    expect(r.match.phase, UljezPhase.over);
-    expect(r.match.winner, UljezWinner.village);
+    r.match.onVote(r.impostor, const Vote(null));
+    r.match.setAway(r.impostor, true); // the phone locks while they guess
+    await r.wait(t, 3600);
+    expect(r.match.phase, UljezPhase.guess);
+    r.match.setAway(r.impostor, false);
+    r.match.onGuess(r.impostor, Guess(r.match.game.rightGuess));
+    expect(r.match.winner, UljezWinner.impostors, reason: 'back in time, the guess counts');
     r.match.dispose();
+    final q = Rig();
+    await q.toVote(t);
+    for (final id in q.match.ids) {
+      if (id != q.impostor) q.match.onVote(id, Vote(q.impostor));
+    }
+    q.match.onVote(q.impostor, const Vote(null));
+    expect(q.match.phase, UljezPhase.guess);
+    q.match.setAway(q.impostor, true);
+    q.match.expel(q.impostor);
+    expect(q.match.winner, UljezWinner.village);
+    q.match.dispose();
   });
 
-  testWidgets('nobody connected: nothing moves, and after 2 minutes the match is given up once', (t) async {
+  testWidgets('nobody still in is connected: nothing moves, and after 10 minutes the match is given up once', (t) async {
     final r = Rig(n: 3);
     var gaveUp = 0;
     r.match.onAbandon = () => gaveUp++;
     for (final id in r.match.ids) {
       r.match.setAway(id, true);
     }
-    await r.wait(t, 119);
+    await r.wait(t, 599);
     expect(gaveUp, 0);
     expect(r.match.phase, UljezPhase.clues);
     await r.wait(t, 1);
     expect(gaveUp, 1);
-    await r.wait(t, 600);
+    await r.wait(t, 1200);
     expect(gaveUp, 1);
     r.match.dispose();
     final q = Rig(n: 3);
@@ -578,9 +540,9 @@ void main() {
     for (final id in q.match.ids) {
       q.match.setAway(id, true);
     }
-    await q.wait(t, 100);
+    await q.wait(t, 500);
     q.match.setAway(2, false);
-    await q.wait(t, 600);
+    await q.wait(t, 1200);
     expect(again, 0, reason: 'someone came back');
     q.match.dispose();
   });

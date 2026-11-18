@@ -378,15 +378,15 @@ class Session {
       case Phase.wolf:
         // Only that player's own state again; an outsider just waits.
         if (_wolf?.ids.contains(p.id) == true) {
-          _wolf!.setAway(p.id, false);
           _wolf!.rejoin(p.id);
+          _wolf!.setAway(p.id, false);
         } else {
           peer.send(_waiting);
         }
       case Phase.uljez:
         if (_uljez?.ids.contains(p.id) == true) {
-          _uljez!.setAway(p.id, false);
           _uljez!.rejoin(p.id);
+          _uljez!.setAway(p.id, false);
         } else {
           peer.send(_waiting);
         }

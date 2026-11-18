@@ -251,8 +251,8 @@ void main() {
       g.match.onVote(id, const Vote(6));
     }
     await t.pumpWidget(g.view());
-    g.match.setAway(6, true); // 6 and 7 never vote: they drop out, so the vote is complete
-    g.match.setAway(7, true);
+    g.match.onVote(6, const Vote(null));
+    g.match.expel(7); // 7 never votes: a sleeping phone is waited for, the host's kick completes the vote
     expect(g.match.lastOut, 6);
     final v = t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen));
     expect(v.voted, 5);

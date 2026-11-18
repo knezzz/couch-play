@@ -137,7 +137,7 @@ void main() {
     s.dispose();
   });
 
-  testWidgets('Idemo glasati counts the sending phone; a closed phone is not waited for; nobody left gives the game up', (t) async {
+  testWidgets('Idemo glasati counts the sending phone; locked phones still count; a kick moves on; 10 empty minutes give up', (t) async {
     setUpSession(5);
     ps[0].say(const StartGame(GameKind.vukodlak, null));
     final w = s.wolf!;
@@ -152,16 +152,23 @@ void main() {
     ps[0].say(const ReadyToVote(true));
     expect(w.wishCount, 1);
     ps[1].close();
-    ps[2].close();
+    ps[2].close(); // two phones lock
     await t.pump();
-    expect(w.wishNeeded, 2, reason: '3 phones left');
+    expect(w.wishNeeded, 3, reason: 'still 3 of 5: the locked ones count');
     ps[3].say(const ReadyToVote(true));
-    expect(w.stage, WolfStage.vote, reason: '2 of the 3 connected');
+    expect(w.stage, WolfStage.day, reason: '2 of 5');
+    final locked = ps[1].sent.whereType<Welcome>().first.playerId;
+    ps[0].say(Kick(locked));
+    expect(w.wishNeeded, 3, reason: '4 left');
+    ps[4].say(const ReadyToVote(true));
+    expect(w.stage, WolfStage.vote);
     for (final p in ps) {
       p.close();
     }
-    await t.pump(const Duration(minutes: 2, seconds: 1));
-    expect(s.phase, Phase.lobby, reason: 'nobody connected for 2 minutes: the game is given up');
+    await t.pump(const Duration(minutes: 9, seconds: 59));
+    expect(s.phase, Phase.wolf);
+    await t.pump(const Duration(seconds: 2));
+    expect(s.phase, Phase.lobby, reason: 'nobody connected for 10 minutes: the game is given up');
     s.dispose();
   });
 

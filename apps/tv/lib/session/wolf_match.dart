@@ -49,9 +49,10 @@ class WolfMatch {
   final void Function()? notify;
   final void Function(WolfWinner winner)? onOver;
 
-  /// Nobody connected this long: the match is given up (no phase waiting on
-  /// players has a clock, so the TV would wait forever).
-  static const emptyHold = Duration(minutes: 2);
+  /// Nobody still in is connected this long: the match is given up (no phase
+  /// waiting on players has a clock, so the TV would wait forever). Locked
+  /// phones count as away, so this is long.
+  static const emptyHold = Duration(minutes: 10);
 
   /// No light goes out in the first 15 s of the night (the person's choice).
   static const lightsHold = Duration(seconds: 15);
@@ -69,11 +70,12 @@ class WolfMatch {
   final _away = <int>{};
   final _wish = WishBox();
 
-  /// Called once when nobody has been connected for [emptyHold].
+  /// Called once when nobody still in has been connected for [emptyHold].
   void Function()? onAbandon;
 
-  /// Connected players still in: the ones waited for and counted.
-  List<int> get present => [for (final i in game.alive) if (!_away.contains(i)) i];
+  /// Everyone still in the game, connected or not (a locked phone drops its
+  /// socket): the players waited for and counted. Only a kick removes one.
+  List<int> get present => game.alive;
 
   /// "Idemo glasati", by day only: wishes of the connected living players.
   bool get wishOpen => stage == WolfStage.day;
@@ -181,7 +183,7 @@ class WolfMatch {
   /// that is away is not waited for). The 15 s of [lightsHold] only hides who
   /// is done; it is not a deadline.
   void _checkNightDone() {
-    if (stage == WolfStage.night && present.isNotEmpty && present.every(game.hasPicked)) _endNight();
+    if (stage == WolfStage.night && game.nightComplete) _endNight();
   }
 
   /// The one place that decides what the TV is told is done (see [lit]). A
@@ -420,11 +422,12 @@ class WolfMatch {
     _checkVoteDone();
   }
 
-  /// Everyone connected who may vote has voted (the away are not waited for).
+  /// Every living player who may vote has voted (a sleeping phone is waited
+  /// for; only the kick moves on). If nobody left may vote (all silenced), it
+  /// ends at once.
   void _checkVoteDone() {
     if (stage != WolfStage.vote) return;
-    final voters = present.where(game.canVote).toList();
-    if (voters.isNotEmpty && voters.every(_voted.contains)) _endVote();
+    if (present.where(game.canVote).every(_voted.contains)) _endVote();
   }
 
   void onVote(int id, Vote m) {
@@ -498,24 +501,20 @@ class WolfMatch {
 
   // ---- phones leaving and coming back ----
 
-  /// [id] lost its connection (or came back). The away are not waited for at
-  /// night or at the vote, and the majority is counted without them. Their
-  /// wish stays set and counts again if they return.
+  /// [id] lost its connection (or came back). Nothing is waited for any
+  /// differently: a sleeping phone keeps its night task, its vote and its
+  /// wish. Only the host's kick moves on. This only feeds the empty-room hold.
   void setAway(int id, bool away) {
     if (!ids.contains(id) || stage == WolfStage.over) return;
     if (away ? !_away.add(id) : !_away.remove(id)) return;
-    _checkNightDone();
-    _checkVoteDone();
-    _afterWishChange();
     _checkEmpty();
-    notify?.call();
   }
 
   void _checkEmpty() {
     _emptyTimer?.cancel();
     _emptyTimer = null;
     final waiting = stage == WolfStage.night || stage == WolfStage.day || stage == WolfStage.vote;
-    if (waiting && present.isEmpty) _emptyTimer = Timer(emptyHold, () => onAbandon?.call());
+    if (waiting && game.alive.every(_away.contains)) _emptyTimer = Timer(emptyHold, () => onAbandon?.call());
   }
 
   // ---- reconnect: a phone gets only its own state ----

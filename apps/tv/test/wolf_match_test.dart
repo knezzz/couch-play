@@ -192,7 +192,7 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('the night ends when every task is done, with no clock; a phone that is away is not waited for', (t) async {
+  testWidgets('the night ends when every living player is done, no clock; a sleeping phone is waited for, a kick moves on', (t) async {
     final r = Rig();
     r.pickAll({});
     expect(r.match.stage, WolfStage.dawn);
@@ -200,12 +200,15 @@ void main() {
     await s.wait(t, 3600);
     expect(s.match.stage, WolfStage.night, reason: 'an hour of waiting ends nothing');
     s.match.setAway(7, true);
+    s.match.setAway(6, true);
     for (final id in [1, 2, 3, 4, 5]) {
       s.match.onNightPick(id, const NightPick(null));
     }
-    expect(s.match.stage, WolfStage.night, reason: '6 is connected and not done');
-    s.match.setAway(6, true);
-    expect(s.match.stage, WolfStage.dawn, reason: 'the last one waited for dropped');
+    await s.wait(t, 3600);
+    expect(s.match.stage, WolfStage.night, reason: '6 and 7 sleep: the night waits for them');
+    s.match.onNightPick(6, const NightPick(null));
+    s.match.expel(7);
+    expect(s.match.stage, WolfStage.dawn, reason: 'the kick cleared the last wait');
     r.match.dispose();
     s.match.dispose();
   });
@@ -241,7 +244,7 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('day majority: drop-outs lower the bar, their wishes stop counting, a returner counts again; the dead cannot wish', (t) async {
+  testWidgets('day majority is over everyone still in, locked phones included; the dead cannot wish; a kick lowers the bar', (t) async {
     final r = Rig();
     r.pickAll({1: const NightPick(7), 2: const NightPick(7)});
     await r.wait(t, 4 + 15);
@@ -249,23 +252,22 @@ void main() {
     expect(r.match.alive.length, 6);
     r.match.onReady(7, const ReadyToVote(true)); // dead
     expect(r.match.wishCount, 0);
+    expect(r.match.wishNeeded, 4);
+    for (final id in [3, 4, 5, 6]) {
+      r.match.setAway(id, true); // four villagers' phones are locked
+    }
     r.match.onReady(1, const ReadyToVote(true));
     r.match.onReady(2, const ReadyToVote(true));
-    r.match.setAway(2, true);
-    expect(r.match.wishCount, 1);
-    expect(r.match.wishNeeded, 3, reason: '5 connected');
-    r.match.setAway(6, true);
-    r.match.setAway(5, true);
-    expect(r.match.wishNeeded, 2, reason: '3 connected');
-    r.match.setAway(2, false);
-    expect(r.match.wishCount, 2, reason: 'the returner counts again');
-    expect(r.match.stage, WolfStage.day, reason: '2 of the 4 connected (1, 2, 3, 4) is not more than half');
     r.match.onReady(3, const ReadyToVote(true));
-    expect(r.match.stage, WolfStage.vote);
+    expect(r.match.stage, WolfStage.day, reason: '3 of 6: the day is not decided over sleeping heads');
+    r.match.setAway(3, false);
+    r.match.expel(6);
+    expect(r.match.wishNeeded, 3, reason: '5 left');
+    expect(r.match.stage, WolfStage.vote, reason: '1, 2, 3 are 3 of the 5 left');
     r.match.dispose();
   });
 
-  testWidgets('the vote ends when every connected living player has voted, not before, no clock', (t) async {
+  testWidgets('the vote waits for every living player who may vote, sleeping ones too; a kick clears the wait', (t) async {
     final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.villager, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer});
     r.pickAll({});
     await r.wait(t, 4);
@@ -274,27 +276,28 @@ void main() {
     await r.wait(t, 3600);
     expect(r.match.stage, WolfStage.vote);
     r.match.setAway(5, true);
-    for (final id in [1, 2, 3]) {
+    for (final id in [1, 2, 3, 4]) {
       r.match.onVote(id, const Vote(null));
     }
-    expect(r.match.stage, WolfStage.vote);
-    r.match.onVote(4, const Vote(null));
-    expect(r.match.stage, isNot(WolfStage.vote), reason: '5 is away: not waited for');
+    await r.wait(t, 3600);
+    expect(r.match.stage, WolfStage.vote, reason: '5 sleeps: not decided without them');
+    r.match.expel(5);
+    expect(r.match.stage, isNot(WolfStage.vote), reason: 'the kick cleared the wait');
     r.match.dispose();
   });
 
-  testWidgets('nobody connected: no clock, and after 2 minutes the match is given up once', (t) async {
+  testWidgets('nobody still in is connected: no clock, and after 10 minutes the match is given up once', (t) async {
     final r = Rig();
     var gaveUp = 0;
     r.match.onAbandon = () => gaveUp++;
     for (final id in r.roles.keys) {
       r.match.setAway(id, true);
     }
-    await r.wait(t, 119);
+    await r.wait(t, 599);
     expect(gaveUp, 0);
     await r.wait(t, 1);
     expect(gaveUp, 1);
-    await r.wait(t, 300);
+    await r.wait(t, 900);
     expect(gaveUp, 1);
     expect(r.match.stage, WolfStage.night);
     r.match.dispose();

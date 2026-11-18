@@ -145,7 +145,7 @@ void main() {
     s.dispose();
   });
 
-  testWidgets('Dao sam trag and Idemo glasati come from the sending phone; a closed phone is skipped; nobody left gives up', (t) async {
+  testWidgets('Dao sam trag and Idemo glasati come from the sending phone; a locked speaker keeps the turn, a kick moves on; 10 empty minutes give up', (t) async {
     setUpSession(4);
     ps[0].say(const StartGame(GameKind.uljez, null));
     final u = s.uljez!;
@@ -156,19 +156,26 @@ void main() {
     other.say(const UljezDone());
     expect(u.speaker, first, reason: 'only the speaker\'s phone passes the turn');
     phone(first).say(const UljezDone());
-    expect(u.speaker, u.order[1]);
-    phone(u.speaker!).close(); // the speaker drops
-    await t.pump();
-    expect(u.speaker, u.order[2], reason: 'a dropped speaker is skipped');
-    final back = join(s, 'P${ps.indexOf(phone(u.order[1]))}', token: 't${ps.indexOf(phone(u.order[1]))}');
-    expect(back.sent.whereType<UljezWord>(), isNotEmpty);
-    expect(back.sent.whereType<VoteWish>(), isNotEmpty, reason: 'a rejoin gets the wish state');
-    expect(u.speaker, u.order[2], reason: 'back, but it is not their turn');
+    final second = u.order[1];
+    expect(u.speaker, second);
+    phone(second).close(); // the speaker's phone locks
+    await t.pump(const Duration(minutes: 5));
+    expect(u.speaker, second, reason: 'the turn waits for the sleeping speaker');
+    final k = ps.indexOf(phone(second));
+    final back = join(s, 'P$k', token: 't$k');
+    final order = [for (final m in back.sent) m.type];
+    expect(order.indexOf('uljezWord'), lessThan(order.indexOf('voteWish')), reason: 'the word before the wish: no spinner');
+    expect(u.speaker, second);
+    final host = ps[0];
+    expect(idOf(host), isNot(second), reason: 'the seed puts the host elsewhere; the host kicks the sleeper');
+    host.say(Kick(second));
+    expect(u.speaker, u.order[2], reason: 'the kick clears the wait');
     for (final p in ps) {
       p.close();
     }
-    back.close();
-    await t.pump(const Duration(minutes: 2, seconds: 1));
+    await t.pump(const Duration(minutes: 9, seconds: 59));
+    expect(s.phase, Phase.uljez);
+    await t.pump(const Duration(seconds: 2));
     expect(s.phase, Phase.lobby);
     s.dispose();
   });
