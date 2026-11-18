@@ -16,7 +16,7 @@ import 'vote_screen.dart';
 /// or the end screen.
 ///
 /// PRIVACY: this reads only what the match makes public: `stage`, `alive` /
-/// `isAlive`, `lit`, `story`, `publicRole`, `votedCount`, `lastOut`, `wishCount`, `present`,
+/// `isAlive`, `lit`, `story`, `publicRole`, `votedCount`, `lastOut`, `wishCount`, `alive`,
 /// `night`, `day`. It never touches `WolfMatch.game` (which holds every role) and
 /// never asks for a role except through `publicRole`, which is null for someone
 /// out while roles are hidden and everything once the game is over.
@@ -164,7 +164,7 @@ class _WolfViewState extends State<WolfView> {
           : (morning ? Strings.wolfMorning(m.day) : Strings.wolfDay(m.day)),
       story: story,
       // By day: how many want to vote (a count, never who). Night and dawn have no clock.
-      clock: m.wishOpen ? '${Strings.wishLabel} ${Strings.wishCount(m.wishCount, m.present.length)}' : '',
+      clock: m.wishOpen ? '${Strings.wishLabel} ${Strings.wishCount(m.wishCount, m.alive.length)}' : '',
     );
   }
 }

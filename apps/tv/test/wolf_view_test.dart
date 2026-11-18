@@ -191,6 +191,22 @@ void main() {
     });
   }
 
+  testWidgets('locked phones still count: the day N is every living player', (t) async {
+    _big(t);
+    final g = _Game(_roles7);
+    for (final id in g.match.alive) {
+      g.match.onNightPick(id, const NightPick(null));
+    }
+    await g.wait(t, 10);
+    for (final id in [5, 6, 7]) {
+      g.match.setAway(id, true);
+    }
+    g.match.onReady(1, const ReadyToVote(true));
+    await t.pumpWidget(g.view());
+    expect(find.text('Idemo glasati 1 od 7'), findsOneWidget);
+    await _close(t, g);
+  });
+
   testWidgets('the vote: the vote screen with how many have voted, and nothing about who voted for whom', (t) async {
     _big(t);
     final g = _Game(_roles7);

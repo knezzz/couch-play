@@ -166,6 +166,19 @@ void main() {
     });
   }
 
+  testWidgets('locked phones still count: N is everyone still in, so 3 of 6 phones away reads n od 6', (t) async {
+    _big(t);
+    final g = _Game(n: 6);
+    g.clues(1);
+    for (final id in [4, 5, 6]) {
+      g.match.setAway(id, true);
+    }
+    g.match.onReady(1, const ReadyToVote(true));
+    await t.pumpWidget(g.view());
+    expect(find.text(Strings.wishCount(1, 6)), findsOneWidget);
+    await _close(t, g);
+  });
+
   testWidgets('a caught impostor: the table shows the votes and who is being asked to guess, still no word', (t) async {
     _big(t);
     final g = _Game();

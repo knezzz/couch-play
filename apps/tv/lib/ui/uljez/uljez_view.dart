@@ -11,7 +11,7 @@ import 'uljez_screen.dart';
 ///
 /// PRIVACY: reads only the match's public getters (`phase`, `speaker`, `round`,
 /// `order`, `alive`, `winner`, `votedCount`, `lastVotes`, `lastOut`,
-/// `wishCount`, `present`, and the words/impostors, which the match only gives once the
+/// `wishCount`, `alive`, and the words/impostors, which the match only gives once the
 /// game is over). It never touches `UljezMatch.game`, which holds both words and
 /// who the impostors are.
 class UljezView extends StatefulWidget {
@@ -118,7 +118,7 @@ class _UljezViewState extends State<UljezView> {
           headline: Strings.uljezClueFor(m.speaker == null ? '' : _name(m.speaker!)),
           // From the end of round 1: how many want to vote (a count, never who).
           clockLabel: m.wishOpen ? Strings.wishLabel : '',
-          clock: m.wishOpen ? Strings.wishCount(m.wishCount, m.present.length) : '',
+          clock: m.wishOpen ? Strings.wishCount(m.wishCount, m.alive.length) : '',
           hint: Strings.uljezClueHint,
         );
       default: // vote
