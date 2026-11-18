@@ -60,7 +60,8 @@ void main() {
   test('the host\'s pack is kept, a missing pack falls back and the other settings survive', () {
     setUpSession(3);
     ps[0].say(const SetSettings(GameSettings(uljezPackId: 'two', kolikoSeconds: 45)));
-    expect(s.settings.uljezPackId, 'two');
+    expect(s.settings.uljezOffPacks, {'one'}, reason: 'an old single id means only that pack');
+    expect(s.settings.uljezPackId, isNull);
     ps[0].say(const SetSettings(GameSettings(uljezPackId: 'gone', kolikoSeconds: 45)));
     expect(s.settings.uljezPackId, isNull);
     expect(s.settings.kolikoSeconds, 45, reason: 'dropping a missing pack keeps the other settings');

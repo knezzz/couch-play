@@ -67,7 +67,8 @@ void main() {
   test('the host\'s pack and question count are used; a missing saved pack falls back and keeps the other settings', () {
     setUpSession(2);
     ps[0].say(const SetSettings(GameSettings(kolikoPackId: 'two', kolikoQuestions: 5, kolikoSeconds: 20, objasniSeconds: 90)));
-    expect(s.settings.kolikoPackId, 'two');
+    expect(s.settings.kolikoOffPacks, {'one'}, reason: 'an old single id means only that pack');
+    expect(s.settings.kolikoPackId, isNull);
     ps[0].say(const SetSettings(GameSettings(kolikoPackId: 'gone', kolikoQuestions: 5, objasniSeconds: 90)));
     expect(s.settings.kolikoPackId, isNull);
     expect([s.settings.kolikoQuestions, s.settings.objasniSeconds], [5, 90]);

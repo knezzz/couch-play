@@ -199,6 +199,40 @@ class GameSettings with _JsonEq {
 
   static Set<String> _ids(Object? v) => v == null ? const {} : {for (final e in v as List) e as String};
 
+  /// The same settings with the off-sets of the games in [off] replaced (and
+  /// their old single pack id cleared: the selection is now the off-set).
+  GameSettings withOffPacks(Map<GameKind, Set<String>> off) => GameSettings(
+      quizSeconds: quizSeconds,
+      quizQuestions: quizQuestions,
+      revealSeconds: revealSeconds,
+      curveCountdown: curveCountdown,
+      curveMode: curveMode,
+      quizPackId: off.containsKey(GameKind.quiz) ? null : quizPackId,
+      wolfRoles: wolfRoles,
+      wolfHideRoles: wolfHideRoles,
+      uljezPackId: off.containsKey(GameKind.uljez) ? null : uljezPackId,
+      uljezImpostors: uljezImpostors,
+      objasniSeconds: objasniSeconds,
+      objasniTarget: objasniTarget,
+      objasniPackId: off.containsKey(GameKind.objasni) ? null : objasniPackId,
+      kolikoSeconds: kolikoSeconds,
+      kolikoQuestions: kolikoQuestions,
+      kolikoPackId: off.containsKey(GameKind.koliko) ? null : kolikoPackId,
+      blefQuestions: blefQuestions,
+      blefPackId: off.containsKey(GameKind.blef) ? null : blefPackId,
+      tkobiPrompts: tkobiPrompts,
+      tkobiPackId: off.containsKey(GameKind.tkobi) ? null : tkobiPackId,
+      kaosviQuestions: kaosviQuestions,
+      kaosviTarget: kaosviTarget,
+      kaosviPackId: off.containsKey(GameKind.kaosvi) ? null : kaosviPackId,
+      quizOffPacks: off[GameKind.quiz] ?? quizOffPacks,
+      uljezOffPacks: off[GameKind.uljez] ?? uljezOffPacks,
+      objasniOffPacks: off[GameKind.objasni] ?? objasniOffPacks,
+      kolikoOffPacks: off[GameKind.koliko] ?? kolikoOffPacks,
+      blefOffPacks: off[GameKind.blef] ?? blefOffPacks,
+      tkobiOffPacks: off[GameKind.tkobi] ?? tkobiOffPacks,
+      kaosviOffPacks: off[GameKind.kaosvi] ?? kaosviOffPacks);
+
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
     // The allowed value nearest to v (the lower one on a tie).

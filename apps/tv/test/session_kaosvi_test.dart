@@ -59,7 +59,8 @@ void main() {
   test('the host\'s pack, question count and target are used; a missing saved pack falls back and keeps the other settings', () {
     setUpSession(3);
     ps[0].say(const SetSettings(GameSettings(kaosviPackId: 'two', kaosviQuestions: 8, kaosviTarget: 5, tkobiPrompts: 15)));
-    expect(s.settings.kaosviPackId, 'two');
+    expect(s.settings.kaosviOffPacks, {'one'}, reason: 'an old single id means only that pack');
+    expect(s.settings.kaosviPackId, isNull);
     ps[0].say(const SetSettings(GameSettings(kaosviPackId: 'gone', kaosviQuestions: 8, kaosviTarget: 5, tkobiPrompts: 15)));
     expect(s.settings.kaosviPackId, isNull);
     expect([s.settings.kaosviQuestions, s.settings.kaosviTarget, s.settings.tkobiPrompts], [8, 5, 15]);

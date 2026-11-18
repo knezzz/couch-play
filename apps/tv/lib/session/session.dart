@@ -461,6 +461,7 @@ class Session {
   }
 
   LobbyState _lobbyMsg() {
+    _normalizePacks(); // packs may have loaded since the settings were read
     return LobbyState(
         players: playerInfos,
         packs: packStore?.infos ?? const [],
@@ -545,8 +546,8 @@ class Session {
     switch (game) {
       case GameKind.quiz:
         // The host's chosen pack; a pack named in StartGame still wins (old callers).
-        if (packId == null) _dropMissingPack(); // removed since it was saved
-        final pack = packLookup(packId ?? _settings.quizPackId);
+        _normalizePacks();
+        final pack = packId != null ? packLookup(packId) : _quizUnion();
         if (pack == null || pack.questions.isEmpty) return Strings.packUnavailable;
         _startQuiz(pack, participants(GameKind.quiz));
       case GameKind.curve:
@@ -564,7 +565,7 @@ class Session {
         if (_players.any((p) => p.bot)) return UljezText.noBots;
         final parts = participants(GameKind.uljez);
         if (parts.length < 3 || parts.length > 8) return UljezText.needPlayers;
-        final pack = uljezPack(_settings.uljezPackId);
+        final pack = _unionUljez();
         if (pack == null) return Strings.packUnavailable;
         _startUljez(parts, pack);
       // The party games: their TV screens are not built yet (the flags in game_ready.dart).
@@ -573,7 +574,7 @@ class Session {
         if (_players.any((p) => p.bot)) return PartyText.noBots;
         final parts = participants(GameKind.objasni);
         if (parts.length < 4 || parts.length > 8) return PartyText.objasniNeedPlayers;
-        final pack = objasniPack(_settings.objasniPackId);
+        final pack = _unionObjasni();
         if (pack == null) return Strings.packUnavailable;
         _startObjasni(parts, pack);
       case GameKind.koliko:
@@ -581,7 +582,7 @@ class Session {
         if (_players.any((p) => p.bot)) return PartyText.noBots;
         final parts = participants(GameKind.koliko);
         if (parts.length < 2 || parts.length > 8) return PartyText.kolikoNeedPlayers;
-        final pack = kolikoPack(_settings.kolikoPackId);
+        final pack = _unionKoliko();
         if (pack == null) return Strings.packUnavailable;
         _startKoliko(parts, pack);
       case GameKind.blef:
@@ -589,7 +590,7 @@ class Session {
         if (_players.any((p) => p.bot)) return PartyText.noBots;
         final parts = participants(GameKind.blef);
         if (parts.length < 3 || parts.length > 8) return PartyText.blefNeedPlayers;
-        final pack = blefPack(_settings.blefPackId);
+        final pack = _unionBlef();
         if (pack == null) return Strings.packUnavailable;
         _startBlef(parts, pack);
       case GameKind.tkobi:
@@ -597,7 +598,7 @@ class Session {
         if (_players.any((p) => p.bot)) return PartyText.noBots;
         final parts = participants(GameKind.tkobi);
         if (parts.length < 3 || parts.length > 8) return PartyText.tkobiNeedPlayers;
-        final pack = tkobiPack(_settings.tkobiPackId);
+        final pack = _unionTkobi();
         if (pack == null) return Strings.packUnavailable;
         _startTkobi(parts, pack);
       case GameKind.kaosvi:
@@ -605,7 +606,7 @@ class Session {
         if (_players.any((p) => p.bot)) return PartyText.noBots;
         final parts = participants(GameKind.kaosvi);
         if (parts.length < 3 || parts.length > 8) return PartyText.kaosviNeedPlayers;
-        final pack = kaosviPack(_settings.kaosviPackId);
+        final pack = _unionKaosvi();
         if (pack == null) return Strings.packUnavailable;
         _startKaosvi(parts, pack);
     }
@@ -701,51 +702,114 @@ class Session {
     } catch (_) {
       _settings = const GameSettings();
     }
-    _dropMissingPack();
+    _normalizePacks();
   }
 
-  /// A chosen pack the TV no longer has becomes the default pack.
-  void _dropMissingPack() {
-    final id = _settings.quizPackId, uid = _settings.uljezPackId;
-    final quizGone = id != null && packLookup(id) == null;
-    final uljezGone = uid != null && uljezPack(uid) == null && uljezPacks.isNotEmpty;
-    final oid = _settings.objasniPackId;
-    final objasniGone = oid != null && objasniPack(oid) == null && objasniPacks.isNotEmpty;
-    final kid = _settings.kolikoPackId;
-    final kolikoGone = kid != null && kolikoPack(kid) == null && kolikoPacks.isNotEmpty;
-    final bid = _settings.blefPackId;
-    final blefGone = bid != null && blefPack(bid) == null && blefPacks.isNotEmpty;
-    final tid = _settings.tkobiPackId;
-    final tkobiGone = tid != null && tkobiPack(tid) == null && tkobiPacks.isNotEmpty;
-    final kaid = _settings.kaosviPackId;
-    final kaosviGone = kaid != null && kaosviPack(kaid) == null && kaosviPacks.isNotEmpty;
-    if (!quizGone && !uljezGone && !objasniGone && !kolikoGone && !blefGone && !tkobiGone && !kaosviGone) return;
-    final o = _settings;
-    _settings = GameSettings(
-        quizSeconds: o.quizSeconds,
-        quizQuestions: o.quizQuestions,
-        revealSeconds: o.revealSeconds,
-        curveCountdown: o.curveCountdown,
-        curveMode: o.curveMode,
-        quizPackId: quizGone ? null : o.quizPackId,
-        wolfRoles: o.wolfRoles,
-        wolfHideRoles: o.wolfHideRoles,
-        uljezPackId: uljezGone ? null : o.uljezPackId,
-        uljezImpostors: o.uljezImpostors,
-        objasniSeconds: o.objasniSeconds,
-        objasniTarget: o.objasniTarget,
-        objasniPackId: objasniGone ? null : o.objasniPackId,
-        kolikoSeconds: o.kolikoSeconds,
-        kolikoQuestions: o.kolikoQuestions,
-        kolikoPackId: kolikoGone ? null : o.kolikoPackId,
-        blefQuestions: o.blefQuestions,
-        blefPackId: blefGone ? null : o.blefPackId,
-        tkobiPrompts: o.tkobiPrompts,
-        tkobiPackId: tkobiGone ? null : o.tkobiPackId,
-        kaosviQuestions: o.kaosviQuestions,
-        kaosviTarget: o.kaosviTarget,
-        kaosviPackId: kaosviGone ? null : o.kaosviPackId);
+  // ---- packs are multi-select: the settings keep the packs switched OFF ----
+
+  static const _packGames = [
+    GameKind.quiz,
+    GameKind.uljez,
+    GameKind.objasni,
+    GameKind.koliko,
+    GameKind.blef,
+    GameKind.tkobi,
+    GameKind.kaosvi,
+  ];
+
+  /// Every pack of [game] the TV has, in lobby order.
+  List<String> _packIds(GameKind game) => switch (game) {
+        GameKind.quiz => packStore != null ? [for (final i in packStore!.infos) i.id] : [testPack.id],
+        GameKind.uljez => [for (final p in uljezPacks) p.id],
+        GameKind.objasni => [for (final p in objasniPacks) p.id],
+        GameKind.koliko => [for (final p in kolikoPacks) p.id],
+        GameKind.blef => [for (final p in blefPacks) p.id],
+        GameKind.tkobi => [for (final p in tkobiPacks) p.id],
+        GameKind.kaosvi => [for (final p in kaosviPacks) p.id],
+        _ => const [],
+      };
+
+  /// The ticked packs of [game]: every pack not in the off-set (so a pack that
+  /// appears later starts ticked). Never empty while the game has packs.
+  List<String> tickedPackIds(GameKind game) {
+    _normalizePacks(); // an old single id is decided once the packs have loaded
+    final all = _packIds(game), off = _settings.offPacks(game);
+    final ticked = [for (final i in all) if (!off.contains(i)) i];
+    return ticked.isEmpty ? all : ticked;
   }
+
+  /// How many packs of [game] are ticked and how many exist (all = equal).
+  ({int ticked, int total}) packSelection(GameKind game) =>
+      (ticked: tickedPackIds(game).length, total: _packIds(game).length);
+
+  /// Turns an old single pack id into "only that pack" and keeps at least one
+  /// pack ticked in every game: a change that would untick them all is undone
+  /// for that game (the [previous] selection stays). Ids of packs the TV does
+  /// not have (yet) stay in the off-set: harmless, and an upload may return.
+  void _normalizePacks([GameSettings? previous]) {
+    final changes = <GameKind, Set<String>>{};
+    for (final g in _packGames) {
+      final all = _packIds(g);
+      if (all.isEmpty) continue; // not loaded yet: decide later
+      final legacy = switch (g) {
+        GameKind.quiz => _settings.quizPackId,
+        GameKind.uljez => _settings.uljezPackId,
+        GameKind.objasni => _settings.objasniPackId,
+        GameKind.koliko => _settings.kolikoPackId,
+        GameKind.blef => _settings.blefPackId,
+        GameKind.tkobi => _settings.tkobiPackId,
+        _ => _settings.kaosviPackId,
+      };
+      if (g == GameKind.quiz && packStore == null) {
+        // The test pack only (no store): a saved id stays while packLookup knows it.
+        if (legacy != null && packLookup(legacy) == null) changes[g] = _settings.offPacks(g);
+        continue;
+      }
+      var off = _settings.offPacks(g);
+      var changed = false;
+      if (legacy != null) {
+        off = all.contains(legacy) ? all.toSet().difference({legacy}) : <String>{};
+        changed = true;
+      }
+      if (all.every(off.contains)) {
+        final before = previous?.offPacks(g) ?? const <String>{};
+        off = all.every(before.contains) ? <String>{} : before;
+        changed = true;
+      }
+      if (changed) changes[g] = off;
+    }
+    if (changes.isNotEmpty) _settings = _settings.withOffPacks(changes);
+  }
+
+  String _packsTitle(int ticked, int total) => ticked >= total ? PartyText.allPacks : PartyText.somePacks(ticked, total);
+
+  /// The union of the ticked packs of a game, or null with none loaded.
+  T? _union<T>(GameKind game, List<T> packs, String Function(T) idOf,
+      T Function(String id, String title, List<T> packs) merge) {
+    _normalizePacks();
+    final ticked = tickedPackIds(game);
+    final chosen = [for (final p in packs) if (ticked.contains(idOf(p))) p];
+    if (chosen.isEmpty) return null;
+    return merge('union-${game.name}', _packsTitle(chosen.length, packs.length), chosen);
+  }
+
+  QuizPack? _quizUnion() {
+    _normalizePacks();
+    if (packStore == null) return packLookup(_settings.quizPackId);
+    final chosen = [
+      for (final id in tickedPackIds(GameKind.quiz))
+        if (packLookup(id) != null) packLookup(id)!
+    ];
+    if (chosen.isEmpty) return null;
+    return unionQuiz('union-quiz', _packsTitle(chosen.length, _packIds(GameKind.quiz).length), chosen);
+  }
+
+  UljezPack? _unionUljez() => _union(GameKind.uljez, uljezPacks, (p) => p.id, unionUljez);
+  ObjasniPack? _unionObjasni() => _union(GameKind.objasni, objasniPacks, (p) => p.id, unionObjasni);
+  KolikoPack? _unionKoliko() => _union(GameKind.koliko, kolikoPacks, (p) => p.id, unionKoliko);
+  BlefPack? _unionBlef() => _union(GameKind.blef, blefPacks, (p) => p.id, unionBlef);
+  TkobiPack? _unionTkobi() => _union(GameKind.tkobi, tkobiPacks, (p) => p.id, unionTkobi);
+  KaosviPack? _unionKaosvi() => _union(GameKind.kaosvi, kaosviPacks, (p) => p.id, unionKaosvi);
 
   /// [want] if it is a character and nobody has it, else a random free one.
   /// 8 players at most and 16 characters: there is always one.
@@ -774,8 +838,9 @@ class Session {
       peer.send(_onlyHost);
       return;
     }
+    final previous = _settings;
     _settings = wanted.clamped();
-    _dropMissingPack();
+    _normalizePacks(previous);
     try {
       _settingsFile?.writeAsStringSync(jsonEncode(_settings.toJson()));
     } catch (_) {} // not remembered, still set for this session
