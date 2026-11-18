@@ -23,8 +23,11 @@ HTML/JS.
 - Rebuild only the edited quiz pack in `apps/tv/assets/packs/`: text pack copied, folder pack zipped with
   `zip -qrX <out>/<id>.zip .` run inside the folder. Never run `tool/pack_zip.sh`.
 - Tests use temporary copies of pack files, never the real ones.
-- Saving writes JSON with 2-space indent and keeps every field the editor doesn't edit (`source`, `image`, and any
-  other key) untouched. Non-ASCII stays as UTF-8 (no `\u` escapes).
+- Saving keeps the file's own layout (one question per line): an unedited save leaves the file byte-identical, and
+  editing one question changes only its line. Every field the editor doesn't edit (`source`, `image`, any other key)
+  stays untouched. Non-ASCII stays as UTF-8 (no `\u` escapes). (Changed 2026-11-18 from "2-space indent", lead's call:
+  a reformat would rewrite whole files and clash with the content seats.)
+- When a sources file can't be renumbered, the save reports a note instead of skipping silently.
 - No commits by the tool. Commit the tool's own code by path. Don't commit pack edits made while testing.
 
 ## Review Focus
