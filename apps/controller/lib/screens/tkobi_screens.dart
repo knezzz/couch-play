@@ -307,15 +307,15 @@ class TkobiSettingsView extends StatelessWidget {
     super.key,
     required this.prompts,
     required this.packs,
-    required this.packId,
+    required this.ticked,
     required this.onPrompts,
-    required this.onPack,
+    required this.onTogglePack,
   });
   final int prompts;
-  final List<(String, String)> packs;
-  final String? packId;
+  final List<PackInfo> packs;
+  final Set<String> ticked;
   final void Function(int) onPrompts;
-  final void Function(String) onPack;
+  final void Function(String id) onTogglePack;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -330,12 +330,12 @@ class TkobiSettingsView extends StatelessWidget {
         onPick: onPrompts,
       ),
       const SizedBox(height: 8),
-      PackDropdown(
-        title: Strings.quizPack,
-        fieldKey: const ValueKey('tkobi-pack'),
+      PackChecklist(
+        key: const ValueKey('tkobi-packs'),
+        title: Strings.packsTitle,
         packs: packs,
-        packId: packId,
-        onPick: onPack,
+        ticked: ticked,
+        onToggle: onTogglePack,
       ),
     ],
   );

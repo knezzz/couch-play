@@ -266,6 +266,7 @@ class _GameCarouselState extends State<GameCarousel> {
                   l.kolikoPacks,
                   l.blefPacks,
                   l.tkobiPacks,
+                  l.kaosviPacks,
                 ),
                 key: ValueKey('line-${k.name}'),
                 maxLines: 2,

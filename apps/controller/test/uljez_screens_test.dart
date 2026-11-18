@@ -1,3 +1,4 @@
+import 'package:core/core.dart';
 import 'package:controller/screens/uljez_screens.dart';
 import 'package:controller/screens/wolf_screens.dart';
 import 'package:controller/strings.dart';
@@ -141,21 +142,24 @@ void main() {
       body: SingleChildScrollView(
         child: UljezSettingsView(
           players: players,
-          packs: const [('a', 'Crtići'), ('b', 'Hrana')],
-          packId: 'a',
+          packs: const [
+            PackInfo('a', 'Crtići', 40),
+            PackInfo('b', 'Hrana', 30),
+          ],
+          ticked: const {'a', 'b'},
           impostors: impostors,
-          onPack: onPack ?? (_) {},
+          onTogglePack: onPack ?? (_) {},
           onImpostors: onImpostors ?? (_) {},
         ),
       ),
     );
 
-    testWidgets('the pack pick goes out and there is no discussion time', (t) async {
+    testWidgets('a pack tick goes out and there is no discussion time', (
+      t,
+    ) async {
       final packs = <String>[];
       await _show(t, view(onPack: packs.add));
-      await t.tap(find.byKey(const ValueKey('uljez-pack')));
-      await t.pumpAndSettle();
-      await t.tap(find.text('Hrana').last);
+      await t.tap(find.byKey(const ValueKey('pack-b')));
       await t.pumpAndSettle();
       expect(packs, ['b']);
       expect(find.byKey(const ValueKey('discuss-more')), findsNothing);

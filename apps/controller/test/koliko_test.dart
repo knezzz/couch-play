@@ -406,7 +406,7 @@ void main() {
       }
       expect(
         t.widget<Text>(find.byKey(const ValueKey('line-koliko'))).data,
-        'Brojevi · 10 pitanja · 30 s',
+        'Svi paketi · 10 pitanja · 30 s',
       );
       await send(
         t,
@@ -421,11 +421,11 @@ void main() {
       expect((s.kolikoSeconds, s.quizSeconds, s.objasniTarget), (45, 25, 50));
       await t.tap(find.byKey(const ValueKey('koliko-questions-15')));
       expect((c.sent.last as SetSettings).settings.kolikoQuestions, 15);
-      await t.tap(find.byKey(const ValueKey('koliko-pack')));
+      await t.tap(find.byKey(const ValueKey('pack-l')));
       await t.pumpAndSettle();
-      await t.tap(find.text('Gradovi').last);
-      await t.pumpAndSettle();
-      expect((c.sent.last as SetSettings).settings.kolikoPackId, 'l');
+      s = (c.sent.last as SetSettings).settings;
+      expect(s.kolikoOffPacks, {'l'});
+      expect(s.kolikoPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.koliko, null));
     });

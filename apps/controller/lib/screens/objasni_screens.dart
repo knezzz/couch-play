@@ -414,16 +414,16 @@ class ObjasniSettingsView extends StatelessWidget {
     required this.seconds,
     required this.target,
     required this.packs,
-    required this.packId,
+    required this.ticked,
     required this.onSeconds,
     required this.onTarget,
-    required this.onPack,
+    required this.onTogglePack,
   });
   final int seconds, target;
-  final List<(String, String)> packs;
-  final String? packId;
+  final List<PackInfo> packs;
+  final Set<String> ticked;
   final void Function(int) onSeconds, onTarget;
-  final void Function(String) onPack;
+  final void Function(String id) onTogglePack;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -447,12 +447,12 @@ class ObjasniSettingsView extends StatelessWidget {
         onPick: onTarget,
       ),
       const SizedBox(height: 8),
-      PackDropdown(
-        title: Strings.wordPackShort,
-        fieldKey: const ValueKey('objasni-pack'),
+      PackChecklist(
+        key: const ValueKey('objasni-packs'),
+        title: Strings.packsTitle,
         packs: packs,
-        packId: packId,
-        onPick: onPack,
+        ticked: ticked,
+        onToggle: onTogglePack,
       ),
     ],
   );

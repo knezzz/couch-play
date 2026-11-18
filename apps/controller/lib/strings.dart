@@ -127,6 +127,13 @@ abstract final class Strings {
   static const blefSpikeTry =
       'Upiši riječi sa č ć š ž đ (npr. „Čačkalica, ćevapi, šljiva, žaba, đak”), pa Pošalji. Ispod se vidi što je stiglo i kodovi znakova.';
   static const pickPack = 'Odaberi paket';
+  static const packsTitle = 'Paketi';
+  static const allPacks = 'Svi paketi';
+  static const packMustStay = 'mora ostati';
+  static const lastPackStays = 'Barem jedan paket mora ostati uključen.';
+  static String packCount(int on, int all) => on >= all
+      ? allPacks
+      : '$on ${on % 10 == 1 && on % 100 != 11 ? 'paket' : 'paketa'}';
   static const addPack = 'Dodaj svoj paket…';
 
   /// 1 pitanje, 21 pitanje, 2 pitanja, 94 pitanja, 401 pitanje.
@@ -195,28 +202,31 @@ abstract final class Strings {
     List<PackInfo> kolikoPacks = const [],
     List<PackInfo> blefPacks = const [],
     List<PackInfo> tkobiPacks = const [],
+    List<PackInfo> kaosviPacks = const [],
   ]) {
-    String pack(List<PackInfo> l, String? id) =>
-        (l.where((p) => p.id == id).firstOrNull ?? l.firstOrNull)?.title ?? '';
+    // "Svi paketi" or the number ticked, the same as the TV.
+    String pack(List<PackInfo> l, GameKind g) => packCount(
+      l.where((p) => !s.offPacks(g).contains(p.id)).length,
+      l.length,
+    );
     return switch (k) {
       GameKind.quiz =>
-        '${pack(packs, s.quizPackId)} · ${questions(s.quizQuestions)} · ${seconds(s.quizSeconds)}',
+        '${pack(packs, GameKind.quiz)} · ${questions(s.quizQuestions)} · ${seconds(s.quizSeconds)}',
       GameKind.curve =>
         '$curveModeLabel: ${curveMode(s.curveMode)} · $curveCountdown: ${seconds(s.curveCountdown)}',
-      GameKind.vukodlak =>
-        '$possibleRoles: ${s.wolfRoles.length}',
+      GameKind.vukodlak => '$possibleRoles: ${s.wolfRoles.length}',
       GameKind.uljez =>
-        '${pack(uljezPacks, s.uljezPackId)} · ${impostors(s.uljezImpostors)}',
+        '${pack(uljezPacks, GameKind.uljez)} · ${impostors(s.uljezImpostors)}',
       GameKind.tkobi =>
-        '${pack(tkobiPacks, s.tkobiPackId)} · ${questions(s.tkobiPrompts)}',
+        '${pack(tkobiPacks, GameKind.tkobi)} · ${questions(s.tkobiPrompts)}',
       GameKind.blef =>
-        '${pack(blefPacks, s.blefPackId)} · ${questions(s.blefQuestions)}',
+        '${pack(blefPacks, GameKind.blef)} · ${questions(s.blefQuestions)}',
       GameKind.koliko =>
-        '${pack(kolikoPacks, s.kolikoPackId)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
+        '${pack(kolikoPacks, GameKind.koliko)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
       GameKind.objasni =>
-        '${pack(objasniPacks, s.objasniPackId)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
+        '${pack(objasniPacks, GameKind.objasni)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
       GameKind.kaosvi =>
-        '${questions(s.kaosviQuestions)} · ${s.kaosviTarget} bodova',
+        '${pack(kaosviPacks, GameKind.kaosvi)} · ${questions(s.kaosviQuestions)} · ${s.kaosviTarget} bodova',
     };
   }
 

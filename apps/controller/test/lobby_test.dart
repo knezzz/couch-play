@@ -135,7 +135,7 @@ void main() {
     final l = LobbyState(
       hostId: 0,
       packs: packs,
-      settings: const GameSettings(quizSeconds: 30, quizPackId: 'a'),
+      settings: const GameSettings(quizSeconds: 30),
       players: _lobby().players,
     );
     final c = await _pump(t, l, 0);
@@ -144,14 +144,12 @@ void main() {
     await t.pumpAndSettle();
     await t.tap(find.byKey(const ValueKey('pack-b')));
     await t.pumpAndSettle();
-    expect(
-      find.text(Strings.back),
-      findsOneWidget,
-      reason: 'back on the details',
-    );
     final sent = (c.sent.last as SetSettings).settings;
-    expect(sent.quizPackId, 'b');
+    expect(sent.quizOffPacks, {'b'});
+    expect(sent.quizPackId, isNull);
     expect(sent.quizSeconds, 30);
+    await t.tap(find.byKey(const ValueKey('packs-back')));
+    await t.pumpAndSettle();
     await t.tap(find.text(Strings.play));
     expect(c.sent.last, const StartGame(GameKind.quiz, null));
   });

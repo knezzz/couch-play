@@ -76,7 +76,7 @@ void main() {
     testWidgets('each game has its own card with its settings line', (t) async {
       await _show(t, _lobby(), 0);
       final quiz = t.widget<Text>(find.byKey(const ValueKey('line-quiz')));
-      expect(quiz.data, 'Opće znanje · 10 pitanja · 20 s');
+      expect(quiz.data, 'Svi paketi · 10 pitanja · 20 s');
       for (final k in [GameKind.quiz, GameKind.curve]) {
         expect(find.byKey(ValueKey('card-${k.name}')), findsOneWidget);
       }
@@ -96,7 +96,7 @@ void main() {
         t,
         _lobby(
           settings: const GameSettings(
-            quizPackId: 'b',
+            quizOffPacks: {'a', 'c'},
             quizQuestions: 15,
             quizSeconds: 30,
           ),
@@ -105,7 +105,7 @@ void main() {
       );
       expect(
         t.widget<Text>(find.byKey(const ValueKey('line-quiz'))).data,
-        'Zastave · 15 pitanja · 30 s',
+        '1 paket · 15 pitanja · 30 s',
       );
     });
 

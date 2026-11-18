@@ -1,3 +1,5 @@
+import 'package:core/core.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -324,15 +326,15 @@ class BlefSettingsView extends StatelessWidget {
     super.key,
     required this.questions,
     required this.packs,
-    required this.packId,
+    required this.ticked,
     required this.onQuestions,
-    required this.onPack,
+    required this.onTogglePack,
   });
   final int questions;
-  final List<(String, String)> packs;
-  final String? packId;
+  final List<PackInfo> packs;
+  final Set<String> ticked;
   final void Function(int) onQuestions;
-  final void Function(String) onPack;
+  final void Function(String id) onTogglePack;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -347,12 +349,12 @@ class BlefSettingsView extends StatelessWidget {
         onPick: onQuestions,
       ),
       const SizedBox(height: 8),
-      PackDropdown(
-        title: Strings.quizPack,
-        fieldKey: const ValueKey('blef-pack'),
+      PackChecklist(
+        key: const ValueKey('blef-packs'),
+        title: Strings.packsTitle,
         packs: packs,
-        packId: packId,
-        onPick: onPack,
+        ticked: ticked,
+        onToggle: onTogglePack,
       ),
     ],
   );

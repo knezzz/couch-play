@@ -1,3 +1,5 @@
+import 'package:core/core.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -338,16 +340,16 @@ class KolikoSettingsView extends StatelessWidget {
     required this.seconds,
     required this.questions,
     required this.packs,
-    required this.packId,
+    required this.ticked,
     required this.onSeconds,
     required this.onQuestions,
-    required this.onPack,
+    required this.onTogglePack,
   });
   final int seconds, questions;
-  final List<(String, String)> packs;
-  final String? packId;
+  final List<PackInfo> packs;
+  final Set<String> ticked;
   final void Function(int) onSeconds, onQuestions;
-  final void Function(String) onPack;
+  final void Function(String id) onTogglePack;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -371,12 +373,12 @@ class KolikoSettingsView extends StatelessWidget {
         onPick: onQuestions,
       ),
       const SizedBox(height: 8),
-      PackDropdown(
-        title: Strings.quizPack,
-        fieldKey: const ValueKey('koliko-pack'),
+      PackChecklist(
+        key: const ValueKey('koliko-packs'),
+        title: Strings.packsTitle,
         packs: packs,
-        packId: packId,
-        onPick: onPack,
+        ticked: ticked,
+        onToggle: onTogglePack,
       ),
     ],
   );

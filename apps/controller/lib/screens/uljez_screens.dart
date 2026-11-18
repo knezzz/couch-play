@@ -1,3 +1,4 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 import '../strings.dart';
@@ -94,29 +95,29 @@ class UljezSettingsView extends StatelessWidget {
     super.key,
     required this.players,
     required this.packs,
-    required this.packId,
+    required this.ticked,
     required this.impostors,
-    required this.onPack,
+    required this.onTogglePack,
     required this.onImpostors,
   });
   final int players, impostors;
 
   /// (id, title) of the word packs.
-  final List<(String, String)> packs;
-  final String? packId;
-  final void Function(String id) onPack;
+  final List<PackInfo> packs;
+  final Set<String> ticked;
+  final void Function(String id) onTogglePack;
   final void Function(int count) onImpostors;
 
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      PackDropdown(
-        title: Strings.wordPack,
-        fieldKey: const ValueKey('uljez-pack'),
+      PackChecklist(
+        key: const ValueKey('uljez-packs'),
+        title: Strings.packsTitle,
         packs: packs,
-        packId: packId,
-        onPick: onPack,
+        ticked: ticked,
+        onToggle: onTogglePack,
       ),
       const SizedBox(height: 8),
       if (players >= 7) ...[

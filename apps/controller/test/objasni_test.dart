@@ -381,7 +381,7 @@ void main() {
       }
       expect(
         t.widget<Text>(find.byKey(const ValueKey('line-objasni'))).data,
-        'Općenito · 60 s · 30 bodova',
+        'Svi paketi · 60 s · 30 bodova',
       );
       await send(
         t,
@@ -398,11 +398,11 @@ void main() {
       await t.tap(find.byKey(const ValueKey('objasni-target-50')));
       s = (c.sent.last as SetSettings).settings;
       expect(s.objasniTarget, 50);
-      await t.tap(find.byKey(const ValueKey('objasni-pack')));
+      await t.tap(find.byKey(const ValueKey('pack-b')));
       await t.pumpAndSettle();
-      await t.tap(find.text('Hrana').last);
-      await t.pumpAndSettle();
-      expect((c.sent.last as SetSettings).settings.objasniPackId, 'b');
+      s = (c.sent.last as SetSettings).settings;
+      expect(s.objasniOffPacks, {'b'});
+      expect(s.objasniPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.objasni, null));
     });

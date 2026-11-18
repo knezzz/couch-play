@@ -400,11 +400,11 @@ void main() {
       expect((s.kaosviQuestions, s.quizSeconds, s.tkobiPrompts), (16, 25, 15));
       await t.tap(find.byKey(const ValueKey('kaosvi-target-10')));
       expect((c.sent.last as SetSettings).settings.kaosviTarget, 10);
-      await t.tap(find.byKey(const ValueKey('kaosvi-pack')));
+      await t.tap(find.byKey(const ValueKey('pack-h')));
       await t.pumpAndSettle();
-      await t.tap(find.text('Hrana').last);
-      await t.pumpAndSettle();
-      expect((c.sent.last as SetSettings).settings.kaosviPackId, 'h');
+      s = (c.sent.last as SetSettings).settings;
+      expect(s.kaosviOffPacks, {'h'});
+      expect(s.kaosviPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.kaosvi, null));
     });

@@ -45,6 +45,11 @@ Choices that were put to the person:
 | questions(n) | {n} pitanje / pitanja | {n} question(s) | pack row, pack grid, settings line |
 | packMeta tags | slike, novo | pictures, new | pack grid tile, after the count |
 | pickPack | Odaberi paket | Pick a pack | Kviz details row when no pack is known |
+| packsTitle | Paketi | Packs | host details, label over the pack checklist (every game with packs) |
+| allPacks | Svi paketi | All packs | Kviz details row; the settings line on every card |
+| packCount | {n} paket / {n} paketa | {n} pack(s) | the same places when some are switched off (1 paket, 21 paket, 2 paketa) |
+| packMustStay | mora ostati | has to stay | under the last ticked pack in the checklist and the grid |
+| lastPackStays | Barem jedan paket mora ostati uključen. | At least one pack has to stay on. | shown when the last ticked pack is tapped |
 | settingPack / settingQuestions / settingAnswerTime / settingReveal | Paket pitanja / Broj pitanja / Vrijeme za odgovor / Pauza između pitanja | Question pack / Number of questions / Time to answer / Pause between questions | TV lobby, Kviz card: label before the value (same as the phone) |
 | settingMode / settingCountdown | Način igre / Pauza prije runde | Game mode / Pause before each round | TV lobby, Curve card: label before the value (same as the phone) |
 | settingsLine(s) | Kviz: {n} pitanja · odgovor {a} s · pauza {r} s     Curve: {mode} · pauza prije runde {c} s | Quiz: {n} questions · answer {a} s · pause {r} s     Curve: {mode} · pause before each round {c} s | TV lobby, bottom right under "waiting for host": one small muted line, the host's settings; hidden while a game card is shown |
@@ -97,6 +102,7 @@ Choices that were put to the person:
 | uljezRoundClues / uljezClueFor / uljezClueHint | RUNDA 2 · TRAGOVI / Marko, reci trag. / Svatko kaže jedan trag o svojoj riječi. Ne reci riječ! | ROUND 2 · CLUES / Marko, give a clue. / Everyone gives one clue about their word. Don't say the word! | Uljez TV, clue turns |
 | uljezNow / uljezSaidClue | Sad ti! / trag dan | Your turn! / clue given | Uljez TV, seat notes |
 | wishLabel / wishCount | Idemo glasati / 3 od 5 | Let's vote / 3 of 5 | Uljez TV (from round 2) and Vukodlak village (day): how many want to vote, count only |
+| settingPack / packsAll / packsLine | Paketi / Svi paketi / 3 od 9 paketa | Packs / All packs / 3 of 9 packs | Home settings panel of every game with packs, and Kviz meta line (replaces the single pack title) |
 | uljezVoteKicker / uljezVoted | GLASANJE / Glasalo 4 od 6 | VOTE / 4 of 6 have voted | Uljez TV, vote |
 | uljezCaught / uljezGuesses / uljezNotImpostor / uljezNobodyOut | Uhvatili ste uljeza: Petra! / Petra pogađa vašu riječ / Petra ispada, ali nije uljez. / Nitko ne ispada. | You caught the impostor: Petra! / Petra guesses your word / Petra is out but was not the impostor. / Nobody is out. | Uljez TV, vote result |
 | uljezEndKicker / uljezVillageWins / uljezImpostorWins / uljezVillageWord / uljezImpostorWord / uljezTag | KRAJ IGRE / Selo je pobijedilo! / Pobjeda uljeza! / Riječ sela / Uljezova riječ / Uljez | GAME OVER / The village won! / The impostor won! / The village's word / The impostor's word / Impostor | Uljez TV, end |

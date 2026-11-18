@@ -374,7 +374,7 @@ void main() {
       }
       expect(
         t.widget<Text>(find.byKey(const ValueKey('line-blef'))).data,
-        'Čudno ali istinito · 7 pitanja',
+        'Svi paketi · 7 pitanja',
       );
       await send(
         t,
@@ -387,11 +387,11 @@ void main() {
       await t.tap(find.byKey(const ValueKey('blef-questions-10')));
       var s = (c.sent.last as SetSettings).settings;
       expect((s.blefQuestions, s.quizSeconds, s.kolikoSeconds), (10, 25, 45));
-      await t.tap(find.byKey(const ValueKey('blef-pack')));
+      await t.tap(find.byKey(const ValueKey('pack-c')));
       await t.pumpAndSettle();
-      await t.tap(find.text('Životinje').last);
-      await t.pumpAndSettle();
-      expect((c.sent.last as SetSettings).settings.blefPackId, 'c');
+      s = (c.sent.last as SetSettings).settings;
+      expect(s.blefOffPacks, {'c'});
+      expect(s.blefPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.blef, null));
     });

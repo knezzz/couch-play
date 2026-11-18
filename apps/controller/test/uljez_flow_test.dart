@@ -267,18 +267,59 @@ void main() {
         t,
         const GameSettings(
           quizSeconds: 25,
+          uljezPackId:
+              'a', // the old single pick: the TV would read it as 'only a'
           curveCountdown: 60,
           kolikoSeconds: 120,
         ),
       );
-      await t.ensureVisible(find.byKey(const ValueKey('uljez-pack')));
-      await t.tap(find.byKey(const ValueKey('uljez-pack')));
-      await t.pumpAndSettle();
-      await t.tap(find.text('Hrana').last);
+      await t.ensureVisible(find.byKey(const ValueKey('pack-b')));
+      await t.tap(find.byKey(const ValueKey('pack-b')));
       await t.pumpAndSettle();
       final s = (c.sent.last as SetSettings).settings;
-      expect(s.uljezPackId, 'b');
+      expect(s.uljezOffPacks, {'b'});
+      expect(s.uljezPackId, isNull);
       expect((s.quizSeconds, s.curveCountdown, s.kolikoSeconds), (25, 60, 120));
+    });
+
+    bool ticked(WidgetTester t, String id) =>
+        t
+            .widget<Icon>(
+              find.descendant(
+                of: find.byKey(ValueKey('pack-$id')),
+                matching: find.byType(Icon),
+              ),
+            )
+            .icon ==
+        Icons.check_box;
+
+    testWidgets('every pack starts ticked, the line says Svi paketi', (
+      t,
+    ) async {
+      await host(t, const GameSettings());
+      expect([ticked(t, 'a'), ticked(t, 'b')], [true, true]);
+    });
+
+    testWidgets('one switched off: the others stay, a new pack is ticked', (
+      t,
+    ) async {
+      // 'a' was switched off; the lobby also has 'b', which the TV added later.
+      await host(t, const GameSettings(uljezOffPacks: {'a'}));
+      expect([ticked(t, 'a'), ticked(t, 'b')], [false, true]);
+    });
+
+    testWidgets('a tick on the last ticked pack sends nothing and says why', (
+      t,
+    ) async {
+      final c = await host(t, const GameSettings(uljezOffPacks: {'a'}));
+      final before = c.sent.length;
+      await t.ensureVisible(find.byKey(const ValueKey('pack-b')));
+      await t.tap(find.byKey(const ValueKey('pack-b')));
+      await t.pump();
+      expect(c.sent.length, before);
+      expect(find.text(Strings.lastPackStays), findsOneWidget);
+      await t.tap(find.byKey(const ValueKey('pack-a')));
+      expect((c.sent.last as SetSettings).settings.uljezOffPacks, isEmpty);
     });
 
     testWidgets('2 impostors (7-8 players) go out; no discussion row', (

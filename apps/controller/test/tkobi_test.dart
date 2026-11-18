@@ -243,7 +243,7 @@ void main() {
       }
       expect(
         t.widget<Text>(find.byKey(const ValueKey('line-tkobi'))).data,
-        'Blago · 10 pitanja',
+        'Svi paketi · 10 pitanja',
       );
       await send(
         t,
@@ -256,11 +256,11 @@ void main() {
       await t.tap(find.byKey(const ValueKey('tkobi-prompts-15')));
       var s = (c.sent.last as SetSettings).settings;
       expect((s.tkobiPrompts, s.quizSeconds, s.blefQuestions), (15, 25, 10));
-      await t.tap(find.byKey(const ValueKey('tkobi-pack')));
+      await t.tap(find.byKey(const ValueKey('pack-l')));
       await t.pumpAndSettle();
-      await t.tap(find.text('Ljuto').last);
-      await t.pumpAndSettle();
-      expect((c.sent.last as SetSettings).settings.tkobiPackId, 'l');
+      s = (c.sent.last as SetSettings).settings;
+      expect(s.tkobiOffPacks, {'l'});
+      expect(s.tkobiPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.tkobi, null));
     });

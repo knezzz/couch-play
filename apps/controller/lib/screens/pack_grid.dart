@@ -5,20 +5,21 @@ import '../strings.dart';
 import '../theme.dart';
 
 /// "Paket pitanja": every quiz pack in two columns, opened from the Kviz
-/// details. The TV owns the choice: [selected] comes from its LobbyState and a
-/// tap only sends [onPick].
+/// details; any number can be ticked. The TV owns the choice: [ticked] comes
+/// from its LobbyState and a tap only sends [onToggle]. The last ticked pack
+/// says it stays and a tap on it shows why.
 class PackGridScreen extends StatefulWidget {
   const PackGridScreen({
     super.key,
     required this.packs,
-    required this.selected,
-    required this.onPick,
+    required this.ticked,
+    required this.onToggle,
     required this.onBack,
     this.addPack,
   });
   final List<PackInfo> packs;
-  final String? selected;
-  final void Function(String id) onPick;
+  final Set<String> ticked;
+  final void Function(String id) onToggle;
   final VoidCallback onBack;
 
   /// Browser-only upload; null in tests and where it is unavailable.
@@ -30,6 +31,7 @@ class PackGridScreen extends StatefulWidget {
 
 class _PackGridState extends State<PackGridScreen> {
   String? _message;
+  bool _refused = false;
 
   Future<void> _add() async {
     final msg = await widget.addPack!();
@@ -72,8 +74,17 @@ class _PackGridState extends State<PackGridScreen> {
                             width: w,
                             child: _PackTile(
                               p,
-                              on: p.id == widget.selected,
-                              onTap: () => widget.onPick(p.id),
+                              on: widget.ticked.contains(p.id),
+                              last:
+                                  widget.ticked.length == 1 &&
+                                  widget.ticked.contains(p.id),
+                              onTap: () {
+                                final last =
+                                    widget.ticked.length == 1 &&
+                                    widget.ticked.contains(p.id);
+                                setState(() => _refused = last);
+                                if (!last) widget.onToggle(p.id);
+                              },
                             ),
                           ),
                       ],
@@ -82,6 +93,15 @@ class _PackGridState extends State<PackGridScreen> {
                 ),
               ),
             ),
+            if (_refused)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  Strings.lastPackStays,
+                  key: ValueKey('pack-refused'),
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
             if (_message != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -115,14 +135,18 @@ class _PackGridState extends State<PackGridScreen> {
 }
 
 class _PackTile extends StatelessWidget {
-  const _PackTile(this.p, {required this.on, required this.onTap});
+  const _PackTile(
+    this.p, {
+    required this.on,
+    required this.last,
+    required this.onTap,
+  });
   final PackInfo p;
-  final bool on;
+  final bool on, last;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => Semantics(
-    inMutuallyExclusiveGroup: true,
     checked: on,
     child: Material(
       color: on ? accent : surface,
@@ -139,17 +163,31 @@ class _PackTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  p.title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    height: 1.2,
-                    color: on ? ink : textColor,
-                  ),
+                Row(
+                  children: [
+                    Icon(
+                      on ? Icons.check_box : Icons.check_box_outline_blank,
+                      size: 24,
+                      color: on ? ink : muted,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        p.title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          height: 1.2,
+                          color: on ? ink : textColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
-                  Strings.packMeta(p),
+                  last
+                      ? '${Strings.packMeta(p)} · ${Strings.packMustStay}'
+                      : Strings.packMeta(p),
                   style: TextStyle(fontSize: 18, color: on ? ink : muted),
                 ),
               ],

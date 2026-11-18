@@ -47,30 +47,49 @@ GameSettings copySettings(
   int? kaosviQuestions,
   int? kaosviTarget,
   String? kaosviPackId,
+  // Replace one game's switched-off packs (and drop its old single pack id,
+  // which the TV would turn into 'only that pack').
+  GameKind? offFor,
+  Set<String>? off,
 }) => GameSettings(
   quizSeconds: quizSeconds ?? s.quizSeconds,
   quizQuestions: quizQuestions ?? s.quizQuestions,
   revealSeconds: revealSeconds ?? s.revealSeconds,
   curveCountdown: curveCountdown ?? s.curveCountdown,
   curveMode: curveMode ?? s.curveMode,
-  quizPackId: setQuizPack ? quizPackId : s.quizPackId,
+  quizPackId: offFor == GameKind.quiz
+      ? null
+      : (setQuizPack ? quizPackId : s.quizPackId),
   wolfRoles: wolfRoles ?? s.wolfRoles,
   wolfHideRoles: wolfHideRoles ?? s.wolfHideRoles,
-  uljezPackId: uljezPackId ?? s.uljezPackId,
+  uljezPackId: offFor == GameKind.uljez ? null : (uljezPackId ?? s.uljezPackId),
   uljezImpostors: uljezImpostors ?? s.uljezImpostors,
   objasniSeconds: objasniSeconds ?? s.objasniSeconds,
   objasniTarget: objasniTarget ?? s.objasniTarget,
-  objasniPackId: objasniPackId ?? s.objasniPackId,
+  objasniPackId: offFor == GameKind.objasni
+      ? null
+      : (objasniPackId ?? s.objasniPackId),
   kolikoSeconds: kolikoSeconds ?? s.kolikoSeconds,
   kolikoQuestions: kolikoQuestions ?? s.kolikoQuestions,
-  kolikoPackId: kolikoPackId ?? s.kolikoPackId,
+  kolikoPackId: offFor == GameKind.koliko
+      ? null
+      : (kolikoPackId ?? s.kolikoPackId),
   blefQuestions: blefQuestions ?? s.blefQuestions,
-  blefPackId: blefPackId ?? s.blefPackId,
+  blefPackId: offFor == GameKind.blef ? null : (blefPackId ?? s.blefPackId),
   tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
-  tkobiPackId: tkobiPackId ?? s.tkobiPackId,
+  tkobiPackId: offFor == GameKind.tkobi ? null : (tkobiPackId ?? s.tkobiPackId),
   kaosviQuestions: kaosviQuestions ?? s.kaosviQuestions,
   kaosviTarget: kaosviTarget ?? s.kaosviTarget,
-  kaosviPackId: kaosviPackId ?? s.kaosviPackId,
+  kaosviPackId: offFor == GameKind.kaosvi
+      ? null
+      : (kaosviPackId ?? s.kaosviPackId),
+  quizOffPacks: offFor == GameKind.quiz ? off! : s.quizOffPacks,
+  uljezOffPacks: offFor == GameKind.uljez ? off! : s.uljezOffPacks,
+  objasniOffPacks: offFor == GameKind.objasni ? off! : s.objasniOffPacks,
+  kolikoOffPacks: offFor == GameKind.koliko ? off! : s.kolikoOffPacks,
+  blefOffPacks: offFor == GameKind.blef ? off! : s.blefOffPacks,
+  tkobiOffPacks: offFor == GameKind.tkobi ? off! : s.tkobiOffPacks,
+  kaosviOffPacks: offFor == GameKind.kaosvi ? off! : s.kaosviOffPacks,
 );
 
 class LobbyScreen extends StatefulWidget {
@@ -216,8 +235,20 @@ class _LobbyScreenState extends State<LobbyScreen> {
     if (ok == true) widget.conn.send(Kick(p.id));
   }
 
-  GameSettings _withPack(GameSettings s, String? id) =>
-      copySettings(s, quizPackId: id, setQuizPack: true);
+  /// The ids of [packs] that are ticked: every pack not switched off, so a
+  /// pack the TV has just got starts ticked.
+  Set<String> _ticked(GameKind k, List<PackInfo> packs, GameSettings s) => {
+    for (final p in packs)
+      if (!s.offPacks(k).contains(p.id)) p.id,
+  };
+
+  /// Flips one pack. The TV refuses to switch the last one off; the checklist
+  /// does not even send that.
+  GameSettings _toggle(GameSettings s, GameKind k, String id) {
+    final off = {...s.offPacks(k)};
+    if (!off.remove(id)) off.add(id);
+    return copySettings(s, offFor: k, off: off);
+  }
 
   GameSettings _wolf(GameSettings s, {Set<WolfRole>? roles, bool? hide}) =>
       copySettings(s, wolfRoles: roles, wolfHideRoles: hide);
@@ -262,11 +293,11 @@ class _LobbyScreenState extends State<LobbyScreen> {
     return KaosviSettingsView(
       questions: s.kaosviQuestions,
       target: s.kaosviTarget,
-      packs: [for (final p in l.kaosviPacks) (p.id, p.title)],
-      packId: s.kaosviPackId ?? l.kaosviPacks.firstOrNull?.id,
+      packs: l.kaosviPacks,
+      ticked: _ticked(GameKind.kaosvi, l.kaosviPacks, s),
       onQuestions: (v) => change(copySettings(s, kaosviQuestions: v)),
       onTarget: (v) => change(copySettings(s, kaosviTarget: v)),
-      onPack: (id) => change(copySettings(s, kaosviPackId: id)),
+      onTogglePack: (id) => change(_toggle(s, GameKind.kaosvi, id)),
     );
   }
 
@@ -274,10 +305,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
     final s = l.settings;
     return TkobiSettingsView(
       prompts: s.tkobiPrompts,
-      packs: [for (final p in l.tkobiPacks) (p.id, p.title)],
-      packId: s.tkobiPackId ?? l.tkobiPacks.firstOrNull?.id,
+      packs: l.tkobiPacks,
+      ticked: _ticked(GameKind.tkobi, l.tkobiPacks, s),
       onPrompts: (v) => change(copySettings(s, tkobiPrompts: v)),
-      onPack: (id) => change(copySettings(s, tkobiPackId: id)),
+      onTogglePack: (id) => change(_toggle(s, GameKind.tkobi, id)),
     );
   }
 
@@ -285,10 +316,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
     final s = l.settings;
     return BlefSettingsView(
       questions: s.blefQuestions,
-      packs: [for (final p in l.blefPacks) (p.id, p.title)],
-      packId: s.blefPackId ?? l.blefPacks.firstOrNull?.id,
+      packs: l.blefPacks,
+      ticked: _ticked(GameKind.blef, l.blefPacks, s),
       onQuestions: (v) => change(copySettings(s, blefQuestions: v)),
-      onPack: (id) => change(copySettings(s, blefPackId: id)),
+      onTogglePack: (id) => change(_toggle(s, GameKind.blef, id)),
     );
   }
 
@@ -297,11 +328,11 @@ class _LobbyScreenState extends State<LobbyScreen> {
     return KolikoSettingsView(
       seconds: s.kolikoSeconds,
       questions: s.kolikoQuestions,
-      packs: [for (final p in l.kolikoPacks) (p.id, p.title)],
-      packId: s.kolikoPackId ?? l.kolikoPacks.firstOrNull?.id,
+      packs: l.kolikoPacks,
+      ticked: _ticked(GameKind.koliko, l.kolikoPacks, s),
       onSeconds: (v) => change(copySettings(s, kolikoSeconds: v)),
       onQuestions: (v) => change(copySettings(s, kolikoQuestions: v)),
-      onPack: (id) => change(copySettings(s, kolikoPackId: id)),
+      onTogglePack: (id) => change(_toggle(s, GameKind.koliko, id)),
     );
   }
 
@@ -310,11 +341,11 @@ class _LobbyScreenState extends State<LobbyScreen> {
     return ObjasniSettingsView(
       seconds: s.objasniSeconds,
       target: s.objasniTarget,
-      packs: [for (final p in l.objasniPacks) (p.id, p.title)],
-      packId: s.objasniPackId ?? l.objasniPacks.firstOrNull?.id,
+      packs: l.objasniPacks,
+      ticked: _ticked(GameKind.objasni, l.objasniPacks, s),
       onSeconds: (v) => change(copySettings(s, objasniSeconds: v)),
       onTarget: (v) => change(copySettings(s, objasniTarget: v)),
-      onPack: (id) => change(copySettings(s, objasniPackId: id)),
+      onTogglePack: (id) => change(_toggle(s, GameKind.objasni, id)),
     );
   }
 
@@ -322,10 +353,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
     final s = l.settings;
     return UljezSettingsView(
       players: l.players.length,
-      packs: [for (final p in l.uljezPacks) (p.id, p.title)],
-      packId: s.uljezPackId ?? l.uljezPacks.firstOrNull?.id,
+      packs: l.uljezPacks,
+      ticked: _ticked(GameKind.uljez, l.uljezPacks, s),
       impostors: s.uljezImpostors,
-      onPack: (id) => change(copySettings(s, uljezPackId: id)),
+      onTogglePack: (id) => change(_toggle(s, GameKind.uljez, id)),
       onImpostors: (n) => change(copySettings(s, uljezImpostors: n)),
     );
   }
@@ -342,9 +373,12 @@ class _LobbyScreenState extends State<LobbyScreen> {
     );
   }
 
-  /// The chosen pack; opens the grid of all packs.
-  Widget _packRow(LobbyState l, String? packId) {
-    final p = l.packs.where((p) => p.id == packId).firstOrNull;
+  /// The ticked packs in a line ("Svi paketi" or "3 paketa"); opens the grid.
+  Widget _packRow(LobbyState l) {
+    final ticked = _ticked(GameKind.quiz, l.packs, l.settings);
+    final questions = l.packs
+        .where((p) => ticked.contains(p.id))
+        .fold(0, (n, p) => n + p.questionCount);
     return Material(
       color: surface,
       borderRadius: BorderRadius.circular(16),
@@ -359,7 +393,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
             children: [
               Expanded(
                 child: Text(
-                  p?.title ?? Strings.pickPack,
+                  l.packs.isEmpty
+                      ? Strings.pickPack
+                      : Strings.packCount(ticked.length, l.packs.length),
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 20,
@@ -367,9 +403,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
                   ),
                 ),
               ),
-              if (p != null)
+              if (l.packs.isNotEmpty)
                 Text(
-                  Strings.questions(p.questionCount),
+                  Strings.questions(questions),
                   style: const TextStyle(fontSize: 18, color: muted),
                 ),
               const SizedBox(width: 12),
@@ -381,25 +417,20 @@ class _LobbyScreenState extends State<LobbyScreen> {
     );
   }
 
-  void _openPacks() => _pushLive((l) {
-    final id = l.packs.any((p) => p.id == l.settings.quizPackId)
-        ? l.settings.quizPackId
-        : l.packs.firstOrNull?.id;
-    return PackGridScreen(
+  void _openPacks() => _pushLive(
+    (l) => PackGridScreen(
       packs: l.packs,
-      selected: id,
+      ticked: _ticked(GameKind.quiz, l.packs, l.settings),
       addPack: widget.addPack == null
           ? null
           : () => widget.addPack!(widget.conn.token),
-      onPick: (pick) {
-        widget.conn.send(SetSettings(_withPack(l.settings, pick)));
-        Navigator.of(context).pop();
-      },
+      onToggle: (id) =>
+          widget.conn.send(SetSettings(_toggle(l.settings, GameKind.quiz, id))),
       onBack: () => Navigator.of(context).pop(),
-    );
-  });
+    ),
+  );
 
-  Widget _details(GameKind kind, LobbyState l, String? packId) {
+  Widget _details(GameKind kind, LobbyState l) {
     final s = l.settings;
     void change(GameSettings n) => widget.conn.send(SetSettings(n));
     return Scaffold(
@@ -451,7 +482,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       style: TextStyle(fontSize: 18, color: muted),
                     ),
                     const SizedBox(height: 8),
-                    _packRow(l, packId),
+                    _packRow(l),
                     const SizedBox(height: 12),
                   ],
                   if (kind == GameKind.vukodlak)
@@ -582,9 +613,6 @@ class _LobbyScreenState extends State<LobbyScreen> {
     final isHost = l.hostId == widget.myId;
     final bots = players.where((p) => p.bot).length;
     final host = players.where((p) => p.id == l.hostId).firstOrNull;
-    final packId = l.packs.any((p) => p.id == l.settings.quizPackId)
-        ? l.settings.quizPackId
-        : l.packs.firstOrNull?.id;
 
     final others = [
       for (final p in players)
@@ -593,7 +621,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
 
     final kind = l.selected;
     if (isHost && kind != null) {
-      return _details(kind, l, packId);
+      return _details(kind, l);
     }
 
     return Scaffold(
@@ -641,6 +669,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     l.kolikoPacks,
                     l.blefPacks,
                     l.tkobiPacks,
+                    l.kaosviPacks,
                   ),
                 ),
               if (l.selected == GameKind.vukodlak)

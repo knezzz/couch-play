@@ -156,8 +156,8 @@ void main() {
       'PhonePacks',
       PackGridScreen(
         packs: _lobby().packs,
-        selected: 'a',
-        onPick: (_) {},
+        ticked: const {'a', 'c'},
+        onToggle: (_) {},
         onBack: () {},
         addPack: () async => null,
       ),
