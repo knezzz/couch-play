@@ -11,6 +11,8 @@ Least sure: the five symmetry axes of the star rest on "dihedral group of order 
 that says five; Bilinski "rediscovered" the rhombic dodecahedron of the second kind (Cowley drew it in 1752); India as
 the home of the first rules for zero rests on Brahmagupta being Indian.
 
+Task 44 (2026-11-17): made easier for a pub-quiz audience. 55 of the hardest questions (textbook problems, multi-step arithmetic, specialist history) were removed and 45 pub-level questions added (Q69–Q113); the rest are unchanged and renumbered.
+
 1. izračun
 2. izračun
 3. izračun
@@ -45,92 +47,82 @@ the home of the first rules for zero rests on Brahmagupta being Indian.
 32. izračun
 33. izračun
 34. izračun
-35. izračun
-36. izračun
-37. izračun
-38. izračun
-39. izračun
-40. izračun
-41. izračun
-42. izračun
-43. izračun
-44. izračun
-45. izračun
-46. izračun
-47. izračun
-48. izračun
-49. izračun
-50. izračun
-51. izračun
-52. izračun
-53. izračun
-54. izračun
-55. izračun
-56. izračun
-57. izračun
-58. izračun
-59. supplementary adjacent angles form a straight angle: https://en.wikipedia.org/wiki/Vertical_angles
-60. izračun
-61. izračun
-62. izračun
-63. izračun
-64. izračun
-65. izračun
-66. izračun
-67. izračun
-68. a regular hexagon has nine diagonals, n(n−3)/2: https://en.wikipedia.org/wiki/Diagonal
-69. It has two lines of reflectional symmetry: https://en.wikipedia.org/wiki/Rectangle
-70. symmetry group the dihedral group of order 10 (5 reflections): https://en.wikipedia.org/wiki/Pentagram
-71. izračun
-72. izračun
-73. kvadrat nad hipotenuzom pravokutnog trokuta jednak zbroju kvadrata nad katetama: https://hr.wikipedia.org/wiki/Pitagorin_poučak
-74. Pitagora je rođen na grčkom otoku Samosu: https://hr.wikipedia.org/wiki/Pitagora
-75. Živio je i radio u Aleksandriji gdje je stvorio matematičku školu: https://hr.wikipedia.org/wiki/Euklid
-76. poznat i kao Arhimed iz Sirakuze: https://hr.wikipedia.org/wiki/Arhimed
-77. Arhimedov zakon ... (uz poklik Eureka!): https://hr.wikipedia.org/wiki/Arhimed
-78. Hipatija (Aleksandrija ... 415): https://hr.wikipedia.org/wiki/Hipatija
-79. he measured the height of the pyramids by their shadows: https://en.wikipedia.org/wiki/Thales_of_Miletus
-80. dužina AC promjer kruga, onda je kut ABC pravi (od 90°): https://hr.wikipedia.org/wiki/Talesov_poučak
-81. tupi kut – <90°, 180°>: https://hr.wikipedia.org/wiki/Kut
-82. ako je veća od polovine, kut je izbočen ili konkavan: https://hr.wikipedia.org/wiki/Kut
-83. Raznostraničan trokut je onaj trokut kome su sve stranice različitih duljina: https://hr.wikipedia.org/wiki/Trokut
-84. Tri težišnice sijeku se u točki koja se naziva težište trokuta: https://hr.wikipedia.org/wiki/Trokut
-85. Trapez je četverokut koji ima jedan par paralelnih nasuprotnih stranica: https://hr.wikipedia.org/wiki/Trapez
-86. Tetiva je dužina koja spaja dvije točke kružnice: https://hr.wikipedia.org/wiki/Kružnica
-87. a se naziva djeljenikom, b djeliteljem, a c količnikom: https://hr.wikipedia.org/wiki/Dijeljenje
-88. a se naziva djeljenikom, b djeliteljem, a c količnikom: https://hr.wikipedia.org/wiki/Dijeljenje
-89. Djelitelj se zove nazivnik razlomka ... ispod razlomačke crte: https://hr.wikipedia.org/wiki/Razlomak
-90. oni brojevi koje ne možemo zapisati u obliku razlomaka: https://hr.wikipedia.org/wiki/Iracionalni_broj
-91. the numbers with exactly two positive divisors: https://en.wikipedia.org/wiki/Prime_number
-92. 6 is the smallest perfect number; the next is 28: https://en.wikipedia.org/wiki/Perfect_number
-93. approximately equal to 3.14159: https://en.wikipedia.org/wiki/Pi
-94. Pi Day is observed on March 14: https://en.wikipedia.org/wiki/Pi_Day
-95. The value of 0! is 1: https://en.wikipedia.org/wiki/Factorial
-96. leaves division by zero undefined: https://en.wikipedia.org/wiki/Division_by_zero
-97. opposite sides all add up to seven, as in modern dice: https://en.wikipedia.org/wiki/Dice
-98. It has eight vertices and twelve straight edges: https://en.wikipedia.org/wiki/Cube
-99. There are only five such polyhedra: https://en.wikipedia.org/wiki/Platonic_solid
-100. icosahedron: twenty triangular faces: https://en.wikipedia.org/wiki/Platonic_solid
-101. dodecahedron: twelve pentagonal faces: https://en.wikipedia.org/wiki/Platonic_solid
-102. jednostrana je površina (ploha): https://hr.wikipedia.org/wiki/Möbiusova_vrpca
-103. sum the numbers from 1 to 100 ... the correct answer of 5050: https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss
-104. a medal ... dedicated "to the Prince of Mathematicians": https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss
-105. e^(iπ) + 1 = 0: https://en.wikipedia.org/wiki/Euler's_identity
-106. the Cartesian coordinate system is named after him: https://en.wikipedia.org/wiki/René_Descartes
-107. He was also a lawyer at the parlement of Toulouse: https://en.wikipedia.org/wiki/Pierre_de_Fermat
-108. He invented the equals sign (=) ... in 1557: https://en.wikipedia.org/wiki/Robert_Recorde
-109. The Liber Abaci ... was a 1202 Latin work ... by Leonardo of Pisa: https://en.wikipedia.org/wiki/Liber_Abaci
-110. among the first Western books to describe the Hindu–Arabic numeral system: https://en.wikipedia.org/wiki/Liber_Abaci
-111. Rules governing the use of zero appeared in Brahmagupta's Brahmasputha Siddhanta: https://en.wikipedia.org/wiki/0
-112. It originated with the ancient Sumerians ... measuring time, angles: https://en.wikipedia.org/wiki/Sexagesimal
-113. named after the French mathematician Blaise Pascal: https://en.wikipedia.org/wiki/Pascal's_triangle
-114. The Millennium Prize Problems are seven ... in 2000: https://en.wikipedia.org/wiki/Millennium_Prize_Problems
-115. awarded annually by the king of Norway ... first in 2003: https://en.wikipedia.org/wiki/Abel_Prize
-116. 2014 Fields Medal ... becoming the first woman: https://en.wikipedia.org/wiki/Maryam_Mirzakhani
-117. Marinus Ghetaldus; Dubrovnik: https://hr.wikipedia.org/wiki/Marin_Getaldić
-118. u Betinoj špilji izvodio pokuse s paraboličnim zrcalima: https://hr.wikipedia.org/wiki/Marin_Getaldić
-119. Radom na teoriji skupova ... Kurepine hipoteze: https://hr.wikipedia.org/wiki/Đuro_Kurepa
-120. Zagreb ... hrvatski matematičar na području teorije vjerojatnosti: https://hr.wikipedia.org/wiki/Vilim_Srećko_Feller
-121. Herman je preveo Euklidovo djelo Elementi oko 1140: https://hr.wikipedia.org/wiki/Herman_Dalmatin
-122. teorija ravninskih krivulja, teorija funkcija, teorija relativnosti: https://hr.wikipedia.org/wiki/Vladimir_Varićak
-123. Stanko Bilinski rediscovered it in 1960 ... twelve golden rhombus faces: https://en.wikipedia.org/wiki/Bilinski_dodecahedron
+35. It has two lines of reflectional symmetry: https://en.wikipedia.org/wiki/Rectangle
+36. symmetry group the dihedral group of order 10 (5 reflections): https://en.wikipedia.org/wiki/Pentagram
+37. kvadrat nad hipotenuzom pravokutnog trokuta jednak zbroju kvadrata nad katetama: https://hr.wikipedia.org/wiki/Pitagorin_poučak
+38. Pitagora je rođen na grčkom otoku Samosu: https://hr.wikipedia.org/wiki/Pitagora
+39. Živio je i radio u Aleksandriji gdje je stvorio matematičku školu: https://hr.wikipedia.org/wiki/Euklid
+40. poznat i kao Arhimed iz Sirakuze: https://hr.wikipedia.org/wiki/Arhimed
+41. Arhimedov zakon ... (uz poklik Eureka!): https://hr.wikipedia.org/wiki/Arhimed
+42. Hipatija (Aleksandrija ... 415): https://hr.wikipedia.org/wiki/Hipatija
+43. he measured the height of the pyramids by their shadows: https://en.wikipedia.org/wiki/Thales_of_Miletus
+44. tupi kut – <90°, 180°>: https://hr.wikipedia.org/wiki/Kut
+45. Raznostraničan trokut je onaj trokut kome su sve stranice različitih duljina: https://hr.wikipedia.org/wiki/Trokut
+46. Trapez je četverokut koji ima jedan par paralelnih nasuprotnih stranica: https://hr.wikipedia.org/wiki/Trapez
+47. a se naziva djeljenikom, b djeliteljem, a c količnikom: https://hr.wikipedia.org/wiki/Dijeljenje
+48. 6 is the smallest perfect number; the next is 28: https://en.wikipedia.org/wiki/Perfect_number
+49. approximately equal to 3.14159: https://en.wikipedia.org/wiki/Pi
+50. Pi Day is observed on March 14: https://en.wikipedia.org/wiki/Pi_Day
+51. leaves division by zero undefined: https://en.wikipedia.org/wiki/Division_by_zero
+52. opposite sides all add up to seven, as in modern dice: https://en.wikipedia.org/wiki/Dice
+53. It has eight vertices and twelve straight edges: https://en.wikipedia.org/wiki/Cube
+54. There are only five such polyhedra: https://en.wikipedia.org/wiki/Platonic_solid
+55. icosahedron: twenty triangular faces: https://en.wikipedia.org/wiki/Platonic_solid
+56. jednostrana je površina (ploha): https://hr.wikipedia.org/wiki/Möbiusova_vrpca
+57. sum the numbers from 1 to 100 ... the correct answer of 5050: https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss
+58. a medal ... dedicated "to the Prince of Mathematicians": https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss
+59. the Cartesian coordinate system is named after him: https://en.wikipedia.org/wiki/René_Descartes
+60. He invented the equals sign (=) ... in 1557: https://en.wikipedia.org/wiki/Robert_Recorde
+61. among the first Western books to describe the Hindu–Arabic numeral system: https://en.wikipedia.org/wiki/Liber_Abaci
+62. Rules governing the use of zero appeared in Brahmagupta's Brahmasputha Siddhanta: https://en.wikipedia.org/wiki/0
+63. It originated with the ancient Sumerians ... measuring time, angles: https://en.wikipedia.org/wiki/Sexagesimal
+64. named after the French mathematician Blaise Pascal: https://en.wikipedia.org/wiki/Pascal's_triangle
+65. The Millennium Prize Problems are seven ... in 2000: https://en.wikipedia.org/wiki/Millennium_Prize_Problems
+66. awarded annually by the king of Norway ... first in 2003: https://en.wikipedia.org/wiki/Abel_Prize
+67. 2014 Fields Medal ... becoming the first woman: https://en.wikipedia.org/wiki/Maryam_Mirzakhani
+68. Marinus Ghetaldus; Dubrovnik: https://hr.wikipedia.org/wiki/Marin_Getaldić
+69. https://hr.wikipedia.org/wiki/Pravokutni_trokut (states: pravi kut)
+70. https://hr.wikipedia.org/wiki/Rimski_brojevi (states: m, 1000)
+71. https://hr.wikipedia.org/wiki/Rimski_brojevi (states: d, 500)
+72. https://hr.wikipedia.org/wiki/Milijarda (states: 10, 9)
+73. https://en.wikipedia.org/wiki/Dozen (states: twelve)
+74. https://en.wikipedia.org/wiki/Octagon (states: eight-sided)
+75. https://hr.wikipedia.org/wiki/Jednakostrani%C4%8Dni_trokut (states: jednak)
+76. https://hr.wikipedia.org/wiki/Pravi_kut (states: 90)
+77. https://en.wikipedia.org/wiki/Turn_(angle) (states: 360)
+78. https://hr.wikipedia.org/wiki/Trokut (states: 180)
+79. https://hr.wikipedia.org/wiki/Polumjer (states: polovica promjera)
+80. https://en.wikipedia.org/wiki/Pi (states: ratio of a circle's circumference to its diameter)
+81. https://en.wikipedia.org/wiki/Pi (states: 3.14)
+82. https://hr.wikipedia.org/wiki/Mno%C5%BEenje (states: umnožak)
+83. https://hr.wikipedia.org/wiki/Zbrajanje (states: zbroj)
+84. izračun: 7 · 8 = 56
+85. izračun: 9 · 9 = 81
+86. izračun: 100 : 4 = 25
+87. izračun: 1/2 · 1/2 = 1/4
+88. izračun: 60 + 30 = 90
+89. izračun: 60 · 60 = 3600
+90. https://en.wikipedia.org/wiki/Hectare (states: the are was defined as 100 square metres)
+91. https://hr.wikipedia.org/wiki/Kocka (states: 8)
+92. https://hr.wikipedia.org/wiki/Kocka (states: 6)
+93. izračun: 1/3 ≈ 0,33 < 0,5
+94. izračun: 2 · 2 · 2 = 8
+95. izračun: 10 · 10 · 10 = 1000
+96. https://en.wikipedia.org/wiki/Number_of_the_beast (states: 666)
+97. https://en.wikipedia.org/wiki/Triskaidekaphobia (states: 13)
+98. https://en.wikipedia.org/wiki/42_(number) (states: hitchhiker's guide)
+99. https://hr.wikipedia.org/wiki/Pitagorin_pou%C4%8Dak (states: pitagor)
+100. https://hr.wikipedia.org/wiki/Trigonometrija (states: sinus)
+101. https://hr.wikipedia.org/wiki/Kugla (states: kugla)
+102. https://en.wikipedia.org/wiki/Square_pyramid (states: triangular)
+103. https://en.wikipedia.org/wiki/Palindromic_number (states: same when its digits are reversed)
+104. https://hr.wikipedia.org/wiki/Binarni_brojevni_sustav (states: 0, 1)
+105. https://en.wikipedia.org/wiki/Square_root (states: square root)
+106. izračun: 200 · 0,25 = 50
+107. izračun: 1000 : 100 = 10
+108. izračun: 6 · 7 = 42
+109. https://hr.wikipedia.org/wiki/Simetrija (states: simetri)
+110. https://hr.wikipedia.org/wiki/Postotak (states: %)
+111. https://en.wikipedia.org/wiki/Per_mille (states: per thousand)
+112. https://en.wikipedia.org/wiki/Square (states: four equal sides)
+113. https://en.wikipedia.org/wiki/Circular_sector (states: two radii and an arc)
