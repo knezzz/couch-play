@@ -148,6 +148,52 @@ void main() {
       expect(g.merge(g.groups[0].id, g.groups[1].id), isFalse, reason: 'revealed');
     });
 
+    test('a merge leaves a trace: the merged group keeps every distinct spelling and the reveal shows them', () {
+      final g = game(5);
+      g.answer(1, 'jabuka');
+      g.answer(2, 'Jabuka');
+      g.answer(3, 'Banana'); // the host's own lone answer, merged in
+      g.answer(4, 'kruška');
+      g.answer(5, 'kruška');
+      g.closeAnswering();
+      final a = g.groups.firstWhere((x) => x.text == 'jabuka').id;
+      final b = g.groups.firstWhere((x) => x.text == 'Banana').id;
+      g.merge(a, b);
+      final merged = g.groups.firstWhere((x) => x.members.contains(3));
+      expect(merged.texts, ['jabuka', 'Banana'], reason: 'jabuka/Jabuka are one spelling after folding');
+      g.finishMerge();
+      final shown = g.lastReveal!.groupOf(3)!;
+      expect(shown.texts, ['jabuka', 'Banana']);
+      expect(shown.members.toSet(), {1, 2, 3});
+    });
+
+    test('merging merged groups keeps all spellings once', () {
+      final g = game(6);
+      g.answer(1, 'a');
+      g.answer(2, 'b');
+      g.answer(3, 'c');
+      g.answer(4, 'A ');
+      g.closeAnswering();
+      int idOf(String t) => g.groups.firstWhere((x) => x.texts.contains(t)).id;
+      g.merge(idOf('b'), idOf('c'));
+      g.merge(idOf('a'), idOf('b'));
+      final all = g.groups.single.texts;
+      expect(all.toSet(), {'a', 'b', 'c'});
+      expect(all.length, 3);
+    });
+
+    test('the merge list is sorted by text, not by group size', () {
+      final g = game(6);
+      g.answer(1, 'zebra');
+      g.answer(2, 'zebra');
+      g.answer(3, 'zebra');
+      g.answer(4, 'mačka');
+      g.answer(5, 'ananas');
+      g.closeAnswering();
+      expect(g.mergeView.map((e) => e.text), ['ananas', 'mačka', 'zebra']);
+      expect(g.groups.first.text, 'zebra', reason: 'the reveal keeps the size order');
+    });
+
     test('the merge view shows answers only: the groups carry texts and ids, nothing says who wrote them', () {
       final g = game(3);
       g.answer(1, 'a');

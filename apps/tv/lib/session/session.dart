@@ -144,7 +144,10 @@ class Session {
     _changes.dispose();
   }
 
-  void _notify() => _changes.value++;
+  void _notify() {
+    _kaosvi?.refreshHost(); // a host change in the middle of the merge
+    _changes.value++;
+  }
 
   // --- who is here ---
 

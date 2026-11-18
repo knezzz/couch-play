@@ -10,7 +10,9 @@ import 'dart:math';
 ///    removed, surrounding spaces trimmed, runs of inner spaces collapsed
 ///    ("Jabuka" = "jabuka " = "JABUKA"; "ne znam" is not "neznam"). A group is
 ///    shown with the first writer's spelling.
-///  * The host may merge two groups (any number of times) before the reveal.
+///  * The host may merge two groups (any number of times) before the reveal. A
+///    merged group keeps EVERY distinct spelling, and the reveal shows them all.
+///    The host's merge list is sorted by text, not by size.
 ///  * Points: every player in the single largest group gets +1, but only if
 ///    that group has at least 2 players (one lone answerer is not a herd). A
 ///    tie for largest scores nobody. If exactly one player is alone with a
@@ -69,10 +71,17 @@ enum KaosviPhase { answering, merging, reveal, over }
 enum KaosviAnswerResult { ok, empty, tooLong, alreadySent, closed }
 
 class KaosviGroup {
-  KaosviGroup(this.id, this.text, this.members);
+  KaosviGroup(this.id, String text, this.members) : texts = [text];
   final int id;
-  String text;
+
+  /// Every distinct spelling that was merged into this group (distinct after
+  /// folding), the first one being the larger group's. The reveal shows all of
+  /// them, so a host merge is never invisible.
+  final List<String> texts;
   final List<int> members;
+
+  /// The main spelling.
+  String get text => texts.first;
 }
 
 /// What the host sees while merging: the answer text and an id to merge by;
@@ -188,8 +197,16 @@ class KaosviGame {
 
   List<KaosviGroup> get groups => List.unmodifiable(_groups);
 
-  /// Answers only, for the host's merge screen.
-  List<KaosviMergeItem> get mergeView => [for (final g in _groups) KaosviMergeItem(g.id, g.text)];
+  /// Answers only, for the host's merge screen. Sorted by text, NOT by size: the
+  /// order must not tell the host how big a group is.
+  List<KaosviMergeItem> get mergeView {
+    final items = [for (final g in _groups) KaosviMergeItem(g.id, g.texts.join(' · '))]
+      ..sort((a, b) {
+        final c = kaosviFold(a.text).compareTo(kaosviFold(b.text));
+        return c != 0 ? c : a.id.compareTo(b.id);
+      });
+    return items;
+  }
 
   /// The host merges two groups; the larger group's text stays.
   bool merge(int a, int b) {
@@ -198,6 +215,10 @@ class KaosviGame {
     if (ga == null || gb == null) return false;
     final keep = ga.members.length >= gb.members.length ? ga : gb, drop = identical(keep, ga) ? gb : ga;
     keep.members.addAll(drop.members);
+    final have = {for (final t in keep.texts) kaosviFold(t)};
+    for (final t in drop.texts) {
+      if (have.add(kaosviFold(t))) keep.texts.add(t);
+    }
     _groups.remove(drop);
     _sort();
     return true;

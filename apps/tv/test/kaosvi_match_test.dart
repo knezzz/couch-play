@@ -16,12 +16,12 @@ class _Sfx implements Sfx {
 }
 
 class Rig {
-  Rig({int n = 5, int questions = 3, int target = 8, int host = 1, int seed = 1}) {
+  Rig({int n = 5, int questions = 3, int target = 8, int host = 1, int seed = 1}) : _host = host {
     match = KaosviMatch(
       ids: [for (var i = 1; i <= n; i++) i],
       pack: pack(),
       settings: GameSettings(kaosviQuestions: questions, kaosviTarget: target),
-      hostId: () => host,
+      hostId: () => _host,
       send: (id, m) => (sent[id] ??= []).add(m),
       clock: () => at,
       random: Random(seed),
@@ -30,6 +30,8 @@ class Rig {
     )..start();
   }
   late final KaosviMatch match;
+  int _host;
+  void setHost(int id) => _host = id;
   final sent = <int, List<Message>>{};
   final played = <Sound>[];
   Map<int, int>? result;
@@ -247,6 +249,44 @@ void main() {
     final before = r.to(2).whereType<KaosviResult>().length;
     r.match.rejoin(2);
     expect(r.to(2).whereType<KaosviResult>().length, before + 1);
+    r.match.dispose();
+  });
+
+  testWidgets('a merged group shows every spelling at the reveal, and the host\'s list is sorted by text', (t) async {
+    final r = Rig();
+    r.answers(['zebra', 'zebra', 'zebra', 'Banana', 'ananas']);
+    final groups = r.to(1).whereType<KaosviMerging>().last.groups;
+    expect(groups.map((g) => g.text), ['ananas', 'Banana', 'zebra'], reason: 'by text, not by size');
+    r.match.onMerge(1, KaosviMerge(groups.firstWhere((g) => g.text == 'zebra').id, groups.firstWhere((g) => g.text == 'Banana').id));
+    expect(r.to(1).whereType<KaosviMerging>().last.groups.map((g) => g.text), ['ananas', 'zebra · Banana']);
+    r.match.onDone(1);
+    final shown = r.match.reveal!.groups.first;
+    expect(shown.texts, ['zebra', 'Banana']);
+    expect(shown.members.length, 4);
+    expect(r.to(4).whereType<KaosviResult>().single.answer, 'Banana', reason: 'a phone is told its OWN spelling');
+    r.match.dispose();
+  });
+
+  testWidgets('the host changes in the middle of the merge: the new host gets the groups, the old one an empty list', (t) async {
+    final r = Rig(n: 4);
+    r.answers(['a', 'b', 'c', 'd']);
+    expect(r.to(2).whereType<KaosviMerging>().last.groups, isEmpty);
+    r.setHost(2);
+    r.match.refreshHost();
+    expect(r.to(2).whereType<KaosviMerging>().last.groups.length, 4);
+    expect(r.to(2).whereType<KaosviMerging>().last.host, isTrue);
+    expect(r.to(1).whereType<KaosviMerging>().last.groups, isEmpty);
+    expect(r.to(1).whereType<KaosviMerging>().last.host, isFalse);
+    // the new host can merge; the old one cannot any more
+    final g = r.to(2).whereType<KaosviMerging>().last.groups;
+    r.match.onMerge(1, KaosviMerge(g[0].id, g[1].id));
+    expect(r.match.game.groups.length, 4);
+    r.match.onMerge(2, KaosviMerge(g[0].id, g[1].id));
+    expect(r.match.game.groups.length, 3);
+    // nothing is resent when the host did not change
+    final n = r.to(2).length, m = r.to(1).length;
+    r.match.refreshHost();
+    expect([r.to(2).length, r.to(1).length], [n, m]);
     r.match.dispose();
   });
 }

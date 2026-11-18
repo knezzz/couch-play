@@ -130,6 +130,7 @@ class KaosviMatch {
     game.closeAnswering();
     if (game.phase == KaosviPhase.reveal) return _toReveal(); // nobody answered
     stage = KaosviStageTv.merge;
+    _mergeHost = hostId();
     _stageEnd = clock() + mergeTime;
     _timer?.cancel();
     _timer = Timer(mergeTime, _endMerge);
@@ -140,6 +141,21 @@ class KaosviMatch {
   }
 
   // ---- the host's merge ----
+
+  int? _mergeHost;
+
+  /// The host may change in the middle of the merge (a phone dropped): the new
+  /// host gets the list, the old one an empty one. Call it whenever the host may
+  /// have changed.
+  void refreshHost() {
+    if (stage != KaosviStageTv.merge) return;
+    final h = hostId();
+    if (h == _mergeHost) return;
+    final old = _mergeHost;
+    _mergeHost = h;
+    if (old != null && ids.contains(old)) send(old, _mergingMsg(old));
+    if (h != null && ids.contains(h)) send(h, _mergingMsg(h));
+  }
 
   KaosviMerging _mergingMsg(int id) {
     final host = id == hostId();
@@ -184,7 +200,7 @@ class KaosviMatch {
     final g = r.groupOf(id);
     final largest = g != null && !r.largestTie && r.groups.isNotEmpty && identical(g, r.groups.first) && g.members.length >= 2;
     return KaosviResult(
-      answer: g?.text,
+      answer: game.answerOf(id), // the player's OWN spelling
       size: g?.members.length ?? 0,
       points: r.points[id] ?? 0,
       total: game.totals[id]!,
