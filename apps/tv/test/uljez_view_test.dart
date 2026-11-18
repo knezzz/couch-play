@@ -179,6 +179,26 @@ void main() {
     await _close(t, g);
   });
 
+  testWidgets('a kicked player (gone from the room) leaves the ring in the clues and the vote', (t) async {
+    _big(t);
+    final g = _Game(n: 6);
+    g.clues(1);
+    g.match.expel(3);
+    g.players.removeWhere((p) => p.id == 3); // the session drops a kicked player
+    await t.pumpWidget(g.view());
+    expect(find.byKey(const ValueKey('seat-3')), findsNothing, reason: 'no empty nameless seat');
+    for (final id in [1, 2, 4, 5, 6]) {
+      expect(find.byKey(ValueKey('seat-$id')), findsOneWidget);
+    }
+    for (final id in g.match.alive) {
+      g.match.onReady(id, const ReadyToVote(true));
+    }
+    await t.pumpWidget(g.view());
+    expect(g.match.phase, UljezPhase.vote);
+    expect(find.byKey(const ValueKey('seat-3')), findsNothing);
+    await _close(t, g);
+  });
+
   testWidgets('a caught impostor: the table shows the votes and who is being asked to guess, still no word', (t) async {
     _big(t);
     final g = _Game();

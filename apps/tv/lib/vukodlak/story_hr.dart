@@ -78,8 +78,8 @@ const Map<String, List<String>> storyHr = {
   'dayStarts': [
     'Seljani se okupljaju na trgu. Vrijeme je za razgovor.',
     'Sjednite oko zdenca i recite što ste vidjeli.',
-    'Dan je kratak, a sumnje duge. Raspravite!',
-    'Tko laže, a tko govori istinu? Selo ima malo vremena.',
+    'Dan je dug, a sumnje još duže. Raspravite!',
+    'Tko laže, a tko govori istinu? Selo čeka vaš sud.',
     'Pričajte, pitajte i gledajte se u oči.',
   ],
   'voteStarts': [

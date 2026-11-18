@@ -68,7 +68,8 @@ class _UljezViewState extends State<UljezView> {
     final impostors = phase == UljezPhase.over ? m.impostors : (phase == UljezPhase.guess && m.lastOut != null ? [m.lastOut!] : const <int>[]);
 
     final seats = [
-      for (final id in m.ids)
+      // A kicked player is gone from the room: no seat. A voted-out one stays, shown as out.
+      for (final id in m.ids.where((id) => _info(id) != null))
         UljezSeat(
           id: id,
           name: _name(id),
