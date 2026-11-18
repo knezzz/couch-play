@@ -57,16 +57,17 @@ class UljezFlow extends StatelessWidget {
 
   Widget? _wish() {
     final w = inbox.wish;
-    if (w == null || !w.open) return null;
     final t = inbox.turn;
+    final speaker = t != null && t.speaker == myId;
+    final open = w != null && w.open;
+    if (!speaker && !open) return null;
     return VoteWishBar(
-      ready: w.ready,
-      want: w.want,
-      needed: w.needed,
+      showWish: open,
+      ready: w?.ready ?? false,
+      want: w?.want ?? 0,
+      needed: w?.needed ?? 0,
       onWish: (on) => conn.send(ReadyToVote(on)),
-      onClue: t != null && t.speaker == myId
-          ? () => conn.send(const UljezDone())
-          : null,
+      onClue: speaker ? () => conn.send(const UljezDone()) : null,
     );
   }
 

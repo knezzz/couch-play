@@ -1005,9 +1005,10 @@ class VoteWishBar extends StatelessWidget {
     required this.want,
     required this.needed,
     required this.onWish,
+    this.showWish = true,
     this.onClue,
   });
-  final bool ready;
+  final bool ready, showWish;
   final int want, needed;
   final void Function(bool on) onWish;
 
@@ -1032,35 +1033,43 @@ class VoteWishBar extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          if (showWish) const SizedBox(height: 8),
         ],
-        SizedBox(
-          height: 64,
-          width: double.infinity,
-          child: ready
-              ? FilledButton(
-                  key: const ValueKey('vote-wish'),
-                  onPressed: () => onWish(false),
-                  child: const Text(
-                    Strings.letsVoteOn,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+        if (showWish) ...[
+          SizedBox(
+            height: 64,
+            width: double.infinity,
+            child: ready
+                ? FilledButton(
+                    key: const ValueKey('vote-wish'),
+                    onPressed: () => onWish(false),
+                    child: const Text(
+                      Strings.letsVoteOn,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  )
+                : OutlinedButton(
+                    key: const ValueKey('vote-wish'),
+                    onPressed: () => onWish(true),
+                    child: const Text(
+                      Strings.letsVote,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
-                )
-              : OutlinedButton(
-                  key: const ValueKey('vote-wish'),
-                  onPressed: () => onWish(true),
-                  child: const Text(
-                    Strings.letsVote,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                  ),
-                ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          Strings.wishCount(want, needed),
-          key: const ValueKey('wish-count'),
-          style: const TextStyle(fontSize: 18, color: _nightMuted),
-        ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            Strings.wishCount(want, needed),
+            key: const ValueKey('wish-count'),
+            style: const TextStyle(fontSize: 18, color: _nightMuted),
+          ),
+        ],
       ],
     ),
   );

@@ -343,12 +343,8 @@ void main() {
         c,
         const VoteWish(open: false, ready: false, want: 0, needed: 3),
       );
-      expect(find.byKey(const ValueKey('clue-done')), findsNothing);
-      await _send(
-        t,
-        c,
-        const VoteWish(open: true, ready: false, want: 0, needed: 3),
-      );
+      // Round 1: the speaker has Dao sam trag but no Idemo glasati.
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
       await t.tap(find.byKey(const ValueKey('clue-done')));
       expect(c.sent.last, const UljezDone());
       final o = await _app(t, me: 2);
