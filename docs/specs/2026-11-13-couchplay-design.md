@@ -212,7 +212,7 @@ the phones. Folk-game roles in our own words; no names or roles from Town of Sal
   a player who is out is not revealed; all roles are shown at the end.
 - **No fixed timers (user request, 2026-11-18):** the day discussion has no clock: every living player's phone has an
   **Idemo glasati** toggle (can be undone), the TV shows how many want to vote, and the vote starts when more than half
-  of the connected living players want it. The day vote ends when every connected living player has voted; the night
+  of the living players want it (connected or not; user answer, 2026-11-18). The day vote ends when every living player has voted (the host's kick moves on without someone who left); the night
   ends when every task is done (the 15 s minimum before lights go out stays: it hides roles, it is not a deadline).
   No day-discussion-time setting. Short TV story animations keep their own pace.
 - **Players see every possible role** (all switched on, not only those drawn) and what each does, on a phone screen.
@@ -232,10 +232,10 @@ A hidden-word party game in the "odd one out" genre, our own name and words. Ref
 - The word shows on the phone only while a finger is on the screen (as in Vukodlak).
 - Clues: in turn, each player says one clue out loud; the TV shows whose turn it is (players around a table). **No
   timers** (user request, 2026-11-18): the speaker taps **Dao sam trag** on their phone and the turn passes; a speaker
-  who drops out is skipped. Clue rounds repeat. From the end of round 1, every phone has an **Idemo glasati** toggle
-  (can be undone) and the TV shows how many want to vote; when more than half of the connected players want to vote,
+  who has left is skipped only after the host kicks them. Clue rounds repeat. From the end of round 1, every phone has an **Idemo glasati** toggle
+  (can be undone) and the TV shows how many want to vote; when more than half of the players still in the game want to vote (locked phones still count; user answer, 2026-11-18),
   the clues end and the vote on the phones starts. There is no separate timed discussion and no discussion-time
-  setting: people talk during the rounds. The vote ends when everyone connected has voted.
+  setting: people talk during the rounds. The vote ends when everyone still in the game has voted; to go on without someone, the host kicks them.
 - A caught impostor guesses the village's word from 4 options on their phone, with no timer; a right guess still wins.
 - Village wins by catching the impostor; the impostor by surviving the vote or guessing. Placement points as usual.
 - Word pairs in packs by theme (cartoons, food, animals, places, famous people…); the host picks the pack. Croatian.
