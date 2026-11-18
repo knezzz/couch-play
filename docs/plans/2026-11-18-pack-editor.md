@@ -111,19 +111,19 @@ HTML/JS.
 - Launch: `cd tool/pack_editor && fvm dart run bin/pack_editor.dart` prints the URL `http://localhost:8765` and opens
   it with `open`.
 
-- [ ] **Step 1: Write the failing test** `server_test.dart` against a server started on a temp repo copy, port 0:
+- [x] **Step 1: Write the failing test** `server_test.dart` against a server started on a temp repo copy, port 0:
   `GET /api/packs` lists `hr-oblici`; `POST` with a bad answer → 422 with the message; `POST` with an old stamp → 409;
   `GET /api/image/hr-oblici/../../pubspec.yaml` → 404.
-- [ ] **Step 2: Run** `fvm dart test test/server_test.dart` — expected: FAIL.
-- [ ] **Step 3: Implement** `bin/pack_editor.dart` (`startServer(String repoRoot, {int port = 8765})` returning the
+- [x] **Step 2: Run** `fvm dart test test/server_test.dart` — expected: FAIL.
+- [x] **Step 3: Implement** `bin/pack_editor.dart` (`startServer(String repoRoot, {int port = 8765})` returning the
   `HttpServer`; `main` takes an optional `--root <dir>`, default the repo root as `../..` from the package) and `web/index.html`: packs grouped by game
   in a sidebar; the selected pack's questions as editable rows (fields per game from the spec, quiz: 4 choices with a
   radio for the right one, picture shown when `image` is set; Koliko/Blef: a `source` box); delete per row; "Dodaj
   pitanje" at the end; "Spremi" shows the server's message, or "Paket se promijenio, učitaj ponovno" on 409. UI text
   in Croatian.
-- [ ] **Step 4: Run** `fvm dart test` — expected: all pass.
-- [ ] **Step 5: By hand (QA)**, with `--root` on a scratch copy of the repo's pack folders, not the real ones: start the editor,
+- [x] **Step 4: Run** `fvm dart test` — expected: all pass.
+- [x] **Step 5: By hand (QA)**, with `--root` on a scratch copy of the repo's pack folders, not the real ones: start the editor,
   open `hr-oblici`, `hr-fizika` (pictures), `objasni-hrana`, `hr-koliko-godine`, `uljez-hrana`; fix an answer, delete a
   question, add one, save; check the file diff and that the pack's zip opens in the TV tests. Screenshot the page.
-- [ ] **Step 6: Commit** `git commit -- tool/pack_editor/bin tool/pack_editor/web tool/pack_editor/test`
+- [x] **Step 6: Commit** `git commit -- tool/pack_editor/bin tool/pack_editor/web tool/pack_editor/test`
   (`feat(pack-editor): local server and page`).
