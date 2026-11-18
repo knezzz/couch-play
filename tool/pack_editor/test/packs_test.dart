@@ -32,6 +32,8 @@ setUp_() {
   }
 }
 
+bool _same(List<int> a, List<int> b) => a.length == b.length && Iterable.generate(a.length).every((i) => a[i] == b[i]);
+
 void main() {
   setUp(setUp_);
   tearDown(() => Directory(root).deleteSync(recursive: true));
@@ -45,6 +47,40 @@ void main() {
       expect(refs.where((r) => r.game == g), isNotEmpty, reason: g.name);
     }
     expect(refs.firstWhere((r) => r.id == 'hr-oblici').count, 50);
+  });
+
+  test('unedited_save_keeps_every_file_byte_identical', () {
+    final changed = <String>[];
+    for (final r in listPacks(root)) {
+      final p = loadPack(root, r.game, r.id);
+      final before = File(r.path).readAsBytesSync();
+      final res = savePack(root, r.game, r.id, p.json, p.stamp);
+      if (res is! SaveOk) {
+        changed.add('${r.game.name}/${r.id}: ${(res as SaveError).message}');
+      } else if (!_same(File(r.path).readAsBytesSync(), before)) {
+        changed.add('${r.game.name}/${r.id}');
+      }
+    }
+    expect(changed, isEmpty);
+  });
+
+  test('editing_one_question_changes_one_line', () {
+    final p = loadPack(root, Game.kviz, 'hr-oblici');
+    final before = read('tool/packs/hr-oblici/hr-oblici.json').split('\n');
+    (p.json['questions'] as List)[3]['answer'] = 0;
+    expect(savePack(root, Game.kviz, 'hr-oblici', p.json, p.stamp), isA<SaveOk>());
+    final after = read('tool/packs/hr-oblici/hr-oblici.json').split('\n');
+    expect(after, hasLength(before.length));
+    expect([for (var i = 0; i < after.length; i++) if (after[i] != before[i]) i], hasLength(1));
+  });
+
+  test('sources_skip_is_reported', () {
+    final p = loadPack(root, Game.kviz, 'hr-fizika');
+    final f = File('$root/tool/packs/hr-fizika.sources.md');
+    f.writeAsStringSync('${f.readAsStringSync()}\n999. extra\n');
+    (p.json['questions'] as List).removeAt(0);
+    final r = savePack(root, Game.kviz, 'hr-fizika', p.json, p.stamp, deleted: [1]);
+    expect((r as SaveOk).note, sourcesNote);
   });
 
   test('save_roundtrip_unchanged', () {

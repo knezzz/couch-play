@@ -35,9 +35,14 @@ sealed class SaveResult {
   const SaveResult();
 }
 
+const sourcesNote = 'izvori nisu prenumerirani';
+
 class SaveOk extends SaveResult {
-  const SaveOk(this.stamp);
+  const SaveOk(this.stamp, {this.note});
   final String stamp;
+
+  /// Something the page should show next to "saved"; null when all is as expected.
+  final String? note;
 }
 
 class SaveError extends SaveResult {
@@ -112,6 +117,27 @@ LoadedPack loadPack(String repoRoot, Game game, String id) {
   return LoadedPack(_ref(game, f), json, stamp);
 }
 
+/// JSON with ", " and ": " separators on one line.
+String _compact(Object? v) => switch (v) {
+      Map() => '{${v.entries.map((e) => '${jsonEncode(e.key)}: ${_compact(e.value)}').join(', ')}}',
+      List() => '[${v.map(_compact).join(', ')}]',
+      _ => jsonEncode(v),
+    };
+
+/// The files' own layout: top-level keys at 2 spaces, the list's items one per line at 4,
+/// each item compact, so an edit changes only the lines it touches.
+String encodePack(Game game, Map<String, dynamic> json, {bool trailingNewline = true}) {
+  final key = _listKey(game);
+  final lines = [
+    for (final e in json.entries)
+      if (e.key == key && e.value is List && (e.value as List).isNotEmpty)
+        '  ${jsonEncode(e.key)}: [\n${(e.value as List).map((i) => '    ${_compact(i)}').join(',\n')}\n  ]'
+      else
+        '  ${jsonEncode(e.key)}: ${_compact(e.value)}',
+  ];
+  return '{\n${lines.join(',\n')}\n}${trailingNewline ? '\n' : ''}';
+}
+
 void _copyDir(Directory from, Directory to) {
   to.createSync(recursive: true);
   for (final e in from.listSync()) {
@@ -163,7 +189,7 @@ SaveResult savePack(String repoRoot, Game game, String id, Map<String, dynamic> 
   if (json['id'] != id) return const SaveError('Oznaka paketa se ne smije mijenjati.');
 
   final original = file.readAsStringSync();
-  final text = '${const JsonEncoder.withIndent('  ').convert(json)}${original.endsWith('\n') ? '\n' : ''}';
+  final text = encodePack(game, json, trailingNewline: original.endsWith('\n'));
   final folder = path.endsWith('/$id/$id.json');
   final tmp = Directory.systemTemp.createTempSync('pack_editor');
   try {
@@ -189,6 +215,7 @@ SaveResult savePack(String repoRoot, Game game, String id, Map<String, dynamic> 
     }
 
     _atomicWrite(path, utf8.encode(text));
+    String? note;
     if (game == Game.kviz) {
       final out = Directory('$repoRoot/apps/tv/assets/packs')..createSync(recursive: true);
       _atomicWrite('${out.path}/$id.${folder ? 'zip' : 'json'}', zip ?? utf8.encode(text));
@@ -199,10 +226,12 @@ SaveResult savePack(String repoRoot, Game game, String id, Map<String, dynamic> 
         // Only when the numbered lines still match the pack one to one.
         if (RegExp(r'^\d+\. ', multiLine: true).allMatches(s).length == originalCount) {
           _atomicWrite(src.path, utf8.encode(renumberSources(s, deleted, added)));
+        } else {
+          note = sourcesNote;
         }
       }
     }
-    return SaveOk(_stamp(file));
+    return SaveOk(_stamp(file), note: note);
   } finally {
     tmp.deleteSync(recursive: true);
   }
