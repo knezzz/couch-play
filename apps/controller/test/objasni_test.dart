@@ -373,7 +373,7 @@ void main() {
       final c = await app(
         t,
         0,
-        lobby(0, s: const GameSettings(quizSeconds: 25, wolfDiscussion: 60)),
+        lobby(0, s: const GameSettings(quizSeconds: 25, curveCountdown: 60)),
       );
       for (var i = 0; i < 4; i++) {
         await t.drag(find.byType(PageView), const Offset(-320, 0));
@@ -389,12 +389,12 @@ void main() {
         lobby(
           0,
           sel: GameKind.objasni,
-          s: const GameSettings(quizSeconds: 25, wolfDiscussion: 60),
+          s: const GameSettings(quizSeconds: 25, curveCountdown: 60),
         ),
       );
       await t.tap(find.byKey(const ValueKey('objasni-seconds-90')));
       var s = (c.sent.last as SetSettings).settings;
-      expect((s.objasniSeconds, s.quizSeconds, s.wolfDiscussion), (90, 25, 60));
+      expect((s.objasniSeconds, s.quizSeconds, s.curveCountdown), (90, 25, 60));
       await t.tap(find.byKey(const ValueKey('objasni-target-50')));
       s = (c.sent.last as SetSettings).settings;
       expect(s.objasniTarget, 50);

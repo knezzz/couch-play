@@ -267,8 +267,8 @@ void main() {
         t,
         const GameSettings(
           quizSeconds: 25,
-          wolfDiscussion: 60,
-          uljezDiscussion: 120,
+          curveCountdown: 60,
+          kolikoSeconds: 120,
         ),
       );
       await t.ensureVisible(find.byKey(const ValueKey('uljez-pack')));
@@ -278,10 +278,7 @@ void main() {
       await t.pumpAndSettle();
       final s = (c.sent.last as SetSettings).settings;
       expect(s.uljezPackId, 'b');
-      expect(
-        (s.quizSeconds, s.wolfDiscussion, s.uljezDiscussion),
-        (25, 60, 120),
-      );
+      expect((s.quizSeconds, s.curveCountdown, s.kolikoSeconds), (25, 60, 120));
     });
 
     testWidgets('2 impostors (7-8 players) go out; no discussion row', (
@@ -306,7 +303,7 @@ void main() {
       (t) async {
         const s = GameSettings(
           uljezPackId: 'b',
-          uljezDiscussion: 150,
+          kolikoSeconds: 150,
           uljezImpostors: 2,
         );
         final c = await _app(t, me: 0);
@@ -314,7 +311,7 @@ void main() {
         await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
         var n = (c.sent.last as SetSettings).settings;
         expect(
-          (n.uljezPackId, n.uljezDiscussion, n.uljezImpostors),
+          (n.uljezPackId, n.kolikoSeconds, n.uljezImpostors),
           ('b', 150, 2),
         );
         await _send(t, c, _lobby(selected: GameKind.vukodlak, settings: s));
@@ -322,7 +319,7 @@ void main() {
         await t.tap(find.byKey(const ValueKey('hidden-roles')));
         n = (c.sent.last as SetSettings).settings;
         expect(
-          (n.uljezPackId, n.uljezDiscussion, n.uljezImpostors),
+          (n.uljezPackId, n.kolikoSeconds, n.uljezImpostors),
           ('b', 150, 2),
         );
       },

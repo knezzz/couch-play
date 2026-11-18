@@ -374,13 +374,13 @@ void main() {
     ) async {
       final c = await host(
         t,
-        const GameSettings(quizSeconds: 25, wolfDiscussion: 90),
+        const GameSettings(quizSeconds: 25, curveCountdown: 90),
       );
       await t.ensureVisible(find.byKey(const ValueKey('hidden-roles')));
       await t.tap(find.byKey(const ValueKey('hidden-roles')));
       final s = (c.sent.last as SetSettings).settings;
       expect(s.wolfHideRoles, isFalse);
-      expect((s.quizSeconds, s.wolfDiscussion), (25, 90));
+      expect((s.quizSeconds, s.curveCountdown), (25, 90));
     });
 
     testWidgets('a role switch keeps the other roles and the always-on two', (
@@ -423,14 +423,14 @@ void main() {
       final s = GameSettings(
         wolfRoles: {...GameSettings.defaultWolfRoles, WolfRole.mayor},
         wolfHideRoles: false,
-        wolfDiscussion: 60,
+        curveCountdown: 60,
       );
       final c = await _app(t, me: 0);
       await _send(t, c, _lobby(selected: GameKind.quiz, settings: s));
       await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
       final n = (c.sent.last as SetSettings).settings;
       expect(n.wolfRoles, s.wolfRoles);
-      expect((n.wolfHideRoles, n.wolfDiscussion), (false, 60));
+      expect((n.wolfHideRoles, n.curveCountdown), (false, 60));
     });
   });
 

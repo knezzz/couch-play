@@ -19,7 +19,7 @@ LobbyState _lobby({String? pack = 'a', int host = 0}) => LobbyState(
   hostId: host,
   packs: _packs,
   selected: GameKind.quiz,
-  settings: GameSettings(quizSeconds: 30, quizPackId: pack, wolfDiscussion: 60),
+  settings: GameSettings(quizSeconds: 30, quizPackId: pack, curveCountdown: 60),
   players: [for (var i = 0; i < 3; i++) PlayerInfo(i, 'P$i', i, true, 0)],
 );
 
@@ -102,7 +102,7 @@ void main() {
     await t.pumpAndSettle();
     final s = (c.sent.last as SetSettings).settings;
     expect(s.quizPackId, 'b');
-    expect((s.quizSeconds, s.wolfDiscussion), (30, 60));
+    expect((s.quizSeconds, s.curveCountdown), (30, 60));
     expect(find.text(Strings.play), findsOneWidget, reason: 'back on details');
     expect(find.byKey(const ValueKey('pack-b')), findsNothing);
   });

@@ -32,9 +32,7 @@ GameSettings copySettings(
   bool setQuizPack = false, // quizPackId may be set to null on purpose
   Set<WolfRole>? wolfRoles,
   bool? wolfHideRoles,
-  int? wolfDiscussion,
   String? uljezPackId,
-  int? uljezDiscussion,
   int? uljezImpostors,
   int? objasniSeconds,
   int? objasniTarget,
@@ -58,9 +56,7 @@ GameSettings copySettings(
   quizPackId: setQuizPack ? quizPackId : s.quizPackId,
   wolfRoles: wolfRoles ?? s.wolfRoles,
   wolfHideRoles: wolfHideRoles ?? s.wolfHideRoles,
-  wolfDiscussion: wolfDiscussion ?? s.wolfDiscussion,
   uljezPackId: uljezPackId ?? s.uljezPackId,
-  uljezDiscussion: uljezDiscussion ?? s.uljezDiscussion,
   uljezImpostors: uljezImpostors ?? s.uljezImpostors,
   objasniSeconds: objasniSeconds ?? s.objasniSeconds,
   objasniTarget: objasniTarget ?? s.objasniTarget,
@@ -223,11 +219,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
   GameSettings _withPack(GameSettings s, String? id) =>
       copySettings(s, quizPackId: id, setQuizPack: true);
 
-  GameSettings _wolf(
-    GameSettings s, {
-    Set<WolfRole>? roles,
-    bool? hide,
-  }) => copySettings(s, wolfRoles: roles, wolfHideRoles: hide);
+  GameSettings _wolf(GameSettings s, {Set<WolfRole>? roles, bool? hide}) =>
+      copySettings(s, wolfRoles: roles, wolfHideRoles: hide);
 
   /// Pushes a screen that follows the TV's latest LobbyState.
   void _pushLive(Widget Function(LobbyState l) build) {
