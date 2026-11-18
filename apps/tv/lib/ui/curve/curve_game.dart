@@ -172,6 +172,50 @@ class CurveGame extends FlameGame {
     return top.clamp(0.0, max(0.0, arenaH - textH));
   }
 
+  /// Where a name pill goes at the countdown: the first of above / below / right / left of the dot (the
+  /// arrow's side first excluded) that stays inside the arena (above the hint band) and covers neither the
+  /// dot nor the start arrow. [base] is the line width: the dot is 1.6 base, the arrow 8 base long.
+  static Rect nameRect(double x, double y, double heading, double base, double chipW, double chipH, double arenaW, double arenaH) {
+    final dotR = base * 1.6, gap = dotR + 14; // clear of the dot and the arrow shaft with air
+    final maxTop = max(0.0, arenaH - hintBand - chipH), maxLeft = max(0.0, arenaW - chipW);
+    Rect at(double l, double t) => Rect.fromLTWH(l.clamp(0.0, maxLeft).toDouble(), t.clamp(0.0, maxTop).toDouble(), chipW, chipH);
+    final centred = x - chipW / 2;
+    final up = sin(heading) < -0.5;
+    final candidates = [
+      if (up) at(centred, y + gap) else at(centred, y - gap - chipH),
+      if (up) at(centred, y - gap - chipH) else at(centred, y + gap),
+      at(x + dotR + gap, y - chipH / 2),
+      at(x - dotR - gap - chipW, y - chipH / 2),
+    ];
+    for (final r in candidates) {
+      if (!nameCoversStart(r, x, y, heading, base)) return r;
+    }
+    // Crowded (a corner, or the hint band in the way): look around the head, nearest first, for any clear place.
+    for (var d = dotR + gap; d <= 700; d += 16) {
+      for (var a = 0; a < 24; a++) {
+        final th = a * pi / 12;
+        final r = at(x + cos(th) * d - chipW / 2, y + sin(th) * d - chipH / 2);
+        if (!nameCoversStart(r, x, y, heading, base)) return r;
+      }
+    }
+    return candidates.first;
+  }
+
+  /// Does [r] touch the dot or the arrow (with a little air) of a head at [x], [y] facing [heading]?
+  static bool nameCoversStart(Rect r, double x, double y, double heading, double base) {
+    final dotR = base * 1.6, len = base * 8;
+    bool near(Offset c, double radius) {
+      final nx = c.dx.clamp(r.left, r.right), ny = c.dy.clamp(r.top, r.bottom);
+      return (c.dx - nx) * (c.dx - nx) + (c.dy - ny) * (c.dy - ny) < radius * radius;
+    }
+
+    if (near(Offset(x, y), dotR + 4)) return true;
+    for (var d = 0.25 * len; d <= len + 1e-9; d += len / 16) {
+      if (near(Offset(x + cos(heading) * d, y + sin(heading) * d), base * 1.6 + 4)) return true;
+    }
+    return false;
+  }
+
   /// The big faint number in the middle (TvCountdown).
   final _digits = <int, TextPainter>{};
   void _drawCountdownNumber(Canvas canvas, double w, double h) {
@@ -214,9 +258,9 @@ class CurveGame extends FlameGame {
     final chipH = faceSize + 2 * pad;
     final lead = face.isEmpty ? 0.0 : faceSize + between;
     final chipW = pad + lead + tp.width + tail;
-    final left = (x - chipW / 2).clamp(0.0, max(0.0, arenaW - chipW)).toDouble();
-    // The hint sits along the bottom: a name never goes into its band.
-    final top = nameTop(y, gap, chipH, heading, arenaH - hintBand);
+    // Never over the dot or the arrow (that is what the countdown is for), never into the hint band.
+    final rect = nameRect(x, y, heading, sim.config.lineWidth, chipW, chipH, arenaW, arenaH);
+    final left = rect.left, top = rect.top;
     canvas.drawRRect(RRect.fromLTRBR(left, top, left + chipW, top + chipH, Radius.circular(chipH / 2)),
         _icon..style = PaintingStyle.fill..color = const Color(0xFF1F1F2C));
     if (face.isNotEmpty) {

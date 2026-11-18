@@ -104,11 +104,32 @@ void main() {
     await t.runAsync(() async {
       for (final heading in [pi / 2, -pi / 2, 0.0]) {
         final g = _game();
-        g.sim.place(0, 800, 880, heading); // right at the bottom
+        g.sim.place(0, 800, 800, heading); // at the lowest start the sim gives (100 from the edge)
         final d = await _render(g);
         expect(_count(d, _pill, x0: 0, y0: 900 - 80, x1: 1600, y1: 900), 0, reason: 'heading $heading: the pill is clear of the hint band');
         expect(_count(d, _muted, x0: 0, y0: 800, x1: 1600, y1: 900), greaterThan(200), reason: 'the hint is still drawn');
       }
     });
+  });
+
+  test('the name pill never covers a head or its arrow, whatever the start, and stays in the arena above the hint band', () {
+    const base = 5.0; // the line width
+    for (final chipW in [150.0, 300.0, 420.0]) {
+      // The sim starts heads at least 100 units from every edge.
+      for (final x in [100.0, 400.0, 800.0, 1200.0, 1500.0]) {
+        for (final y in [100.0, 450.0, 700.0, 780.0, 800.0]) {
+          for (var k = 0; k < 8; k++) {
+            final heading = k * pi / 4;
+            final r = CurveGame.nameRect(x, y, heading, base, chipW, 68, 1600, 900);
+            final why = 'head ($x, $y) heading $heading chip $chipW: $r';
+            expect(CurveGame.nameCoversStart(r, x, y, heading, base), isFalse, reason: 'covers the dot or arrow: $why');
+            expect(r.left, greaterThanOrEqualTo(0), reason: why);
+            expect(r.right, lessThanOrEqualTo(1600), reason: why);
+            expect(r.top, greaterThanOrEqualTo(0), reason: why);
+            expect(r.bottom, lessThanOrEqualTo(900 - CurveGame.hintBand + 1e-6), reason: 'into the hint band: $why');
+          }
+        }
+      }
+    }
   });
 }
