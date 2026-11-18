@@ -32,8 +32,10 @@ HTML/JS.
 
 ## Review Focus
 
-1. Deleting below a game's minimum (quiz 30 per the bundled test; Koliko 15 in the parser): save must be refused with
-   the message, not written.
+1. Any save the TV pack tests would fail (`apps/tv/test/*pack*_test.dart`: per-game minimums such as quiz/Koliko/Blef
+   30, Uljez 40, Kao svi 60; Blef sources as links; repeated questions) must be refused with the message, not
+   written. The tests' rules win over the parsers' looser minimums. (Changed 2026-11-18 after review: it said only
+   the parser minimums.)
 2. A file changed on disk after load (couchplay content seats): save refused with "reload", file untouched.
 3. Croatian letters and quotes in text (č ć đ š ž, „ “): round-trip byte-for-byte unchanged when not edited.
 4. A quiz pack with pictures: saving keeps `image` and the zip still contains its `img/`/`shapes/` files.
