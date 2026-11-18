@@ -260,7 +260,6 @@ void main() {
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.tkobiOffPacks, {'l'});
-      expect(s.tkobiPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.tkobi, null));
     });

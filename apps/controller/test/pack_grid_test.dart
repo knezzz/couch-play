@@ -127,7 +127,6 @@ void main() {
     await t.pumpAndSettle();
     final s = (c.sent.last as SetSettings).settings;
     expect(s.quizOffPacks, {'b'});
-    expect(s.quizPackId, isNull);
     expect((s.quizSeconds, s.curveCountdown), (30, 60));
     expect(find.byKey(const ValueKey('pack-b')), findsOneWidget);
   });

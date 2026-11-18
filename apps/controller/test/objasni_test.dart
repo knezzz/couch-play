@@ -402,7 +402,6 @@ void main() {
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.objasniOffPacks, {'b'});
-      expect(s.objasniPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.objasni, null));
     });

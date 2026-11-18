@@ -425,7 +425,6 @@ void main() {
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.kolikoOffPacks, {'l'});
-      expect(s.kolikoPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.koliko, null));
     });

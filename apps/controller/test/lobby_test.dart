@@ -146,7 +146,6 @@ void main() {
     await t.pumpAndSettle();
     final sent = (c.sent.last as SetSettings).settings;
     expect(sent.quizOffPacks, {'b'});
-    expect(sent.quizPackId, isNull);
     expect(sent.quizSeconds, 30);
     await t.tap(find.byKey(const ValueKey('packs-back')));
     await t.pumpAndSettle();
@@ -635,11 +634,11 @@ void settingsTests() {
     testWidgets('a stepper keeps the chosen quiz pack', (t) async {
       final c = await open(
         t,
-        const GameSettings(quizPackId: 'b'),
+        const GameSettings(quizOffPacks: {'b'}),
         GameKind.quiz,
       );
       await tapTip(t, Strings.moreOf(Strings.quizSeconds));
-      expect((c.sent.last as SetSettings).settings.quizPackId, 'b');
+      expect((c.sent.last as SetSettings).settings.quizOffPacks, {'b'});
     });
 
     testWidgets('the Curve pause sends; a mode pick sends the rest along', (

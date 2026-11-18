@@ -267,8 +267,6 @@ void main() {
         t,
         const GameSettings(
           quizSeconds: 25,
-          uljezPackId:
-              'a', // the old single pick: the TV would read it as 'only a'
           curveCountdown: 60,
           kolikoSeconds: 120,
         ),
@@ -278,7 +276,6 @@ void main() {
       await t.pumpAndSettle();
       final s = (c.sent.last as SetSettings).settings;
       expect(s.uljezOffPacks, {'b'});
-      expect(s.uljezPackId, isNull);
       expect((s.quizSeconds, s.curveCountdown, s.kolikoSeconds), (25, 60, 120));
     });
 
@@ -343,7 +340,7 @@ void main() {
       'a quiz stepper and a Vukodlak switch keep the Uljez settings',
       (t) async {
         const s = GameSettings(
-          uljezPackId: 'b',
+          uljezOffPacks: {'b'},
           kolikoSeconds: 150,
           uljezImpostors: 2,
         );
@@ -351,18 +348,14 @@ void main() {
         await _send(t, c, _lobby(selected: GameKind.quiz, settings: s));
         await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
         var n = (c.sent.last as SetSettings).settings;
-        expect(
-          (n.uljezPackId, n.kolikoSeconds, n.uljezImpostors),
-          ('b', 150, 2),
-        );
+        expect((n.kolikoSeconds, n.uljezImpostors), (150, 2));
+        expect(n.uljezOffPacks, {'b'});
         await _send(t, c, _lobby(selected: GameKind.vukodlak, settings: s));
         await t.ensureVisible(find.byKey(const ValueKey('hidden-roles')));
         await t.tap(find.byKey(const ValueKey('hidden-roles')));
         n = (c.sent.last as SetSettings).settings;
-        expect(
-          (n.uljezPackId, n.kolikoSeconds, n.uljezImpostors),
-          ('b', 150, 2),
-        );
+        expect((n.kolikoSeconds, n.uljezImpostors), (150, 2));
+        expect(n.uljezOffPacks, {'b'});
       },
     );
   });

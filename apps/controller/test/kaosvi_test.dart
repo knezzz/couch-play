@@ -404,7 +404,6 @@ void main() {
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.kaosviOffPacks, {'h'});
-      expect(s.kaosviPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.kaosvi, null));
     });
@@ -419,16 +418,14 @@ void main() {
           s: const GameSettings(
             kaosviQuestions: 16,
             kaosviTarget: 10,
-            kaosviPackId: 'h',
+            kaosviOffPacks: {'h'},
           ),
         ),
       );
       await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
       final n = (c.sent.last as SetSettings).settings;
-      expect(
-        (n.kaosviQuestions, n.kaosviTarget, n.kaosviPackId),
-        (16, 10, 'h'),
-      );
+      expect((n.kaosviQuestions, n.kaosviTarget), (16, 10));
+      expect(n.kaosviOffPacks, {'h'});
     });
   });
 }

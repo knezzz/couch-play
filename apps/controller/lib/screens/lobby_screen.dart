@@ -28,27 +28,19 @@ GameSettings copySettings(
   int? revealSeconds,
   int? curveCountdown,
   CurveMode? curveMode,
-  String? quizPackId,
-  bool setQuizPack = false, // quizPackId may be set to null on purpose
   Set<WolfRole>? wolfRoles,
   bool? wolfHideRoles,
-  String? uljezPackId,
   int? uljezImpostors,
   int? objasniSeconds,
   int? objasniTarget,
-  String? objasniPackId,
   int? kolikoSeconds,
   int? kolikoQuestions,
-  String? kolikoPackId,
   int? blefQuestions,
-  String? blefPackId,
   int? tkobiPrompts,
-  String? tkobiPackId,
   int? kaosviQuestions,
   int? kaosviTarget,
-  String? kaosviPackId,
-  // Replace one game's switched-off packs (and drop its old single pack id,
-  // which the TV would turn into 'only that pack').
+  // Replace one game's switched-off packs. The old single pack ids are never
+  // sent (null): the TV would turn one into 'only that pack'.
   GameKind? offFor,
   Set<String>? off,
 }) => GameSettings(
@@ -57,32 +49,17 @@ GameSettings copySettings(
   revealSeconds: revealSeconds ?? s.revealSeconds,
   curveCountdown: curveCountdown ?? s.curveCountdown,
   curveMode: curveMode ?? s.curveMode,
-  quizPackId: offFor == GameKind.quiz
-      ? null
-      : (setQuizPack ? quizPackId : s.quizPackId),
   wolfRoles: wolfRoles ?? s.wolfRoles,
   wolfHideRoles: wolfHideRoles ?? s.wolfHideRoles,
-  uljezPackId: offFor == GameKind.uljez ? null : (uljezPackId ?? s.uljezPackId),
   uljezImpostors: uljezImpostors ?? s.uljezImpostors,
   objasniSeconds: objasniSeconds ?? s.objasniSeconds,
   objasniTarget: objasniTarget ?? s.objasniTarget,
-  objasniPackId: offFor == GameKind.objasni
-      ? null
-      : (objasniPackId ?? s.objasniPackId),
   kolikoSeconds: kolikoSeconds ?? s.kolikoSeconds,
   kolikoQuestions: kolikoQuestions ?? s.kolikoQuestions,
-  kolikoPackId: offFor == GameKind.koliko
-      ? null
-      : (kolikoPackId ?? s.kolikoPackId),
   blefQuestions: blefQuestions ?? s.blefQuestions,
-  blefPackId: offFor == GameKind.blef ? null : (blefPackId ?? s.blefPackId),
   tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
-  tkobiPackId: offFor == GameKind.tkobi ? null : (tkobiPackId ?? s.tkobiPackId),
   kaosviQuestions: kaosviQuestions ?? s.kaosviQuestions,
   kaosviTarget: kaosviTarget ?? s.kaosviTarget,
-  kaosviPackId: offFor == GameKind.kaosvi
-      ? null
-      : (kaosviPackId ?? s.kaosviPackId),
   quizOffPacks: offFor == GameKind.quiz ? off! : s.quizOffPacks,
   uljezOffPacks: offFor == GameKind.uljez ? off! : s.uljezOffPacks,
   objasniOffPacks: offFor == GameKind.objasni ? off! : s.objasniOffPacks,

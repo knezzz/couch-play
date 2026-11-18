@@ -391,7 +391,6 @@ void main() {
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.blefOffPacks, {'c'});
-      expect(s.blefPackId, isNull);
       await t.tap(find.text(Strings.play));
       expect(c.sent.last, const StartGame(GameKind.blef, null));
     });
