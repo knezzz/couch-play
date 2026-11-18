@@ -193,5 +193,30 @@ void main() {
       await t.pumpAndSettle();
       expect(c.sent.last, const Kick(2));
     });
+
+    testWidgets('night closes an open kick list and an open confirm', (
+      t,
+    ) async {
+      final c = await _app(t, 0);
+      await _send(t, c, _role);
+      await _send(t, c, const Morning(1, 'Nitko nije umro.'));
+      await t.tap(find.byKey(_bar));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('kick-2')), findsOneWidget);
+      await _send(t, c, _night());
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('kick-2')), findsNothing);
+      // The confirm too.
+      await _send(t, c, const Morning(2, 'Nitko nije umro.'));
+      await t.tap(find.byKey(_bar));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('kick-2')));
+      await t.pumpAndSettle();
+      expect(find.text(Strings.remove), findsOneWidget);
+      await _send(t, c, _night());
+      await t.pumpAndSettle();
+      expect(find.text(Strings.remove), findsNothing);
+      expect(c.sent.whereType<Kick>(), isEmpty);
+    });
   });
 }

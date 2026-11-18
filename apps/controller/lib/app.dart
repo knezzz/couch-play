@@ -227,7 +227,10 @@ class _AppState extends State<App> {
     });
     // A grid, a roles list or a sheet the host left open must not stay on top
     // of a game the TV just started.
-    if (before == _Screen.lobby && _screen != _Screen.lobby) {
+    // The host's kick list or confirm, opened by day, must not outlive the
+    // day: its Ukloni would still send a Kick at night.
+    if ((before == _Screen.lobby && _screen != _Screen.lobby) ||
+        m is NightPrompt) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _nav.currentState?.popUntil((r) => r.isFirst),
       );
