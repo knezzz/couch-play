@@ -630,7 +630,22 @@ class Session {
       peer.send(const ErrorMsg(Strings.cannotKickSelf));
       return;
     }
+    _kickPlayer(target);
+  }
+
+  /// The TV remote's kick (Back menu, "Izbaci igrača"): the same as the host
+  /// phone's, for any player, the host included (the next player becomes host).
+  /// False if there is no such player.
+  bool kickFromTv(int playerId) {
+    final target = _byId(playerId);
+    if (target == null) return false;
+    _kickPlayer(target);
+    return true;
+  }
+
+  void _kickPlayer(Player target) {
     final socket = target.socket;
+    final wasHost = target.id == hostId;
     _wolf?.expel(target.id); // out of a running Vukodlak now
     _uljez?.expel(target.id); // and of a running Uljez
     _objasni?.setAway(target.id, true); // and Objasni counts it as gone
@@ -639,6 +654,7 @@ class Session {
     _tkobi?.setAway(target.id, true);
     _kaosvi?.setAway(target.id, true);
     _remove(target); // bots can be kicked too
+    if (wasHost) _keepGameHost();
     socket?.send(const Kicked());
     socket?.close();
     if (_phase == Phase.lobby) _broadcastLobby();
