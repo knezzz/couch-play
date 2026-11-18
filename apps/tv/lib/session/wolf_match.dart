@@ -5,6 +5,7 @@ import 'package:core/core.dart';
 import 'package:flutter/foundation.dart';
 
 import '../sound/sfx.dart';
+import 'vote_wish.dart';
 import 'wolf_text.dart';
 
 enum WolfStage { night, dawn, farewell, day, vote, over }
@@ -48,14 +49,14 @@ class WolfMatch {
   final void Function()? notify;
   final void Function(WolfWinner winner)? onOver;
 
-  /// How long the night waits for the slowest phone.
-  static const nightMax = Duration(seconds: 60);
+  /// Nobody connected this long: the match is given up (no phase waiting on
+  /// players has a clock, so the TV would wait forever).
+  static const emptyHold = Duration(minutes: 2);
 
   /// No light goes out in the first 15 s of the night (the person's choice).
   static const lightsHold = Duration(seconds: 15);
   static const dawnPause = Duration(seconds: 3);
   static const farewellTime = Duration(seconds: 15);
-  static const voteTime = Duration(seconds: 30);
 
   /// The rules. Not for the TV to display from: it holds every role and vote.
   @visibleForTesting
@@ -64,6 +65,20 @@ class WolfMatch {
   Duration _stageEnd = Duration.zero;
   Timer? _timer;
   Timer? _lightTimer;
+  Timer? _emptyTimer;
+  final _away = <int>{};
+  final _wish = WishBox();
+
+  /// Called once when nobody has been connected for [emptyHold].
+  void Function()? onAbandon;
+
+  /// Connected players still in: the ones waited for and counted.
+  List<int> get present => [for (final i in game.alive) if (!_away.contains(i)) i];
+
+  /// "Idemo glasati", by day only: wishes of the connected living players.
+  bool get wishOpen => stage == WolfStage.day;
+  int get wishCount => wishOpen ? _wish.want(present) : 0;
+  int get wishNeeded => WishBox.needed(present.length);
 
   /// Story events for the TV, in order. Args hold player ids.
   final List<WolfEvent> story = [];
@@ -128,6 +143,7 @@ class WolfMatch {
   void dispose() {
     _timer?.cancel();
     _lightTimer?.cancel();
+    _emptyTimer?.cancel();
   }
 
   void _sendRole(int id) => send(
@@ -140,8 +156,7 @@ class WolfMatch {
   void _beginNight() {
     sfx.play(Sound.nightAmbience);
     story.add(game.night == 1 ? const WolfEvent('firstNight') : WolfEvent('nightFalls', {'night': game.night}));
-    _setStage(WolfStage.night, nightMax);
-    _timer = Timer(nightMax, _endNight);
+    _setStage(WolfStage.night, Duration.zero); // no clock: it ends when every task is done
     _prompts.clear();
     _nightIds = alive;
     for (final id in alive) {
@@ -158,6 +173,15 @@ class WolfMatch {
     });
     _sendPrompts();
     notify?.call();
+    _checkEmpty();
+    _checkNightDone();
+  }
+
+  /// The night ends when every connected living player has finished (a phone
+  /// that is away is not waited for). The 15 s of [lightsHold] only hides who
+  /// is done; it is not a deadline.
+  void _checkNightDone() {
+    if (stage == WolfStage.night && present.isNotEmpty && present.every(game.hasPicked)) _endNight();
   }
 
   /// The one place that decides what the TV is told is done (see [lit]). A
@@ -254,7 +278,7 @@ class WolfMatch {
     _refreshShown();
     _sendPrompts();
     notify?.call();
-    if (game.nightComplete) _endNight();
+    _checkNightDone();
   }
 
   void _endNight() {
@@ -349,8 +373,34 @@ class WolfMatch {
 
   void _beginDay() {
     story.add(WolfEvent('dayStarts', {'day': day}));
-    _setStage(WolfStage.day, Duration(seconds: settings.wolfDiscussion));
-    _timer = Timer(Duration(seconds: settings.wolfDiscussion), _beginVote);
+    _setStage(WolfStage.day, Duration.zero); // no clock: the players decide
+    _wish.clear();
+    _sendWishes();
+    _checkEmpty();
+    notify?.call();
+  }
+
+  VoteWish _wishMsg(int id) =>
+      VoteWish(open: true, ready: _wish.has(id), want: wishCount, needed: wishNeeded);
+
+  void _sendWishes() {
+    if (!wishOpen) return;
+    for (final id in present) {
+      send(id, _wishMsg(id));
+    }
+  }
+
+  /// A phone's "Idemo glasati" wish: only by day, only from the living.
+  void onReady(int id, ReadyToVote m) {
+    if (!wishOpen || !game.isAlive(id)) return;
+    _wish.set(id, m.on);
+    _afterWishChange();
+  }
+
+  void _afterWishChange() {
+    if (!wishOpen) return;
+    if (_wish.majority(present)) return _beginVote();
+    _sendWishes();
     notify?.call();
   }
 
@@ -358,14 +408,23 @@ class WolfMatch {
     game.startVote();
     sfx.play(Sound.voteBell);
     story.add(const WolfEvent('voteStarts'));
-    _setStage(WolfStage.vote, voteTime);
+    _setStage(WolfStage.vote, Duration.zero); // ends when every connected living player has voted
     _voted.clear();
+    _wish.clear();
     _voteIds = alive;
-    _timer = Timer(voteTime, _endVote);
     for (final id in alive) {
-      send(id, VotePrompt(day: day, seconds: voteTime.inSeconds, ids: _voteIds, canVote: game.canVote(id)));
+      send(id, VotePrompt(day: day, seconds: 0, ids: _voteIds, canVote: game.canVote(id)));
     }
     notify?.call();
+    _checkEmpty();
+    _checkVoteDone();
+  }
+
+  /// Everyone connected who may vote has voted (the away are not waited for).
+  void _checkVoteDone() {
+    if (stage != WolfStage.vote) return;
+    final voters = present.where(game.canVote).toList();
+    if (voters.isNotEmpty && voters.every(_voted.contains)) _endVote();
   }
 
   void onVote(int id, Vote m) {
@@ -373,7 +432,7 @@ class WolfMatch {
     if (!game.vote(id, m.target)) return;
     _voted.add(id);
     notify?.call();
-    if (game.voteComplete) _endVote();
+    _checkVoteDone();
   }
 
   void _endVote() {
@@ -400,6 +459,7 @@ class WolfMatch {
   void _finish() {
     _timer?.cancel();
     _lightTimer?.cancel();
+    _emptyTimer?.cancel();
     stage = WolfStage.over;
     story.add(const WolfEvent('endReveal'));
     final end = WolfEnd(game.winner!, {for (final id in ids) id: game.roleOf(id)});
@@ -428,9 +488,34 @@ class WolfMatch {
       if (d.id != id) send(d.id, const Waiting(WolfText.out));
     }
     if (game.winner != null) return _finish();
-    if (stage == WolfStage.night && game.nightComplete) _endNight();
-    if (stage == WolfStage.vote && game.voteComplete) _endVote();
+    _wish.set(id, false);
+    _checkNightDone();
+    _checkVoteDone();
+    _afterWishChange();
+    _checkEmpty();
     notify?.call();
+  }
+
+  // ---- phones leaving and coming back ----
+
+  /// [id] lost its connection (or came back). The away are not waited for at
+  /// night or at the vote, and the majority is counted without them. Their
+  /// wish stays set and counts again if they return.
+  void setAway(int id, bool away) {
+    if (!ids.contains(id) || stage == WolfStage.over) return;
+    if (away ? !_away.add(id) : !_away.remove(id)) return;
+    _checkNightDone();
+    _checkVoteDone();
+    _afterWishChange();
+    _checkEmpty();
+    notify?.call();
+  }
+
+  void _checkEmpty() {
+    _emptyTimer?.cancel();
+    _emptyTimer = null;
+    final waiting = stage == WolfStage.night || stage == WolfStage.day || stage == WolfStage.vote;
+    if (waiting && present.isEmpty) _emptyTimer = Timer(emptyHold, () => onAbandon?.call());
   }
 
   // ---- reconnect: a phone gets only its own state ----
@@ -447,9 +532,10 @@ class WolfMatch {
     } else if (stage == WolfStage.night) {
       send(id, _prompt(id));
     } else if (stage == WolfStage.vote) {
-      send(id, VotePrompt(day: day, seconds: remaining.inSeconds, ids: _voteIds, canVote: game.canVote(id), picked: game.voteOf(id)));
+      send(id, VotePrompt(day: day, seconds: 0, ids: _voteIds, canVote: game.canVote(id), picked: game.voteOf(id)));
     } else if (_morning.containsKey(id)) {
       send(id, Morning(day, _morning[id]!));
+      if (stage == WolfStage.day) send(id, _wishMsg(id));
     }
   }
 }

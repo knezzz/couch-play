@@ -104,13 +104,31 @@ void main() {
     s.dispose();
   });
 
+  /// Round 1 by the speakers' phones, then everyone says "Idemo glasati".
+  void toVote() {
+    final u = s.uljez!;
+    for (var i = 0; i < ps.length; i++) {
+      final speaker = u.speaker!;
+      ps.firstWhere((p) => p.sent.whereType<Welcome>().first.playerId == speaker).say(const UljezDone());
+    }
+    for (final p in ps) {
+      p.say(const ReadyToVote(true));
+    }
+  }
+
   testWidgets('a game ends with placement points, the results, and back to the lobby', (t) async {
     setUpSession(4);
     ps[0].say(const StartGame(GameKind.uljez, null));
     final u = s.uljez!;
-    await t.pump(const Duration(seconds: 20 * 8 + 90));
+    await t.pump(const Duration(minutes: 30));
+    expect(u.phase, UljezPhase.clues, reason: 'no clock ends the clues');
+    toVote();
     expect(u.phase, UljezPhase.vote);
-    await t.pump(const Duration(seconds: 30));
+    await t.pump(const Duration(minutes: 30));
+    expect(u.phase, UljezPhase.vote);
+    for (final p in ps) {
+      p.say(const Vote(null));
+    }
     expect(s.phase, Phase.uljez, reason: 'the end screen with both words first');
     expect(u.phase, UljezPhase.over);
     expect(ps[1].sent.whereType<UljezEnd>(), isNotEmpty);
@@ -128,22 +146,31 @@ void main() {
     s.dispose();
   });
 
-  testWidgets('votes and the guess arrive as the sending phone\'s own player', (t) async {
+  testWidgets('Dao sam trag and Idemo glasati come from the sending phone; a closed phone is skipped; nobody left gives up', (t) async {
     setUpSession(4);
     ps[0].say(const StartGame(GameKind.uljez, null));
     final u = s.uljez!;
     int idOf(FakePeer p) => p.sent.whereType<Welcome>().first.playerId;
-    await t.pump(const Duration(seconds: 20 * 8 + 90));
-    final imp = [for (final p in ps) if (u.game.isImpostor(idOf(p))) p].single;
+    FakePeer phone(int id) => ps.firstWhere((p) => idOf(p) == id);
+    final first = u.speaker!;
+    final other = ps.firstWhere((p) => idOf(p) != first);
+    other.say(const UljezDone());
+    expect(u.speaker, first, reason: 'only the speaker\'s phone passes the turn');
+    phone(first).say(const UljezDone());
+    expect(u.speaker, u.order[1]);
+    phone(u.speaker!).close(); // the speaker drops
+    await t.pump();
+    expect(u.speaker, u.order[2], reason: 'a dropped speaker is skipped');
+    final back = join(s, 'P${ps.indexOf(phone(u.order[1]))}', token: 't${ps.indexOf(phone(u.order[1]))}');
+    expect(back.sent.whereType<UljezWord>(), isNotEmpty);
+    expect(back.sent.whereType<VoteWish>(), isNotEmpty, reason: 'a rejoin gets the wish state');
+    expect(u.speaker, u.order[2], reason: 'back, but it is not their turn');
     for (final p in ps) {
-      if (p != imp) p.say(Vote(idOf(imp)));
+      p.close();
     }
-    expect(u.game.votes[idOf(ps[1])] ?? u.game.votes[idOf(ps[2])], idOf(imp));
-    expect(u.game.votes.keys.toSet(), {for (final p in ps) if (p != imp) idOf(p)});
-    imp.say(const Vote(null));
-    expect(u.phase, UljezPhase.guess);
-    imp.say(Guess(u.game.rightGuess));
-    expect(u.winner, UljezWinner.impostors);
+    back.close();
+    await t.pump(const Duration(minutes: 2, seconds: 1));
+    expect(s.phase, Phase.lobby);
     s.dispose();
   });
 

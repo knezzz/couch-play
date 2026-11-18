@@ -46,6 +46,7 @@ class UljezPack {
   }
 }
 
+/// [discussion] is no longer used (kept so older screens compile).
 enum UljezPhase { clues, discussion, vote, guess, over }
 
 enum UljezWinner { village, impostors }
@@ -106,16 +107,19 @@ class UljezGame {
   int? get speaker => phase == UljezPhase.clues ? order[turn % order.length] : null;
   int get round => turn ~/ order.length + 1;
 
+  /// The next speaker. Rounds repeat until the vote starts (no clock).
   void nextTurn() {
     if (phase != UljezPhase.clues) return;
     turn++;
-    if (turn >= order.length * 2) phase = UljezPhase.discussion;
   }
+
+  /// "Idemo glasati" opens at the end of round 1.
+  bool get voteMayStart => phase == UljezPhase.clues && turn >= order.length;
 
   // ---- vote ----
 
   void startVote() {
-    if (phase != UljezPhase.discussion) throw StateError('not the discussion');
+    if (!voteMayStart) throw StateError('not after round 1');
     _beginVote();
   }
 
@@ -206,7 +210,7 @@ class UljezGame {
     return true;
   }
 
-  /// Ends the guess (the 15 s ran out, or the guess came in).
+  /// Ends the guess (the guess came in, or the guesser is gone).
   void resolveGuess() {
     if (phase != UljezPhase.guess) return;
     guessedRight = _guess == rightGuess;

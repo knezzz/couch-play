@@ -261,6 +261,14 @@ class Session {
       case Guess():
         final p = _playerOf(peer);
         if (p != null) _uljez?.onGuess(p.id, m);
+      case UljezDone():
+        final p = _playerOf(peer);
+        if (p != null) _uljez?.onDone(p.id);
+      case ReadyToVote():
+        final p = _playerOf(peer);
+        if (p == null) break;
+        _wolf?.onReady(p.id, m);
+        _uljez?.onReady(p.id, m);
       case KaosviAnswer():
         final p = _playerOf(peer);
         if (p != null) _kaosvi?.onAnswer(p.id, m);
@@ -370,12 +378,14 @@ class Session {
       case Phase.wolf:
         // Only that player's own state again; an outsider just waits.
         if (_wolf?.ids.contains(p.id) == true) {
+          _wolf!.setAway(p.id, false);
           _wolf!.rejoin(p.id);
         } else {
           peer.send(_waiting);
         }
       case Phase.uljez:
         if (_uljez?.ids.contains(p.id) == true) {
+          _uljez!.setAway(p.id, false);
           _uljez!.rejoin(p.id);
         } else {
           peer.send(_waiting);
@@ -428,6 +438,8 @@ class Session {
     p.connected = false;
     p.disconnectedAt = _now();
     _dropFromGame(p, returnable: true);
+    _wolf?.setAway(p.id, true);
+    _uljez?.setAway(p.id, true);
     _objasni?.setAway(p.id, true);
     _koliko?.setAway(p.id, true);
     _blef?.setAway(p.id, true);
@@ -995,7 +1007,9 @@ class Session {
       sfx: sfx,
       notify: _notify,
       onOver: (scores) => finishGame(scores, game: UljezText.name),
-    )..start();
+    )
+      ..onAbandon = returnToLobby
+      ..start();
     _notify();
   }
 
@@ -1032,7 +1046,9 @@ class Session {
         _wolfEndTimer?.cancel();
         _wolfEndTimer = Timer(const Duration(seconds: 10), returnToLobby);
       },
-    )..start();
+    )
+      ..onAbandon = returnToLobby
+      ..start();
     _notify();
   }
 

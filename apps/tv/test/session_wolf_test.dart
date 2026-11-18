@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/session/session.dart';
+import 'package:tv/session/wolf_match.dart';
 import 'package:tv/session/wolf_text.dart';
 import 'package:tv/strings.dart';
 
@@ -121,7 +122,9 @@ void main() {
       w.onNightPick(id, const NightPick(null));
     }
     await t.pump(const Duration(seconds: 4));
-    await t.pump(const Duration(seconds: 130));
+    for (final p in ps) {
+      p.say(const ReadyToVote(true)); // the day has no clock: the phones end it
+    }
     final wolf = w.alive.firstWhere((i) => w.game.roleOf(i).isWolf);
     for (final id in w.alive) {
       w.onVote(id, Vote(id == wolf ? w.alive.firstWhere((x) => x != id) : wolf));
@@ -131,6 +134,34 @@ void main() {
     expect(ps[1].sent.whereType<WolfEnd>().single.winner, WolfWinner.village);
     await t.pump(const Duration(seconds: 12));
     expect(s.phase, Phase.lobby);
+    s.dispose();
+  });
+
+  testWidgets('Idemo glasati counts the sending phone; a closed phone is not waited for; nobody left gives the game up', (t) async {
+    setUpSession(5);
+    ps[0].say(const StartGame(GameKind.vukodlak, null));
+    final w = s.wolf!;
+    ps[0].say(const ReadyToVote(true));
+    expect(w.wishCount, 0, reason: 'night: the toggle does nothing');
+    for (final id in w.alive) {
+      w.onNightPick(id, const NightPick(null));
+    }
+    await t.pump(const Duration(seconds: 4));
+    expect(w.stage, WolfStage.day);
+    ps[0].say(const ReadyToVote(true));
+    ps[0].say(const ReadyToVote(true));
+    expect(w.wishCount, 1);
+    ps[1].close();
+    ps[2].close();
+    await t.pump();
+    expect(w.wishNeeded, 2, reason: '3 phones left');
+    ps[3].say(const ReadyToVote(true));
+    expect(w.stage, WolfStage.vote, reason: '2 of the 3 connected');
+    for (final p in ps) {
+      p.close();
+    }
+    await t.pump(const Duration(minutes: 2, seconds: 1));
+    expect(s.phase, Phase.lobby, reason: 'nobody connected for 2 minutes: the game is given up');
     s.dispose();
   });
 

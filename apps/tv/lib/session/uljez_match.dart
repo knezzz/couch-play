@@ -5,9 +5,10 @@ import 'package:core/core.dart';
 
 import '../sound/sfx.dart';
 import 'uljez_text.dart';
+import 'vote_wish.dart';
 
 /// One game of Uljez on the TV: drives [UljezGame] through the clue turns, the
-/// discussion, the vote(s) and the caught impostor's guess, and talks to the
+/// "Idemo glasati" wishes, the vote(s) and the caught impostor's guess, and talks to the
 /// phones.
 ///
 /// PRIVACY. The impostor's phone gets the same message types at the same
@@ -39,18 +40,24 @@ class UljezMatch {
   /// Called once with the scores (1 for the winning side, 0 for the rest).
   final void Function(Map<int, int> scores)? onOver;
 
-  static const clueTime = Duration(seconds: 20);
-  static const voteTime = Duration(seconds: 30);
-  static const guessTime = Duration(seconds: 15);
-
   /// The end screen (both words, who the impostors were) stays up this long
   /// before the results take over, like Vukodlak's end.
   static const endHold = Duration(seconds: 10);
 
+  /// Nobody connected this long: the match is given up (the TV would wait
+  /// forever otherwise, as no phase has a clock).
+  static const emptyHold = Duration(minutes: 2);
+
   late UljezGame game;
-  Timer? _timer;
+  Timer? _timer; // only the end hold
+  Timer? _emptyTimer;
   Duration _stageEnd = Duration.zero;
   int voteNo = 0;
+  final _away = <int>{};
+  final _wish = WishBox();
+
+  /// Called once when nobody has been connected for [emptyHold].
+  void Function()? onAbandon;
 
   /// The last counted vote, and who it put out (null: nobody).
   Map<int, int?> lastVotes = {};
@@ -69,16 +76,19 @@ class UljezMatch {
   String? get impostorWord => phase == UljezPhase.over ? game.impostorWord : null;
   List<int> get impostors => phase == UljezPhase.over ? [for (final i in ids) if (game.isImpostor(i)) i] : const [];
 
+  /// Only the end hold has a clock.
   Duration get remaining {
     final r = _stageEnd - clock();
     return r.isNegative ? Duration.zero : r;
   }
 
-  void _stage(Duration length, void Function() then) {
-    _timer?.cancel();
-    _stageEnd = clock() + length;
-    _timer = Timer(length, then);
-  }
+  /// Connected players still in: the ones waited for and counted.
+  List<int> get present => [for (final i in game.alive) if (!_away.contains(i)) i];
+
+  /// "Idemo glasati": open from the end of round 1 until the vote starts.
+  bool get wishOpen => phase == UljezPhase.clues && game.voteMayStart;
+  int get wishCount => wishOpen ? _wish.want(present) : 0;
+  int get wishNeeded => WishBox.needed(present.length);
 
   void start() {
     game = UljezGame(ids, pack, impostors: settings.uljezImpostors, random: random);
@@ -88,9 +98,12 @@ class UljezMatch {
     _turnStart();
   }
 
-  void dispose() => _timer?.cancel();
+  void dispose() {
+    _timer?.cancel();
+    _emptyTimer?.cancel();
+  }
 
-  // ---- clues ----
+  // ---- clues: no clock, the speaker passes the turn ----
 
   void _broadcastTurn() {
     final m = _turnMsg();
@@ -99,56 +112,78 @@ class UljezMatch {
     }
   }
 
-  UljezTurn _turnMsg() => UljezTurn(
-      round: game.round,
-      speaker: game.speaker,
-      seconds: remaining.inSeconds,
-      stage: game.phase == UljezPhase.clues ? 'clues' : 'discussion');
+  UljezTurn _turnMsg() => UljezTurn(round: game.round, speaker: game.speaker, seconds: 0, stage: 'clues');
 
+  VoteWish _wishMsg(int id) =>
+      VoteWish(open: wishOpen, ready: _wish.has(id), want: wishCount, needed: wishNeeded);
+
+  void _sendWishes() {
+    if (phase != UljezPhase.clues) return;
+    for (final id in present) {
+      send(id, _wishMsg(id));
+    }
+  }
+
+  bool _canSpeak(int id) => game.alive.contains(id) && !_away.contains(id);
+
+  /// Skips a speaker who is out or away (a full circle of skips stops: nobody
+  /// is here), then tells everyone.
   void _turnStart() {
-    // A kicked player has no turn: skip them.
-    while (game.phase == UljezPhase.clues && !game.alive.contains(game.speaker)) {
+    for (var i = 0; i < game.order.length && !_canSpeak(game.speaker!); i++) {
       game.nextTurn();
     }
-    if (game.phase != UljezPhase.clues) return _discussion();
-    _stage(clueTime, _turnEnd);
     _broadcastTurn();
+    _sendWishes();
+    _checkEmpty();
     notify?.call();
   }
 
-  void _turnEnd() {
+  /// The speaker's "Dao sam trag". Anyone else, or out of turn, is ignored.
+  void onDone(int id) {
+    if (phase != UljezPhase.clues || game.speaker != id) return;
     game.nextTurn();
-    if (game.phase == UljezPhase.clues) {
-      _turnStart();
-    } else {
-      _discussion();
-    }
+    _turnStart();
   }
 
-  void _discussion() {
-    _stage(Duration(seconds: settings.uljezDiscussion), _beginVote);
-    _broadcastTurn();
+  /// A phone's "Idemo glasati" wish. Ignored until it is open, and from
+  /// players who are out.
+  void onReady(int id, ReadyToVote m) {
+    if (!wishOpen || !game.alive.contains(id)) return;
+    _wish.set(id, m.on);
+    _afterWishChange();
+  }
+
+  void _afterWishChange() {
+    if (wishOpen && _wish.majority(present)) return _beginVote();
+    _sendWishes();
     notify?.call();
   }
 
-  // ---- vote ----
+  // ---- vote: ends when everyone connected has voted ----
 
   void _beginVote() {
     if (voteNo == 0) game.startVote();
     voteNo++;
+    _wish.clear();
     sfx.play(Sound.voteBell);
-    _stage(voteTime, _endVote);
     for (final id in game.alive) {
-      send(id, VotePrompt(day: voteNo, seconds: voteTime.inSeconds, ids: game.alive));
+      send(id, VotePrompt(day: voteNo, seconds: 0, ids: game.alive));
     }
     notify?.call();
+    _checkVoteDone();
+  }
+
+  bool get _voteDone => present.isNotEmpty && present.every(game.votes.containsKey);
+
+  void _checkVoteDone() {
+    if (phase == UljezPhase.vote && _voteDone) _endVote();
   }
 
   void onVote(int id, Vote m) {
     if (game.phase != UljezPhase.vote) return;
     if (!game.vote(id, m.target)) return;
     notify?.call();
-    if (game.voteComplete) _endVote();
+    _checkVoteDone();
   }
 
   void _endVote() {
@@ -178,11 +213,12 @@ class UljezMatch {
 
   void _beginGuess() {
     final g = game.guesser!;
-    _stage(guessTime, _endGuess);
     for (final id in ids) {
-      send(id, id == g ? UljezGuess(seconds: guessTime.inSeconds, options: game.guessOptions) : const Waiting(_guessing));
+      send(id, id == g ? UljezGuess(seconds: 0, options: game.guessOptions) : const Waiting(_guessing));
     }
     notify?.call();
+    // No clock on the guess, but a guesser who is gone is not waited for.
+    if (_away.contains(g)) _endGuess();
   }
 
   static const _guessing = 'Uljez pogađa riječ sela.';
@@ -210,25 +246,67 @@ class UljezMatch {
     // The guesser is already out (voted out): their kick just ends the guess.
     if (game.phase == UljezPhase.guess && game.guesser == id) return _endGuess();
     if (!game.expel(id)) return;
+    _wish.set(id, false);
     switch (game.phase) {
       case UljezPhase.over:
         return _finish();
       case UljezPhase.clues:
-        if (game.speaker == id) _turnEnd();
+        if (game.speaker == id) {
+          game.nextTurn();
+          _turnStart();
+        } else {
+          _afterWishChange();
+        }
       case UljezPhase.vote:
-        if (game.voteComplete) _endVote();
+        _checkVoteDone();
       case UljezPhase.guess:
         if (game.guesser == id) _endGuess();
       case UljezPhase.discussion:
         break;
     }
+    _checkEmpty();
     notify?.call();
+  }
+
+  // ---- phones leaving and coming back ----
+
+  /// [id] lost its connection (or came back). A speaker who is away is
+  /// skipped; the vote and the majority are counted without them; a guesser
+  /// who is away has no guess. Their "Idemo glasati" stays set and counts
+  /// again if they return.
+  void setAway(int id, bool away) {
+    if (!ids.contains(id) || phase == UljezPhase.over) return;
+    if (away ? !_away.add(id) : !_away.remove(id)) return;
+    switch (phase) {
+      case UljezPhase.clues:
+        if (away && game.speaker == id) {
+          game.nextTurn();
+          _turnStart();
+        } else {
+          _afterWishChange();
+        }
+      case UljezPhase.vote:
+        _checkVoteDone();
+      case UljezPhase.guess:
+        if (away && game.guesser == id) _endGuess();
+      default:
+        break;
+    }
+    _checkEmpty();
+    notify?.call();
+  }
+
+  void _checkEmpty() {
+    _emptyTimer?.cancel();
+    _emptyTimer = null;
+    if (phase != UljezPhase.over && present.isEmpty) _emptyTimer = Timer(emptyHold, () => onAbandon?.call());
   }
 
   // ---- end ----
 
   void _finish() {
     _timer?.cancel();
+    _emptyTimer?.cancel();
     final end = UljezEnd(game.winner!, game.villageWord, game.impostorWord,
         [for (final i in ids) if (game.isImpostor(i)) i]);
     sfx.play(game.winner == UljezWinner.village ? Sound.fanfare : Sound.wrong);
@@ -250,17 +328,18 @@ class UljezMatch {
       case UljezPhase.clues:
       case UljezPhase.discussion:
         send(id, _turnMsg());
+        if (game.alive.contains(id)) send(id, _wishMsg(id));
       case UljezPhase.vote:
         send(
             id,
             game.alive.contains(id)
-                ? VotePrompt(day: voteNo, seconds: remaining.inSeconds, ids: game.alive, picked: game.votes[id])
+                ? VotePrompt(day: voteNo, seconds: 0, ids: game.alive, picked: game.votes[id])
                 : const Waiting(UljezText.out));
       case UljezPhase.guess:
         send(
             id,
             id == game.guesser
-                ? UljezGuess(seconds: remaining.inSeconds, options: game.guessOptions)
+                ? UljezGuess(seconds: 0, options: game.guessOptions)
                 : const Waiting(_guessing));
       case UljezPhase.over:
         send(id, UljezEnd(game.winner!, game.villageWord, game.impostorWord, [for (final i in ids) if (game.isImpostor(i)) i]));

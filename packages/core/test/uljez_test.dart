@@ -11,7 +11,7 @@ UljezGame game(int n, {int impostors = 1, int seed = 1, UljezPack? p}) =>
 
 /// Plays the clues to the end.
 void clues(UljezGame g) {
-  while (g.phase == UljezPhase.clues) {
+  for (var i = 0; i < g.order.length * 2; i++) {
     g.nextTurn();
   }
 }
@@ -91,28 +91,41 @@ void main() {
   });
 
   group('clue turns', () {
-    test('everyone speaks once per round, twice in all, in the same order', () {
+    test('everyone speaks once per round in the same order, round after round, with no end of its own', () {
       final g = game(5);
       expect(g.order.toSet(), {1, 2, 3, 4, 5});
       final spoke = <int>[];
-      while (g.phase == UljezPhase.clues) {
+      for (var i = 0; i < 20; i++) {
         spoke.add(g.speaker!);
         g.nextTurn();
       }
-      expect(spoke, [...g.order, ...g.order]);
-      expect(spoke.length, 10);
-      expect(g.phase, UljezPhase.discussion);
-      expect(g.speaker, isNull);
+      expect(spoke, [...g.order, ...g.order, ...g.order, ...g.order]);
+      expect(g.phase, UljezPhase.clues);
+    });
+
+    test('the vote may start only from the end of round 1', () {
+      final g = game(3);
+      expect(g.voteMayStart, isFalse);
+      expect(g.startVote, throwsStateError);
+      g.nextTurn();
+      g.nextTurn();
+      expect(g.voteMayStart, isFalse);
+      g.nextTurn();
+      expect(g.round, 2);
+      expect(g.voteMayStart, isTrue);
+      g.startVote();
+      expect(g.phase, UljezPhase.vote);
+      expect(g.voteMayStart, isFalse);
     });
 
     test('round numbers', () {
       final g = game(3);
       final rounds = <int>[];
-      while (g.phase == UljezPhase.clues) {
+      for (var i = 0; i < 9; i++) {
         rounds.add(g.round);
         g.nextTurn();
       }
-      expect(rounds, [1, 1, 1, 2, 2, 2]);
+      expect(rounds, [1, 1, 1, 2, 2, 2, 3, 3, 3]);
     });
 
     test('the order is shuffled by the seed', () {

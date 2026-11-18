@@ -45,6 +45,13 @@ class Rig {
     }
   }
 
+  /// Everyone connected and alive says "Idemo glasati".
+  void allReady() {
+    for (final id in match.alive) {
+      match.onReady(id, const ReadyToVote(true));
+    }
+  }
+
   List<Message> to(int id) => [for (final e in sent[id] ?? const <(Duration, Message)>[]) e.$2];
   void pickAll(Map<int, NightPick> picks) {
     for (final id in match.alive) {
@@ -104,7 +111,11 @@ void main() {
   testWidgets('and the same on a later night after someone died', (t) async {
     final r = Rig();
     r.pickAll({1: const NightPick(7), 2: const NightPick(7)});
-    await r.wait(t, 4 + 15 + 120 + 30);
+    await r.wait(t, 4 + 15);
+    r.allReady();
+    for (final id in r.match.alive) {
+      r.match.onVote(id, const Vote(null));
+    }
     final counts = {
       for (final id in r.match.alive) id: r.to(id).whereType<NightPrompt>().last.choices.length
     };
@@ -181,17 +192,112 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('the night ends when everybody is done, or after 60 s', (t) async {
+  testWidgets('the night ends when every task is done, with no clock; a phone that is away is not waited for', (t) async {
     final r = Rig();
     r.pickAll({});
     expect(r.match.stage, WolfStage.dawn);
     final s = Rig(seed: 2);
-    await s.wait(t, 59);
-    expect(s.match.stage, WolfStage.night);
-    await s.wait(t, 1);
-    expect(s.match.stage, WolfStage.dawn);
+    await s.wait(t, 3600);
+    expect(s.match.stage, WolfStage.night, reason: 'an hour of waiting ends nothing');
+    s.match.setAway(7, true);
+    for (final id in [1, 2, 3, 4, 5]) {
+      s.match.onNightPick(id, const NightPick(null));
+    }
+    expect(s.match.stage, WolfStage.night, reason: '6 is connected and not done');
+    s.match.setAway(6, true);
+    expect(s.match.stage, WolfStage.dawn, reason: 'the last one waited for dropped');
     r.match.dispose();
     s.match.dispose();
+  });
+
+  testWidgets('the day ends by the majority of the connected living, not by a clock; the toggle is day-only', (t) async {
+    final r = Rig();
+    // night: nothing for a phone to do with the toggle, and no VoteWish is sent
+    r.match.onReady(1, const ReadyToVote(true));
+    expect(r.match.wishCount, 0);
+    expect(r.match.wishOpen, isFalse);
+    r.pickAll({});
+    await r.wait(t, 4);
+    expect(r.match.stage, WolfStage.day);
+    for (final id in r.roles.keys) {
+      expect(r.to(id).whereType<VoteWish>().length, 1, reason: 'one at the start of the day, none at night');
+    }
+    expect(r.to(1).whereType<VoteWish>().single, const VoteWish(open: true, ready: false, want: 0, needed: 4));
+    await r.wait(t, 3600);
+    expect(r.match.stage, WolfStage.day, reason: 'no day timer');
+    for (final id in [1, 2, 3]) {
+      r.match.onReady(id, const ReadyToVote(true));
+    }
+    r.match.onReady(3, const ReadyToVote(true)); // double
+    expect(r.match.wishCount, 3);
+    expect(r.match.stage, WolfStage.day);
+    r.match.onReady(3, const ReadyToVote(false)); // undo
+    expect(r.match.wishCount, 2);
+    r.match.onReady(3, const ReadyToVote(true));
+    r.match.onReady(4, const ReadyToVote(true));
+    expect(r.match.stage, WolfStage.vote, reason: '4 of 7');
+    r.match.onReady(5, const ReadyToVote(true)); // too late
+    expect(r.match.wishCount, 0);
+    r.match.dispose();
+  });
+
+  testWidgets('day majority: drop-outs lower the bar, their wishes stop counting, a returner counts again; the dead cannot wish', (t) async {
+    final r = Rig();
+    r.pickAll({1: const NightPick(7), 2: const NightPick(7)});
+    await r.wait(t, 4 + 15);
+    expect(r.match.stage, WolfStage.day);
+    expect(r.match.alive.length, 6);
+    r.match.onReady(7, const ReadyToVote(true)); // dead
+    expect(r.match.wishCount, 0);
+    r.match.onReady(1, const ReadyToVote(true));
+    r.match.onReady(2, const ReadyToVote(true));
+    r.match.setAway(2, true);
+    expect(r.match.wishCount, 1);
+    expect(r.match.wishNeeded, 3, reason: '5 connected');
+    r.match.setAway(6, true);
+    r.match.setAway(5, true);
+    expect(r.match.wishNeeded, 2, reason: '3 connected');
+    r.match.setAway(2, false);
+    expect(r.match.wishCount, 2, reason: 'the returner counts again');
+    expect(r.match.stage, WolfStage.day, reason: '2 of the 4 connected (1, 2, 3, 4) is not more than half');
+    r.match.onReady(3, const ReadyToVote(true));
+    expect(r.match.stage, WolfStage.vote);
+    r.match.dispose();
+  });
+
+  testWidgets('the vote ends when every connected living player has voted, not before, no clock', (t) async {
+    final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.villager, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer});
+    r.pickAll({});
+    await r.wait(t, 4);
+    r.allReady();
+    expect(r.match.stage, WolfStage.vote);
+    await r.wait(t, 3600);
+    expect(r.match.stage, WolfStage.vote);
+    r.match.setAway(5, true);
+    for (final id in [1, 2, 3]) {
+      r.match.onVote(id, const Vote(null));
+    }
+    expect(r.match.stage, WolfStage.vote);
+    r.match.onVote(4, const Vote(null));
+    expect(r.match.stage, isNot(WolfStage.vote), reason: '5 is away: not waited for');
+    r.match.dispose();
+  });
+
+  testWidgets('nobody connected: no clock, and after 2 minutes the match is given up once', (t) async {
+    final r = Rig();
+    var gaveUp = 0;
+    r.match.onAbandon = () => gaveUp++;
+    for (final id in r.roles.keys) {
+      r.match.setAway(id, true);
+    }
+    await r.wait(t, 119);
+    expect(gaveUp, 0);
+    await r.wait(t, 1);
+    expect(gaveUp, 1);
+    await r.wait(t, 300);
+    expect(gaveUp, 1);
+    expect(r.match.stage, WolfStage.night);
+    r.match.dispose();
   });
 
   testWidgets('a dead hunter and a dead villager look the same to the phones and the TV', (t) async {
@@ -299,6 +405,8 @@ void main() {
     expect(r.match.stage, WolfStage.day);
     expect(r.played, [Sound.nightAmbience, Sound.howl, Sound.rooster]);
     await r.wait(t, 120);
+    expect(r.match.stage, WolfStage.day, reason: 'the day has no clock');
+    r.allReady();
     expect(r.match.stage, WolfStage.vote);
     expect(r.played.last, Sound.voteBell);
     for (final id in [2, 3, 4, 5]) {
@@ -350,7 +458,8 @@ void main() {
   testWidgets('a rejoin during the vote keeps the vote already cast', (t) async {
     final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.villager, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer});
     r.pickAll({});
-    await r.wait(t, 4 + 120);
+    await r.wait(t, 4);
+    r.allReady();
     expect(r.match.stage, WolfStage.vote);
     r.match.onVote(3, const Vote(1));
     r.match.rejoin(3);
@@ -418,7 +527,8 @@ void main() {
       1: WolfRole.wolf, 2: WolfRole.mayor, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager
     });
     r.pickAll({});
-    await r.wait(t, 4 + 120);
+    await r.wait(t, 4);
+    r.allReady();
     for (final id in r.match.alive) {
       r.match.onVote(id, Vote(id == 1 ? 2 : 1));
     }
@@ -467,7 +577,8 @@ void main() {
   testWidgets('kick during the vote: the vote list stays the same for a rejoin', (t) async {
     final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.villager, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager});
     r.pickAll({});
-    await r.wait(t, 4 + 120);
+    await r.wait(t, 4);
+    r.allReady();
     final first = r.to(3).whereType<VotePrompt>().last.ids;
     r.match.expel(6);
     r.match.rejoin(3);
@@ -480,7 +591,8 @@ void main() {
       1: WolfRole.wolf, 2: WolfRole.mayor, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager
     });
     r.pickAll({});
-    await r.wait(t, 4 + 120);
+    await r.wait(t, 4);
+    r.allReady();
     r.match.onVote(2, const Vote(1));
     r.match.onVote(3, const Vote(1));
     r.match.onVote(4, const Vote(5));
@@ -517,7 +629,8 @@ void main() {
   testWidgets('a kick during the vote: those who voted for the kicked player still count as voted, and a kicked tramp does not win', (t) async {
     final r = Rig(roles: {1: WolfRole.wolf, 2: WolfRole.tramp, 3: WolfRole.villager, 4: WolfRole.villager, 5: WolfRole.seer, 6: WolfRole.villager});
     r.pickAll({});
-    await r.wait(t, 4 + 120);
+    await r.wait(t, 4);
+    r.allReady();
     for (final id in [1, 3, 4]) {
       r.match.onVote(id, const Vote(2));
     }
