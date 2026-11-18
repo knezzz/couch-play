@@ -47,7 +47,7 @@ class _KaosviViewState extends State<KaosviView> {
     final stacks = <KaosviStack>[
       if (rev != null)
         for (final g in rev.groups)
-          KaosviStack(g.text, [for (final id in g.members) ?info(id)], points: g.members.isEmpty ? 0 : (rev.points[g.members.first] ?? 0)),
+          KaosviStack(g.texts.join(' \u00b7 '), [for (final id in g.members) ?info(id)], points: g.members.isEmpty ? 0 : (rev.points[g.members.first] ?? 0)),
     ];
     if (rev != null && !rev.largestTie && stacks.any((s) => s.points > 0) && _confettiFor != m.number) {
       _confettiFor = m.number;

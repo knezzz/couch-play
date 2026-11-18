@@ -98,4 +98,21 @@ void main() {
     await t.pumpWidget(const SizedBox());
     s.dispose();
   });
+
+  testWidgets('a merged group shows every spelling it carries, joined with a dot', (t) async {
+    setUp3();
+    await show(t);
+    ps[0].say(const KaosviAnswer('jabuka'));
+    ps[1].say(const KaosviAnswer('Banana'));
+    ps[2].say(const KaosviAnswer('jabuka'));
+    ps[3].say(const KaosviAnswer('dinja'));
+    final groups = ps[0].sent.whereType<KaosviMerging>().last.groups;
+    final jabuka = groups.firstWhere((g) => g.text == 'jabuka'), banana = groups.firstWhere((g) => g.text == 'Banana');
+    ps[0].say(KaosviMerge(jabuka.id, banana.id));
+    ps[0].say(const KaosviDone());
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text('jabuka \u00b7 Banana'), findsOneWidget, reason: 'the host merge is not invisible on the TV');
+    await t.pumpWidget(const SizedBox());
+    s.dispose();
+  });
 }

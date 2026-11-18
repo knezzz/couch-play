@@ -152,7 +152,7 @@ class KaosviScreen extends StatelessWidget {
 
   Widget _reveal() {
     final many = b.groups.length > 6;
-    final rowH = many ? 92.0 : 112.0;
+    final rowH = many ? 96.0 : 112.0;
     return Column(children: [
       _header(),
       Text(b.question, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 42, color: tvMuted)),
@@ -180,7 +180,11 @@ class KaosviScreen extends StatelessWidget {
         border: Border.all(color: color, width: crowned ? 5 : 2),
       ),
       child: Row(children: [
-        Expanded(flex: 7, child: Text(g.text, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w800, color: tvText))),
+        // A merged group shows every spelling ('jabuka · Banana'); a long one takes two lines at 40 px.
+        Expanded(
+          flex: 7,
+          child: Text(g.text, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: g.text.length > 22 ? 40 : 48, height: 1.05, fontWeight: FontWeight.w800, color: tvText)),
+        ),
         // The group as a stack of faces: overlapping, so eight still fit.
         Expanded(
           flex: 8,

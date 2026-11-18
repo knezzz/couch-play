@@ -84,7 +84,7 @@ void main() {
       fits('merge');
       await _show(t, _board(KaosviShow.reveal, groups: [for (var i = 0; i < 8; i++) KaosviStack('odgovor broj $i, dosta dug', [_eight[i]], points: i == 7 ? -1 : 0)]), size);
       fits('8 groups');
-      await _show(t, _board(KaosviShow.reveal, groups: [KaosviStack('svi isto', _eight, points: 1)]), size);
+      await _show(t, _board(KaosviShow.reveal, groups: [KaosviStack('svi isto \u00b7 Svi Isto \u00b7 svi  isto \u00b7 sviisto \u00b7 jos jedan dugi zapis', _eight, points: 1)]), size);
       fits('one group of 8');
       final r = t.getRect(find.byKey(const ValueKey('group-0-top')));
       expect(r.right, lessThanOrEqualTo(size.width + 1));
