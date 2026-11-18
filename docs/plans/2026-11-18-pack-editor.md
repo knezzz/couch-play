@@ -106,7 +106,7 @@ HTML/JS.
   - `GET /api/packs` → `[{game, id, title, count}]`
   - `GET /api/pack/<game>/<id>` → `{json, stamp}`
   - `GET /api/image/<id>/<path>` → the picture bytes from the quiz pack folder (path must stay inside it)
-  - `POST /api/pack/<game>/<id>` body `{json, stamp, deleted, added}` → 200 `{ok:true, stamp}`, 409 for stale,
+  - `POST /api/pack/<game>/<id>` body `{json, stamp, deleted, added}` → 200 `{ok:true, stamp, note}` (`note`: null or "izvori nisu prenumerirani"), 409 for stale,
     422 `{message}` for invalid.
 - Launch: `cd tool/pack_editor && fvm dart run bin/pack_editor.dart` prints the URL `http://localhost:8765` and opens
   it with `open`.
