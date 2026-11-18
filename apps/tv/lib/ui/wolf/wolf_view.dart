@@ -16,7 +16,7 @@ import 'vote_screen.dart';
 /// or the end screen.
 ///
 /// PRIVACY: this reads only what the match makes public: `stage`, `alive` /
-/// `isAlive`, `lit`, `story`, `publicRole`, `votedCount`, `lastOut`, `remaining`,
+/// `isAlive`, `lit`, `story`, `publicRole`, `votedCount`, `lastOut`, `wishCount`, `present`,
 /// `night`, `day`. It never touches `WolfMatch.game` (which holds every role) and
 /// never asks for a role except through `publicRole`, which is null for someone
 /// out while roles are hidden and everything once the game is over.
@@ -42,7 +42,7 @@ class _WolfViewState extends State<WolfView> {
 
   final _random = Random();
   final _lines = <int, String>{};
-  Timer? _clock, _hold;
+  Timer? _hold;
   var _seen = 0;
   int? _resultAt; // the story index of the vote's result, while it is held on the vote screen
   var _voted = 0,
@@ -52,14 +52,10 @@ class _WolfViewState extends State<WolfView> {
   @override
   void initState() {
     super.initState();
-    _clock = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
-    });
   }
 
   @override
   void dispose() {
-    _clock?.cancel();
     _hold?.cancel();
     super.dispose();
   }
@@ -84,11 +80,6 @@ class _WolfViewState extends State<WolfView> {
       }
     }
     _seen = story.length;
-  }
-
-  static String _clockText(Duration d) {
-    final s = d.inSeconds;
-    return '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
   }
 
   @override
@@ -144,8 +135,6 @@ class _WolfViewState extends State<WolfView> {
         day: m.day,
         voted: _voted,
         expected: held == null ? m.alive.length : _expected,
-        // While the result is held the match is already in its next stage: its clock is not the vote's.
-        clock: held == null ? _clockText(m.remaining) : '',
         outId: out,
         // The first part never names the role: that is the banner's second part, and only when it may be shown.
         result: held == null
@@ -174,7 +163,8 @@ class _WolfViewState extends State<WolfView> {
           ? Strings.wolfNight(m.night)
           : (morning ? Strings.wolfMorning(m.day) : Strings.wolfDay(m.day)),
       story: story,
-      clock: _clockText(m.remaining),
+      // By day: how many want to vote (a count, never who). Night and dawn have no clock.
+      clock: m.wishOpen ? '${Strings.wishLabel} ${Strings.wishCount(m.wishCount, m.present.length)}' : '',
     );
   }
 }

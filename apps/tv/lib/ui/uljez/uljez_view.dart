@@ -11,7 +11,7 @@ import 'uljez_screen.dart';
 ///
 /// PRIVACY: reads only the match's public getters (`phase`, `speaker`, `round`,
 /// `order`, `alive`, `winner`, `votedCount`, `lastVotes`, `lastOut`,
-/// `remaining`, and the words/impostors, which the match only gives once the
+/// `wishCount`, `present`, and the words/impostors, which the match only gives once the
 /// game is over). It never touches `UljezMatch.game`, which holds both words and
 /// who the impostors are.
 class UljezView extends StatefulWidget {
@@ -26,32 +26,23 @@ class UljezView extends StatefulWidget {
 class _UljezViewState extends State<UljezView> {
   static const _holdFor = Duration(seconds: 6);
 
-  Timer? _clock, _hold;
+  Timer? _hold;
   late Map<int, int?> _seenVotes = widget.match.lastVotes;
   var _holding = false;
 
   @override
   void initState() {
     super.initState();
-    _clock = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
-    });
   }
 
   @override
   void dispose() {
-    _clock?.cancel();
     _hold?.cancel();
     super.dispose();
   }
 
   PlayerInfo? _info(int id) => widget.players.where((p) => p.id == id).firstOrNull;
   String _name(int id) => _info(id)?.name ?? '';
-
-  static String _clockText(Duration d) {
-    final s = d.inSeconds;
-    return '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
-  }
 
   /// A vote's result (a tie, or someone who was not the impostor) stays up a
   /// few seconds even though the next vote or discussion starts at once.
@@ -107,7 +98,6 @@ class _UljezViewState extends State<UljezView> {
         kicker: Strings.uljezRoundOver,
         headline: Strings.uljezCaught(out == null ? '' : _name(out)),
         clockLabel: Strings.uljezGuesses(out == null ? '' : _name(out)),
-        clock: _clockText(m.remaining),
         showVotes: true,
       );
     }
@@ -126,18 +116,10 @@ class _UljezViewState extends State<UljezView> {
           seats: seats,
           kicker: Strings.uljezRoundClues(m.round),
           headline: Strings.uljezClueFor(m.speaker == null ? '' : _name(m.speaker!)),
-          clockLabel: Strings.uljezClueClock,
-          clock: _clockText(m.remaining),
+          // From the end of round 1: how many want to vote (a count, never who).
+          clockLabel: m.wishOpen ? Strings.wishLabel : '',
+          clock: m.wishOpen ? Strings.wishCount(m.wishCount, m.present.length) : '',
           hint: Strings.uljezClueHint,
-        );
-      case UljezPhase.discussion:
-        return UljezScreen(
-          seats: seats,
-          kicker: Strings.uljezDiscussKicker,
-          headline: Strings.uljezWho,
-          clockLabel: Strings.uljezDiscussClock,
-          clock: _clockText(m.remaining),
-          hint: Strings.uljezDiscussHint,
         );
       default: // vote
         return UljezScreen(
@@ -145,7 +127,6 @@ class _UljezViewState extends State<UljezView> {
           kicker: Strings.uljezVoteKicker,
           headline: Strings.uljezWho,
           clockLabel: Strings.uljezVoted(m.votedCount, m.alive.length),
-          clock: _clockText(m.remaining),
         );
     }
   }

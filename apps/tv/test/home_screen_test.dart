@@ -432,16 +432,16 @@ void main() {
   });
 
   testWidgets('Vukodlak and Uljez have settings rows too, not an empty panel', (t) async {
-    await _pump(t, selected: GameKind.vukodlak, games: homeGames, settings: const GameSettings(wolfDiscussion: 90, wolfHideRoles: true));
+    await _pump(t, selected: GameKind.vukodlak, games: homeGames, settings: const GameSettings(wolfHideRoles: true));
     await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await t.pump();
     final card = find.byKey(const ValueKey('game-card'));
-    expect(find.descendant(of: card, matching: find.textContaining('90 s')), findsOneWidget);
+    expect(find.descendant(of: card, matching: find.text('Vrijeme razgovora')), findsNothing, reason: 'no discussion time: nothing is timed');
     expect(find.descendant(of: card, matching: find.textContaining(Strings.settingHideRoles)), findsOneWidget);
-    await _pump(t, selected: GameKind.uljez, games: homeGames, settings: const GameSettings(uljezDiscussion: 45, uljezImpostors: 2));
+    await _pump(t, selected: GameKind.uljez, games: homeGames, settings: const GameSettings(uljezImpostors: 2));
     await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await t.pump();
-    expect(find.descendant(of: card, matching: find.textContaining('45 s')), findsOneWidget);
+    expect(find.descendant(of: card, matching: find.text('Vrijeme razgovora')), findsNothing);
     expect(find.descendant(of: card, matching: find.textContaining(Strings.settingImpostors)), findsOneWidget);
   });
 

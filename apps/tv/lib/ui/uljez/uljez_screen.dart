@@ -133,15 +133,15 @@ class _UljezScreenState extends State<UljezScreen> with SingleTickerProviderStat
                   ],
                 ),
               ),
-              if (widget.clock.isNotEmpty)
+              if (widget.clock.isNotEmpty || widget.clockLabel.isNotEmpty)
                 Positioned(
                   right: 72,
                   top: 64,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(widget.clockLabel, style: const TextStyle(fontSize: 30, color: tvMuted)),
-                      Text(widget.clock, style: const TextStyle(fontSize: 96, fontWeight: FontWeight.w900, height: 1, color: tvText)),
+                      if (widget.clockLabel.isNotEmpty) Text(widget.clockLabel, style: const TextStyle(fontSize: 40, color: tvMuted)),
+                      if (widget.clock.isNotEmpty) Text(widget.clock, style: const TextStyle(fontSize: 96, fontWeight: FontWeight.w900, height: 1, color: tvText)),
                     ],
                   ),
                 ),

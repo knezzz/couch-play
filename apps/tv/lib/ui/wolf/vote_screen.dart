@@ -16,7 +16,6 @@ class WolfVoteScreen extends StatelessWidget {
     required this.day,
     required this.voted,
     required this.expected,
-    required this.clock,
     this.outId,
     this.result,
     this.role,
@@ -25,7 +24,6 @@ class WolfVoteScreen extends StatelessWidget {
   });
   final List<VillagePlayer> players;
   final int day, voted, expected;
-  final String clock;
   final int? outId;
   final String? result, role, extra;
 
@@ -82,9 +80,7 @@ class WolfVoteScreen extends StatelessWidget {
                 right: 96,
                 top: 96,
                 child: Text(
-                  clock.isEmpty
-                      ? Strings.wolfVoted(voted, expected)
-                      : '${Strings.wolfVoted(voted, expected)} · $clock',
+                  Strings.wolfVoted(voted, expected),
                   style: const TextStyle(fontSize: 40, color: tvMuted),
                 ),
               ),

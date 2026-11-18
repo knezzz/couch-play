@@ -56,6 +56,7 @@ class VillageScreen extends StatefulWidget {
   });
   final List<VillagePlayer> players;
   final bool night;
+  /// [clock] is the status line under the story (by day: the "Idemo glasati" count); empty hides it.
   final String kicker, story, clock;
 
   @override
@@ -152,8 +153,13 @@ class _VillageScreenState extends State<VillageScreen> with SingleTickerProvider
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(widget.clock,
-                        style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: night ? tvText : const Color(0xFF2A1E2E))),
+                    if (widget.clock.isNotEmpty)
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(widget.clock,
+                            maxLines: 1,
+                            style: TextStyle(fontSize: 52, fontWeight: FontWeight.w900, color: night ? tvText : const Color(0xFF2A1E2E))),
+                      ),
                   ],
                 ),
               ),

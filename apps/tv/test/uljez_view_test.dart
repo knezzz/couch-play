@@ -44,6 +44,21 @@ class _Game {
     }
   }
 
+  /// Every speaker taps "Dao sam trag" once: [rounds] full rounds.
+  void clues(int rounds) {
+    for (var i = 0; i < rounds * match.ids.length; i++) {
+      match.onDone(match.speaker!);
+    }
+  }
+
+  /// One round of clues, then everyone taps "Idemo glasati": the vote begins.
+  void toVote() {
+    clues(1);
+    for (final id in match.alive) {
+      match.onReady(id, const ReadyToVote(true));
+    }
+  }
+
   Widget view() => MaterialApp(theme: tvTheme(), home: UljezView(match: match, players: players));
 }
 
@@ -80,7 +95,8 @@ void main() {
     expect(find.byType(UljezScreen), findsOneWidget);
     expect(find.text(Strings.uljezClueFor('Ime$speaker')), findsOneWidget);
     expect(find.text(Strings.uljezRoundClues(1)), findsOneWidget);
-    expect(find.text('0:20'), findsOneWidget);
+    expect(find.text('0:20'), findsNothing, reason: 'no clock on a turn');
+    expect(find.textContaining(Strings.wishLabel), findsNothing, reason: 'the wish opens after round 1');
     expect(find.byKey(const ValueKey('turn-ring')), findsOneWidget);
     for (var i = 1; i <= 4; i++) {
       expect(find.byKey(ValueKey('seat-$i')), findsOneWidget);
@@ -89,11 +105,13 @@ void main() {
     await _close(t, g);
   });
 
-  testWidgets('the turn moves on after 20 s: the next speaker is up and the one before is ticked; still no word', (t) async {
+  testWidgets('the turn moves on when the speaker taps Dao sam trag, and not by itself: the next speaker is up and the one before is ticked; still no word', (t) async {
     _big(t);
     final g = _Game();
     final first = g.match.speaker!;
-    await g.wait(t, 21);
+    await g.wait(t, 60);
+    expect(g.match.speaker, first, reason: 'no clock moves the turn');
+    g.match.onDone(first);
     await t.pumpWidget(g.view());
     final second = g.match.speaker!;
     expect(second, isNot(first));
@@ -103,15 +121,22 @@ void main() {
     await _close(t, g);
   });
 
-  testWidgets('discussion and vote screens show no word either, and how many have voted', (t) async {
+  testWidgets('from round 2: how many want to vote (a count, never who); a majority starts the vote, which shows how many have voted', (t) async {
     _big(t);
     final g = _Game();
-    await g.wait(t, 4 * 2 * 20 + 1); // two rounds of four 20 s turns
+    g.clues(1);
     await t.pumpWidget(g.view());
-    expect(g.match.phase, UljezPhase.discussion);
-    expect(find.text(Strings.uljezWho), findsOneWidget);
+    expect(find.text(Strings.wishLabel), findsOneWidget);
+    expect(find.text(Strings.wishCount(0, 4)), findsOneWidget);
+    g.match.onReady(1, const ReadyToVote(true));
+    g.match.onReady(3, const ReadyToVote(true));
+    await t.pumpWidget(g.view());
+    expect(find.text(Strings.wishCount(2, 4)), findsOneWidget);
+    for (final w in t.widgetList<Text>(find.byType(Text))) {
+      expect(w.data ?? '', isNot(matches(RegExp(r'\d:\d\d'))), reason: 'no clock');
+    }
     expect(_wordsOnScreen(t), isEmpty);
-    await g.wait(t, 31);
+    g.match.onReady(2, const ReadyToVote(true));
     expect(g.match.phase, UljezPhase.vote);
     g.match.onVote(1, const Vote(2));
     await t.pumpWidget(g.view());
@@ -120,10 +145,31 @@ void main() {
     await _close(t, g);
   });
 
+  for (final size in const [Size(1920, 1080), Size(1272, 715), Size(960, 540)]) {
+    testWidgets('the wish count and the vote count fit at ${size.width.toInt()}x${size.height.toInt()}', (t) async {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      final g = _Game(n: 8);
+      g.clues(1);
+      await t.pumpWidget(g.view());
+      expect(find.text(Strings.wishCount(0, 8)), findsOneWidget);
+      for (final id in [1, 2, 3, 4, 5]) {
+        g.match.onReady(id, const ReadyToVote(true));
+      }
+      await t.pumpWidget(g.view());
+      expect(g.match.phase, UljezPhase.vote);
+      expect(find.text(Strings.uljezVoted(0, 8)), findsOneWidget);
+      expect(t.takeException(), isNull);
+      await _close(t, g);
+    });
+  }
+
   testWidgets('a caught impostor: the table shows the votes and who is being asked to guess, still no word', (t) async {
     _big(t);
     final g = _Game();
-    await g.wait(t, 4 * 2 * 20 + 1 + 31);
+    g.toVote();
     final imp = g.impostor;
     for (final id in g.match.alive) {
       g.match.onVote(id, Vote(id == imp ? (imp % 4) + 1 : imp));
@@ -141,7 +187,7 @@ void main() {
   testWidgets('the end: both words, the impostor marked, who won', (t) async {
     _big(t);
     final g = _Game();
-    await g.wait(t, 4 * 2 * 20 + 1 + 31);
+    g.toVote();
     final imp = g.impostor;
     for (final id in g.match.alive) {
       g.match.onVote(id, Vote(id == imp ? (imp % 4) + 1 : imp));
@@ -162,7 +208,7 @@ void main() {
   testWidgets('two impostors: a villager is voted out; the votes stay up a few seconds, then the next vote starts', (t) async {
     _big(t);
     final g = _Game(n: 7, impostors: 2);
-    await g.wait(t, 7 * 2 * 20 + 1 + 31);
+    g.toVote();
     expect(g.match.phase, UljezPhase.vote);
     await t.pumpWidget(g.view()); // the TV is already showing the vote
     // ignore: invalid_use_of_visible_for_testing_member

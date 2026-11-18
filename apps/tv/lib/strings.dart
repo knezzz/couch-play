@@ -68,7 +68,6 @@ abstract final class Strings {
   static const settingReveal = 'Pauza između pitanja';
   static const settingMode = 'Način igre';
   static const settingCountdown = 'Pauza prije runde';
-  static const settingDiscussion = 'Vrijeme razgovora';
   static const settingHideRoles = 'Skrivene uloge';
   static const settingImpostors = 'Broj uljeza';
   static String settingsLine(GameSettings s) =>
@@ -162,16 +161,15 @@ abstract final class Strings {
 
   static String uljezRoundClues(int n) => 'RUNDA $n · TRAGOVI';
   static String uljezClueFor(String name) => '$name, reci trag.';
-  static const uljezClueClock = 'Za trag';
   static const uljezClueHint = 'Svatko kaže jedan trag o svojoj riječi.\nNe reci riječ!';
   static const uljezNow = 'Sad ti!';
   static const uljezSaidClue = 'trag dan';
-  static const uljezDiscussKicker = 'RAZGOVOR';
   static const uljezWho = 'Tko je uljez?';
-  static const uljezDiscussClock = 'Do glasanja';
-  static const uljezDiscussHint = 'Raspravite i potražite uljeza.';
   static const uljezVoteKicker = 'GLASANJE';
   static String uljezVoted(int x, int y) => 'Glasalo $x od $y';
+  // The count of players who want to end the talking and vote (never who).
+  static const wishLabel = 'Idemo glasati';
+  static String wishCount(int x, int y) => '$x od $y';
   static String uljezCaught(String name) => 'Uhvatili ste uljeza: $name!';
   static String uljezGuesses(String name) => '$name pogađa vašu riječ';
   static String uljezNotImpostor(String name) => '$name ispada, ali nije uljez.';

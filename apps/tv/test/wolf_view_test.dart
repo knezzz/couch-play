@@ -47,6 +47,14 @@ class _Game {
     }
   }
 
+  /// The morning passes, then everyone taps "Idemo glasati": the vote begins.
+  Future<void> toVote(WidgetTester t, {int morning = 10}) async {
+    await wait(t, morning);
+    for (final id in match.alive) {
+      match.onReady(id, const ReadyToVote(true));
+    }
+  }
+
   Widget view() => MaterialApp(theme: tvTheme(), home: WolfView(match: match, players: players));
 }
 
@@ -143,14 +151,53 @@ void main() {
     await _close(t, g);
   });
 
+  testWidgets('by day: how many want to vote, as a count only, and no clock anywhere; at night nothing', (t) async {
+    _big(t);
+    final g = _Game(_roles7);
+    await t.pumpWidget(g.view());
+    expect(find.textContaining('Idemo glasati'), findsNothing, reason: 'night');
+    for (final id in g.match.alive) {
+      g.match.onNightPick(id, const NightPick(null));
+    }
+    await g.wait(t, 10);
+    await t.pumpWidget(g.view());
+    expect(find.text('Idemo glasati 0 od 7'), findsOneWidget);
+    g.match.onReady(2, const ReadyToVote(true));
+    g.match.onReady(5, const ReadyToVote(true));
+    await t.pumpWidget(g.view());
+    expect(find.text('Idemo glasati 2 od 7'), findsOneWidget);
+    for (final w in t.widgetList<Text>(find.byType(Text))) {
+      expect(w.data ?? w.textSpan?.toPlainText() ?? '', isNot(matches(RegExp(r'\d:\d\d'))));
+    }
+    expect(t.widgetList<Text>(find.byType(Text)).map((w) => w.data ?? ''), isNot(contains('2')), reason: 'no name of who wants');
+    await _close(t, g);
+  });
+
+  for (final size in const [Size(1272, 715), Size(960, 540)]) {
+    testWidgets('the day count fits at ${size.width.toInt()}x${size.height.toInt()}', (t) async {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      final g = _Game(_roles7);
+      for (final id in g.match.alive) {
+        g.match.onNightPick(id, const NightPick(null));
+      }
+      await g.wait(t, 10);
+      await t.pumpWidget(g.view());
+      expect(find.text('Idemo glasati 0 od 7'), findsOneWidget);
+      expect(t.takeException(), isNull);
+      await _close(t, g);
+    });
+  }
+
   testWidgets('the vote: the vote screen with how many have voted, and nothing about who voted for whom', (t) async {
     _big(t);
     final g = _Game(_roles7);
     for (final id in g.match.alive) {
       g.match.onNightPick(id, const NightPick(null));
     }
-    await g.wait(t, 5); // morning, nobody died
-    await g.wait(t, 125); // the day passes
+    await g.toVote(t, morning: 5); // morning, nobody died, then the wish
     await t.pumpWidget(g.view());
     expect(g.match.stage, WolfStage.vote);
     expect(find.byType(WolfVoteScreen), findsOneWidget);
@@ -169,7 +216,7 @@ void main() {
     for (final id in g.match.alive) {
       g.match.onNightPick(id, const NightPick(null));
     }
-    await g.wait(t, 130); // morning, the day, then the vote
+    await g.toVote(t);
     expect(g.match.stage, WolfStage.vote);
     for (final id in g.match.alive) {
       g.match.onVote(id, Vote(id == 6 ? 1 : 6)); // everyone votes for player 6 (who votes for 1)
@@ -192,24 +239,24 @@ void main() {
     await _close(t, g);
   });
 
-  testWidgets('a held vote result shows the real x of y (someone did not vote) and no clock', (t) async {
+  testWidgets('a held vote result shows the real x of y (someone did not vote)', (t) async {
     _big(t);
     final g = _Game(_roles7);
     for (final id in g.match.alive) {
       g.match.onNightPick(id, const NightPick(null));
     }
-    await g.wait(t, 130);
+    await g.toVote(t);
     expect(g.match.stage, WolfStage.vote);
     for (final id in [1, 2, 3, 4, 5]) {
       g.match.onVote(id, const Vote(6));
     }
     await t.pumpWidget(g.view());
-    await g.wait(t, 25); // 6 and 7 never vote: the vote times out (30 s after it began, ~7 s were already gone)
+    g.match.setAway(6, true); // 6 and 7 never vote: they drop out, so the vote is complete
+    g.match.setAway(7, true);
     expect(g.match.lastOut, 6);
     final v = t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen));
     expect(v.voted, 5);
     expect(v.expected, 7);
-    expect(v.clock, isEmpty);
     expect(find.text(Strings.wolfVoted(5, 7)), findsOneWidget);
     await _close(t, g);
   });
@@ -221,7 +268,7 @@ void main() {
       g.match.onNightPick(id, id <= 2 ? const NightPick(7) : const NightPick(null));
     }
     await g.wait(t, 30); // morning: 7 is out; farewell
-    await g.wait(t, 130);
+    await g.toVote(t, morning: 0);
     await t.pumpWidget(g.view());
     expect(g.match.stage, WolfStage.vote);
     var v = t.widget<WolfVoteScreen>(find.byType(WolfVoteScreen));
@@ -243,7 +290,7 @@ void main() {
     for (final id in g.match.alive) {
       g.match.onNightPick(id, const NightPick(null));
     }
-    await g.wait(t, 130);
+    await g.toVote(t);
     for (final id in g.match.alive) {
       g.match.onVote(id, Vote(id == 6 ? 1 : 6));
     }

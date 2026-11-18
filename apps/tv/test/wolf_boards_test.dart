@@ -21,7 +21,7 @@ void _big(WidgetTester t) {
 
 Widget _vote(List<VillagePlayer> p, {int voted = 4, int expected = 5, int? outId, String? result, String? extra, String? role}) => MaterialApp(
       theme: tvTheme(),
-      home: WolfVoteScreen(players: p, day: 3, voted: voted, expected: expected, clock: '0:12', outId: outId, result: result, extra: extra, role: role),
+      home: WolfVoteScreen(players: p, day: 3, voted: voted, expected: expected, outId: outId, result: result, extra: extra, role: role),
     );
 
 Finder _face(String id) => find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);

@@ -530,13 +530,11 @@ class _SettingsPanel extends StatelessWidget {
       ],
       GameKind.vukodlak => [
           [
-            (Strings.settingDiscussion, '${settings.wolfDiscussion} s'),
             (Strings.settingHideRoles, settings.wolfHideRoles ? Strings.yes : Strings.no),
           ],
         ],
       GameKind.uljez => [
           [
-            (Strings.settingDiscussion, '${settings.uljezDiscussion} s'),
             (Strings.settingImpostors, '${settings.uljezImpostors}'),
           ],
         ],
