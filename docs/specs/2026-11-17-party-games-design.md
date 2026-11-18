@@ -64,7 +64,7 @@ A team word game. One player explains a word without saying it, their team shout
 - **Session points:** each player on the winning team scores 1 and each player on the other team scores 0. Those
   results go into `placementPoints`, as in Uljez.
 - **Host settings:** time per turn (45 / 60 / 90 s, default 60), target score (20 / 30 / 50, default 30), the word
-  pack.
+  packs (multi-select, all selected by default; see the main spec).
 - **Words:** packs of single words or short phrases by theme (Općenito, Hrana, Životinje, Poznate osobe, Mjesta,
   Filmovi i serije, Međimurje…). A word does not come up twice in one game. Format:
   `{"id","title","words":[...]}`, with at least 100 words, none empty, no duplicates. The first pack can start from
@@ -124,7 +124,7 @@ A warm-up voting game about the people in the room. There are no right answers, 
 - **Points (Claude's call, so that the game can count on the session board):** you score 1 point if your vote went
   to a crowned player, so you read the room right. Being crowned scores nothing. After the last prompt, players are
   placed by their points.
-- **Game:** 10 prompts (host setting 5 / 10 / 15), drawn from the chosen pack without repeats.
+- **Game:** 10 prompts (host setting 5 / 10 / 15), drawn from the selected packs (all by default) without repeats.
 - **Content:** prompts in Croatian, cheeky but kind. No prompts about looks, weight, health, money troubles,
   relationships or anything that would hurt someone in a mixed group. Packs: "Blago" (default) and "Ljuto"
   (spicier, still within those limits). Format: `{"id","title","prompts":[...]}`, at least 30 prompts.

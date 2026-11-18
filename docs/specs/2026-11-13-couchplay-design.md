@@ -85,7 +85,7 @@ Home (one game full screen, QR, players, the "Večeras" strip) → host picks a 
 
 - Question on TV (text, optional picture); phone shows the answer buttons, color/shape-coded to match the TV. After a tap the phone hides the pick: it shows one neutral "Locked in" screen that looks the same whatever was chosen, so nobody nearby can copy it (user request, 2026-11-14).
 - 4 choices, 20 s timer (default; see host settings below). Points: correct answers score 500–1000, scaled by how fast; wrong or no answer = 0.
-- After each question: reveal the correct answer, show who picked what, update the scoreboard. Round = 10 questions from the chosen pack, shuffled.
+- After each question: reveal the correct answer, show who picked what, update the scoreboard. Round = 10 questions from the chosen packs, shuffled.
 - **Host settings (user request, 2026-11-16):** in the lobby the host can set the time per question, the number of questions per game, the time between questions (the reveal), and the pause before each Curve round. The TV remembers them across restarts and applies them from the next game.
 - **Pack format:** one JSON file per pack:
   ```json
@@ -121,7 +121,13 @@ Home (one game full screen, QR, players, the "Večeras" strip) → host picks a 
   picture only where the image is freely licensed.
 
   **Photo questions (user request, 2026-11-15):** questions like "Koji je ovo grad?" with a photo, and other picture questions (landmarks, places, people, things). The pack format accepts photos (JPEG, PNG or WebP) as well as SVG. Photos come only from freely licensed sources (e.g. Wikimedia Commons); the pack's `.sources.md` credits the author and licence of each one. On a picture question the TV gives the picture as much of the screen as it can, uncropped.
-- **Adding packs without rebuilding:** the host can upload a pack file from the controller. The TV validates it and stores it in app storage, so it's there next time. Invalid packs are rejected with a readable error.
+- - **Packs are multi-select in every game (user request, 2026-11-18):** wherever the host picks a pack (Quiz, Uljez,
+  Objasni, Koliko?, Blef, Tko bi?, Kao svi), the details screen shows every pack as a checklist, and **all packs are
+  selected by default**, uploaded packs included. The game draws from all selected packs together, with no repeats in
+  one game. At least one pack stays selected (the last one can't be unticked). The selection is remembered like the
+  other host settings; a pack that appears later (new build or upload) starts selected. The TV lobby shows the
+  selection ("Svi paketi" or the count).
+**Adding packs without rebuilding:** the host can upload a pack file from the controller. The TV validates it and stores it in app storage, so it's there next time. Invalid packs are rejected with a readable error.
 
 ### Curve
 
@@ -238,7 +244,7 @@ A hidden-word party game in the "odd one out" genre, our own name and words. Ref
   setting: people talk during the rounds. The vote ends when everyone still in the game has voted; to go on without someone, the host kicks them.
 - A caught impostor guesses the village's word from 4 options on their phone, with no timer; a right guess still wins.
 - Village wins by catching the impostor; the impostor by surviving the vote or guessing. Placement points as usual.
-- Word pairs in packs by theme (cartoons, food, animals, places, famous people…); the host picks the pack. Croatian.
+- Word pairs in packs by theme (cartoons, food, animals, places, famous people…); the host picks the packs (multi-select, all by default). Croatian.
 
 ### Sound (user request, 2026-11-16)
 

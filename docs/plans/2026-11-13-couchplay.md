@@ -1010,3 +1010,9 @@ Spec: the Uljez and Vukodlak sections of the design spec ("No timers" / "No fixe
 - [ ] Uljez: the speaker's **Dao sam trag** passes the turn (dropped speaker skipped); clue rounds repeat; from the end of round 1 an **Idemo glasati** toggle on every phone, count on the TV, majority starts the vote; no timed discussion, setting removed; vote ends when all connected have voted; impostor guess untimed.
 - [ ] Vukodlak: day discussion ends by the same **Idemo glasati** majority, setting removed; day vote ends when all connected living players have voted; night ends when all tasks are done (15 s light minimum kept).
 - [ ] Tests first (turn passing, majority incl. drop-outs and undo, no timer fires); QA with 3–8 phones on macOS release; review that the toggle and count give nothing away (night stays identical on every phone).
+
+### Task 46: Multi-select packs, all on by default (added 2026-11-18, person request)
+
+Spec: main design spec, "Packs are multi-select in every game".
+- [ ] Every game with packs (Quiz, Uljez, Objasni, Koliko?, Blef, Tko bi?, Kao svi): the host's details show a pack checklist, all ticked by default (uploaded packs too); the last pack can't be unticked; the game draws from the union without repeats; the selection is remembered and new packs start ticked; the TV lobby shows "Svi paketi" or the count.
+- [ ] Tests first (union draw without repeats across packs, default all, last-one guard, remembered selection with a new pack added); QA on macOS release with a phone per game; check the canvas details boards and say where the checklist differs.

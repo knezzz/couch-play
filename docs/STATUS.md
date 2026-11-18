@@ -50,6 +50,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 43 | Kao svi: match the herd (person, 2026-11-17) | done (QA pass 3/5/8 phones); next TV install | lead + content |
 | 44 | Difficulty: Oblici harder, Matematika/Fizika easier, pub-quiz level (person, 2026-11-17) | done (0713aa3, e430b0e): Oblici 36 new; Matematika 113, Fizika 107; next TV install | content |
 | 45 | Uljez and Vukodlak without fixed timers: Dao sam trag, Idemo glasati majority (person, 2026-11-18) | routed to lead | lead |
+| 46 | Multi-select packs in every game, all selected by default (person, 2026-11-18) | routed to lead | lead |
 
 ## Open questions for the person
 
@@ -319,3 +320,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-18: c5d194d installed on the TV, not opened (person: will play later today); lead's log capture running.
 - 2026-11-18: Person (via product-pm@update-and-simplify): no fixed timers in Uljez, a hint button passes the turn, majority vote ends the rounds after round 1; same for Vukodlak. Task 45.
 - 2026-11-18: Choppy home found from the person's play logs: the sound player (audioplayers, low latency) never reports done on Android, so its ticker redraws the home every frame (~27 ms) all session. Fix in builder-2's row tv-sfx-frames; confirm at the next TV install. Games smooth (p95 5-10 ms, quiz ~22 ms).
+- 2026-11-18: Person: keep-phones-awake trick, forget it for now. Task 45: locked phones count as still in (person chose a).
+- 2026-11-18: Person: all packs multi-select, all selected by default. Task 46.
