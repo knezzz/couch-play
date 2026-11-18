@@ -209,7 +209,12 @@ the phones. Folk-game roles in our own words; no names or roles from Town of Sal
 - **Host settings:** switch on the possible roles (Vukodlak and Seljanin always on); the game draws the mix each game:
   1 werewolf for 5–6 players, 2 for 7–8; up to (players − werewolves − 2) special roles at random from those switched
   on; the rest Seljani; Vođa čopora / Vuk samotnjak may replace an ordinary werewolf. "Skrivene uloge" (on by default):
-  a player who is out is not revealed; all roles are shown at the end. Day discussion time.
+  a player who is out is not revealed; all roles are shown at the end.
+- **No fixed timers (user request, 2026-11-18):** the day discussion has no clock: every living player's phone has an
+  **Idemo glasati** toggle (can be undone), the TV shows how many want to vote, and the vote starts when more than half
+  of the connected living players want it. The day vote ends when every connected living player has voted; the night
+  ends when every task is done (the 15 s minimum before lights go out stays: it hides roles, it is not a deadline).
+  No day-discussion-time setting. Short TV story animations keep their own pace.
 - **Players see every possible role** (all switched on, not only those drawn) and what each does, on a phone screen.
 - **Rule choices (user answers, 2026-11-17):** Travarica cures by guessing whom to save (she is not shown the
   victim; one night step for everyone). Provodadžija picks two other players as the lovers on night 1, so night 1 has
@@ -225,9 +230,13 @@ A hidden-word party game in the "odd one out" genre, our own name and words. Ref
 - 3–8 people, no bots. Everyone gets the same word (e.g. "Spužva Bob"); the impostor gets a similar word ("Pikachu")
   and does not know they are the impostor. 1 impostor for 3–6 players; for 7–8 the host picks 1 or 2.
 - The word shows on the phone only while a finger is on the screen (as in Vukodlak).
-- Clues: in turn, each player says one clue out loud; the TV shows whose turn it is (players around a table), 20 s
-  each, two rounds. Then a free discussion (host sets the time) and a vote on the phones.
-- A caught impostor has 15 s to guess the village's word from 4 options on their phone; a right guess still wins.
+- Clues: in turn, each player says one clue out loud; the TV shows whose turn it is (players around a table). **No
+  timers** (user request, 2026-11-18): the speaker taps **Dao sam trag** on their phone and the turn passes; a speaker
+  who drops out is skipped. Clue rounds repeat. From the end of round 1, every phone has an **Idemo glasati** toggle
+  (can be undone) and the TV shows how many want to vote; when more than half of the connected players want to vote,
+  the clues end and the vote on the phones starts. There is no separate timed discussion and no discussion-time
+  setting: people talk during the rounds. The vote ends when everyone connected has voted.
+- A caught impostor guesses the village's word from 4 options on their phone, with no timer; a right guess still wins.
 - Village wins by catching the impostor; the impostor by surviving the vote or guessing. Placement points as usual.
 - Word pairs in packs by theme (cartoons, food, animals, places, famous people…); the host picks the pack. Croatian.
 

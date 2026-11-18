@@ -1004,3 +1004,9 @@ Spec: `docs/specs/2026-11-17-party-games-design.md` (all rules there). Each game
 Spec: `2026-11-17-party-games-design.md` §5. Reuse Blef's text field and the party-game pieces.
 - [x] Core rules (grouping with normalisation, host merges, scoring incl. ties and the lone-answer −1, end), protocol + session, TV (answered faces, group stacks), phones (answer, host merge screen), packs (5 themes, ≥ 60 questions), home card. Tests first; QA with 3–8 phones; review of privacy (no answer on the TV before the reveal).
 
+### Task 45: Uljez and Vukodlak without fixed timers (added 2026-11-18, person request)
+
+Spec: the Uljez and Vukodlak sections of the design spec ("No timers" / "No fixed timers"). Majority = more than half of the connected players still in.
+- [ ] Uljez: the speaker's **Dao sam trag** passes the turn (dropped speaker skipped); clue rounds repeat; from the end of round 1 an **Idemo glasati** toggle on every phone, count on the TV, majority starts the vote; no timed discussion, setting removed; vote ends when all connected have voted; impostor guess untimed.
+- [ ] Vukodlak: day discussion ends by the same **Idemo glasati** majority, setting removed; day vote ends when all connected living players have voted; night ends when all tasks are done (15 s light minimum kept).
+- [ ] Tests first (turn passing, majority incl. drop-outs and undo, no timer fires); QA with 3–8 phones on macOS release; review that the toggle and count give nothing away (night stays identical on every phone).

@@ -49,6 +49,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 39–42 | Party games: Objasni, Koliko?, Blef, Tko bi?, with new packs (person, 2026-11-17) | done (QA pass with real browser phones; Blef typing proven on Android + iPhone); on the TV in ee00641 | lead + content |
 | 43 | Kao svi: match the herd (person, 2026-11-17) | done (QA pass 3/5/8 phones); next TV install | lead + content |
 | 44 | Difficulty: Oblici harder, Matematika/Fizika easier, pub-quiz level (person, 2026-11-17) | done (0713aa3, e430b0e): Oblici 36 new; Matematika 113, Fizika 107; next TV install | content |
+| 45 | Uljez and Vukodlak without fixed timers: Dao sam trag, Idemo glasati majority (person, 2026-11-18) | routed to lead | lead |
 
 ## Open questions for the person
 
@@ -315,3 +316,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   38 too. Kao svi: review clean, QA running.
 - 2026-11-18: Task 43 accepted. Everything routed is handed back. Next TV install waits for the person (yesterday's
   standing yes was for 2026-11-17).
+- 2026-11-18: c5d194d installed on the TV, not opened (person: will play later today); lead's log capture running.
+- 2026-11-18: Person (via product-pm@update-and-simplify): no fixed timers in Uljez, a hint button passes the turn, majority vote ends the rounds after round 1; same for Vukodlak. Task 45.
