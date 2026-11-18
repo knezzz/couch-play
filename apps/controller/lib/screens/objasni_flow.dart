@@ -24,10 +24,20 @@ class ObjasniInbox {
 /// The phone's Objasni screens: the setup until the first ObjasniTurn, then
 /// the turn for this phone's role.
 class ObjasniFlow extends StatelessWidget {
-  const ObjasniFlow(this.conn, this.lobby, this.myId, this.inbox, {super.key});
+  const ObjasniFlow(
+    this.conn,
+    this.lobby,
+    this.myId,
+    this.inbox, {
+    required this.hostId,
+    super.key,
+  });
   final Connection conn;
   final LobbyState lobby;
   final int myId;
+
+  /// The current host (HostIs mid-game), not LobbyState's, which goes stale.
+  final int hostId;
   final ObjasniInbox inbox;
 
   PlayerInfo? _p(int id) => lobby.players.where((p) => p.id == id).firstOrNull;
@@ -69,8 +79,8 @@ class ObjasniFlow extends StatelessWidget {
           ],
       ],
       myTeam: teams.team,
-      isHost: lobby.hostId == myId,
-      hostName: _p(lobby.hostId)?.name,
+      isHost: hostId == myId,
+      hostName: _p(hostId)?.name,
       onReshuffle: () => conn.send(const Reshuffle()),
       onGo: () => conn.send(const Go()),
     );

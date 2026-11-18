@@ -271,6 +271,37 @@ void main() {
       expect(find.text(Strings.yourTeam(1)), findsOneWidget);
     });
 
+    testWidgets('a kicked host: HostIs makes the next player the host', (
+      t,
+    ) async {
+      // The TV sends no new LobbyState in a game; HostIs is the only word.
+      final c = await app(t, 1);
+      await send(t, c, teams);
+      expect(find.byKey(const ValueKey('objasni-go')), findsNothing);
+      await send(t, c, const HostIs(1));
+      await t.tap(find.byKey(const ValueKey('reshuffle')));
+      expect(c.sent.last, const Reshuffle());
+      await t.tap(find.byKey(const ValueKey('objasni-go')));
+      expect(c.sent.last, const Go());
+    });
+
+    testWidgets('the old host loses the buttons after HostIs', (t) async {
+      final c = await app(t, 0);
+      await send(t, c, teams);
+      expect(find.byKey(const ValueKey('objasni-go')), findsOneWidget);
+      await send(t, c, const HostIs(1));
+      expect(find.byKey(const ValueKey('objasni-go')), findsNothing);
+    });
+
+    testWidgets('a LobbyState after HostIs wins again', (t) async {
+      final c = await app(t, 1);
+      await send(t, c, teams);
+      await send(t, c, const HostIs(1));
+      await send(t, c, lobby(0, sel: GameKind.objasni));
+      await send(t, c, teams);
+      expect(find.byKey(const ValueKey('objasni-go')), findsNothing);
+    });
+
     testWidgets('ObjasniTurn per role, the actions go out', (t) async {
       final c = await app(t, 1);
       await send(t, c, teams);

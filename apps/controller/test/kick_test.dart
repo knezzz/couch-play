@@ -218,5 +218,22 @@ void main() {
       expect(find.text(Strings.remove), findsNothing);
       expect(c.sent.whereType<Kick>(), isEmpty);
     });
+
+    testWidgets('after a host kick the new host has the strip, the old not', (
+      t,
+    ) async {
+      final n = await _app(t, 1);
+      await _send(t, n, _role);
+      await _send(t, n, const Morning(1, 'Nitko nije umro.'));
+      expect(find.byKey(_bar), findsNothing);
+      await _send(t, n, const HostIs(1));
+      expect(find.byKey(_bar), findsOneWidget);
+      final o = await _app(t, 0);
+      await _send(t, o, _role);
+      await _send(t, o, const Morning(1, 'Nitko nije umro.'));
+      expect(find.byKey(_bar), findsOneWidget);
+      await _send(t, o, const HostIs(1));
+      expect(find.byKey(_bar), findsNothing);
+    });
   });
 }

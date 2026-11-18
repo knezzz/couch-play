@@ -70,6 +70,7 @@ class _AppState extends State<App> {
   int _myColor =
       0; // from Welcome, so it survives a reload before any LobbyState
   LobbyState? _lobby;
+  int? _host; // from HostIs; null until one arrives, reset by a LobbyState
   String _waitReason = '';
   String? _error;
   bool _alive = true;
@@ -140,11 +141,14 @@ class _AppState extends State<App> {
           _screen = _Screen.lobby;
         case LobbyState():
           _lobby = m;
+          _host = null; // the lobby state says who hosts
           final me = m.players.where((p) => p.id == _myId).firstOrNull;
           if (me != null && !_rejoining) {
             widget.onSave?.call(SavedJoin(me.name, me.character));
           }
           if (_screen != _Screen.kicked) _screen = _Screen.lobby;
+        case HostIs():
+          _host = m.host; // mid-game the TV sends this instead
         case Waiting():
           _waitReason = m.reason;
           _screen = _Screen.wait;
@@ -237,10 +241,13 @@ class _AppState extends State<App> {
     }
   }
 
+  /// Who hosts now: HostIs (sent mid-game) until the next LobbyState.
+  int? get _hostId => _host ?? _lobby?.hostId;
+
   /// The host's way to remove a player who has gone away, during Uljez and by
   /// day in Vukodlak. Never at night: the night phones must all look alike.
   bool get _kickBar {
-    if (_lobby?.hostId != _myId) return false;
+    if (_hostId != _myId) return false;
     return switch (_screen) {
       _Screen.uljez => _uljez.screen != 'end',
       _Screen.wolf =>
@@ -297,7 +304,13 @@ class _AppState extends State<App> {
     _Screen.objasni =>
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
-          : ObjasniFlow(widget.conn, _lobby!, _myId, _objasni),
+          : ObjasniFlow(
+              widget.conn,
+              _lobby!,
+              _myId,
+              _objasni,
+              hostId: _hostId ?? _lobby!.hostId,
+            ),
     _Screen.uljez =>
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
