@@ -1,8 +1,8 @@
 /// "Idemo glasati": who wants to end the talking and vote (Uljez clues from the
 /// end of round 1, the Vukodlak day). A wish is a state, not a toggle, so a
-/// double send changes nothing. Only the wishes of the players counted (the
-/// connected ones still in) count, so a wish stays set while its player is
-/// away and counts again if they come back (build-core's reading).
+/// double send changes nothing. The players counted are everyone still in the
+/// game, connected or not (a locked phone drops its socket), so a wish stays
+/// counted while its player's phone sleeps. Only a kick removes a player.
 class WishBox {
   final _on = <int>{};
 
@@ -15,6 +15,6 @@ class WishBox {
   /// More than half of [n].
   static int needed(int n) => n ~/ 2 + 1;
 
-  /// Nobody connected is never a majority.
+  /// An empty room is never a majority.
   bool majority(List<int> counted) => counted.isNotEmpty && want(counted) >= needed(counted.length);
 }

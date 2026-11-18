@@ -77,7 +77,7 @@ class WolfMatch {
   /// socket): the players waited for and counted. Only a kick removes one.
   List<int> get present => game.alive;
 
-  /// "Idemo glasati", by day only: wishes of the connected living players.
+  /// "Idemo glasati", by day only: wishes of the living players (connected or not).
   bool get wishOpen => stage == WolfStage.day;
   int get wishCount => wishOpen ? _wish.want(present) : 0;
   int get wishNeeded => WishBox.needed(present.length);
@@ -179,8 +179,8 @@ class WolfMatch {
     _checkNightDone();
   }
 
-  /// The night ends when every connected living player has finished (a phone
-  /// that is away is not waited for). The 15 s of [lightsHold] only hides who
+  /// The night ends when every living player has finished (a sleeping phone
+  /// is waited for; only the host's kick moves on). The 15 s of [lightsHold] only hides who
   /// is done; it is not a deadline.
   void _checkNightDone() {
     if (stage == WolfStage.night && game.nightComplete) _endNight();
@@ -410,7 +410,7 @@ class WolfMatch {
     game.startVote();
     sfx.play(Sound.voteBell);
     story.add(const WolfEvent('voteStarts'));
-    _setStage(WolfStage.vote, Duration.zero); // ends when every connected living player has voted
+    _setStage(WolfStage.vote, Duration.zero); // ends when every living player who may vote has voted
     _voted.clear();
     _wish.clear();
     _voteIds = alive;

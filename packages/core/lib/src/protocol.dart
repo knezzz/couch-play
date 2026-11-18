@@ -871,7 +871,7 @@ class ReadyToVote extends Message {
 
 /// TV -> one phone (Uljez; Vukodlak day, living players only): the state of
 /// "Idemo glasati". [open] false = hide the button (Uljez round 1); [ready] is
-/// this phone's own wish; [want] of the connected players still in want to
+/// this phone's own wish; [want] of the players still in (connected or not) want to
 /// vote and the vote starts at [needed] (more than half). The same shape for
 /// every phone; it carries nothing private. Sent again on every change and on
 /// reconnect. Never sent at night.
