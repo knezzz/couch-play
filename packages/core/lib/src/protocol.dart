@@ -102,6 +102,25 @@ class GameSettings with _JsonEq {
   /// Kao svi: questions (8 / 12 / 16), target score (5 / 8 / 10), pack.
   final int kaosviQuestions, kaosviTarget;
   final String? kaosviPackId;
+  /// Packs are multi-select in every game: the ids of the packs that are
+  /// switched OFF, per game. Empty (the default) = every pack is ticked, so a
+  /// pack that appears later starts ticked. The session keeps at least one
+  /// pack ticked. The single `<game>PackId` above is the old way: an old
+  /// message with one is turned into "only that pack" by the session.
+  final Set<String> quizOffPacks, uljezOffPacks, objasniOffPacks, kolikoOffPacks, blefOffPacks, tkobiOffPacks, kaosviOffPacks;
+
+  /// The off-set of [game] (empty for a game without packs).
+  Set<String> offPacks(GameKind game) => switch (game) {
+        GameKind.quiz => quizOffPacks,
+        GameKind.uljez => uljezOffPacks,
+        GameKind.objasni => objasniOffPacks,
+        GameKind.koliko => kolikoOffPacks,
+        GameKind.blef => blefOffPacks,
+        GameKind.tkobi => tkobiOffPacks,
+        GameKind.kaosvi => kaosviOffPacks,
+        _ => const {},
+      };
+
   static const defaultWolfRoles = {
     WolfRole.wolf,
     WolfRole.villager,
@@ -134,6 +153,13 @@ class GameSettings with _JsonEq {
     this.kaosviQuestions = 12,
     this.kaosviTarget = 8,
     this.kaosviPackId,
+    this.quizOffPacks = const {},
+    this.uljezOffPacks = const {},
+    this.objasniOffPacks = const {},
+    this.kolikoOffPacks = const {},
+    this.blefOffPacks = const {},
+    this.tkobiOffPacks = const {},
+    this.kaosviOffPacks = const {},
   });
   factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
       quizSeconds: j['quizSeconds'] as int,
@@ -162,7 +188,16 @@ class GameSettings with _JsonEq {
       tkobiPackId: j['tkobiPackId'] as String?,
       kaosviQuestions: (j['kaosviQuestions'] as int?) ?? 12,
       kaosviTarget: (j['kaosviTarget'] as int?) ?? 8,
-      kaosviPackId: j['kaosviPackId'] as String?);
+      kaosviPackId: j['kaosviPackId'] as String?,
+      quizOffPacks: _ids(j['quizOffPacks']),
+      uljezOffPacks: _ids(j['uljezOffPacks']),
+      objasniOffPacks: _ids(j['objasniOffPacks']),
+      kolikoOffPacks: _ids(j['kolikoOffPacks']),
+      blefOffPacks: _ids(j['blefOffPacks']),
+      tkobiOffPacks: _ids(j['tkobiOffPacks']),
+      kaosviOffPacks: _ids(j['kaosviOffPacks']));
+
+  static Set<String> _ids(Object? v) => v == null ? const {} : {for (final e in v as List) e as String};
 
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
@@ -195,6 +230,13 @@ class GameSettings with _JsonEq {
       kaosviQuestions: oneOf(kaosviQuestions, const [8, 12, 16]),
       kaosviTarget: oneOf(kaosviTarget, const [5, 8, 10]),
       kaosviPackId: kaosviPackId,
+      quizOffPacks: quizOffPacks,
+      uljezOffPacks: uljezOffPacks,
+      objasniOffPacks: objasniOffPacks,
+      kolikoOffPacks: kolikoOffPacks,
+      blefOffPacks: blefOffPacks,
+      tkobiOffPacks: tkobiOffPacks,
+      kaosviOffPacks: kaosviOffPacks,
     );
   }
 
@@ -223,6 +265,13 @@ class GameSettings with _JsonEq {
         'kaosviQuestions': kaosviQuestions,
         'kaosviTarget': kaosviTarget,
         'kaosviPackId': kaosviPackId,
+        'quizOffPacks': (quizOffPacks.toList()..sort()),
+        'uljezOffPacks': (uljezOffPacks.toList()..sort()),
+        'objasniOffPacks': (objasniOffPacks.toList()..sort()),
+        'kolikoOffPacks': (kolikoOffPacks.toList()..sort()),
+        'blefOffPacks': (blefOffPacks.toList()..sort()),
+        'tkobiOffPacks': (tkobiOffPacks.toList()..sort()),
+        'kaosviOffPacks': (kaosviOffPacks.toList()..sort()),
       };
 }
 

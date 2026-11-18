@@ -198,6 +198,23 @@ void main() {
       }
     });
 
+    test('pack selection: off-sets default to empty (all ticked), round-trip, old messages and old single ids decode', () {
+      const d = GameSettings();
+      for (final g in GameKind.values) {
+        expect(d.offPacks(g), isEmpty, reason: g.name);
+      }
+      const s = GameSettings(quizOffPacks: {'b', 'a'}, uljezOffPacks: {'u1'}, kaosviOffPacks: {'k'});
+      final back = (Message.decode(const SetSettings(s).encode()) as SetSettings).settings;
+      expect(back, s);
+      expect(back.offPacks(GameKind.quiz), {'a', 'b'});
+      expect(back.clamped().offPacks(GameKind.uljez), {'u1'}, reason: 'clamping keeps the selection');
+      expect(s.toJson()['quizOffPacks'], ['a', 'b'], reason: 'sorted: equal sets are equal messages');
+      final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"quizPackId":"x","uljezPackId":"y"}');
+      final o = (old as SetSettings).settings;
+      expect([o.quizPackId, o.uljezPackId, o.quizOffPacks, o.blefOffPacks], ['x', 'y', isEmpty, isEmpty]);
+      expect(Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,"quizOffPacks":[1]}'), isNull);
+    });
+
     test('wolf settings: defaults, an old settings message, and clamping', () {
       const d = GameSettings();
       expect(d.wolfRoles, GameSettings.defaultWolfRoles);
