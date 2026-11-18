@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/session/objasni_match.dart';
 import 'package:tv/session/session.dart';
 
 import 'session_test.dart' show FakePeer, join;
@@ -58,6 +59,26 @@ void main() {
     for (final p in ps) {
       expect(p.sent.whereType<HostIs>(), isEmpty);
     }
+    s.dispose();
+  });
+
+  test('the reviewer\'s probe: the host is kicked in Objasni setup, the new host\'s phone is told and Kreni works for it', () {
+    s = Session(random: Random(1))
+      ..objasniTvReady = true
+      ..objasniPacks = [ObjasniPack('o', 'O', [for (var i = 0; i < 110; i++) 'w$i'])];
+    ps = [for (var i = 0; i < 4; i++) join(s, 'P$i', token: 't$i')];
+    ps[0].say(const StartGame(GameKind.objasni, null));
+    final m = s.objasni!;
+    expect(m.stage, ObjasniStageTv.setup);
+    final old = s.hostId!;
+    expect(s.kickFromTv(old), isTrue);
+    final now = s.hostId!;
+    final newHost = ps.firstWhere((p) => idOf(p) == now);
+    expect(newHost.sent.whereType<HostIs>().last, HostIs(now));
+    ps[0].say(const Go());
+    expect(m.stage, ObjasniStageTv.setup, reason: 'the kicked host\'s Kreni does nothing');
+    newHost.say(const Go());
+    expect(m.stage, isNot(ObjasniStageTv.setup), reason: 'the new host starts the game');
     s.dispose();
   });
 }
