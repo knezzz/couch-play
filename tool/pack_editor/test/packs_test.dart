@@ -170,6 +170,14 @@ void main() {
   refused('kaosvi_repeat_in_another_pack', Game.kaosvi, 'kaosvi-pop', (j) {
     qs(j)[0] = '  ${otherFirst(Game.kaosvi, 'kaosvi-hrana').toUpperCase()}';
   }, 'ponavlja se');
+  refused('objasni_long_word', Game.objasni, 'objasni-hrana', (j) => (j['words'] as List)[0] = 'x' * 25,
+      'Objasni: riječ „${'x' * 25}“ smije imati najviše 24 znaka (sada 25)');
+  // kaosvi_packs_load_test folds Croatian letters (kaosviFold), so "š" and "s" are the same question.
+  refused('kaosvi_repeat_without_diacritics', Game.kaosvi, 'kaosvi-pop', (j) {
+    final other = (loadPack(root, Game.kaosvi, 'kaosvi-hrvatska').json['questions'] as List).cast<String>();
+    final withLetters = other.firstWhere((q) => RegExp('[čćšžđ]').hasMatch(q));
+    qs(j)[0] = withLetters.replaceAll('č', 'c').replaceAll('ć', 'c').replaceAll('š', 's').replaceAll('ž', 'z').replaceAll('đ', 'd');
+  }, 'ponavlja se');
   refused('quiz_repeat_in_another_pack', Game.kviz, 'hr-oblici', (j) {
     qs(j).add({'q': otherFirst(Game.kviz, 'hr-opce-znanje').toUpperCase(), 'choices': ['a', 'b', 'c', 'd'], 'answer': 0});
   }, 'ponavlja se');

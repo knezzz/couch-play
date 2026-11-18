@@ -168,9 +168,9 @@ String _few(String name, int min, int n, String unit) => '$name treba barem $min
 String _again(String name, String text) => '$name: ponavlja se „$text“ (u ovom ili drugom paketu).';
 
 // The rules below mirror the TV pack tests, so a saved pack keeps them green:
-// party_packs_test _norm (Koliko, Blef), kaosvi_packs_test _norm, pack_duplicates_test _normal.
+// party_packs_test _norm (Koliko, Blef), kaosviFold for Kao svi (kaosvi_packs_load_test; it is
+// stricter than kaosvi_packs_test _norm), pack_duplicates_test _normal.
 String _normParty(String s) => s.toLowerCase().replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ').trim();
-String _normKaosvi(String s) => s.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim();
 String _normQuiz(String q) =>
     q.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim().replaceAll(RegExp(r'[\s.,;:!?…]+$'), '');
 
@@ -232,15 +232,18 @@ String? _rules(String root, Game game, String id, Map<String, dynamic> j) {
     case Game.kaosvi:
       final qs = (j['questions'] as List).cast<String>();
       if (qs.length < 60) return _few('Kao svi', 60, qs.length, 'pitanja');
-      final seen = {for (final o in _others(root, game, id)) _normKaosvi(o as String)};
+      final seen = {for (final o in _others(root, game, id)) kaosviFold(o as String)};
       for (final q in qs) {
         if (!q.endsWith('?') && !q.endsWith('.')) return 'Kao svi: pitanje mora završiti s ? ili . (sada „$q“).';
-        if (!seen.add(_normKaosvi(q))) return _again('Kao svi', q);
+        if (!seen.add(kaosviFold(q))) return _again('Kao svi', q);
+      }
+    case Game.objasni:
+      for (final w in (j['words'] as List).cast<String>()) {
+        if (w.length > 24) return 'Objasni: riječ „$w“ smije imati najviše 24 znaka (sada ${w.length}).'; // objasni_packs_test
       }
     case Game.kviz:
-    case Game.objasni:
     case Game.tkobi:
-      break; // quiz is checked on its bytes; Objasni and Tko bi: the parsers already match the tests
+      break; // quiz is checked on its bytes; Tko bi: tkobi_packs_test is covered by the parser (30+, no repeats)
   }
   return null;
 }
