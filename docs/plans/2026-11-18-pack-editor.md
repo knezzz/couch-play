@@ -65,11 +65,11 @@ HTML/JS.
     order); `added`: how many were appended. Used only for the sources file.
   - `String renumberSources(String text, List<int> deleted, int added)` (pure, exported for tests).
 
-- [ ] **Step 0: Check `package:core` resolves under plain Dart.** `cd tool/pack_editor && fvm dart pub get`, then a
+- [x] **Step 0: Check `package:core` resolves under plain Dart.** `cd tool/pack_editor && fvm dart pub get`, then a
   one-line `bin/` script importing `package:core/src/quiz_pack.dart` and `src/koliko.dart` runs with
   `fvm dart run`. If it fails because core needs Flutter, stop and tell the lead which import breaks; the lead picks
   the cheapest fix that still runs the same rules (for example importing the files by relative path).
-- [ ] **Step 1: Write the failing tests** in `packs_test.dart`, each on a temp dir that copies the needed real files:
+- [x] **Step 1: Write the failing tests** in `packs_test.dart`, each on a temp dir that copies the needed real files:
   - `lists_every_game`: `listPacks` on a copy of the repo's pack dirs returns 16 kviz packs and ≥1 for each other game;
     `hr-oblici` has `count == 50`.
   - `save_roundtrip_unchanged`: load `hr-oblici`, save with the same json and stamp → `SaveOk`, and the JSON file's
@@ -82,14 +82,14 @@ HTML/JS.
     `parsePack` on it is `PackOk` with the picture files; another pack's zip mtime is unchanged.
   - `renumber_sources`: header text + lines `1.`..`4.`; `deleted: [2]`, `added: 1` → header unchanged, lines
     `1. a`, `2. c`, `3. d`, `4. (added in the editor, no source yet)`.
-- [ ] **Step 2: Run** `cd tool/pack_editor && fvm dart test` — expected: FAIL (`packs.dart` symbols undefined).
-- [ ] **Step 3: Implement `lib/packs.dart`.** Validate quiz packs by building the bytes the TV would load (JSON for a
+- [x] **Step 2: Run** `cd tool/pack_editor && fvm dart test` — expected: FAIL (`packs.dart` symbols undefined).
+- [x] **Step 3: Implement `lib/packs.dart`.** Validate quiz packs by building the bytes the TV would load (JSON for a
   text pack; the zip of the folder for a folder pack) and calling `parsePack`; others with `fromJson` in a
   try/catch on `FormatException`, message = the exception's message. Also enforce the bundled test's quiz minimum of
   30 questions. Write the JSON to a temp file in the same folder and rename over the original.
-- [ ] **Step 4: Run** `fvm dart test` — expected: all pass. Then from the repo root `cd apps/tv && fvm flutter test
+- [x] **Step 4: Run** `fvm dart test` — expected: all pass. Then from the repo root `cd apps/tv && fvm flutter test
   test/bundled_packs_test.dart test/pack_duplicates_test.dart` — expected: pass (real packs untouched).
-- [ ] **Step 5: Commit** `git commit -- tool/pack_editor/pubspec.yaml tool/pack_editor/pubspec.lock
+- [x] **Step 5: Commit** `git commit -- tool/pack_editor/pubspec.yaml tool/pack_editor/pubspec.lock
   tool/pack_editor/lib tool/pack_editor/test` (`feat(pack-editor): load, check and save packs`).
 
 ### Task 2: Server and page
