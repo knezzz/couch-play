@@ -1,0 +1,13 @@
+name: pack_editor
+description: Local editor for the CouchPlay question packs.
+publish_to: none
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  core:
+    path: ../../packages/core
+
+dev_dependencies:
+  test: ^1.25.0
