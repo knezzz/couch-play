@@ -76,6 +76,7 @@ const $ = id => document.getElementById(id);
 let packs = [];
 let cur = null;   // {game, id, json, stamp, items:[{orig, data, gone}]}
 let dirty = false;
+let saving = false;
 
 function el(tag, props, ...kids) {
   const e = Object.assign(document.createElement(tag), props || {});
@@ -104,9 +105,9 @@ function drawNav() {
   }
 }
 
-async function openPack(game, id) {
-  if (cur && cur.game === game && cur.id === id) return;
-  if (!ok2leave()) return;
+async function openPack(game, id, reload) {
+  if (!reload && cur && cur.game === game && cur.id === id) return;
+  if (!reload && !ok2leave()) return;
   setMsg('Učitavam…');
   const r = await fetch(`/api/pack/${game}/${encodeURIComponent(id)}`);
   if (!r.ok) { setMsg('Ne mogu učitati paket.', 'err'); return; }
@@ -195,7 +196,11 @@ function applyFind() {
 $('find').oninput = applyFind;
 
 async function save() {
-  if (!cur || !dirty) return;
+  if (!cur || !dirty || saving) return;   // a second save would carry the old stamp and get a false 409
+  saving = true;
+  try { await doSave(); } finally { saving = false; }
+}
+async function doSave() {
   const [key] = SHAPE[cur.game];
   const kept = cur.items.filter(i => !i.gone);
   const body = {
@@ -217,7 +222,10 @@ async function save() {
     setDirty(false); drawNav(); drawRows(); applyFind();
     out.note ? setMsg('Spremljeno. ' + out.note, 'note') : setMsg('Spremljeno.', 'ok');
   } else if (r.status === 409) {
-    setDirty(true); setMsg('Paket se promijenio, učitaj ponovno', 'err');
+    setDirty(true); setMsg('Paket se promijenio, učitaj ponovno ', 'err');
+    $('msg').append(el('button', {textContent: 'Učitaj ponovno', onclick: () => {
+      if (ok2leave()) openPack(cur.game, cur.id, true);   // asks first: edits are dropped
+    }}));
   } else {
     setDirty(true); setMsg(out.message || ('Greška ' + r.status), 'err');
   }
