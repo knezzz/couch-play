@@ -23,6 +23,7 @@ import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/blef/blef_view.dart';
+import 'ui/kaosvi/kaosvi_view.dart';
 import 'ui/koliko/koliko_view.dart';
 import 'ui/tkobi/tkobi_view.dart';
 import 'ui/objasni/objasni_view.dart';
@@ -258,7 +259,7 @@ class _TvAppState extends State<TvApp> {
       navigatorKey: _nav,
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
-        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef || _session.phase == Phase.tkobi,
+        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef || _session.phase == Phase.tkobi || _session.phase == Phase.kaosvi,
         changes: _session.changes,
         onEnd: _session.endGame,
         // Back on the results screen moves on at once instead of waiting out the hold.
@@ -318,6 +319,8 @@ class _TvAppState extends State<TvApp> {
               ? BlefView(match: _session.blef!, players: _session.playerInfos)
               : _session.phase == Phase.tkobi && _session.tkobi != null
               ? TkobiView(match: _session.tkobi!, players: _session.playerInfos)
+              : _session.phase == Phase.kaosvi && _session.kaosvi != null
+              ? KaosviView(match: _session.kaosvi!, players: _session.playerInfos)
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,

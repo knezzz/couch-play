@@ -6,7 +6,7 @@ import '../tv_theme.dart';
 
 const _amber = Color(0xFFFFB020), _red = Color(0xFFFF4D6D), _gold = Color(0xFFFFD54A), _green = Color(0xFF2ECC71);
 
-enum KaosviStageTv { ask, merge, reveal, over }
+enum KaosviShow { ask, merge, reveal, over }
 
 /// One group of equal answers at the reveal.
 class KaosviStack {
@@ -34,7 +34,7 @@ class KaosviBoard {
     this.groups = const [],
     this.tie = false,
   });
-  final KaosviStageTv stage;
+  final KaosviShow stage;
   final int number, total;
   final String question;
   final List<PlayerInfo> players;
@@ -52,7 +52,7 @@ class KaosviScreen extends StatelessWidget {
   const KaosviScreen(this.b, {super.key});
   final KaosviBoard b;
 
-  bool get _timed => b.stage == KaosviStageTv.ask || b.stage == KaosviStageTv.merge;
+  bool get _timed => b.stage == KaosviShow.ask || b.stage == KaosviShow.merge;
   bool get _urgent => b.secondsLeft <= 5;
 
   Widget _face(PlayerInfo p, double size) => PlayerDot(playerColors[p.colorIndex % playerColors.length], size: size, character: p.character);
@@ -128,7 +128,7 @@ class KaosviScreen extends StatelessWidget {
       ]);
 
   Widget _body() => switch (b.stage) {
-        KaosviStageTv.ask => Column(children: [
+        KaosviShow.ask => Column(children: [
             _header(),
             Expanded(child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
               _question(76),
@@ -137,7 +137,7 @@ class KaosviScreen extends StatelessWidget {
             ]))),
             _who(Strings.kaosviAnswered(b.answered.length, b.players.length)),
           ]),
-        KaosviStageTv.merge => Column(children: [
+        KaosviShow.merge => Column(children: [
             _header(),
             Expanded(child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
               _question(56),
@@ -147,7 +147,7 @@ class KaosviScreen extends StatelessWidget {
               const Text(Strings.kaosviMergingHint, style: TextStyle(fontSize: 40, color: tvMuted)),
             ]))),
           ]),
-        KaosviStageTv.reveal || KaosviStageTv.over => _reveal(),
+        KaosviShow.reveal || KaosviShow.over => _reveal(),
       };
 
   Widget _reveal() {

@@ -7,7 +7,7 @@ import 'package:tv/ui/tv_theme.dart';
 final _eight = [for (var i = 0; i < 8; i++) PlayerInfo(i, 'Igrac$i-duže', i, true, 0, character: characterIds[i])];
 const _q = 'Navedi voće koje se najčešće jede ljeti na plaži, u hladu ili kod kuće, uz sladoled ili samo tako.';
 
-KaosviBoard _board(KaosviStageTv st, {Set<int> answered = const {}, int left = 20, List<KaosviStack> groups = const [], bool tie = false, List<PlayerInfo>? players}) => KaosviBoard(
+KaosviBoard _board(KaosviShow st, {Set<int> answered = const {}, int left = 20, List<KaosviStack> groups = const [], bool tie = false, List<PlayerInfo>? players}) => KaosviBoard(
     stage: st, number: 2, total: 12, question: _q, players: players ?? _eight, answered: answered, secondsLeft: left, seconds: 30, groups: groups, tie: tie);
 
 Future<void> _show(WidgetTester t, KaosviBoard b, Size size) async {
@@ -20,7 +20,7 @@ Future<void> _show(WidgetTester t, KaosviBoard b, Size size) async {
 
 void main() {
   testWidgets('asking: the question, who has answered (lit) and how many, never an answer', (t) async {
-    await _show(t, _board(KaosviStageTv.ask, answered: const {0, 3}), const Size(1920, 1080));
+    await _show(t, _board(KaosviShow.ask, answered: const {0, 3}), const Size(1920, 1080));
     expect(find.text(_q), findsOneWidget);
     expect(find.text('Odgovoreno: 2 od 8'), findsOneWidget);
     expect(find.byKey(const ValueKey('who-0-yes')), findsOneWidget);
@@ -28,12 +28,12 @@ void main() {
     expect(t.widget<Text>(find.byKey(const ValueKey('seconds'))).data, '20');
     expect(find.byKey(const ValueKey('group-0')), findsNothing);
     expect(t.takeException(), isNull);
-    await _show(t, _board(KaosviStageTv.ask, left: 5), const Size(1920, 1080));
+    await _show(t, _board(KaosviShow.ask, left: 5), const Size(1920, 1080));
     expect(t.widget<Text>(find.byKey(const ValueKey('seconds'))).style!.color, const Color(0xFFFF4D6D));
   });
 
   testWidgets('merging: says the host is merging; no answers, no groups', (t) async {
-    await _show(t, _board(KaosviStageTv.merge, left: 12), const Size(1920, 1080));
+    await _show(t, _board(KaosviShow.merge, left: 12), const Size(1920, 1080));
     expect(find.byKey(const ValueKey('merging')), findsOneWidget);
     expect(find.byKey(const ValueKey('group-0')), findsNothing);
     expect(t.takeException(), isNull);
@@ -45,7 +45,7 @@ void main() {
       KaosviStack('kruška', [_eight[3], _eight[4]]),
       KaosviStack('dinja', [_eight[5]], points: -1),
     ];
-    await _show(t, _board(KaosviStageTv.reveal, groups: groups, players: _eight.sublist(0, 6)), const Size(1920, 1080));
+    await _show(t, _board(KaosviShow.reveal, groups: groups, players: _eight.sublist(0, 6)), const Size(1920, 1080));
     expect(find.byKey(const ValueKey('group-0-top')), findsOneWidget);
     expect(find.byKey(const ValueKey('group-1')), findsOneWidget);
     expect(find.byKey(const ValueKey('group-2')), findsOneWidget);
@@ -60,7 +60,7 @@ void main() {
 
   testWidgets('a tie: nobody is marked or scores, and the screen says so', (t) async {
     final groups = [KaosviStack('a', [_eight[0], _eight[1]]), KaosviStack('b', [_eight[2], _eight[3]]), KaosviStack('c', [_eight[4]])];
-    await _show(t, _board(KaosviStageTv.reveal, groups: groups, tie: true, players: _eight.sublist(0, 5)), const Size(1920, 1080));
+    await _show(t, _board(KaosviShow.reveal, groups: groups, tie: true, players: _eight.sublist(0, 5)), const Size(1920, 1080));
     expect(find.byKey(const ValueKey('tie')), findsOneWidget);
     expect(find.byKey(const ValueKey('group-0-top')), findsNothing);
     expect(find.textContaining('+'), findsNothing);
@@ -78,13 +78,13 @@ void main() {
         }
       }
 
-      await _show(t, _board(KaosviStageTv.ask, answered: const {0, 1, 2, 3, 4}), size);
+      await _show(t, _board(KaosviShow.ask, answered: const {0, 1, 2, 3, 4}), size);
       fits('ask');
-      await _show(t, _board(KaosviStageTv.merge), size);
+      await _show(t, _board(KaosviShow.merge), size);
       fits('merge');
-      await _show(t, _board(KaosviStageTv.reveal, groups: [for (var i = 0; i < 8; i++) KaosviStack('odgovor broj $i, dosta dug', [_eight[i]], points: i == 7 ? -1 : 0)]), size);
+      await _show(t, _board(KaosviShow.reveal, groups: [for (var i = 0; i < 8; i++) KaosviStack('odgovor broj $i, dosta dug', [_eight[i]], points: i == 7 ? -1 : 0)]), size);
       fits('8 groups');
-      await _show(t, _board(KaosviStageTv.reveal, groups: [KaosviStack('svi isto', _eight, points: 1)]), size);
+      await _show(t, _board(KaosviShow.reveal, groups: [KaosviStack('svi isto', _eight, points: 1)]), size);
       fits('one group of 8');
       final r = t.getRect(find.byKey(const ValueKey('group-0-top')));
       expect(r.right, lessThanOrEqualTo(size.width + 1));
