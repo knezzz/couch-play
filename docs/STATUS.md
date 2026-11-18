@@ -47,7 +47,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 37 | Design-audit decisions: scores between Curve rounds, Večeras strip, power-up legend, fat icon, night switch (person, 2026-11-17) | done; on the TV | lead |
 | 38 | Placement points last = 0; all-zero game = 0; Back on results moves on; Međimurje words without villages, no easy ones (person, 2026-11-17) | done; on the TV (682e883) | lead + content |
 | 39–42 | Party games: Objasni, Koliko?, Blef, Tko bi?, with new packs (person, 2026-11-17) | done (QA pass with real browser phones; Blef typing proven on Android + iPhone); on the TV in ee00641 | lead + content |
-| 43 | Kao svi: match the herd (person, 2026-11-17) | built; review clean; QA running | lead + content |
+| 43 | Kao svi: match the herd (person, 2026-11-17) | done (QA pass 3/5/8 phones); next TV install | lead + content |
 | 44 | Difficulty: Oblici harder, Matematika/Fizika easier, pub-quiz level (person, 2026-11-17) | done (0713aa3, e430b0e): Oblici 36 new; Matematika 113, Fizika 107; next TV install | content |
 
 ## Open questions for the person
@@ -313,3 +313,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
   Another rig (web-editor) is building a Mac pack editor; it tells the PM before writing pack files.
 - 2026-11-18: Tasks 37, 39–42 and the play feedback (Oblici labels, Koliko?/Blef reveals) accepted; QA pass on 36 and
   38 too. Kao svi: review clean, QA running.
+- 2026-11-18: Task 43 accepted. Everything routed is handed back. Next TV install waits for the person (yesterday's
+  standing yes was for 2026-11-17).
