@@ -261,8 +261,6 @@ class UljezMatch {
         _checkVoteDone();
       case UljezPhase.guess:
         if (game.guesser == id) _endGuess();
-      case UljezPhase.discussion:
-        break;
     }
     _checkEmpty();
     notify?.call();
@@ -326,7 +324,6 @@ class UljezMatch {
     send(id, UljezWord(game.wordOf(id)));
     switch (game.phase) {
       case UljezPhase.clues:
-      case UljezPhase.discussion:
         send(id, _turnMsg());
         if (game.alive.contains(id)) send(id, _wishMsg(id));
       case UljezPhase.vote:

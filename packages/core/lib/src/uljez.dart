@@ -46,8 +46,7 @@ class UljezPack {
   }
 }
 
-/// [discussion] is no longer used (kept so older screens compile).
-enum UljezPhase { clues, discussion, vote, guess, over }
+enum UljezPhase { clues, vote, guess, over }
 
 enum UljezWinner { village, impostors }
 
