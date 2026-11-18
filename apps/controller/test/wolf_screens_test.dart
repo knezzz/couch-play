@@ -392,14 +392,13 @@ void main() {
         t,
         VoteScreen(
           day: 3,
-          secondsLeft: 72,
           targets: _people,
           selfId: 1,
           onVote: sent.add,
           onSkip: () {},
         ),
       );
-      expect(find.text('1:12'), findsOneWidget);
+      expect(find.byKey(const ValueKey('vote-clock')), findsNothing);
       await t.tap(find.byKey(const ValueKey('vote-go')), warnIfMissed: false);
       expect(sent, isEmpty);
       await t.tap(find.byKey(const ValueKey('vote-3')));
@@ -414,7 +413,6 @@ void main() {
         t,
         VoteScreen(
           day: 1,
-          secondsLeft: 5,
           targets: _people,
           selfId: 1,
           onVote: sent.add,
@@ -433,7 +431,6 @@ void main() {
         t,
         VoteScreen(
           day: 1,
-          secondsLeft: 5,
           targets: _people,
           selfId: 1,
           onVote: (_) {},
@@ -449,18 +446,14 @@ void main() {
     Widget settings({
       Set<String> enabled = const {'seer', 'doc'},
       bool hidden = true,
-      int secs = 120,
       void Function(bool)? onHidden,
-      void Function(int)? onDiscuss,
     }) => Scaffold(
       body: SingleChildScrollView(
         child: WolfSettingsView(
           players: 7,
           enabled: enabled,
           hidden: hidden,
-          discussSeconds: secs,
           onHidden: onHidden ?? (_) {},
-          onDiscuss: onDiscuss ?? (_) {},
           onPickRoles: () {},
           onShowRoles: () {},
         ),
@@ -470,7 +463,7 @@ void main() {
     testWidgets('shows the count with the always-on roles included', (t) async {
       await _show(t, settings());
       expect(find.text(Strings.possibleRolesCount(4)), findsOneWidget);
-      expect(find.text('2:00'), findsOneWidget);
+      expect(find.byKey(const ValueKey('discuss-more')), findsNothing);
     });
 
     testWidgets('Skrivene uloge sends the opposite of what is shown', (
@@ -480,27 +473,6 @@ void main() {
       await _show(t, settings(hidden: true, onHidden: sent.add));
       await t.tap(find.byKey(const ValueKey('hidden-roles')));
       expect(sent, [false]);
-    });
-
-    testWidgets('discussion time steps 30 s and stops at both ends', (t) async {
-      final sent = <int>[];
-      await _show(t, settings(secs: 120, onDiscuss: sent.add));
-      await t.tap(find.byKey(const ValueKey('discuss-more')));
-      await t.tap(find.byKey(const ValueKey('discuss-less')));
-      expect(sent, [150, 90]);
-      sent.clear();
-      await _show(t, settings(secs: 30, onDiscuss: sent.add));
-      await t.tap(
-        find.byKey(const ValueKey('discuss-less')),
-        warnIfMissed: false,
-      );
-      expect(sent, isEmpty);
-      await _show(t, settings(secs: 300, onDiscuss: sent.add));
-      await t.tap(
-        find.byKey(const ValueKey('discuss-more')),
-        warnIfMissed: false,
-      );
-      expect(sent, isEmpty);
     });
 
     testWidgets('the pick screen toggles a role, never Vukodlak or Seljanin', (

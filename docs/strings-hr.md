@@ -94,9 +94,9 @@ Choices that were put to the person:
 | wolfVoteHeader / wolfVoteQuestion | DAN 3 · GLASANJE / Koga selo izbacuje? | DAY 3 · VOTE / Whom does the village throw out? | Vukodlak vote screen |
 | wolfVoted | Glasalo 4 od 5 | 4 of 5 have voted | Vukodlak vote screen, top right (the only count shown) |
 | wolfEndHeader / wolfTeam* | KRAJ IGRE / Selo / Vukodlaci / Sam | GAME OVER / Village / Werewolves / Alone | Vukodlak end screen (all roles shown) |
-| uljezRoundClues / uljezClueFor / uljezClueClock / uljezClueHint | RUNDA 2 · TRAGOVI / Marko, reci trag. / Za trag / Svatko kaže jedan trag o svojoj riječi. Ne reci riječ! | ROUND 2 · CLUES / Marko, give a clue. / For the clue / Everyone gives one clue about their word. Don't say the word! | Uljez TV, clue turns |
+| uljezRoundClues / uljezClueFor / uljezClueHint | RUNDA 2 · TRAGOVI / Marko, reci trag. / Svatko kaže jedan trag o svojoj riječi. Ne reci riječ! | ROUND 2 · CLUES / Marko, give a clue. / Everyone gives one clue about their word. Don't say the word! | Uljez TV, clue turns |
 | uljezNow / uljezSaidClue | Sad ti! / trag dan | Your turn! / clue given | Uljez TV, seat notes |
-| uljezDiscussKicker / uljezWho / uljezDiscussClock / uljezDiscussHint | RAZGOVOR / Tko je uljez? / Do glasanja / Raspravite i potražite uljeza. | DISCUSSION / Who is the impostor? / Until the vote / Discuss and look for the impostor. | Uljez TV, free discussion |
+| wishLabel / wishCount | Idemo glasati / 3 od 5 | Let's vote / 3 of 5 | Uljez TV (from round 2) and Vukodlak village (day): how many want to vote, count only |
 | uljezVoteKicker / uljezVoted | GLASANJE / Glasalo 4 od 6 | VOTE / 4 of 6 have voted | Uljez TV, vote |
 | uljezCaught / uljezGuesses / uljezNotImpostor / uljezNobodyOut | Uhvatili ste uljeza: Petra! / Petra pogađa vašu riječ / Petra ispada, ali nije uljez. / Nitko ne ispada. | You caught the impostor: Petra! / Petra guesses your word / Petra is out but was not the impostor. / Nobody is out. | Uljez TV, vote result |
 | uljezEndKicker / uljezVillageWins / uljezImpostorWins / uljezVillageWord / uljezImpostorWord / uljezTag | KRAJ IGRE / Selo je pobijedilo! / Pobjeda uljeza! / Riječ sela / Uljezova riječ / Uljez | GAME OVER / The village won! / The impostor won! / The village's word / The impostor's word / Impostor | Uljez TV, end |
@@ -210,8 +210,6 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | rolesLocked | (uvijek u igri) | (always in the game) | host: Vukodlak and Seljanin rows |
 | hiddenRoles | Skrivene uloge | Hidden roles | host: Vukodlak settings |
 | hiddenRolesHint | Kad netko ispadne, uloga se ne otkriva. Sve uloge se vide tek na kraju igre. | When someone is out, their role is not revealed. All roles show only at the end. | host: Vukodlak settings |
-| discussion | Razgovor danju | Day discussion | host: Vukodlak settings |
-| shorter / longer | Kraće / Duže | Shorter / Longer | discussion − and + (screen reader) |
 | save | Spremi | Save | host: role switches |
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
@@ -290,7 +288,16 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | rolesPickIntroLead | Ti biraš koje uloge smiju biti u igri. Igra sama izvlači koje će biti i koliko. | You choose which roles may be in the game. The game draws which and how many. | host: role switches, grey box |
 | rolesPickMix | Za {n} igrača: {a} vukodlaka, {b} posebne uloge od uključenih, {c} seljana. Svaka igra izvuče drugačije. | For {n} players: {a} werewolves, {b} special roles from those on, {c} villagers. Every game draws differently. | host: role switches, bold line (plurals: 1 vukodlak, 1 posebna uloga, 1 seljanin) |
 | rolesInfoIntro | 2 vukodlaka i do 3 posebne uloge s ovog popisa. Ne mora svaka biti u igri. Ostali su Seljani. Svi vide isti popis. | 2 werewolves and up to 3 special roles from this list. Not every one has to be in play. The rest are Villagers. Everyone sees the same list. | everyone's roles list, grey box |
-| uljezStage | Tragovi / Rasprava | Clues / Discussion | word card, top right |
+| uljezStage | Tragovi | Clues | word card, top right (no more Rasprava) |
+
+### Idemo glasati and Dao sam trag (phone, Uljez and Vukodlak by day)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| clueDone | Dao sam trag | I gave my clue | Uljez, speaker's phone only, under the word card |
+| letsVote | Idemo glasati | Let's vote | Uljez clues (from round 2) and Vukodlak day, every living phone; tap again to take it back |
+| letsVoteOn | Idemo glasati ✓ | Let's vote ✓ | the same button while this phone's wish is on |
+| wishCount | Glasati žele {n} · treba ih {m} | {n} want to vote · {m} needed | line under the button, from the TV's count |
 
 ### Uljez (phone)
 

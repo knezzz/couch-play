@@ -190,6 +190,12 @@ class _AppState extends State<App> {
         case UljezTurn() || UljezGuess() || UljezEnd():
           _uljez.on(m);
           _screen = _Screen.uljez;
+        case VoteWish() when _uljezOn:
+          _uljez.on(m);
+          _screen = _Screen.uljez;
+        case VoteWish():
+          _wolf.on(m);
+          _screen = _Screen.wolf;
         case VotePrompt() when _uljezOn:
           _uljez.on(m);
           _screen = _Screen.uljez;

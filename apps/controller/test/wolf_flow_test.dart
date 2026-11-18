@@ -443,4 +443,66 @@ void main() {
     expect(find.byType(Switch), findsNothing);
     expect(find.byKey(const ValueKey('role-wolf')), findsOneWidget);
   });
+
+  group('no timers: Idemo glasati by day', () {
+    testWidgets('after Morning the wish shows; it sends and follows the TV', (
+      t,
+    ) async {
+      final c = await _app(t);
+      await _send(t, c, _role);
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+      await _send(t, c, Morning(2, _pad('P2 je vukodlak.')));
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: false, want: 0, needed: 3),
+      );
+      expect(find.text(Strings.wishCount(0, 3)), findsOneWidget);
+      expect(find.byKey(const ValueKey('clue-done')), findsNothing);
+      await t.tap(find.byKey(const ValueKey('vote-wish')));
+      expect(c.sent.last, const ReadyToVote(true));
+      expect(find.text(Strings.letsVote), findsOneWidget);
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: true, want: 1, needed: 3),
+      );
+      await t.tap(find.byKey(const ValueKey('vote-wish')));
+      expect(c.sent.last, const ReadyToVote(false));
+    });
+
+    testWidgets('a night prompt and a vote take the button away', (t) async {
+      final c = await _app(t);
+      await _send(t, c, _role);
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: true, want: 1, needed: 3),
+      );
+      await _send(t, c, _night());
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+      // Back at the card (next morning) the old wish must not reappear.
+      await _send(t, c, Morning(3, _pad('Nitko nije umro.')));
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+      await _send(t, c, const VotePrompt(day: 1, seconds: 0, ids: [0, 2, 3]));
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+      expect(find.byKey(const ValueKey('vote-clock')), findsNothing);
+    });
+
+    testWidgets('the night screens carry no wish, even if one arrives', (
+      t,
+    ) async {
+      final c = await _app(t);
+      await _send(t, c, _role);
+      await _send(t, c, _night());
+      final before = look(t, {'x'});
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: false, want: 0, needed: 3),
+      );
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+      expect(look(t, {'x'}), before);
+    });
+  });
 }

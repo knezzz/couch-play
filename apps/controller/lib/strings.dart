@@ -204,9 +204,9 @@ abstract final class Strings {
       GameKind.curve =>
         '$curveModeLabel: ${curveMode(s.curveMode)} · $curveCountdown: ${seconds(s.curveCountdown)}',
       GameKind.vukodlak =>
-        '$possibleRoles: ${s.wolfRoles.length} · $discussion: ${minutes(s.wolfDiscussion)}',
+        '$possibleRoles: ${s.wolfRoles.length}',
       GameKind.uljez =>
-        '${pack(uljezPacks, s.uljezPackId)} · $discussion: ${minutes(s.uljezDiscussion)} · ${impostors(s.uljezImpostors)}',
+        '${pack(uljezPacks, s.uljezPackId)} · ${impostors(s.uljezImpostors)}',
       GameKind.tkobi =>
         '${pack(tkobiPacks, s.tkobiPackId)} · ${questions(s.tkobiPrompts)}',
       GameKind.blef =>
@@ -271,9 +271,6 @@ abstract final class Strings {
   static const hiddenRoles = 'Skrivene uloge';
   static const hiddenRolesHint =
       'Kad netko ispadne, uloga se ne otkriva. Sve uloge se vide tek na kraju igre.';
-  static const discussion = 'Razgovor danju';
-  static const shorter = 'Kraće';
-  static const longer = 'Duže';
   static const save = 'Spremi';
   static const rulesHeader = 'Pravila';
   static String minutes(int s) =>
@@ -404,7 +401,12 @@ abstract final class Strings {
     ('tramp', 'Lutalica', 'Pobjeđuje sam ako ga selo izglasa van.', 2, false),
   ];
 
-  // Uljez
+  // Uljez and the day discussion
+  static const clueDone = 'Dao sam trag';
+  static const letsVote = 'Idemo glasati';
+  static const letsVoteOn = 'Idemo glasati ✓';
+  static String wishCount(int want, int needed) =>
+      'Glasati žele $want · treba ih $needed';
   static const uljezName = 'Uljez';
   static String uljezRound(int n) => 'ULJEZ · RUNDA $n';
   static const yourWord = 'TVOJA RIJEČ';
@@ -412,7 +414,6 @@ abstract final class Strings {
   static const wordNote = 'Netko možda ima drugu riječ. Možda i ti.';
   static String uljezStage(String stage) => switch (stage) {
     'clues' => 'Tragovi',
-    'discussion' => 'Rasprava',
     _ => '',
   };
   static const uljezVoteHeader = 'GLASANJE';

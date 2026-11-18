@@ -159,47 +159,27 @@ void main() {
     expect(c.sent.last, const Vote(2));
   });
 
-  testWidgets('the vote and the guess show a clock that counts down', (
-    t,
-  ) async {
+  testWidgets('the vote and the guess show no clock', (t) async {
     final c = await _app(t);
     await _send(t, c, const UljezWord('Pikachu'));
-    await _send(t, c, const VotePrompt(day: 1, seconds: 20, ids: [0, 2]));
-    expect(find.text('GLASANJE · 0:20'), findsOneWidget);
+    await _send(t, c, const VotePrompt(day: 1, seconds: 0, ids: [0, 2]));
+    expect(find.text('GLASANJE'), findsOneWidget);
     await t.pump(const Duration(seconds: 3));
-    expect(find.text('GLASANJE · 0:17'), findsOneWidget);
-    await _send(
-      t,
-      c,
-      const UljezGuess(seconds: 15, options: ['a', 'b', 'c', 'd']),
-    );
-    expect(find.text('POGAĐANJE · 0:15'), findsOneWidget);
+    expect(find.text('GLASANJE'), findsOneWidget);
+    await _send(t, c, const UljezGuess(seconds: 0, options: ['a', 'b']));
+    expect(find.text('POGAĐANJE'), findsOneWidget);
   });
 
-  testWidgets('the word card shows the stage: Tragovi, then Rasprava', (
-    t,
-  ) async {
+  testWidgets('the word card shows the stage Tragovi', (t) async {
     final c = await _app(t);
     await _send(t, c, const UljezWord('Pikachu'));
     await _send(
       t,
       c,
-      const UljezTurn(round: 2, speaker: 0, seconds: 20, stage: 'clues'),
+      const UljezTurn(round: 2, speaker: 0, seconds: 0, stage: 'clues'),
     );
     expect(find.text('Tragovi'), findsOneWidget);
     expect(find.text(Strings.uljezRound(2)), findsOneWidget);
-    await _send(
-      t,
-      c,
-      const UljezTurn(
-        round: 2,
-        speaker: null,
-        seconds: 90,
-        stage: 'discussion',
-      ),
-    );
-    expect(find.text('Rasprava'), findsOneWidget);
-    expect(find.text('Tragovi'), findsNothing);
   });
 
   testWidgets('the next turn after a vote brings the word card back', (
@@ -304,13 +284,11 @@ void main() {
       );
     });
 
-    testWidgets('discussion time and 2 impostors (7-8 players) go out', (
+    testWidgets('2 impostors (7-8 players) go out; no discussion row', (
       t,
     ) async {
       final c = await host(t, const GameSettings(), players: 7);
-      await t.ensureVisible(find.byKey(const ValueKey('discuss-more')));
-      await t.tap(find.byKey(const ValueKey('discuss-more')));
-      expect((c.sent.last as SetSettings).settings.uljezDiscussion, 120);
+      expect(find.byKey(const ValueKey('discuss-more')), findsNothing);
       await t.ensureVisible(find.byKey(const ValueKey('impostors-2')));
       await t.tap(find.byKey(const ValueKey('impostors-2')));
       expect((c.sent.last as SetSettings).settings.uljezImpostors, 2);
@@ -349,5 +327,97 @@ void main() {
         );
       },
     );
+  });
+
+  group('no timers: Dao sam trag and Idemo glasati', () {
+    const turn = UljezTurn(round: 1, speaker: 1, seconds: 0, stage: 'clues');
+
+    testWidgets('only the speaker has Dao sam trag, and it sends UljezDone', (
+      t,
+    ) async {
+      final c = await _app(t, me: 1);
+      await _send(t, c, const UljezWord('Pikachu'));
+      await _send(t, c, turn);
+      await _send(
+        t,
+        c,
+        const VoteWish(open: false, ready: false, want: 0, needed: 3),
+      );
+      expect(find.byKey(const ValueKey('clue-done')), findsNothing);
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: false, want: 0, needed: 3),
+      );
+      await t.tap(find.byKey(const ValueKey('clue-done')));
+      expect(c.sent.last, const UljezDone());
+      final o = await _app(t, me: 2);
+      await _send(t, o, const UljezWord('Pikachu'));
+      await _send(t, o, turn);
+      await _send(
+        t,
+        o,
+        const VoteWish(open: true, ready: false, want: 0, needed: 3),
+      );
+      expect(find.byKey(const ValueKey('vote-wish')), findsOneWidget);
+      expect(find.byKey(const ValueKey('clue-done')), findsNothing);
+    });
+
+    testWidgets('no Idemo glasati until the TV opens it (round 1)', (t) async {
+      final c = await _app(t, me: 1);
+      await _send(t, c, const UljezWord('Pikachu'));
+      await _send(t, c, turn);
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+    });
+
+    testWidgets('Idemo glasati sends the wish and shows only the TV state', (
+      t,
+    ) async {
+      final c = await _app(t, me: 2);
+      await _send(t, c, const UljezWord('Pikachu'));
+      await _send(t, c, turn);
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: false, want: 1, needed: 3),
+      );
+      expect(find.text(Strings.wishCount(1, 3)), findsOneWidget);
+      await t.tap(find.byKey(const ValueKey('vote-wish')));
+      expect(c.sent.last, const ReadyToVote(true));
+      // Nothing local: until the TV says so, the button is unchanged.
+      expect(find.text(Strings.letsVote), findsOneWidget);
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: true, want: 2, needed: 3),
+      );
+      expect(find.text(Strings.letsVoteOn), findsOneWidget);
+      expect(find.text(Strings.wishCount(2, 3)), findsOneWidget);
+      await t.tap(find.byKey(const ValueKey('vote-wish')));
+      expect(c.sent.last, const ReadyToVote(false));
+    });
+
+    testWidgets('a vote removes the button and no clock is shown', (t) async {
+      final c = await _app(t, me: 2);
+      await _send(t, c, const UljezWord('Pikachu'));
+      await _send(
+        t,
+        c,
+        const VoteWish(open: true, ready: true, want: 2, needed: 3),
+      );
+      await _send(t, c, const VotePrompt(day: 1, seconds: 0, ids: [0, 1, 3]));
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+      // A word card after the vote must not bring the old wish back.
+      await _send(
+        t,
+        c,
+        const UljezTurn(round: 2, speaker: 0, seconds: 0, stage: 'clues'),
+      );
+      expect(find.byKey(const ValueKey('vote-wish')), findsNothing);
+      await _send(t, c, const VotePrompt(day: 1, seconds: 0, ids: [0, 1, 3]));
+      expect(find.textContaining(':'), findsNothing);
+      await _send(t, c, const UljezGuess(seconds: 0, options: ['a', 'b']));
+      expect(find.textContaining(':'), findsNothing);
+    });
   });
 }

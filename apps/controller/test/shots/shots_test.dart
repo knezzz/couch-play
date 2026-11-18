@@ -204,7 +204,6 @@ void main() {
       'V2PhoneVote',
       VoteScreen(
         day: 3,
-        secondsLeft: 12,
         selfId: 1,
         targets: const [
           WolfTarget(0, 'Luka', 'fox', 0),
@@ -261,7 +260,6 @@ void main() {
       t,
       'UljezPhone_vote',
       UljezVoteScreen(
-        seconds: 20,
         targets: const [
           NightItem(1, 'Luka'),
           NightItem(2, 'Ana', enabled: false, note: 'ti'),
@@ -275,7 +273,6 @@ void main() {
       'UljezPhone_guess',
       UljezGuessScreen(
         word: 'Pikachu',
-        seconds: 15,
         options: const [
           NightItem(0, 'Spužva Bob'),
           NightItem(1, 'Patrik'),

@@ -14,6 +14,7 @@ class UljezInbox {
   VotePrompt? vote;
   UljezGuess? guess;
   UljezEnd? end;
+  VoteWish? wish;
   String screen = 'word'; // word | vote | guess | end
 
   void on(Message m) {
@@ -23,12 +24,15 @@ class UljezInbox {
         screen = 'word';
       case UljezTurn():
         turn = m;
-        // The vote screen stays up through the discussion text of the turn
-        // that follows; only a new word card or vote changes it.
+        // The vote screen stays up through the turn that follows; only a
+        // new word card or vote changes it.
         if (screen == 'vote') screen = 'word';
       case VotePrompt():
         vote = m;
+        wish = null;
         screen = 'vote';
+      case VoteWish():
+        wish = m;
       case UljezGuess():
         guess = m;
         screen = 'guess';
@@ -51,6 +55,21 @@ class UljezFlow extends StatelessWidget {
   String _name(int id) =>
       lobby.players.where((p) => p.id == id).firstOrNull?.name ?? '?';
 
+  Widget? _wish() {
+    final w = inbox.wish;
+    if (w == null || !w.open) return null;
+    final t = inbox.turn;
+    return VoteWishBar(
+      ready: w.ready,
+      want: w.want,
+      needed: w.needed,
+      onWish: (on) => conn.send(ReadyToVote(on)),
+      onClue: t != null && t.speaker == myId
+          ? () => conn.send(const UljezDone())
+          : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (inbox.screen) {
@@ -68,7 +87,6 @@ class UljezFlow extends StatelessWidget {
               ),
           ],
           picked: v.picked,
-          seconds: v.seconds,
           onVote: (t) => conn.send(Vote(t)),
         );
       case 'guess':
@@ -76,7 +94,6 @@ class UljezFlow extends StatelessWidget {
         return UljezGuessScreen(
           key: ValueKey('uljez-guess-${g.options.join('|')}'),
           word: inbox.word?.word ?? '',
-          seconds: g.seconds,
           options: [
             for (var i = 0; i < g.options.length; i++)
               NightItem(i, g.options[i]),
@@ -98,6 +115,7 @@ class UljezFlow extends StatelessWidget {
           round: inbox.turn?.round ?? 1,
           stage: inbox.turn?.stage ?? '',
           word: w.word,
+          bottom: _wish(),
         );
     }
   }

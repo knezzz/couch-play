@@ -227,13 +227,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
     GameSettings s, {
     Set<WolfRole>? roles,
     bool? hide,
-    int? discuss,
-  }) => copySettings(
-    s,
-    wolfRoles: roles,
-    wolfHideRoles: hide,
-    wolfDiscussion: discuss,
-  );
+  }) => copySettings(s, wolfRoles: roles, wolfHideRoles: hide);
 
   /// Pushes a screen that follows the TV's latest LobbyState.
   void _pushLive(Widget Function(LobbyState l) build) {
@@ -337,10 +331,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
       players: l.players.length,
       packs: [for (final p in l.uljezPacks) (p.id, p.title)],
       packId: s.uljezPackId ?? l.uljezPacks.firstOrNull?.id,
-      discussSeconds: s.uljezDiscussion,
       impostors: s.uljezImpostors,
       onPack: (id) => change(copySettings(s, uljezPackId: id)),
-      onDiscuss: (v) => change(copySettings(s, uljezDiscussion: v)),
       onImpostors: (n) => change(copySettings(s, uljezImpostors: n)),
     );
   }
@@ -351,9 +343,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
       players: l.players.length,
       enabled: {for (final r in s.wolfRoles) r.name},
       hidden: s.wolfHideRoles,
-      discussSeconds: s.wolfDiscussion,
       onHidden: (v) => change(_wolf(s, hide: v)),
-      onDiscuss: (v) => change(_wolf(s, discuss: v)),
       onPickRoles: _pickRoles,
       onShowRoles: _showRoles,
     );

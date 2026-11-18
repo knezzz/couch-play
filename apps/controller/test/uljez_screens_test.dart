@@ -136,7 +136,6 @@ void main() {
       int players = 5,
       int impostors = 1,
       void Function(String)? onPack,
-      void Function(int)? onDiscuss,
       void Function(int)? onImpostors,
     }) => Scaffold(
       body: SingleChildScrollView(
@@ -144,26 +143,22 @@ void main() {
           players: players,
           packs: const [('a', 'Crtići'), ('b', 'Hrana')],
           packId: 'a',
-          discussSeconds: 120,
           impostors: impostors,
           onPack: onPack ?? (_) {},
-          onDiscuss: onDiscuss ?? (_) {},
           onImpostors: onImpostors ?? (_) {},
         ),
       ),
     );
 
-    testWidgets('the pack pick and discussion time go out', (t) async {
+    testWidgets('the pack pick goes out and there is no discussion time', (t) async {
       final packs = <String>[];
-      final secs = <int>[];
-      await _show(t, view(onPack: packs.add, onDiscuss: secs.add));
+      await _show(t, view(onPack: packs.add));
       await t.tap(find.byKey(const ValueKey('uljez-pack')));
       await t.pumpAndSettle();
       await t.tap(find.text('Hrana').last);
       await t.pumpAndSettle();
-      await t.tap(find.byKey(const ValueKey('discuss-more')));
       expect(packs, ['b']);
-      expect(secs, [150]);
+      expect(find.byKey(const ValueKey('discuss-more')), findsNothing);
     });
 
     testWidgets('1 or 2 impostors only from 7 players', (t) async {

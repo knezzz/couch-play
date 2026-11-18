@@ -16,6 +16,9 @@ class WolfInbox {
   Farewell? farewell;
   WolfEnd? end;
 
+  /// The day's "Idemo glasati" state; null at night and during a vote.
+  VoteWish? wish;
+
   /// Which screen is up now.
   String screen = 'idle'; // idle | night | vote | farewell | end
 
@@ -25,13 +28,17 @@ class WolfInbox {
         role = m;
       case NightPrompt():
         night = m;
+        wish = null;
         screen = 'night';
       case Morning():
         morning = m;
         screen = 'idle';
       case VotePrompt():
         vote = m;
+        wish = null;
         screen = 'vote';
+      case VoteWish():
+        wish = m;
       case Farewell():
         farewell = m;
         screen = 'farewell';
@@ -64,6 +71,15 @@ class WolfFlow extends StatelessWidget {
           ),
         ),
       );
+
+  Widget? _wish(VoteWish? w) => w == null || !w.open
+      ? null
+      : VoteWishBar(
+          ready: w.ready,
+          want: w.want,
+          needed: w.needed,
+          onWish: (on) => conn.send(ReadyToVote(on)),
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +114,6 @@ class WolfFlow extends StatelessWidget {
         return VoteScreen(
           key: ValueKey('vote-${v.day}'),
           day: v.day,
-          secondsLeft: v.seconds,
           selfId: myId,
           canVote: v.canVote,
           picked: v.picked,
@@ -146,6 +161,7 @@ class WolfFlow extends StatelessWidget {
           role: info.$2,
           description: info.$3,
           extra: extra,
+          bottom: _wish(phase.wish),
           onRoles: () => _roles(context, r.possible.toSet()),
         );
     }

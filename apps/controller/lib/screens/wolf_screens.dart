@@ -49,9 +49,13 @@ class RoleHoldScreen extends StatefulWidget {
     required this.description,
     this.extra = '',
     this.onRoles,
+    this.bottom,
   });
   final String name;
   final int night;
+
+  /// Day buttons (Idemo glasati, Dao sam trag) under the card.
+  final Widget? bottom;
 
   /// Replaces "NOĆ n" (Uljez shows its round); [heading] and [hiddenHint] are
   /// the small label over the shown text and the hint on the hidden card.
@@ -132,6 +136,7 @@ class _RoleHoldState extends State<RoleHoldScreen> {
                   ),
                 ),
               ),
+              if (widget.bottom != null) widget.bottom!,
               if (widget.onRoles != null)
                 TextButton(
                   key: const ValueKey('open-roles'),
@@ -470,7 +475,6 @@ class VoteScreen extends StatefulWidget {
   const VoteScreen({
     super.key,
     required this.day,
-    required this.secondsLeft,
     required this.targets,
     required this.selfId,
     required this.onVote,
@@ -484,7 +488,7 @@ class VoteScreen extends StatefulWidget {
 
   /// The vote the TV already has from this phone (after a reload).
   final int? picked;
-  final int day, secondsLeft, selfId;
+  final int day, selfId;
   final List<WolfTarget> targets;
   final void Function(int target) onVote;
   final VoidCallback onSkip;
@@ -494,23 +498,6 @@ class VoteScreen extends StatefulWidget {
 
 class _VoteState extends State<VoteScreen> {
   late int? _pick = widget.picked;
-  late int _left = widget.secondsLeft;
-  late final Timer _tick = Timer.periodic(const Duration(seconds: 1), (_) {
-    if (_left > 0) setState(() => _left--);
-  });
-
-  @override
-  void initState() {
-    super.initState();
-    _tick; // start counting
-  }
-
-  @override
-  void dispose() {
-    _tick.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -539,14 +526,6 @@ class _VoteState extends State<VoteScreen> {
                           letterSpacing: 2,
                           fontWeight: FontWeight.w700,
                         ),
-                      ),
-                    ),
-                    Text(
-                      Strings.minutes(_left),
-                      key: const ValueKey('vote-clock'),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -899,54 +878,6 @@ class WolfRolesInfoScreen extends StatelessWidget {
   );
 }
 
-/// "Razgovor danju" with - and + (30 s steps, 0:30 to 5:00), shared by the
-/// games that have a discussion.
-class DiscussRow extends StatelessWidget {
-  const DiscussRow({super.key, required this.seconds, required this.onChange});
-  final int seconds;
-  final void Function(int seconds) onChange;
-
-  static const min = 30, max = 300, step = 30;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
-    decoration: BoxDecoration(
-      color: surface,
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: Row(
-      children: [
-        const Expanded(
-          child: Text(Strings.discussion, style: TextStyle(fontSize: 19)),
-        ),
-        _btn('discuss-less', Strings.shorter, '−', seconds <= min, -step),
-        SizedBox(
-          width: 64,
-          child: Text(
-            Strings.minutes(seconds),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-          ),
-        ),
-        _btn('discuss-more', Strings.longer, '+', seconds >= max, step),
-      ],
-    ),
-  );
-
-  Widget _btn(String key, String tip, String sign, bool off, int d) =>
-      IconButton(
-        key: ValueKey(key),
-        tooltip: tip,
-        onPressed: off ? null : () => onChange(seconds + d),
-        icon: Text(sign, style: const TextStyle(fontSize: 26)),
-        style: IconButton.styleFrom(
-          minimumSize: const Size(56, 56),
-          backgroundColor: raised,
-        ),
-      );
-}
-
 /// Host: Vukodlak's details. Only the switches live here; the TV owns state.
 class WolfSettingsView extends StatelessWidget {
   const WolfSettingsView({
@@ -954,17 +885,14 @@ class WolfSettingsView extends StatelessWidget {
     required this.players,
     required this.enabled,
     required this.hidden,
-    required this.discussSeconds,
     required this.onHidden,
-    required this.onDiscuss,
     required this.onPickRoles,
     required this.onShowRoles,
   });
-  final int players, discussSeconds;
+  final int players;
   final Set<String> enabled;
   final bool hidden;
   final void Function(bool) onHidden;
-  final void Function(int seconds) onDiscuss;
   final VoidCallback onPickRoles, onShowRoles;
 
   @override
@@ -1013,8 +941,6 @@ class WolfSettingsView extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        DiscussRow(seconds: discussSeconds, onChange: onDiscuss),
       ],
     );
   }
@@ -1068,4 +994,74 @@ class WolfSettingsView extends StatelessWidget {
           ),
         ),
       );
+}
+
+/// "Idemo glasati" under the day card: a wish that can be taken back, with the
+/// TV's count. The same for every phone; [onWish] sends the wish itself.
+class VoteWishBar extends StatelessWidget {
+  const VoteWishBar({
+    super.key,
+    required this.ready,
+    required this.want,
+    required this.needed,
+    required this.onWish,
+    this.onClue,
+  });
+  final bool ready;
+  final int want, needed;
+  final void Function(bool on) onWish;
+
+  /// The speaker's "Dao sam trag" (Uljez only); null on other phones.
+  final VoidCallback? onClue;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: Column(
+      children: [
+        if (onClue != null) ...[
+          SizedBox(
+            height: 64,
+            width: double.infinity,
+            child: FilledButton(
+              key: const ValueKey('clue-done'),
+              onPressed: onClue,
+              child: const Text(
+                Strings.clueDone,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        SizedBox(
+          height: 64,
+          width: double.infinity,
+          child: ready
+              ? FilledButton(
+                  key: const ValueKey('vote-wish'),
+                  onPressed: () => onWish(false),
+                  child: const Text(
+                    Strings.letsVoteOn,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                )
+              : OutlinedButton(
+                  key: const ValueKey('vote-wish'),
+                  onPressed: () => onWish(true),
+                  child: const Text(
+                    Strings.letsVote,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  ),
+                ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          Strings.wishCount(want, needed),
+          key: const ValueKey('wish-count'),
+          style: const TextStyle(fontSize: 18, color: _nightMuted),
+        ),
+      ],
+    ),
+  );
 }

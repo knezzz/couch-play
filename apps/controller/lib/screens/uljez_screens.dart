@@ -16,10 +16,12 @@ class UljezWordScreen extends StatelessWidget {
     required this.round,
     required this.word,
     this.stage = '',
+    this.bottom,
   });
+  final Widget? bottom;
   final String name, word;
 
-  /// 'clues' or 'discussion': shown top right (Tragovi, Rasprava).
+  /// 'clues': shown top right (Tragovi).
   final String stage;
   final int round;
 
@@ -32,6 +34,7 @@ class UljezWordScreen extends StatelessWidget {
     hiddenHint: Strings.wordHint,
     role: word,
     description: Strings.wordNote,
+    bottom: bottom,
   );
 }
 
@@ -42,9 +45,7 @@ class UljezVoteScreen extends StatelessWidget {
     required this.targets,
     required this.onVote,
     this.picked,
-    this.seconds,
   });
-  final int? seconds;
   final int? picked;
   final List<NightItem> targets;
   final void Function(int target) onVote;
@@ -58,7 +59,6 @@ class UljezVoteScreen extends StatelessWidget {
     hint: '',
     showSpecial: false,
     picked: picked,
-    seconds: seconds,
     targets: targets,
     onConfirm: (t, _, _) => onVote(t),
   );
@@ -71,9 +71,7 @@ class UljezGuessScreen extends StatelessWidget {
     required this.word,
     required this.options,
     required this.onGuess,
-    this.seconds,
   });
-  final int? seconds;
   final String word;
   final List<NightItem> options;
   final void Function(int option) onGuess;
@@ -84,33 +82,29 @@ class UljezGuessScreen extends StatelessWidget {
     header: Strings.guessHeader,
     title: Strings.caught,
     hint: Strings.caughtHint(word),
-    seconds: seconds,
     showSpecial: false,
     targets: options,
     onConfirm: (t, _, _) => onGuess(t),
   );
 }
 
-/// Host: the word pack, discussion time and (7-8 players) 1 or 2 impostors.
+/// Host: the word pack and (7-8 players) 1 or 2 impostors.
 class UljezSettingsView extends StatelessWidget {
   const UljezSettingsView({
     super.key,
     required this.players,
     required this.packs,
     required this.packId,
-    required this.discussSeconds,
     required this.impostors,
     required this.onPack,
-    required this.onDiscuss,
     required this.onImpostors,
   });
-  final int players, discussSeconds, impostors;
+  final int players, impostors;
 
   /// (id, title) of the word packs.
   final List<(String, String)> packs;
   final String? packId;
   final void Function(String id) onPack;
-  final void Function(int seconds) onDiscuss;
   final void Function(int count) onImpostors;
 
   @override
@@ -125,7 +119,6 @@ class UljezSettingsView extends StatelessWidget {
         onPick: onPack,
       ),
       const SizedBox(height: 8),
-      DiscussRow(seconds: discussSeconds, onChange: onDiscuss),
       if (players >= 7) ...[
         const SizedBox(height: 8),
         ChoiceRow(
