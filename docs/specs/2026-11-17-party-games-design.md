@@ -126,7 +126,7 @@ A warm-up voting game about the people in the room. There are no right answers, 
   placed by their points.
 - **Game:** 10 prompts (host setting 5 / 10 / 15), drawn from the selected packs (all by default) without repeats.
 - **Content:** prompts in Croatian, cheeky but kind. No prompts about looks, weight, health, money troubles,
-  relationships or anything that would hurt someone in a mixed group. Packs: "Blago" (default) and "Ljuto"
+  relationships or anything that would hurt someone in a mixed group. Packs: "Blago" and "Ljuto" (both ticked by default since 2026-11-18, as every pack)
   (spicier, still within those limits). Format: `{"id","title","prompts":[...]}`, at least 30 prompts.
 
 ## 4. Koliko? (guess the number)

@@ -121,7 +121,7 @@ Home (one game full screen, QR, players, the "Večeras" strip) → host picks a 
   picture only where the image is freely licensed.
 
   **Photo questions (user request, 2026-11-15):** questions like "Koji je ovo grad?" with a photo, and other picture questions (landmarks, places, people, things). The pack format accepts photos (JPEG, PNG or WebP) as well as SVG. Photos come only from freely licensed sources (e.g. Wikimedia Commons); the pack's `.sources.md` credits the author and licence of each one. On a picture question the TV gives the picture as much of the screen as it can, uncropped.
-- - **Packs are multi-select in every game (user request, 2026-11-18):** wherever the host picks a pack (Quiz, Uljez,
+- **Packs are multi-select in every game (user request, 2026-11-18):** wherever the host picks a pack (Quiz, Uljez,
   Objasni, Koliko?, Blef, Tko bi?, Kao svi), the details screen shows every pack as a checklist, and **all packs are
   selected by default**, uploaded packs included. The game draws from all selected packs together, with no repeats in
   one game. At least one pack stays selected (the last one can't be unticked). The selection is remembered like the
