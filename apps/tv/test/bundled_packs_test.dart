@@ -32,6 +32,20 @@ void main() {
     expect(total, greaterThanOrEqualTo(300));
   });
 
+  test('the union of all bundled packs keeps the picture questions (task 46 must-fix: 226 used to become 104)', () {
+    final packs = [for (final f in _files()) (parsePack(f.readAsBytesSync()) as PackOk).pack];
+    final u = unionQuiz('all', 'Svi', packs);
+    int pics(Iterable<PackQuestion> qs) => qs.where((q) => q.image != null).length;
+    final sum = packs.fold<int>(0, (n, p) => n + pics(p.questions));
+    expect(sum, greaterThan(200));
+    expect(pics(u.questions), greaterThanOrEqualTo(sum - 5), reason: 'only true cross-pack repeats may drop');
+    expect(u.questions.where((q) => q.q == 'Koji je ovo grad?').length,
+        greaterThanOrEqualTo(packs.firstWhere((p) => p.id == 'hr-geografija').questions.where((q) => q.q == 'Koji je ovo grad?').length));
+    for (final q in u.questions) {
+      if (q.image != null) expect(u.images.containsKey(q.image), isTrue, reason: q.q);
+    }
+  });
+
   test('bundled packs load, are the default, and an upload cannot replace one', () async {
     final dir = Directory.systemTemp.createTempSync('packs');
     addTearDown(() => dir.deleteSync(recursive: true));

@@ -41,7 +41,15 @@ QuizPack unionQuiz(String id, String title, List<QuizPack> packs) {
       images['${p.id}/${e.key}'] = e.value;
     }
   }
-  final qs = _unique<PackQuestion>(lists, (q) => _fold(q.q));
+  // A repeat is the same question with the same right answer and the same
+  // picture. The text alone is not enough: "Koji je ovo grad?" is eleven
+  // different picture questions.
+  String key(PackQuestion q) {
+    final pic = q.image == null ? '' : '${images[q.image]?.length}:${Object.hashAll(images[q.image] ?? const <int>[])}';
+    return '${_fold(q.q)}\u0000${_fold(q.choices[q.answer])}\u0000$pic';
+  }
+
+  final qs = _unique<PackQuestion>(lists, key);
   final used = {for (final q in qs) if (q.image != null) q.image!};
   return QuizPack(id, title, qs, {for (final e in images.entries) if (used.contains(e.key)) e.key: e.value});
 }
@@ -53,7 +61,10 @@ UljezPack unionUljez(String id, String title, List<UljezPack> packs) {
     return w.join('\u0000');
   }
 
-  return UljezPack(id, title, _unique<WordPair>([for (final p in packs) p.pairs], key));
+  // Each pair remembers its pack: the guess draws its decoys from there.
+  return UljezPack(id, title, _unique<WordPair>([
+    for (final p in packs) [for (final w in p.pairs) WordPair(w.a, w.b, source: p.id)]
+  ], key));
 }
 
 ObjasniPack unionObjasni(String id, String title, List<ObjasniPack> packs) =>

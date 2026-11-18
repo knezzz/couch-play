@@ -16,8 +16,13 @@ import 'dart:math';
 ///    otherwise (an impostor survived all the votes, or a right guess)
 ///    the impostors win. Winners score 1, the rest 0, fed to placementPoints.
 class WordPair {
-  const WordPair(this.a, this.b);
+  const WordPair(this.a, this.b, {this.source});
   final String a, b;
+
+  /// The pack this pair came from when several packs were merged (null in a
+  /// plain pack): the guess draws its decoys from the same source, so they
+  /// stay on the word's theme.
+  final String? source;
 }
 
 class UljezPack {
@@ -191,7 +196,13 @@ class UljezGame {
     guesser = id;
     phase = UljezPhase.guess;
     _guess = null;
-    final others = [for (var i = 0; i < _pack.pairs.length; i++) if (i != pairIndex) _pack.pairs[i]]..shuffle(_random);
+    // Pairs of the word's own source first (the same theme), the rest only if
+    // that source does not have enough distinct words.
+    final rest = [for (var i = 0; i < _pack.pairs.length; i++) if (i != pairIndex) _pack.pairs[i]];
+    final others = [
+      ...(rest.where((p) => p.source == pair.source).toList()..shuffle(_random)),
+      ...(rest.where((p) => p.source != pair.source).toList()..shuffle(_random)),
+    ];
     final decoys = <String>[];
     for (final p in others) {
       final w = _random.nextBool() ? p.a : p.b;
