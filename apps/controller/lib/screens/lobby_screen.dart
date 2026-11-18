@@ -8,6 +8,7 @@ import '../strings.dart';
 import 'game_cards.dart';
 import 'blef_screens.dart';
 import 'kaosvi_screens.dart';
+import 'kick.dart';
 import 'koliko_screens.dart';
 import 'objasni_screens.dart';
 import 'pack_grid.dart';
@@ -136,81 +137,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
     );
   }
 
-  Future<void> _confirmKick(PlayerInfo p) async {
-    final color = playerColors[p.colorIndex % playerColors.length];
-    final ok = await showModalBottomSheet<bool>(
-      isScrollControlled:
-          true, // the Croatian text can need more than the default 9/16 height
-      context: context,
-      backgroundColor: surface,
-      barrierColor: const Color(0xCC0A0A10),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (c) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Flexible(
-                    child: Text(
-                      Strings.removeTitle(p.name),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                Strings.removeBody(p.name),
-                style: const TextStyle(fontSize: 18, color: muted, height: 1.4),
-              ),
-              const SizedBox(height: 24),
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF4D6D),
-                  foregroundColor: ink,
-                ),
-                onPressed: () => Navigator.pop(c, true),
-                child: const Text(
-                  Strings.remove,
-                  style: TextStyle(fontSize: 22),
-                ),
-              ),
-              const SizedBox(height: 16),
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: raised,
-                  foregroundColor: textColor,
-                ),
-                onPressed: () => Navigator.pop(c, false),
-                child: const Text(Strings.keep, style: TextStyle(fontSize: 22)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (ok == true) widget.conn.send(Kick(p.id));
-  }
+  Future<void> _confirmKick(PlayerInfo p) =>
+      confirmKick(context, widget.conn, p);
 
   /// The ids of [packs] that are ticked: every pack not switched off, so a
   /// pack the TV has just got starts ticked.

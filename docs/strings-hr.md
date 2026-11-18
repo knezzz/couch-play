@@ -173,6 +173,10 @@ Informal "ti". `{x}` is filled in by the app.
 | botTag | ROBOT | BOT | tag on a bot row |
 | remove | Ukloni | Remove | button on a player row; button in the sheet |
 | keep | Zadrži | Keep | button in the sheet |
+| removePlayer | Ukloni igrača | Remove a player | host only, strip at the bottom of Uljez and the Vukodlak day (no night); title of the list |
+| removeAway | Ukloni igrača · nema veze: {n} | Remove a player · no connection: {n} | the same strip, when {n} players have lost the connection |
+| noConnection | nema veze | no connection | under a name in that list |
+| day | DAN {n} | DAY {n} | Vukodlak role card by day (was NOĆ) |
 | removeTitle | Ukloniti igrača {name}? | Remove player {name}? | bottom sheet title |
 | removeBody | {name} izlazi iz igre i može se ponovno pridružiti sa svog mobitela. | {name} leaves the game and can join again from their phone. | bottom sheet text |
 | tvProblem | TV ima problem. Pokušaj ponovno. | The TV had a problem. Try again. | after a failed pack upload |

@@ -149,6 +149,10 @@ abstract final class Strings {
   static const botTag = 'ROBOT';
   static const remove = 'Ukloni';
   static const keep = 'Zadrži';
+  static const removePlayer = 'Ukloni igrača';
+  static String removeAway(int n) => 'Ukloni igrača · nema veze: $n';
+  static const noConnection = 'nema veze';
+  static String day(int n) => 'DAN $n';
   static String removeTitle(String name) => 'Ukloniti igrača $name?';
   static String removeBody(String name) =>
       '$name izlazi iz igre i može se ponovno pridružiti sa svog mobitela.';

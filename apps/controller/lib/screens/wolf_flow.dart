@@ -28,6 +28,7 @@ class WolfInbox {
         role = m;
       case NightPrompt():
         night = m;
+        morning = null; // the day is over
         wish = null;
         screen = 'night';
       case Morning():
@@ -158,6 +159,9 @@ class WolfFlow extends StatelessWidget {
         return RoleHoldScreen(
           name: me?.name ?? '',
           night: phase.night?.night ?? 1,
+          header: phase.morning == null
+              ? null
+              : Strings.day(phase.morning!.day),
           role: info.$2,
           description: info.$3,
           extra: extra,

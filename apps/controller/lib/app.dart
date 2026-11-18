@@ -7,6 +7,7 @@ import 'connection.dart';
 import 'screens/curve_screen.dart';
 import 'theme.dart';
 import 'screens/join_screen.dart';
+import 'screens/kick.dart';
 import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
@@ -233,6 +234,19 @@ class _AppState extends State<App> {
     }
   }
 
+  /// The host's way to remove a player who has gone away, during Uljez and by
+  /// day in Vukodlak. Never at night: the night phones must all look alike.
+  bool get _kickBar {
+    if (_lobby?.hostId != _myId) return false;
+    return switch (_screen) {
+      _Screen.uljez => _uljez.screen != 'end',
+      _Screen.wolf =>
+        _wolf.screen == 'vote' ||
+            (_wolf.screen == 'idle' && _wolf.morning != null),
+      _ => false,
+    };
+  }
+
   PlayerInfo? get _me =>
       _lobby?.players.where((p) => p.id == _myId).firstOrNull;
 
@@ -330,7 +344,21 @@ class _AppState extends State<App> {
               ),
             ),
           ),
-        Expanded(child: _body()),
+        Expanded(
+          child: _kickBar
+              ? MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: true,
+                  child: _body(),
+                )
+              : _body(),
+        ),
+        if (_kickBar)
+          HostKickBar(
+            conn: widget.conn,
+            players: _lobby?.players ?? const [],
+            myId: _myId,
+          ),
       ],
     ),
   );
