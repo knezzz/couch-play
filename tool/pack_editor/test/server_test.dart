@@ -201,9 +201,15 @@ void main() {
       expect((await call('GET', '/api/packs', headers: {'host': '192.168.1.5:${server.port}'})).$1, 403);
     });
 
+    test('lan_off_refuses_own_ip', () async {
+      final ip = await ownIp();
+      if (ip == null) return markTestSkipped('no network address on this machine');
+      expect((await call('GET', '/api/packs', headers: {'host': '$ip:${server.port}'})).$1, 403);
+    });
+
     test('lan_on_accepts_own_ip', () async {
       final ip = await ownIp();
-      if (ip == null) return; // no network on this machine
+      if (ip == null) return markTestSkipped('no network address on this machine');
       final lan = await startServer(root, port: 0, webDir: web, lan: true);
       addTearDown(() => lan.close(force: true));
       final req = await client.openUrl('GET', Uri.parse('http://$ip:${lan.port}/api/packs'));
