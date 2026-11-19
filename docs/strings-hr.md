@@ -103,7 +103,7 @@ Choices that were put to the person:
 | uljezNow / uljezSaidClue | Sad ti! / trag dan | Your turn! / clue given | Uljez TV, seat notes |
 | wishLabel / wishCount | Idemo glasati / 3 od 5 | Let's vote / 3 of 5 | Uljez TV (from round 2) and Vukodlak village (day): how many want to vote, count only |
 | settingPack / packsAll / packsLine | Paketi / Svi paketi / 3 od 9 paketa | Packs / All packs / 3 of 9 packs | Home settings panel of every game with packs, and Kviz meta line (replaces the single pack title) |
-| kickPlayer / kickConfirm / kickOffline | Ukloni igrača / Ukloniti Ana? / bez veze | Remove a player / Remove Ana? / no connection | TV Back menu during a game (remote kick); the list shows names and 'bez veze' only |
+| kickPlayer / kickConfirm / kickOffline | Ukloni igrača / Ukloniti Ana? / nije tu | Remove a player / Remove Ana? / not here | TV Back menu during a game (remote kick); the list shows names and 'nije tu' only |
 | uljezVoteKicker / uljezVoted | GLASANJE / Glasalo 4 od 6 | VOTE / 4 of 6 have voted | Uljez TV, vote |
 | uljezCaught / uljezGuesses / uljezNotImpostor / uljezNobodyOut | Uhvatili ste uljeza: Petra! / Petra pogađa vašu riječ / Petra ispada, ali nije uljez. / Nitko ne ispada. | You caught the impostor: Petra! / Petra guesses your word / Petra is out but was not the impostor. / Nobody is out. | Uljez TV, vote result |
 | uljezEndKicker / uljezVillageWins / uljezImpostorWins / uljezVillageWord / uljezImpostorWord / uljezTag | KRAJ IGRE / Selo je pobijedilo! / Pobjeda uljeza! / Riječ sela / Uljezova riječ / Uljez | GAME OVER / The village won! / The impostor won! / The village's word / The impostor's word / Impostor | Uljez TV, end |
@@ -175,13 +175,13 @@ Informal "ti". `{x}` is filled in by the app.
 | remove | Ukloni | Remove | button on a player row; button in the sheet |
 | keep | Zadrži | Keep | button in the sheet |
 | removePlayer | Ukloni igrača | Remove a player | host only, strip at the bottom of Uljez and the Vukodlak day (no night); title of the list |
-| removeAway | Ukloni igrača · nema veze: {n} | Remove a player · no connection: {n} | the same strip, when {n} players have lost the connection |
-| noConnection | nema veze | no connection | under a name in that list |
+| removeAway | Ukloni igrača · nije tu: {n} | Remove a player · not here: {n} | the same strip, when {n} players have lost the connection |
+| noConnection | nije tu | not here | under a name in that list |
 | day | DAN {n} | DAY {n} | Vukodlak role card by day (was NOĆ) |
 | removeTitle | Ukloniti igrača {name}? | Remove player {name}? | bottom sheet title |
 | removeBody | {name} izlazi iz igre i može se ponovno pridružiti sa svog mobitela. | {name} leaves the game and can join again from their phone. | bottom sheet text |
 | tvProblem | TV ima problem. Pokušaj ponovno. | The TV had a problem. Try again. | after a failed pack upload |
-| tvUnreachable | Ne mogu doći do TV-a. Provjeri Wi-Fi i pokušaj ponovno. | Can't reach the TV. Check the Wi-Fi and try again. | after a pack upload with no connection |
+| tvUnreachable | Ne mogu doći do TV-a. Provjeri Wi-Fi i pokušaj ponovno. | Can't reach the TV. Check the Wi-Fi and try again. | after a pack upload with not here |
 | questionHeader | Pitanje {n} od {total} · gledaj TV | Question {n} of {total} · look at the TV | quiz, top line |
 | locked | Odgovor je zaključan. Gledaj TV. | Your answer is locked. Look at the TV. | quiz, after you tap |
 | correct | Točno | Correct | quiz result, green |
