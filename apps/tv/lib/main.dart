@@ -23,7 +23,6 @@ import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/blef/blef_view.dart';
-import 'ui/kaosvi/kaosvi_view.dart';
 import 'ui/koliko/koliko_view.dart';
 import 'ui/tkobi/tkobi_view.dart';
 import 'ui/objasni/objasni_view.dart';
@@ -127,7 +126,6 @@ class _TvAppState extends State<TvApp> {
       _session.kolikoPacks = await loadKolikoPacks(rootBundle);
       _session.blefPacks = await loadBlefPacks(rootBundle);
       _session.tkobiPacks = await loadTkobiPacks(rootBundle);
-      _session.kaosviPacks = await loadKaosviPacks(rootBundle);
       _session.loadSettings(File('${support.path}/settings.json'));
       final server = await GameServer.start(
         webRoot: web,
@@ -259,7 +257,7 @@ class _TvAppState extends State<TvApp> {
       navigatorKey: _nav,
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
-        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef || _session.phase == Phase.tkobi || _session.phase == Phase.kaosvi,
+        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef || _session.phase == Phase.tkobi,
         changes: _session.changes,
         onEnd: _session.endGame,
         // Back also offers "Ukloni igrača" (the way out when a phone has left mid-game).
@@ -322,8 +320,6 @@ class _TvAppState extends State<TvApp> {
               ? BlefView(match: _session.blef!, players: _session.playerInfos)
               : _session.phase == Phase.tkobi && _session.tkobi != null
               ? TkobiView(match: _session.tkobi!, players: _session.playerInfos)
-              : _session.phase == Phase.kaosvi && _session.kaosvi != null
-              ? KaosviView(match: _session.kaosvi!, players: _session.playerInfos)
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,
@@ -335,7 +331,7 @@ class _TvAppState extends State<TvApp> {
                   settings: _session.settings,
                   selected: _session.selectedGame ?? _homeGame,
                   packs: {
-                    for (final k in const [GameKind.quiz, GameKind.uljez, GameKind.objasni, GameKind.koliko, GameKind.blef, GameKind.tkobi, GameKind.kaosvi])
+                    for (final k in const [GameKind.quiz, GameKind.uljez, GameKind.objasni, GameKind.koliko, GameKind.blef, GameKind.tkobi])
                       k: _session.packSelection(k),
                   },
                   quizPacks: _session.packStore?.infos.length ?? 0,

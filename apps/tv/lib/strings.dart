@@ -35,7 +35,7 @@ abstract final class Strings {
         CurveMode.onlyYou => 'Samo za tebe',
       };
   /// The host's game card on the lobby, same words as the phone's game details.
-  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?', GameKind.kaosvi => 'Kao svi' };
+  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?', GameKind.kaosvi => '' };
   /// 2000 -> '2 000' (no-break space).
   static String _g(int n) => n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => '\u00A0');
 
@@ -57,7 +57,7 @@ abstract final class Strings {
         GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
         GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
         GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
-        GameKind.kaosvi => 'Odgovori isto kao većina u sobi.',
+        GameKind.kaosvi => '', // removed with the enum value in stage 2 (Task 47)
       };
   /// Bottom of the lobby while the host has a game's card open (the phones say the same).
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
@@ -66,7 +66,6 @@ abstract final class Strings {
   /// Which packs a game draws from: all of them, or how many are ticked.
   static String packsLine(int ticked, int total) => ticked >= total ? packsAll : '$ticked od $total paketa';
   static const settingQuestions = 'Broj pitanja';
-  static const settingTarget = 'Bodova do pobjede';
   static const settingAnswerTime = 'Vrijeme za odgovor';
   static const settingReveal = 'Pauza između pitanja';
   static const settingMode = 'Način igre';
@@ -112,12 +111,6 @@ abstract final class Strings {
   static const blefNobody = 'nitko';
   static String tkobiQuestionOf(int n, int total) => 'Pitanje $n od $total';
   static String tkobiVoted(int n, int total) => 'Glasalo: $n od $total';
-  static String kaosviQuestionOf(int n, int total) => 'Pitanje $n od $total';
-  static const kaosviHint = 'Odgovori kao većina.';
-  static String kaosviAnswered(int n, int total) => 'Odgovoreno: $n od $total';
-  static const kaosviMerging = 'Domaćin spaja odgovore';
-  static const kaosviMergingHint = 'Isti odgovori idu u istu skupinu.';
-  static const kaosviTie = 'Izjednačeno: nitko ne boduje';
   static const legendTitle = 'Pojačanja';
   static const homeJoin = 'Skeniraj i pridruži se';
   static const homeJoinOr = 'ili otvori u pregledniku:';
@@ -143,7 +136,7 @@ abstract final class Strings {
         GameKind.koliko => '2–8 igrača · ${_pk(pack)}bez robota',
         GameKind.blef => '3–8 igrača · ${_pk(pack)}bez robota',
         GameKind.tkobi => '3–8 igrača · ${_pk(pack)}bez robota',
-        GameKind.kaosvi => '3–8 igrača · ${s.kaosviQuestions} pitanja · do ${s.kaosviTarget} bodova · ${_pk(pack)}bez robota',
+        GameKind.kaosvi => '', // removed with the enum value in stage 2 (Task 47)
       };
 
   // --- Vukodlak (the village on the TV) ---

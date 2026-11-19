@@ -18,7 +18,6 @@ const homeGames = [
   GameKind.koliko,
   GameKind.blef,
   GameKind.tkobi,
-  GameKind.kaosvi,
 ];
 
 /// The console home (docs/design/couchplay-screens/V2Home.dc.html), on a 1920x1080
@@ -211,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.symmetric(
                               horizontal: 200,
                             ),
-                            // Scales down instead of cutting the packs off (the longest lines, Objasni and Kaosvi, do not fit at 34).
+                            // Scales down instead of cutting the packs off (the longest line, Objasni, does not fit at 34).
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
@@ -551,14 +550,8 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingImpostors, '${settings.uljezImpostors}'),
           ],
         ],
-      GameKind.kaosvi => [
-          [
-            (Strings.settingQuestions, '${settings.kaosviQuestions}'),
-            (Strings.settingTarget, '${settings.kaosviTarget}'),
-          ],
-        ],
-      // The other party games have no settings on the TV yet.
-      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String)>>[],
+      // The other party games have no settings on the TV yet. (kaosvi: not on the home list; its enum value goes in Task 47 stage 2.)
+      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi || GameKind.kaosvi => <List<(String, String)>>[],
       },
     ];
     Widget item((String, String) it) => Text.rich(
@@ -727,7 +720,7 @@ class _Backdrop extends StatelessWidget {
           GameKind.koliko => const [Color(0xFF0B1F1A), Color(0xFF12304A)],
           GameKind.blef => const [Color(0xFF3A2008), Color(0xFF2A0E0E)],
           GameKind.tkobi => const [Color(0xFF2A1030), Color(0xFF3A1430)],
-          GameKind.kaosvi => const [Color(0xFF0E2A1E), Color(0xFF1A3A2A)],
+          GameKind.kaosvi => const [Color(0xFF14142A), Color(0xFF14142A)], // removed with the enum value in stage 2 (Task 47)
         },
       ),
     ),
@@ -850,15 +843,7 @@ class _ArtPainter extends CustomPainter {
           canvas.drawCircle(Offset(960 + 760 * cos(a), 640 + 380 * sin(a)), 56, Paint()..color = playerColors[i].withValues(alpha: 0.4));
         }
       case GameKind.kaosvi:
-        // A herd: one big flock in the middle, a pair to one side and one that went its own way. Dots only.
-        const flock = [Offset(900, 700), Offset(990, 660), Offset(1070, 730), Offset(940, 790), Offset(1030, 820), Offset(860, 640)];
-        for (var i = 0; i < flock.length; i++) {
-          canvas.drawCircle(flock[i], 62, Paint()..color = playerColors[i % playerColors.length].withValues(alpha: 0.5));
-        }
-        for (var i = 0; i < 2; i++) {
-          canvas.drawCircle(Offset(400.0 + i * 100, 780 - i * 40), 52, Paint()..color = playerColors[6 + i].withValues(alpha: 0.4));
-        }
-        canvas.drawCircle(const Offset(1620, 640), 52, Paint()..color = const Color(0x66FF4D6D));
+        break; // removed with the enum value in stage 2 (Task 47)
     }
     canvas.restore();
   }

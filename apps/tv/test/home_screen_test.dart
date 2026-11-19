@@ -66,6 +66,9 @@ double _fs(WidgetTester t, Finder f) => t.widget<Text>(f).style!.fontSize!;
 Finder _face(String id) =>
     find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);
 
+// build-core drops GameKind.kaosvi in Task 47 stage 2; then this is GameKind.values.
+final _games = GameKind.values.where((g) => g != GameKind.kaosvi).toList();
+
 void main() {
   testWidgets('the blurbs are the canvas\'s (V2Home); Kviz says how much there is to play', (t) async {
     await _pump(t, selected: GameKind.curve);
@@ -468,7 +471,7 @@ void main() {
     });
 
     // QA fail: the card's meta line (panel closed) must carry the selection for every pack game.
-    for (final g in const [GameKind.uljez, GameKind.objasni, GameKind.koliko, GameKind.blef, GameKind.tkobi, GameKind.kaosvi]) {
+    for (final g in const [GameKind.uljez, GameKind.objasni, GameKind.koliko, GameKind.blef, GameKind.tkobi]) {
       for (final size in const [Size(1272, 715), Size(960, 540)]) {
         testWidgets('${g.name}: the card meta says the packs, panel closed, whole at ${size.width.toInt()}x${size.height.toInt()}', (t) async {
           t.view
@@ -515,9 +518,9 @@ void main() {
             joinUrl: 'http://192.168.1.5:8080/',
             players: _four,
             settings: const GameSettings(),
-            selected: GameKind.kaosvi,
+            selected: GameKind.tkobi,
             games: homeGames,
-            packs: const {GameKind.kaosvi: (ticked: 12, total: 14)},
+            packs: const {GameKind.tkobi: (ticked: 12, total: 14)},
             onSelect: (_) {},
             onPlay: (_) {},
           ),
@@ -665,12 +668,12 @@ void main() {
 
     testWidgets('the four backgrounds differ', (t) async {
       final px = <GameKind, List<Color>>{};
-      for (final g in GameKind.values) {
+      for (final g in _games) {
         final d = await shot(t, g);
         px[g] = [for (final p in const [(300, 300), (960, 700), (1460, 250), (300, 1000), (1600, 900)]) at(d, p.$1, p.$2)];
       }
-      for (final a in GameKind.values) {
-        for (final b in GameKind.values) {
+      for (final a in _games) {
+        for (final b in _games) {
           if (a.index >= b.index) continue;
           var diff = 0;
           for (var i = 0; i < 5; i++) {
