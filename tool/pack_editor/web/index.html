@@ -47,6 +47,42 @@
   .del { flex:none; border:1px solid var(--line); background:#fff; border-radius:6px; padding:5px 10px; cursor:pointer; font:inherit; color:var(--bad); }
   #add { margin-top:10px; padding:10px 18px; border:2px dashed var(--accent); background:none; color:var(--accent); border-radius:8px; font:inherit; font-weight:600; cursor:pointer; }
   .empty { color:var(--mute); padding:40px; text-align:center; }
+  #savebar { display:contents; }
+  #pick { display:none; }
+  #msg button { font:inherit; padding:2px 8px; cursor:pointer; }
+
+  /* Phone: pack picker on top, one column per question, Spremi + its message pinned at the bottom. */
+  @media (max-width: 700px) {
+    body { display:block; height:auto; }
+    nav { display:none; }
+    main { display:block; }
+    header { gap:8px; padding:10px 12px; }
+    header h1 { display:none; }
+    #pick { display:block; width:100%; }
+    #find { width:100%; }
+    #pick, #find, input[type=text], input[type=number], textarea { font-size:16px; min-height:44px; }
+    #rows { overflow:visible; padding:10px 12px 140px; }
+    .row { flex-wrap:wrap; gap:8px; }
+    .no { width:auto; padding-top:0; text-align:left; align-self:center; }
+    .del { order:1; margin-left:auto; min-height:44px; min-width:44px; }
+    .fields { order:2; flex-basis:100%; }
+    img.pic { order:3; max-width:100%; height:auto; }
+    .line { flex-wrap:wrap; }
+    .line > label { width:auto; }
+    .line > input { flex:1 1 140px; }
+    .line.nowrap { flex-wrap:nowrap; }
+    .line.nowrap > input { flex:1 1 0; min-width:0; }
+    input.small { width:auto; }
+    .choices { grid-template-columns:1fr; }
+    .choice { min-height:44px; }
+    .choice input[type=radio] { width:24px; height:24px; flex:none; }
+    #add { width:100%; min-height:44px; }
+    #savebar { display:flex; gap:10px; align-items:center; position:fixed; left:0; right:0; bottom:0; z-index:5;
+               background:var(--card); border-top:1px solid var(--line); padding:10px 12px; }
+    #msg { flex:1; max-height:30vh; overflow-y:auto; }
+    #msg button { min-height:44px; }
+    button.primary { min-height:44px; flex:none; }
+  }
 </style>
 </head>
 <body>
@@ -54,11 +90,12 @@
 <main>
   <header>
     <h1 id="title">Odaberi paket</h1>
+    <select id="pick"></select>
     <input id="find" type="search" placeholder="Traži u paketu…" hidden>
-    <span id="msg"></span>
-    <button id="save" class="primary" disabled>Spremi</button>
+    <div id="savebar"><span id="msg"></span>
+    <button id="save" class="primary" disabled>Spremi</button></div>
   </header>
-  <div id="rows"><div class="empty">Odaberi paket s lijeve strane.</div></div>
+  <div id="rows"><div class="empty">Odaberi paket.</div></div>
 </main>
 <script>
 const GAMES = [['kviz','Kviz'],['objasni','Objasni'],['koliko','Koliko?'],['blef','Blef'],['tkobi','Tko bi?'],['kaosvi','Kao svi'],['uljez','Uljez']];
@@ -92,18 +129,29 @@ async function loadList() {
   drawNav();
 }
 function drawNav() {
-  const nav = $('nav'); nav.textContent = '';
+  const nav = $('nav'), pick = $('pick'); nav.textContent = ''; pick.textContent = '';
+  if (!cur) pick.append(el('option', {value: '', textContent: 'Odaberi paket…'}));
   for (const [g, label] of GAMES) {
     const list = packs.filter(p => p.game === g);
     if (!list.length) continue;
     nav.append(el('h3', {textContent: label}));
+    const grp = el('optgroup', {label});
+    pick.append(grp);
     for (const p of list) {
+      grp.append(el('option', {value: g + '/' + p.id, textContent: `${p.title || p.id} (${p.count})`}));
       const b = el('button', {className: cur && cur.game === g && cur.id === p.id ? 'on' : '', onclick: () => openPack(g, p.id)},
         el('span', {textContent: p.title || p.id}), el('span', {className: 'n', textContent: p.count}));
       nav.append(b);
     }
   }
+  if (cur) pick.value = cur.game + '/' + cur.id;
 }
+$('pick').onchange = async e => {
+  const [g, ...id] = e.target.value.split('/');
+  if (!id.length) return;
+  await openPack(g, id.join('/'));
+  if (cur) e.target.value = cur.game + '/' + cur.id;   // declined the unsaved-edits question: stay on the current pack
+};
 
 async function openPack(game, id, reload) {
   if (!reload && cur && cur.game === game && cur.id === id) return;
@@ -150,7 +198,7 @@ function fieldsFor(item) {
     box.append(areaInput(() => d.q, v => d.q = v));
     const n = textInput(() => String(d.answer), v => { const x = Number(v); d.answer = v.trim() === '' || isNaN(x) ? v : x; }, {className: 'small'});
     const u = textInput(() => d.unit, v => d.unit = v, {className: 'small'});
-    box.append(el('div', {className: 'line'}, el('label', {textContent: 'Broj'}), n, el('label', {textContent: 'Jedinica'}), u));
+    box.append(el('div', {className: 'line nowrap'}, el('label', {textContent: 'Broj'}), n,el('label', {textContent: 'Jedinica'}), u));
     box.append(line('Izvor', textInput(() => d.source || '', v => d.source = v)));
   } else if (g === 'blef') {
     box.append(areaInput(() => d.q, v => d.q = v));
