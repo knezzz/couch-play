@@ -30,7 +30,7 @@ void main() {
   setUp(() async {
     root = Directory.systemTemp.createTempSync('pack_editor_server').path;
     _copy(Directory('$_real/tool/packs'), Directory('$root/tool/packs'));
-    for (final g in ['packs', 'objasni', 'koliko', 'blef', 'tkobi', 'kaosvi', 'uljez']) {
+    for (final g in ['packs', 'objasni', 'koliko', 'blef', 'tkobi', 'uljez']) {
       _copy(Directory('$_real/apps/tv/assets/$g'), Directory('$root/apps/tv/assets/$g'));
     }
     web = '$root/web'; // not created: GET / is a 404 until a page exists

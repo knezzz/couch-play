@@ -3,14 +3,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:core/src/blef.dart';
-import 'package:core/src/kaosvi.dart';
 import 'package:core/src/koliko.dart';
 import 'package:core/src/objasni.dart';
 import 'package:core/src/quiz_pack.dart';
 import 'package:core/src/tkobi.dart';
 import 'package:core/src/uljez.dart';
 
-enum Game { kviz, objasni, koliko, blef, tkobi, kaosvi, uljez }
+enum Game { kviz, objasni, koliko, blef, tkobi, uljez }
 
 const staleMessage = 'Paket se promijenio, učitaj ponovno.';
 const _minQuiz = 30; // same floor as apps/tv/test/bundled_packs_test.dart
@@ -168,8 +167,7 @@ String _few(String name, int min, int n, String unit) => '$name treba barem $min
 String _again(String name, String text) => '$name: ponavlja se „$text“ (u ovom ili drugom paketu).';
 
 // The rules below mirror the TV pack tests, so a saved pack keeps them green:
-// party_packs_test _norm (Koliko, Blef), kaosviFold for Kao svi (kaosvi_packs_load_test; it is
-// stricter than kaosvi_packs_test _norm), pack_duplicates_test _normal.
+// party_packs_test _norm (Koliko, Blef), pack_duplicates_test _normal.
 String _normParty(String s) => s.toLowerCase().replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ').trim();
 String _normQuiz(String q) =>
     q.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim().replaceAll(RegExp(r'[\s.,;:!?…]+$'), '');
@@ -204,7 +202,7 @@ String? _quizRepeat(String root, QuizPack mine) {
   return null;
 }
 
-/// What party_packs_test, uljez_packs_test and kaosvi_packs_test ask beyond the parsers.
+/// What party_packs_test and uljez_packs_test ask beyond the parsers.
 String? _rules(String root, Game game, String id, Map<String, dynamic> j) {
   switch (game) {
     case Game.koliko:
@@ -228,14 +226,6 @@ String? _rules(String root, Game game, String id, Map<String, dynamic> j) {
       for (final w in [for (final p in pairs) ...p.cast<String>()]) {
         if (w.length > 24) return 'Uljez: riječ „$w“ smije imati najviše 24 znaka (sada ${w.length}).';
         if (!words.add(w)) return 'Uljez: ponavlja se riječ „$w“.';
-      }
-    case Game.kaosvi:
-      final qs = (j['questions'] as List).cast<String>();
-      if (qs.length < 60) return _few('Kao svi', 60, qs.length, 'pitanja');
-      final seen = {for (final o in _others(root, game, id)) kaosviFold(o as String)};
-      for (final q in qs) {
-        if (!q.endsWith('?') && !q.endsWith('.')) return 'Kao svi: pitanje mora završiti s ? ili . (sada „$q“).';
-        if (!seen.add(kaosviFold(q))) return _again('Kao svi', q);
       }
     case Game.objasni:
       for (final w in (j['words'] as List).cast<String>()) {
@@ -266,8 +256,6 @@ String? _checkOther(String root, Game game, String id, Map<String, dynamic> json
         BlefPack.fromJson(json);
       case Game.tkobi:
         TkobiPack.fromJson(json);
-      case Game.kaosvi:
-        KaosviPack.fromJson(json);
       case Game.uljez:
         UljezPack.fromJson(json);
       case Game.kviz:

@@ -27,7 +27,7 @@ setUp_() {
   final d = Directory.systemTemp.createTempSync('pack_editor_test');
   root = d.path;
   _copy(Directory('$_real/tool/packs'), Directory('$root/tool/packs'));
-  for (final g in ['packs', 'objasni', 'koliko', 'blef', 'tkobi', 'kaosvi', 'uljez']) {
+  for (final g in ['packs', 'objasni', 'koliko', 'blef', 'tkobi', 'uljez']) {
     _copy(Directory('$_real/apps/tv/assets/$g'), Directory('$root/apps/tv/assets/$g'));
   }
 }
@@ -128,7 +128,7 @@ void main() {
     expect(File(p.ref.path).readAsBytesSync(), before);
   });
 
-  // Rules of the TV pack tests (party_packs, uljez_packs, kaosvi_packs, pack_duplicates):
+  // Rules of the TV pack tests (party_packs, uljez_packs, pack_duplicates):
   // an accepted save must keep them green. Each case is refused, the file unchanged.
   void refused(String what, Game g, String id, void Function(Map<String, dynamic> json) edit, String text) {
     test('refuses_$what', () {
@@ -165,19 +165,8 @@ void main() {
     final pairs = j['pairs'] as List;
     pairs[1] = [pairs[0][0], 'zzz'];
   }, 'ponavlja se');
-  refused('kaosvi_59', Game.kaosvi, 'kaosvi-pop', (j) => qs(j).removeRange(59, qs(j).length), 'Kao svi treba barem 60 pitanja (sada 59)');
-  refused('kaosvi_no_question_mark', Game.kaosvi, 'kaosvi-pop', (j) => qs(j)[0] = 'Bez znaka na kraju', '?');
-  refused('kaosvi_repeat_in_another_pack', Game.kaosvi, 'kaosvi-pop', (j) {
-    qs(j)[0] = '  ${otherFirst(Game.kaosvi, 'kaosvi-hrana').toUpperCase()}';
-  }, 'ponavlja se');
   refused('objasni_long_word', Game.objasni, 'objasni-hrana', (j) => (j['words'] as List)[0] = 'x' * 25,
       'Objasni: riječ „${'x' * 25}“ smije imati najviše 24 znaka (sada 25)');
-  // kaosvi_packs_load_test folds Croatian letters (kaosviFold), so "š" and "s" are the same question.
-  refused('kaosvi_repeat_without_diacritics', Game.kaosvi, 'kaosvi-pop', (j) {
-    final other = (loadPack(root, Game.kaosvi, 'kaosvi-hrvatska').json['questions'] as List).cast<String>();
-    final withLetters = other.firstWhere((q) => RegExp('[čćšžđ]').hasMatch(q));
-    qs(j)[0] = withLetters.replaceAll('č', 'c').replaceAll('ć', 'c').replaceAll('š', 's').replaceAll('ž', 'z').replaceAll('đ', 'd');
-  }, 'ponavlja se');
   refused('quiz_repeat_in_another_pack', Game.kviz, 'hr-oblici', (j) {
     qs(j).add({'q': otherFirst(Game.kviz, 'hr-opce-znanje').toUpperCase(), 'choices': ['a', 'b', 'c', 'd'], 'answer': 0});
   }, 'ponavlja se');

@@ -98,7 +98,7 @@
   <div id="rows"><div class="empty">Odaberi paket.</div></div>
 </main>
 <script>
-const GAMES = [['kviz','Kviz'],['objasni','Objasni'],['koliko','Koliko?'],['blef','Blef'],['tkobi','Tko bi?'],['kaosvi','Kao svi'],['uljez','Uljez']];
+const GAMES = [['kviz','Kviz'],['objasni','Objasni'],['koliko','Koliko?'],['blef','Blef'],['tkobi','Tko bi?'],['uljez','Uljez']];
 // Which json key holds the list, and what a new empty item looks like.
 const SHAPE = {
   kviz:    ['questions', () => ({q:'', choices:['','','',''], answer:0})],
@@ -106,7 +106,6 @@ const SHAPE = {
   koliko:  ['questions', () => ({q:'', answer:0, unit:'', source:''})],
   blef:    ['questions', () => ({q:'', answer:'', source:''})],
   tkobi:   ['prompts',   () => ''],
-  kaosvi:  ['questions', () => ''],
   uljez:   ['pairs',     () => ['','']],
 };
 const $ = id => document.getElementById(id);
@@ -208,7 +207,7 @@ function fieldsFor(item) {
     box.append(el('div', {className: 'line'},
       textInput(() => d[0], v => d[0] = v), textInput(() => d[1], v => d[1] = v)));
   } else {
-    // objasni, tkobi, kaosvi: a plain string at this position
+    // objasni, tkobi: a plain string at this position
     box.append(textInput(() => item.data, v => item.data = v));
   }
   return box;
