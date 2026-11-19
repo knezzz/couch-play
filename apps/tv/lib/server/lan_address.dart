@@ -1,7 +1,8 @@
 import 'dart:io';
 
-const _preferred = ['wlan', 'eth', 'en'];
-const _skipped = ['docker', 'vbox', 'utun', 'tun', 'bridge'];
+// Windows names adapters "Wi-Fi", "Ethernet" and Hyper-V/WSL "vEthernet (...)".
+const _preferred = ['wlan', 'wi-fi', 'eth', 'en'];
+const _skipped = ['docker', 'vbox', 'utun', 'tun', 'bridge', 'vethernet'];
 
 bool _isPrivate(String a) {
   final p = a.split('.').map(int.tryParse).toList();

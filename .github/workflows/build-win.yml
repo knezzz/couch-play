@@ -1,0 +1,50 @@
+# Builds the TV app for Windows. Runs ONLY when the tag `build-win` is pushed
+# (person, 2026-11-19). No branch, merge, PR, schedule or manual trigger.
+# Tests stay local; this only builds.
+name: build-win
+
+on:
+  push:
+    tags:
+      - build-win
+
+permissions:
+  contents: read
+
+jobs:
+  controller:
+    # The controller zip needs `zip`, which the Windows runner lacks.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.7
+          channel: stable
+      - run: flutter pub get
+      - run: tool/build_controller.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: controller
+          path: apps/tv/assets/controller.zip
+
+  windows:
+    needs: controller
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.7
+          channel: stable
+      - uses: actions/download-artifact@v4
+        with:
+          name: controller
+          path: apps/tv/assets
+      - run: flutter pub get
+      - run: flutter build windows --release
+        working-directory: apps/tv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CouchPlay-windows
+          path: apps/tv/build/windows/x64/runner/Release

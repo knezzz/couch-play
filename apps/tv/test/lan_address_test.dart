@@ -54,4 +54,12 @@ void main() {
     ];
     expect(pickLanAddress(ifaces), '172.20.5.9');
   });
+
+  test('windows_picks_wifi_over_hyperv_switch', () {
+    final ifaces = [
+      _Iface('vEthernet (Default Switch)', [_Addr('172.27.16.1')]),
+      _Iface('Wi-Fi', [_Addr('192.168.1.31')]),
+    ];
+    expect(pickLanAddress(ifaces), '192.168.1.31');
+  });
 }
