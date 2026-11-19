@@ -127,3 +127,29 @@ HTML/JS.
   question, add one, save; check the file diff and that the pack's zip opens in the TV tests. Screenshot the page.
 - [x] **Step 6: Commit** `git commit -- tool/pack_editor/bin tool/pack_editor/web tool/pack_editor/test`
   (`feat(pack-editor): local server and page`).
+
+### Task 3: Phone access (`--lan`) and a phone layout (person, 2026-11-19)
+
+**Files:**
+- Modify: `tool/pack_editor/bin/pack_editor.dart`, `tool/pack_editor/web/index.html`
+- Test: `tool/pack_editor/test/server_test.dart`
+
+**Interfaces:**
+- `startServer(String repoRoot, {int port = 8765, bool lan = false})`: `lan` binds `InternetAddress.anyIPv4`;
+  the Host/Origin check then also accepts the Mac's own IPv4 addresses on port `port`. Without `--lan`, nothing
+  changes.
+- With `--lan`, `main` prints `http://<wifi-ip>:8765` (the address the TV app already finds for its own QR, if that
+  code can be reused; otherwise the first non-loopback IPv4) and a QR code of it in the terminal only if a QR
+  package is already in the workspace; no new dependency for it.
+
+- [ ] **Step 1: Failing tests**: `lan_off_refuses_lan_host` (default server, Host `192.168.1.5:<port>` → 403);
+  `lan_on_accepts_own_ip` (`lan: true`, request to the Mac's own IPv4 → 200 on `/api/packs`);
+  `lan_on_refuses_foreign_origin` (`lan: true`, Origin `http://evil.example` → 403).
+- [ ] **Step 2: Run** `fvm dart test test/server_test.dart`: FAIL.
+- [ ] **Step 3: Implement** the flag, and a narrow layout in `index.html` (below ~700 px: pack list becomes a
+  picker at the top; one column per question; choices stacked; buttons at least 44 px tall; no sideways scroll).
+- [ ] **Step 4: Run** `fvm dart test`: all pass.
+- [ ] **Step 5: QA** on a scratch `--root` copy with `--lan`: Chrome on the person's Pixel 6a (allowed for testing;
+  check docs/STATUS.md), else device emulation at 390x844 in Chrome and Safari's responsive mode; open a quiz pack
+  with pictures, edit, delete, add, save, refused save. Screenshots.
+- [ ] **Step 6: Commit** by path: `git commit -- tool/pack_editor/bin tool/pack_editor/web tool/pack_editor/test`.

@@ -37,7 +37,10 @@ person (or a seat they ask) commits edits by path.
 
 ## Constraints
 
-- Everything stays on the Mac; the server listens on `localhost` only.
+- By default the server listens on `localhost` only. With `--lan` (person, 2026-11-19: "I want to check it out on my
+  phone") it also listens on the home Wi-Fi so a phone can open it; the person accepted that anyone on the Wi-Fi can
+  edit while it runs with `--lan` (no password). The page must work on a phone screen (Safari on iPhone, Chrome on
+  Android).
 - Keep the existing pack tests green after an edit (`apps/tv/test/*pack*_test.dart`: bundled packs, duplicates,
   per-game loads).
 - Field names per game are what the files use today (`questions`, `words`, `prompts`, `pairs`; Koliko `answer` +
