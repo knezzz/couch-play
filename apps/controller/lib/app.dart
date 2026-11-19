@@ -89,6 +89,7 @@ class _AppState extends State<App> {
   final _kaosvi = KaosviInbox();
   // Vukodlak and Uljez share VotePrompt; the game that started last owns it.
   bool _uljezOn = false;
+  List<PlayerInfo>? _inGame; // GamePlayers: who is still in, until a lobby state
   StreamSubscription<Message>? _sub;
 
   @override
@@ -143,11 +144,14 @@ class _AppState extends State<App> {
           _lobby = m;
           _host = null; // the lobby state says who hosts
           _uljezOn = false; // back in the lobby: no game is on
+          _inGame = null;
           final me = m.players.where((p) => p.id == _myId).firstOrNull;
           if (me != null && !_rejoining) {
             widget.onSave?.call(SavedJoin(me.name, me.character));
           }
           if (_screen != _Screen.kicked) _screen = _Screen.lobby;
+        case GamePlayers():
+          _inGame = m.players;
         case HostIs():
           _host = m.host; // mid-game the TV sends this instead
         case Waiting():
@@ -375,7 +379,7 @@ class _AppState extends State<App> {
         if (_kickBar)
           HostKickBar(
             conn: widget.conn,
-            players: _lobby?.players ?? const [],
+            players: _inGame ?? _lobby?.players ?? const [],
             myId: _myId,
           ),
       ],

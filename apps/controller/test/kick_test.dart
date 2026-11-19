@@ -116,6 +116,34 @@ void main() {
       expect(find.text(Strings.noConnection), findsOneWidget);
     });
 
+    testWidgets('GamePlayers: kicked and dead are gone, a return is seen', (
+      t,
+    ) async {
+      final c = await _app(t, 0);
+      await _send(t, c, const UljezWord('Pikachu'));
+      PlayerInfo p(int i, bool on) => PlayerInfo(i, 'P$i', i, on, 0);
+      // P3 was kicked; P2 is still away, P1 has just dropped.
+      await _send(t, c, GamePlayers([p(0, true), p(1, false), p(2, false)]));
+      expect(find.text(Strings.removeAway(2)), findsOneWidget);
+      await t.tap(find.byKey(_bar));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('kick-3')), findsNothing);
+      expect(find.byKey(const ValueKey('kick-1')), findsOneWidget);
+      expect(find.text(Strings.noConnection), findsNWidgets(2));
+      // P2 comes back.
+      await _send(t, c, GamePlayers([p(0, true), p(1, false), p(2, true)]));
+      await t.pumpAndSettle();
+      expect(find.text(Strings.noConnection), findsOneWidget);
+      await t.tapAt(const Offset(10, 10)); // the barrier closes the list
+      await t.pumpAndSettle();
+      // The next lobby state is the truth again.
+      await _send(t, c, _lobby());
+      await _send(t, c, const UljezWord('Pikachu'));
+      await t.tap(find.byKey(_bar));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('kick-3')), findsOneWidget);
+    });
+
     testWidgets('Ukloni after the confirm sends Kick; Zadrži sends nothing', (
       t,
     ) async {
@@ -208,6 +236,22 @@ void main() {
       await t.tap(find.text(Strings.remove));
       await t.pumpAndSettle();
       expect(c.sent.last, const Kick(2));
+    });
+
+    testWidgets('a GamePlayers at night changes nothing on the phone', (
+      t,
+    ) async {
+      final c = await _app(t, 0);
+      await _send(t, c, _role);
+      await _send(t, c, _night());
+      final before = look(t, {});
+      await _send(
+        t,
+        c,
+        GamePlayers([PlayerInfo(0, 'P0', 0, true, 0), PlayerInfo(1, 'P1', 1, false, 0)]),
+      );
+      expect(look(t, {}), before);
+      expect(find.byKey(_bar), findsNothing);
     });
 
     testWidgets('night closes an open kick list and an open confirm', (

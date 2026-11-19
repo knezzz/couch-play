@@ -254,6 +254,26 @@ void main() {
       expect(c.sent.last, const Go());
     });
 
+    testWidgets('teams re-sent after a kick drop the kicked player', (t) async {
+      final c = await app(t, 2);
+      await send(t, c, teams);
+      expect(find.text('Marko'), findsWidgets);
+      expect(find.text('Ivana'), findsWidgets);
+      await send(
+        t,
+        c,
+        const ObjasniTeams(
+          team: 0,
+          teams: [
+            [0, 1],
+            [2],
+          ],
+        ),
+      );
+      expect(find.text('Ivana'), findsNothing);
+      expect(find.text('Marko'), findsWidgets);
+    });
+
     testWidgets('a guest sees the setup without buttons', (t) async {
       final c = await app(t, 2);
       await send(

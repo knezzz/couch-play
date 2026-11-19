@@ -86,7 +86,7 @@ Future<void> confirmKick(
 
 /// The host's strip at the bottom of a game screen: opens the list of the
 /// other players. Shown on the host's phone only, and not at night.
-class HostKickBar extends StatelessWidget {
+class HostKickBar extends StatefulWidget {
   const HostKickBar({
     super.key,
     required this.conn,
@@ -98,7 +98,33 @@ class HostKickBar extends StatelessWidget {
   final int myId;
 
   @override
+  State<HostKickBar> createState() => _HostKickBarState();
+}
+
+class _HostKickBarState extends State<HostKickBar> {
+  // The open list follows the players as the TV reports them.
+  late final _live = ValueNotifier(widget.players);
+  Connection get conn => widget.conn;
+  int get myId => widget.myId;
+
+  @override
+  void didUpdateWidget(HostKickBar old) {
+    super.didUpdateWidget(old);
+    // Not during this build: the open list listens to it.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _live.value = widget.players;
+    });
+  }
+
+  @override
+  void dispose() {
+    _live.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final players = widget.players;
     final away = players.where((p) => p.id != myId && !p.bot && !p.connected);
     return Material(
       color: bg,
@@ -150,12 +176,15 @@ class HostKickBar extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Flexible(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    for (final p in players)
-                      if (p.id != myId && !p.bot) _row(c, context, p),
-                  ],
+                child: ValueListenableBuilder(
+                  valueListenable: _live,
+                  builder: (_, players, _) => ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (final p in players)
+                        if (p.id != myId && !p.bot) _row(c, context, p),
+                    ],
+                  ),
                 ),
               ),
             ],
