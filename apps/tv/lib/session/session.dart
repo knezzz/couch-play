@@ -176,9 +176,11 @@ class Session {
 
   /// The lobby state is not resent mid-game, so the list is sent on its own
   /// whenever it changes (same for every phone, night included).
+  bool get _wolfDawn => _phase == Phase.wolf && _wolf?.stage == WolfStage.dawn;
+
   void _tellPlayers() {
     // The night's dead are announced with the Morning, not before.
-    if (_phase == Phase.wolf && _wolf?.stage == WolfStage.dawn) return;
+    if (_wolfDawn) return;
     final m = _gamePlayers();
     if (m == null) {
       _playersTold = null;
@@ -416,7 +418,7 @@ class Session {
     final host = hostId;
     if (_phase != Phase.lobby && host != null) peer.send(HostIs(host)); // after the lobby state
     final gp = _gamePlayers();
-    if (gp != null) peer.send(gp);
+    if (gp != null && !_wolfDawn) peer.send(gp); // at dawn the Morning brings it
     switch (_phase) {
       case Phase.lobby:
         _broadcastLobby();

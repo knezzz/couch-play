@@ -123,4 +123,43 @@ void main() {
     expect(m.stage, ObjasniStageTv.summary);
     s.dispose();
   });
+
+  // The explainer's only teammate is away, then the explainer is kicked mid-turn.
+  Future<(ObjasniMatch, int)> kickedExplainerWithMateAway(WidgetTester t) async {
+    var now = Duration.zero;
+    s = Session(random: Random(1), clock: () => now)
+      ..objasniTvReady = true
+      ..objasniPacks = [ObjasniPack('o', 'O', [for (var i = 0; i < 110; i++) 'w$i'])];
+    ps = [for (var i = 0; i < 4; i++) join(s, 'P$i', token: 't$i')];
+    ps[0].say(const StartGame(GameKind.objasni, null));
+    ps[0].say(const Go());
+    final m = s.objasni!;
+    final ex = m.explainer!;
+    final mate = m.teamMembers(m.teamOf(ex)).firstWhere((i) => i != ex);
+    ps.firstWhere((p) => idOf(p) == ex).say(const Go());
+    ps.firstWhere((p) => idOf(p) == mate).drop();
+    await t.pump();
+    s.kickFromTv(ex);
+    expect(m.stage, ObjasniStageTv.summary);
+    expect(m.paused, isTrue);
+    return (m, mate);
+  }
+
+  testWidgets('Objasni: a kicked explainer with the teammate away still ends in the 30 s abandon', (t) async {
+    final (m, _) = await kickedExplainerWithMateAway(t);
+    await t.pump(const Duration(seconds: 31));
+    expect(m.stage, ObjasniStageTv.over);
+    s.dispose();
+  });
+
+  testWidgets('Objasni: a kicked explainer, the teammate returns: the game goes on after the summary', (t) async {
+    final (m, mate) = await kickedExplainerWithMateAway(t);
+    final i = ps.indexWhere((p) => idOf(p) == mate);
+    join(s, 'P$i', token: 't$i');
+    await t.pump();
+    expect(m.paused, isFalse);
+    await t.pump(const Duration(seconds: 10));
+    expect(m.stage, ObjasniStageTv.ready);
+    s.dispose();
+  });
 }

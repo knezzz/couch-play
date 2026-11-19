@@ -243,9 +243,13 @@ class ObjasniMatch {
 
   void _toSummary() {
     stage = ObjasniStageTv.summary;
-    _stageEnd = clock() + summaryTime;
-    _timer?.cancel();
-    _timer = Timer(summaryTime, _afterSummary);
+    // Paused (a team has nobody): the abandon timer keeps running; _endPause
+    // starts the summary timer when someone returns.
+    if (!paused) {
+      _stageEnd = clock() + summaryTime;
+      _timer?.cancel();
+      _timer = Timer(summaryTime, _afterSummary);
+    }
     _sendTurn(ObjasniStageTv.summary);
     notify?.call();
   }
