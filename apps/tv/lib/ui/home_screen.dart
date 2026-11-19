@@ -211,17 +211,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.symmetric(
                               horizontal: 200,
                             ),
-                            child: Text(
-                              Strings.homeMeta(
-                                g,
-                                widget.settings,
-                                widget._packsLine(g),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 34,
-                                color: Color(0xFFC9C9D8),
+                            // Scales down instead of cutting the packs off (the longest lines, Objasni and Kaosvi, do not fit at 34).
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                Strings.homeMeta(
+                                  g,
+                                  widget.settings,
+                                  widget._packsLine(g),
+                                ),
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  fontSize: 34,
+                                  color: Color(0xFFC9C9D8),
+                                ),
                               ),
                             ),
                           ),

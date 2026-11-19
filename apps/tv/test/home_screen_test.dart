@@ -467,6 +467,42 @@ void main() {
       expect(find.textContaining('paket'), findsNothing);
     });
 
+    // QA fail: the card's meta line (panel closed) must carry the selection for every pack game.
+    for (final g in const [GameKind.uljez, GameKind.objasni, GameKind.koliko, GameKind.blef, GameKind.tkobi, GameKind.kaosvi]) {
+      for (final size in const [Size(1272, 715), Size(960, 540)]) {
+        testWidgets('${g.name}: the card meta says the packs, panel closed, whole at ${size.width.toInt()}x${size.height.toInt()}', (t) async {
+          t.view
+            ..physicalSize = size
+            ..devicePixelRatio = 1;
+          addTearDown(t.view.reset);
+          for (final c in const [(ticked: 9, total: 9), (ticked: 3, total: 9)]) {
+            await t.pumpWidget(MaterialApp(
+              theme: tvTheme(),
+              home: HomeScreen(
+                joinUrl: 'http://192.168.1.5:8080/',
+                players: _four,
+                settings: const GameSettings(),
+                selected: g,
+                games: homeGames,
+                packs: {g: c},
+                onSelect: (_) {},
+                onPlay: (_) {},
+              ),
+            ));
+            await t.pump();
+            final line = Strings.packsLine(c.ticked, c.total);
+            final meta = find.textContaining('$line · bez robota');
+            expect(meta, findsOneWidget, reason: '${g.name} $line');
+            // Whole: scaled to fit, so it lies inside the screen.
+            final r = t.getRect(meta);
+            expect(r.left, greaterThanOrEqualTo(0), reason: '${g.name} $line');
+            expect(r.right, lessThanOrEqualTo(size.width), reason: '${g.name} $line');
+          }
+          expect(t.takeException(), isNull);
+        });
+      }
+    }
+
     for (final size in const [Size(1272, 715), Size(960, 540)]) {
       testWidgets('the pack line fits at ${size.width.toInt()}x${size.height.toInt()}', (t) async {
         t.view
@@ -489,7 +525,7 @@ void main() {
         await t.pump();
         await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
         await t.pump();
-        expect(find.textContaining('12 od 14 paketa'), findsOneWidget);
+        expect(find.textContaining('12 od 14 paketa'), findsWidgets); // card meta and panel row
         expect(t.takeException(), isNull);
       });
     }

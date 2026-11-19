@@ -131,17 +131,19 @@ abstract final class Strings {
   static const homeHelpSettings = 'postavke';
   static const homeHelpBack = 'izlaz';
 
+  static String _pk(String? pack) => pack == null ? '' : '$pack · ';
+
   /// The line under the description: who can play and what is set.
   static String homeMeta(GameKind k, GameSettings s, String? pack) => switch (k) {
         GameKind.curve => '2–8 igrača · ${curveModeName(s.curveMode)} · pauza ${s.curveCountdown} s',
         GameKind.quiz => '1–8 igrača · ${pack ?? '–'} · ${s.quizQuestions} pitanja · ${s.quizSeconds} s',
         GameKind.vukodlak => '5–8 igrača · bez robota',
-        GameKind.uljez => '3–8 igrača · bez robota',
-        GameKind.objasni => '4–8 igrača · dvije ekipe · bez robota',
-        GameKind.koliko => '2–8 igrača · bez robota',
-        GameKind.blef => '3–8 igrača · bez robota',
-        GameKind.tkobi => '3–8 igrača · bez robota',
-        GameKind.kaosvi => '3–8 igrača · ${s.kaosviQuestions} pitanja · do ${s.kaosviTarget} bodova · bez robota',
+        GameKind.uljez => '3–8 igrača · ${_pk(pack)}bez robota',
+        GameKind.objasni => '4–8 igrača · dvije ekipe · ${_pk(pack)}bez robota',
+        GameKind.koliko => '2–8 igrača · ${_pk(pack)}bez robota',
+        GameKind.blef => '3–8 igrača · ${_pk(pack)}bez robota',
+        GameKind.tkobi => '3–8 igrača · ${_pk(pack)}bez robota',
+        GameKind.kaosvi => '3–8 igrača · ${s.kaosviQuestions} pitanja · do ${s.kaosviTarget} bodova · ${_pk(pack)}bez robota',
       };
 
   // --- Vukodlak (the village on the TV) ---
