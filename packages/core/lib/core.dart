@@ -19,5 +19,4 @@ export 'src/koliko.dart';
 export 'src/blef.dart';
 export 'src/tkobi.dart';
 export 'src/objasni_colors.dart';
-export 'src/kaosvi.dart';
 export 'src/pack_union.dart';

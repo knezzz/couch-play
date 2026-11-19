@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'blef.dart';
-import 'kaosvi.dart';
 import 'koliko.dart';
 import 'objasni.dart';
 import 'quiz_pack.dart';
@@ -80,6 +79,3 @@ BlefPack unionBlef(String id, String title, List<BlefPack> packs) => packs.lengt
 
 TkobiPack unionTkobi(String id, String title, List<TkobiPack> packs) =>
     packs.length == 1 ? packs.single : TkobiPack(id, title, _unique<String>([for (final p in packs) p.prompts], _fold));
-
-KaosviPack unionKaosvi(String id, String title, List<KaosviPack> packs) =>
-    packs.length == 1 ? packs.single : KaosviPack(id, title, _unique<String>([for (final p in packs) p.questions], _fold));

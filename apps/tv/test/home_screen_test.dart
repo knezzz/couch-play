@@ -66,8 +66,7 @@ double _fs(WidgetTester t, Finder f) => t.widget<Text>(f).style!.fontSize!;
 Finder _face(String id) =>
     find.byWidgetPredicate((w) => w is CharacterFace && w.id == id);
 
-// build-core drops GameKind.kaosvi in Task 47 stage 2; then this is GameKind.values.
-final _games = GameKind.values.where((g) => g != GameKind.kaosvi).toList();
+final _games = GameKind.values;
 
 void main() {
   testWidgets('the blurbs are the canvas\'s (V2Home); Kviz says how much there is to play', (t) async {

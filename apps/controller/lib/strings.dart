@@ -152,7 +152,6 @@ abstract final class Strings {
     GameKind.koliko => 'Koliko?',
     GameKind.blef => 'Blef',
     GameKind.tkobi => 'Tko bi?',
-    GameKind.kaosvi => '',
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
@@ -163,7 +162,6 @@ abstract final class Strings {
     GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
     GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
     GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
-    GameKind.kaosvi => '',
   };
   static String watchingLabel(String? host) => '${host ?? 'Domaćin'} gleda:';
   static String startsWhen(String? host) =>
@@ -211,8 +209,6 @@ abstract final class Strings {
         '${pack(kolikoPacks, GameKind.koliko)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
       GameKind.objasni =>
         '${pack(objasniPacks, GameKind.objasni)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
-      // Core still has GameKind.kaosvi; the arm goes with it (task 47 stage 2).
-      GameKind.kaosvi => '',
     };
   }
 

@@ -7,4 +7,3 @@ const kObjasniTvReady = true;
 const kKolikoTvReady = true;
 const kBlefTvReady = true;
 const kTkobiTvReady = true;
-const kKaosviTvReady = true;

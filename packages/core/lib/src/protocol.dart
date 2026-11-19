@@ -1,10 +1,9 @@
 import 'dart:convert';
 
-import 'kaosvi.dart' show KaosviMergeItem;
 import 'uljez.dart';
 import 'wolf.dart';
 
-enum GameKind { quiz, curve, vukodlak, uljez, objasni, koliko, blef, tkobi, kaosvi }
+enum GameKind { quiz, curve, vukodlak, uljez, objasni, koliko, blef, tkobi }
 
 /// Value equality from the JSON form, so every wire type compares by content.
 mixin _JsonEq {
@@ -91,15 +90,12 @@ class GameSettings with _JsonEq {
   /// Tko bi?: prompts (5 / 10 / 15).
   final int tkobiPrompts;
 
-  /// Kao svi: questions (8 / 12 / 16), target score (5 / 8 / 10).
-  final int kaosviQuestions, kaosviTarget;
-
   /// Packs are multi-select in every game: the ids of the packs that are
   /// switched OFF, per game. Empty (the default) = every pack is ticked, so a
   /// pack that appears later starts ticked. The session keeps at least one
   /// pack ticked. (The old single `<game>PackId` is gone; a message carrying
   /// one still decodes, the key is ignored and every pack stays ticked.)
-  final Set<String> quizOffPacks, uljezOffPacks, objasniOffPacks, kolikoOffPacks, blefOffPacks, tkobiOffPacks, kaosviOffPacks;
+  final Set<String> quizOffPacks, uljezOffPacks, objasniOffPacks, kolikoOffPacks, blefOffPacks, tkobiOffPacks;
 
   /// The off-set of [game] (empty for a game without packs).
   Set<String> offPacks(GameKind game) => switch (game) {
@@ -109,7 +105,6 @@ class GameSettings with _JsonEq {
         GameKind.koliko => kolikoOffPacks,
         GameKind.blef => blefOffPacks,
         GameKind.tkobi => tkobiOffPacks,
-        GameKind.kaosvi => kaosviOffPacks,
         _ => const {},
       };
 
@@ -136,15 +131,12 @@ class GameSettings with _JsonEq {
     this.kolikoQuestions = 10,
     this.blefQuestions = 7,
     this.tkobiPrompts = 10,
-    this.kaosviQuestions = 12,
-    this.kaosviTarget = 8,
     this.quizOffPacks = const {},
     this.uljezOffPacks = const {},
     this.objasniOffPacks = const {},
     this.kolikoOffPacks = const {},
     this.blefOffPacks = const {},
     this.tkobiOffPacks = const {},
-    this.kaosviOffPacks = const {},
   });
   factory GameSettings.fromJson(Map<String, dynamic> j) => GameSettings(
       quizSeconds: j['quizSeconds'] as int,
@@ -165,15 +157,12 @@ class GameSettings with _JsonEq {
       kolikoQuestions: (j['kolikoQuestions'] as int?) ?? 10,
       blefQuestions: (j['blefQuestions'] as int?) ?? 7,
       tkobiPrompts: (j['tkobiPrompts'] as int?) ?? 10,
-      kaosviQuestions: (j['kaosviQuestions'] as int?) ?? 12,
-      kaosviTarget: (j['kaosviTarget'] as int?) ?? 8,
       quizOffPacks: _ids(j['quizOffPacks']),
       uljezOffPacks: _ids(j['uljezOffPacks']),
       objasniOffPacks: _ids(j['objasniOffPacks']),
       kolikoOffPacks: _ids(j['kolikoOffPacks']),
       blefOffPacks: _ids(j['blefOffPacks']),
-      tkobiOffPacks: _ids(j['tkobiOffPacks']),
-      kaosviOffPacks: _ids(j['kaosviOffPacks']));
+      tkobiOffPacks: _ids(j['tkobiOffPacks']));
 
   static Set<String> _ids(Object? v) => v == null ? const {} : {for (final e in v as List) e as String};
 
@@ -193,15 +182,12 @@ class GameSettings with _JsonEq {
       kolikoQuestions: kolikoQuestions,
       blefQuestions: blefQuestions,
       tkobiPrompts: tkobiPrompts,
-      kaosviQuestions: kaosviQuestions,
-      kaosviTarget: kaosviTarget,
       quizOffPacks: off[GameKind.quiz] ?? quizOffPacks,
       uljezOffPacks: off[GameKind.uljez] ?? uljezOffPacks,
       objasniOffPacks: off[GameKind.objasni] ?? objasniOffPacks,
       kolikoOffPacks: off[GameKind.koliko] ?? kolikoOffPacks,
       blefOffPacks: off[GameKind.blef] ?? blefOffPacks,
-      tkobiOffPacks: off[GameKind.tkobi] ?? tkobiOffPacks,
-      kaosviOffPacks: off[GameKind.kaosvi] ?? kaosviOffPacks);
+      tkobiOffPacks: off[GameKind.tkobi] ?? tkobiOffPacks);
 
   /// The same values pulled into range and onto their steps.
   GameSettings clamped() {
@@ -225,15 +211,12 @@ class GameSettings with _JsonEq {
       kolikoQuestions: oneOf(kolikoQuestions, const [5, 10, 15]),
       blefQuestions: oneOf(blefQuestions, const [5, 7, 10]),
       tkobiPrompts: oneOf(tkobiPrompts, const [5, 10, 15]),
-      kaosviQuestions: oneOf(kaosviQuestions, const [8, 12, 16]),
-      kaosviTarget: oneOf(kaosviTarget, const [5, 8, 10]),
       quizOffPacks: quizOffPacks,
       uljezOffPacks: uljezOffPacks,
       objasniOffPacks: objasniOffPacks,
       kolikoOffPacks: kolikoOffPacks,
       blefOffPacks: blefOffPacks,
       tkobiOffPacks: tkobiOffPacks,
-      kaosviOffPacks: kaosviOffPacks,
     );
   }
 
@@ -253,15 +236,12 @@ class GameSettings with _JsonEq {
         'kolikoQuestions': kolikoQuestions,
         'blefQuestions': blefQuestions,
         'tkobiPrompts': tkobiPrompts,
-        'kaosviQuestions': kaosviQuestions,
-        'kaosviTarget': kaosviTarget,
         'quizOffPacks': (quizOffPacks.toList()..sort()),
         'uljezOffPacks': (uljezOffPacks.toList()..sort()),
         'objasniOffPacks': (objasniOffPacks.toList()..sort()),
         'kolikoOffPacks': (kolikoOffPacks.toList()..sort()),
         'blefOffPacks': (blefOffPacks.toList()..sort()),
         'tkobiOffPacks': (tkobiOffPacks.toList()..sort()),
-        'kaosviOffPacks': (kaosviOffPacks.toList()..sort()),
       };
 }
 
@@ -339,9 +319,6 @@ sealed class Message with _JsonEq {
         'readyToVote' => ReadyToVote(m['on'] as bool),
         'guess' => Guess(m['index'] as int),
         'number' => NumberAnswer((m['value'] as num).toDouble()),
-        'kaosviAnswer' => KaosviAnswer(m['text'] as String),
-        'kaosviMerge' => KaosviMerge(m['a'] as int, m['b'] as int),
-        'kaosviDone' => const KaosviDone(),
         'blefFake' => BlefFake(m['text'] as String),
         'blefPick' => BlefPick(m['index'] as int),
         'reshuffle' => const Reshuffle(),
@@ -361,7 +338,6 @@ sealed class Message with _JsonEq {
             kolikoPacks: m['kolikoPacks'] == null ? const [] : list('kolikoPacks', PackInfo.fromJson),
             blefPacks: m['blefPacks'] == null ? const [] : list('blefPacks', PackInfo.fromJson),
             tkobiPacks: m['tkobiPacks'] == null ? const [] : list('tkobiPacks', PackInfo.fromJson),
-            kaosviPacks: m['kaosviPacks'] == null ? const [] : list('kaosviPacks', PackInfo.fromJson),
             selected: m['selected'] == null
                 ? null
                 : GameKind.values.byName(m['selected'] as String),
@@ -420,26 +396,6 @@ sealed class Message with _JsonEq {
             seconds: m['seconds'] as int, options: [for (final e in m['options'] as List) e as String]),
         'uljezEnd' => UljezEnd(UljezWinner.values.byName(m['winner'] as String), m['village'] as String,
             m['impostor'] as String, [for (final e in m['impostors'] as List) e as int]),
-        'kaosviAsk' => KaosviAsk(
-            number: m['number'] as int,
-            total: m['total'] as int,
-            seconds: m['seconds'] as int,
-            q: m['q'] as String,
-            sent: m['sent'] as String?),
-        'kaosviMerging' => KaosviMerging(
-            seconds: m['seconds'] as int,
-            groups: [
-              for (final e in m['groups'] as List)
-                KaosviMergeItem((e as Map<String, dynamic>)['id'] as int, e['text'] as String)
-            ],
-            host: m['host'] as bool),
-        'kaosviResult' => KaosviResult(
-            answer: m['answer'] as String?,
-            size: m['size'] as int,
-            points: m['points'] as int,
-            total: m['total'] as int,
-            largest: m['largest'] as bool,
-            lone: m['lone'] as bool),
         'tkobiAsk' => TkobiAsk(
             number: m['number'] as int,
             total: m['total'] as int,
@@ -641,7 +597,7 @@ class LobbyState extends Message {
   final List<PackInfo> uljezPacks;
 
   /// The packs of the party games (questionCount = words / questions / prompts).
-  final List<PackInfo> objasniPacks, kolikoPacks, blefPacks, tkobiPacks, kaosviPacks;
+  final List<PackInfo> objasniPacks, kolikoPacks, blefPacks, tkobiPacks;
 
   /// The game the host has open, or null.
   final GameKind? selected;
@@ -655,7 +611,6 @@ class LobbyState extends Message {
       this.kolikoPacks = const [],
       this.blefPacks = const [],
       this.tkobiPacks = const [],
-      this.kaosviPacks = const [],
       this.settings = const GameSettings()});
   @override
   String get type => 'lobby';
@@ -670,7 +625,6 @@ class LobbyState extends Message {
         'kolikoPacks': [for (final p in kolikoPacks) p.toJson()],
         'blefPacks': [for (final p in blefPacks) p.toJson()],
         'tkobiPacks': [for (final p in tkobiPacks) p.toJson()],
-        'kaosviPacks': [for (final p in kaosviPacks) p.toJson()],
         'settings': settings.toJson(),
       };
 }
@@ -1331,89 +1285,4 @@ class TkobiResult extends Message {
         'points': points,
         'total': total,
       };
-}
-
-// Kao svi (match the herd). No answer reaches the TV or another phone before the
-// reveal; only the HOST's phone sees the grouped answers (texts, not writers)
-// during the merge.
-
-/// Phone -> TV: the player's answer (<= 30 characters; the first accepted one is final).
-class KaosviAnswer extends Message {
-  final String text;
-  const KaosviAnswer(this.text);
-  @override
-  String get type => 'kaosviAnswer';
-  @override
-  Map<String, Object?> get fields => {'text': text};
-}
-
-/// Host phone -> TV, during the merge: merge group [a] and group [b].
-class KaosviMerge extends Message {
-  final int a, b;
-  const KaosviMerge(this.a, this.b);
-  @override
-  String get type => 'kaosviMerge';
-  @override
-  Map<String, Object?> get fields => {'a': a, 'b': b};
-}
-
-/// Host phone -> TV: "Gotovo", end the merge now.
-class KaosviDone extends Message {
-  const KaosviDone();
-  @override
-  String get type => 'kaosviDone';
-}
-
-/// TV -> every phone: an open question. [sent] is this phone's own accepted
-/// answer (the ack, and the restore after a reload).
-class KaosviAsk extends Message {
-  final int number, total, seconds;
-  final String q;
-  final String? sent;
-  const KaosviAsk({required this.number, required this.total, required this.seconds, required this.q, required this.sent});
-  @override
-  String get type => 'kaosviAsk';
-  @override
-  Map<String, Object?> get fields =>
-      {'number': number, 'total': total, 'seconds': seconds, 'q': q, 'sent': sent};
-}
-
-/// TV -> every phone while the host merges. [groups] holds the answers (id +
-/// text, never who wrote them) ONLY for the host's phone ([host] true); every
-/// other phone gets an empty list and just waits.
-class KaosviMerging extends Message {
-  final int seconds;
-  final List<KaosviMergeItem> groups;
-  final bool host;
-  const KaosviMerging({required this.seconds, required this.groups, required this.host});
-  @override
-  String get type => 'kaosviMerging';
-  @override
-  Map<String, Object?> get fields =>
-      {'seconds': seconds, 'groups': [for (final g in groups) g.toJson()], 'host': host};
-  @override
-  bool operator ==(Object other) => other is KaosviMerging && jsonEncode(toJson()) == jsonEncode(other.toJson());
-  @override
-  int get hashCode => jsonEncode(toJson()).hashCode;
-}
-
-/// TV -> one phone after the reveal: this phone's own answer (null: none), the
-/// size of its group, the points it got, its total, and whether its group was
-/// the single largest or it was the lone one.
-class KaosviResult extends Message {
-  final String? answer;
-  final int size, points, total;
-  final bool largest, lone;
-  const KaosviResult(
-      {required this.answer,
-      required this.size,
-      required this.points,
-      required this.total,
-      required this.largest,
-      required this.lone});
-  @override
-  String get type => 'kaosviResult';
-  @override
-  Map<String, Object?> get fields =>
-      {'answer': answer, 'size': size, 'points': points, 'total': total, 'largest': largest, 'lone': lone};
 }

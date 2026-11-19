@@ -70,8 +70,6 @@ class GameLook {
       Color(0xFFE6DAFF),
       null,
     ),
-    // Core still has GameKind.kaosvi; this arm goes with it (task 47 stage 2).
-    GameKind.kaosvi => const GameLook(bg, ink, ink, null),
   };
 }
 
@@ -115,7 +113,6 @@ Widget _art(GameKind k) => switch (k) {
   ),
   GameKind.blef => const Icon(Icons.theater_comedy, size: 96, color: ink),
   GameKind.tkobi => const Icon(Icons.how_to_vote, size: 96, color: textColor),
-  GameKind.kaosvi => const SizedBox(), // goes with core's kaosvi (stage 2)
   GameKind.uljez => const Text(
     '?',
     style: TextStyle(

@@ -14,6 +14,4 @@ class PartyText {
   static const kolikoName = 'Koliko?';
   static const blefName = 'Blef';
   static const tkobiName = 'Tko bi?';
-  static const kaosviName = 'Kao svi';
-  static const kaosviNeedPlayers = 'Kao svi traži 3 do 8 igrača na mobitelima.';
 }

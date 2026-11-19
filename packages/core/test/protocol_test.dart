@@ -203,7 +203,7 @@ void main() {
       for (final g in GameKind.values) {
         expect(d.offPacks(g), isEmpty, reason: g.name);
       }
-      const s = GameSettings(quizOffPacks: {'b', 'a'}, uljezOffPacks: {'u1'}, kaosviOffPacks: {'k'});
+      const s = GameSettings(quizOffPacks: {'b', 'a'}, uljezOffPacks: {'u1'});
       final back = (Message.decode(const SetSettings(s).encode()) as SetSettings).settings;
       expect(back, s);
       expect(back.offPacks(GameKind.quiz), {'a', 'b'});
@@ -463,42 +463,18 @@ void main() {
     expect(m.done, isFalse);
   });
 
-  group('party games: kao svi', () {
-    test('messages round trip', () {
-      final ms = <Message>[
-        const StartGame(GameKind.kaosvi, null),
-        const SelectGame(GameKind.kaosvi),
-        const KaosviAnswer('Jabuka'),
-        const KaosviMerge(1, 3),
-        const KaosviDone(),
-        const KaosviAsk(number: 1, total: 12, seconds: 30, q: 'Navedi voće.', sent: null),
-        const KaosviAsk(number: 2, total: 12, seconds: 11, q: 'x', sent: 'Kruška'),
-        const KaosviMerging(seconds: 15, groups: [KaosviMergeItem(0, 'jabuka'), KaosviMergeItem(2, 'jabuke')], host: true),
-        const KaosviMerging(seconds: 15, groups: [], host: false),
-        const KaosviResult(answer: 'jabuka', size: 3, points: 1, total: 4, largest: true, lone: false),
-        const KaosviResult(answer: null, size: 0, points: 0, total: 0, largest: false, lone: false),
-        const SetSettings(GameSettings(kaosviQuestions: 16, kaosviTarget: 10, kaosviOffPacks: {'k'})),
-        const LobbyState(players: [], packs: [], hostId: 1, kaosviPacks: [PackInfo('k', 'K', 60)]),
-      ];
-      for (final m in ms) {
-        expect(Message.decode(m.encode()), m, reason: m.encode());
-      }
-    });
-
-    test('settings: defaults, an old message, clamping to the allowed values', () {
-      const d = GameSettings();
-      expect([d.kaosviQuestions, d.kaosviTarget, d.kaosviOffPacks], [12, 8, isEmpty]);
-      final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2}');
-      expect((old as SetSettings).settings, const GameSettings());
-      final c = const GameSettings(kaosviQuestions: 13, kaosviTarget: 1).clamped();
-      expect([c.kaosviQuestions, c.kaosviTarget], [12, 5]);
-      expect(const GameSettings(kaosviQuestions: 99, kaosviTarget: 99).clamped().kaosviQuestions, 16);
-    });
-
-    test('an old lobby has no kao svi packs; wrong types are null', () {
-      expect((Message.decode('{"type":"lobby","players":[],"packs":[],"hostId":1}') as LobbyState).kaosviPacks, isEmpty);
-      expect(Message.decode('{"type":"kaosviAnswer","text":5}'), isNull);
-      expect(Message.decode('{"type":"kaosviMerge","a":"1","b":2}'), isNull);
+  group('Kao svi is gone: what an old phone, file or TV may still send', () {
+    test('old settings and lobby with the kaosvi keys load; the old messages and game name are null, not a throw', () {
+      final old = Message.decode('{"type":"settings","quizSeconds":20,"quizQuestions":10,"revealSeconds":4,"curveCountdown":2,'
+          '"kaosviQuestions":16,"kaosviTarget":10,"kaosviOffPacks":["k"]}');
+      expect((old as SetSettings).settings, isA<GameSettings>());
+      expect(old.settings.quizSeconds, 20);
+      expect(GameSettings.fromJson({'quizSeconds': 20, 'quizQuestions': 10, 'revealSeconds': 4, 'curveCountdown': 2, 'kaosviQuestions': 16, 'kaosviTarget': 10, 'kaosviOffPacks': ['k']}), const GameSettings(quizSeconds: 20, quizQuestions: 10, revealSeconds: 4, curveCountdown: 2));
+      expect(Message.decode('{"type":"lobby","players":[],"packs":[],"hostId":1,"kaosviPacks":[{"id":"k","title":"K","count":60}]}'),
+          isA<LobbyState>());
+      expect(Message.decode('{"type":"kaosviAnswer","text":"x"}'), isNull);
+      expect(Message.decode('{"type":"start","game":"kaosvi"}'), isNull);
+      expect(Message.decode('{"type":"select","game":"kaosvi"}'), isNull);
     });
   });
 }

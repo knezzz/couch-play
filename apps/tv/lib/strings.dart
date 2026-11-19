@@ -35,7 +35,7 @@ abstract final class Strings {
         CurveMode.onlyYou => 'Samo za tebe',
       };
   /// The host's game card on the lobby, same words as the phone's game details.
-  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?', GameKind.kaosvi => '' };
+  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?' };
   /// 2000 -> '2 000' (no-break space).
   static String _g(int n) => n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => '\u00A0');
 
@@ -57,7 +57,6 @@ abstract final class Strings {
         GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
         GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
         GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
-        GameKind.kaosvi => '', // removed with the enum value in stage 2 (Task 47)
       };
   /// Bottom of the lobby while the host has a game's card open (the phones say the same).
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
@@ -136,7 +135,6 @@ abstract final class Strings {
         GameKind.koliko => '2–8 igrača · ${_pk(pack)}bez robota',
         GameKind.blef => '3–8 igrača · ${_pk(pack)}bez robota',
         GameKind.tkobi => '3–8 igrača · ${_pk(pack)}bez robota',
-        GameKind.kaosvi => '', // removed with the enum value in stage 2 (Task 47)
       };
 
   // --- Vukodlak (the village on the TV) ---

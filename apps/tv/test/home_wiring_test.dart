@@ -11,8 +11,7 @@ import 'package:tv/ui/home_screen.dart';
 import 'session_test.dart' show FakePeer, join;
 
 /// The home inside the real app: what the host's phone and the remote do to it.
-// build-core drops GameKind.kaosvi in Task 47 stage 2; then this is GameKind.values.
-final _games = GameKind.values.where((g) => g != GameKind.kaosvi).toList();
+final _games = GameKind.values;
 
 void main() {
   late Session s;

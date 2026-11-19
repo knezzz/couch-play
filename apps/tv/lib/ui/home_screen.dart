@@ -550,8 +550,8 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingImpostors, '${settings.uljezImpostors}'),
           ],
         ],
-      // The other party games have no settings on the TV yet. (kaosvi: not on the home list; its enum value goes in Task 47 stage 2.)
-      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi || GameKind.kaosvi => <List<(String, String)>>[],
+      // The other party games have no settings on the TV yet.
+      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String)>>[],
       },
     ];
     Widget item((String, String) it) => Text.rich(
@@ -720,7 +720,6 @@ class _Backdrop extends StatelessWidget {
           GameKind.koliko => const [Color(0xFF0B1F1A), Color(0xFF12304A)],
           GameKind.blef => const [Color(0xFF3A2008), Color(0xFF2A0E0E)],
           GameKind.tkobi => const [Color(0xFF2A1030), Color(0xFF3A1430)],
-          GameKind.kaosvi => const [Color(0xFF14142A), Color(0xFF14142A)], // removed with the enum value in stage 2 (Task 47)
         },
       ),
     ),
@@ -842,8 +841,6 @@ class _ArtPainter extends CustomPainter {
           final a = -pi / 2 + i * 2 * pi / 8;
           canvas.drawCircle(Offset(960 + 760 * cos(a), 640 + 380 * sin(a)), 56, Paint()..color = playerColors[i].withValues(alpha: 0.4));
         }
-      case GameKind.kaosvi:
-        break; // removed with the enum value in stage 2 (Task 47)
     }
     canvas.restore();
   }

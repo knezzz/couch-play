@@ -23,7 +23,7 @@ void main() {
     expect(u.pairs.first.a, 'Pas');
   });
 
-  test('koliko, blef, tko bi, kao svi: the same question in two packs is drawn once', () {
+  test('koliko, blef, tko bi: the same question in two packs is drawn once', () {
     KolikoQuestion k(String q) => KolikoQuestion(q, 1, '', null, 's');
     expect(
         unionKoliko('u', 'U', [
@@ -39,7 +39,6 @@ void main() {
         ]).questions.length,
         3);
     expect(unionTkobi('u', 'U', [TkobiPack('a', 'A', ['p', 'q']), TkobiPack('b', 'B', ['Q', 'r'])]).prompts, ['p', 'q', 'r']);
-    expect(unionKaosvi('u', 'U', [KaosviPack('a', 'A', ['p', 'q']), KaosviPack('b', 'B', ['P', 'r'])]).questions, ['p', 'q', 'r']);
   });
 
   test('quiz: pictures are renamed per pack so two packs may use the same file name; unused pictures are not carried', () {

@@ -141,4 +141,21 @@ void main() {
     expect(s.packSelection(GameKind.quiz), (ticked: 2, total: 3));
     s.dispose();
   });
+
+  test('an old settings file with the Kao svi keys loads and keeps the other settings', () {
+    final dir = Directory.systemTemp.createTempSync('oldkaosvi');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final file = File('${dir.path}/settings.json');
+    file.writeAsStringSync(jsonEncode({
+      ...const GameSettings(kolikoSeconds: 45, uljezOffPacks: {'two'}).toJson(),
+      'kaosviQuestions': 16,
+      'kaosviTarget': 10,
+      'kaosviOffPacks': ['k'],
+    }));
+    setUpSession();
+    s.loadSettings(file);
+    expect(s.settings.kolikoSeconds, 45);
+    expect(s.settings.uljezOffPacks, {'two'});
+    s.dispose();
+  });
 }

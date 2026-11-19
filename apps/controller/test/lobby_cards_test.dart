@@ -121,10 +121,7 @@ void main() {
       expect(supportedGames, contains(GameKind.objasni));
       expect(supportedGames, contains(GameKind.blef));
       expect(supportedGames, contains(GameKind.tkobi));
-      // Kao svi is gone from the carousel; build-core drops GameKind.kaosvi in
-      // task 47 stage 2, then this is GameKind.values.length again.
-      expect(supportedGames, isNot(contains(GameKind.kaosvi)));
-      expect(supportedGames.length, GameKind.values.length - 1);
+      expect(supportedGames.length, GameKind.values.length);
       double w(int i) => t.getSize(dots.at(i)).width;
       expect(w(0), 32); // 24 + the 4 px margins
       expect(w(1), 16);
