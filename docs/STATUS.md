@@ -322,3 +322,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-18: Choppy home found from the person's play logs: the sound player (audioplayers, low latency) never reports done on Android, so its ticker redraws the home every frame (~27 ms) all session. Fix in builder-2's row tv-sfx-frames; confirm at the next TV install. Games smooth (p95 5-10 ms, quiz ~22 ms).
 - 2026-11-18: Person: keep-phones-awake trick, forget it for now. Task 45: locked phones count as still in (person chose a).
 - 2026-11-18: Person: all packs multi-select, all selected by default. Task 46.
+- 2026-11-19: a0f53f5 (Tasks 45, 46) installed on the TV, not opened; capture running. The 6e0fb3c capture file was lost.
+- 2026-11-19: Person (to the lead): a Windows .exe of the TV app via one GitHub Actions workflow, triggered only by the person pushing the `build-win` tag; exception to the no-CI rule. Committed bc9ce8c (apps/tv/windows, build-win.yml, Wi-Fi-first LAN address). Windows build not run yet. The tag push also needs main pushed (many commits unpushed).
