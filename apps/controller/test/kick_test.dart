@@ -79,6 +79,22 @@ void main() {
       expect(find.byKey(_bar), findsNothing);
     });
 
+    testWidgets('the host not guessing sees Waiting and keeps the bar', (
+      t,
+    ) async {
+      final c = await _app(t, 0);
+      await _send(t, c, const Waiting('Pogađa riječ'));
+      expect(find.byKey(_bar), findsNothing, reason: 'no Uljez yet');
+      await _send(t, c, const UljezWord('Pikachu'));
+      await _send(t, c, const VotePrompt(day: 1, seconds: 0, ids: [1, 2, 3]));
+      await _send(t, c, const Waiting('Pogađa riječ'));
+      expect(find.text('Pogađa riječ'), findsOneWidget);
+      expect(find.byKey(_bar), findsOneWidget);
+      await _send(t, c, _lobby());
+      await _send(t, c, const Waiting('Čekaj'));
+      expect(find.byKey(_bar), findsNothing, reason: 'another game');
+    });
+
     testWidgets('the bar names how many are away', (t) async {
       final c = await _app(t, 0);
       await _send(t, c, const UljezWord('Pikachu'));

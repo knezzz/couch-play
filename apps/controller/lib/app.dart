@@ -142,6 +142,7 @@ class _AppState extends State<App> {
         case LobbyState():
           _lobby = m;
           _host = null; // the lobby state says who hosts
+          _uljezOn = false; // back in the lobby: no game is on
           final me = m.players.where((p) => p.id == _myId).firstOrNull;
           if (me != null && !_rejoining) {
             widget.onSave?.call(SavedJoin(me.name, me.character));
@@ -250,6 +251,8 @@ class _AppState extends State<App> {
     if (_hostId != _myId) return false;
     return switch (_screen) {
       _Screen.uljez => _uljez.screen != 'end',
+      // The others wait while the caught impostor guesses.
+      _Screen.wait => _uljezOn && _uljez.screen != 'end',
       _Screen.wolf =>
         _wolf.screen == 'vote' ||
             (_wolf.screen == 'idle' && _wolf.morning != null),

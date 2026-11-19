@@ -137,7 +137,7 @@ Informal "ti". `{x}` is filled in by the app.
 | join | Pridruži se | Join | join button |
 | joinAgain | Pridruži se ponovno | Join again | button after you were removed |
 | emptyName | Upiši ime da se pridružiš. | Type a name to join. | join screen, name empty |
-| removed | Domaćin te uklonio iz igre. | The host removed you from the game. | screen after the host removes you |
+| removed | Više nisi u ovoj igri. | You are no longer in this game. | screen after the host or the TV removes you (neutral: no gendered verb, true for both) |
 | ok | U redu | OK | closes a red error bar |
 | waitingForHost | Čekaš da {host} pokrene igru. (fallback: domaćin) | You are waiting for {host} to start the game. | lobby, for non-hosts |
 | pickGame | Odaberi igru | Pick a game | lobby, host only |

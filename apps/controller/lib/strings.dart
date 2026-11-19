@@ -33,7 +33,7 @@ abstract final class Strings {
   static const changeCharacter = 'Promijeni lik';
   static const joinAgain = 'Pridruži se ponovno';
   static const emptyName = 'Upiši ime da se pridružiš.';
-  static const removed = 'Domaćin te uklonio iz igre.';
+  static const removed = 'Više nisi u ovoj igri.';
   static const ok = 'U redu';
 
   // Lobby
