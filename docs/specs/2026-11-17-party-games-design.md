@@ -156,6 +156,9 @@ Questions whose answer is a number. The closest guess wins. Like the number roun
 
 ## 5. Kao svi (match the herd) (added 2026-11-17, person approved)
 
+**Removed 2026-11-19 (person): "Lets remove 'Kao svi' game mode".** It is gone from the game; this section stays only as
+history (git keeps the code).
+
 Everyone answers the same open question; the goal is to give the SAME answer as most of the room. Our own name and
 questions (no cow, no names or tokens from any existing game).
 

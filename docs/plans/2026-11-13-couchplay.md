@@ -1016,3 +1016,7 @@ Spec: the Uljez and Vukodlak sections of the design spec ("No timers" / "No fixe
 Spec: main design spec, "Packs are multi-select in every game".
 - [x] Every game with packs (Quiz, Uljez, Objasni, Koliko?, Blef, Tko bi?, Kao svi): the host's details show a pack checklist, all ticked by default (uploaded packs too); the last pack can't be unticked; the game draws from the union without repeats; the selection is remembered and new packs start ticked; the TV lobby shows "Svi paketi" or the count.
 - [x] Tests first (union draw without repeats across packs, default all, last-one guard, remembered selection with a new pack added); QA on macOS release with a phone per game; check the canvas details boards and say where the checklist differs.
+
+### Task 47: Remove Kao svi (added 2026-11-19, person request)
+
+- [ ] Remove Kao svi from the game: the home card, the phone carousel, its settings, rules, protocol messages, TV and phone screens, sounds wiring, packs (apps/tv/assets) and their tests. Git keeps the history. Other games and the session board unchanged; a remembered setting from Kao svi must not break loading. Tests green; a quick QA that the carousel and home show the other games and nothing points at Kao svi.

@@ -51,6 +51,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 44 | Difficulty: Oblici harder, Matematika/Fizika easier, pub-quiz level (person, 2026-11-17) | done (0713aa3, e430b0e): Oblici 36 new; Matematika 113, Fizika 107; next TV install | content |
 | 45 | Uljez and Vukodlak without fixed timers: Dao sam trag, Idemo glasati majority (person, 2026-11-18) | done (review clean after 7 rounds, QA pass 3-8 phones; kicks from host phone by day and TV Back menu any time); next TV install | lead |
 | 46 | Multi-select packs in every game, all selected by default (person, 2026-11-18) | done (review 2 must-fixes fixed, QA pass all 7 games; 41ff6dd); next TV install | lead |
+| 47 | Remove Kao svi (person, 2026-11-19) | routed to lead | lead |
 
 ## Open questions for the person
 
@@ -324,3 +325,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-18: Person: all packs multi-select, all selected by default. Task 46.
 - 2026-11-19: a0f53f5 (Tasks 45, 46) installed on the TV, not opened; capture running. The 6e0fb3c capture file was lost.
 - 2026-11-19: Person (to the lead): a Windows .exe of the TV app via one GitHub Actions workflow, triggered only by the person pushing the `build-win` tag; exception to the no-CI rule. Committed bc9ce8c (apps/tv/windows, build-win.yml, Wi-Fi-first LAN address). Windows build not run yet. The tag push uploads the tagged commit and its history; pushing main is a separate choice.
+- 2026-11-19: Person: remove Kao svi. Task 47.
