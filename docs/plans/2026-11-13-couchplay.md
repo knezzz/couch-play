@@ -1019,4 +1019,4 @@ Spec: main design spec, "Packs are multi-select in every game".
 
 ### Task 47: Remove Kao svi (added 2026-11-19, person request)
 
-- [ ] Remove Kao svi from the game: the home card, the phone carousel, its settings, rules, protocol messages, TV and phone screens, sounds wiring, packs (apps/tv/assets) and their tests. Git keeps the history. Other games and the session board unchanged; a remembered setting from Kao svi must not break loading. Tests green; a quick QA that the carousel and home show the other games and nothing points at Kao svi.
+- [x] Remove Kao svi from the game: the home card, the phone carousel, its settings, rules, protocol messages, TV and phone screens, sounds wiring, packs (apps/tv/assets) and their tests. Git keeps the history. Other games and the session board unchanged; a remembered setting from Kao svi must not break loading. Tests green; a quick QA that the carousel and home show the other games and nothing points at Kao svi.
