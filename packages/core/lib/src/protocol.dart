@@ -335,6 +335,7 @@ sealed class Message with _JsonEq {
         'vote' => Vote(m['target'] as int?),
         'uljezDone' => const UljezDone(),
         'hostIs' => HostIs(m['host'] as int),
+        'gamePlayers' => GamePlayers([for (final x in m['players'] as List) PlayerInfo.fromJson(x as Map<String, dynamic>)]),
         'readyToVote' => ReadyToVote(m['on'] as bool),
         'guess' => Guess(m['index'] as int),
         'number' => NumberAnswer((m['value'] as num).toDouble()),
@@ -827,6 +828,20 @@ class HostIs extends Message {
   String get type => 'hostIs';
   @override
   Map<String, Object?> get fields => {'host': host};
+}
+
+/// TV -> every phone, during a game: the players still in it (kicked and dead
+/// ones left out), each with [PlayerInfo.connected]. Sent identically to all
+/// phones whenever a kick, death, drop or return changes it, and to a phone
+/// that (re)connects. Like [HostIs] it replaces `LobbyState.players` for the
+/// kick list until the next lobby state; names and colours stay the same.
+class GamePlayers extends Message {
+  final List<PlayerInfo> players;
+  const GamePlayers(this.players);
+  @override
+  String get type => 'gamePlayers';
+  @override
+  Map<String, Object?> get fields => {'players': [for (final p in players) p.toJson()]};
 }
 
 /// Phone -> TV, "Idemo glasati" (Uljez from the end of round 1, Vukodlak by

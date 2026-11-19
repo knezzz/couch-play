@@ -96,11 +96,24 @@ class ObjasniMatch {
 
   // ---- messages out ----
 
+  /// Kicked players: the phones' team lists leave them out (the TV does too).
+  final _kicked = <int>{};
+
+  List<List<int>> _teamLists() => [
+        for (var t = 0; t < 2; t++) [for (final id in game.teamMembers(t)) if (!_kicked.contains(id)) id]
+      ];
+
   void _sendTeams() {
-    final teams = [game.teamMembers(0), game.teamMembers(1)];
+    final teams = _teamLists();
     for (final id in ids) {
-      send(id, ObjasniTeams(team: game.teamOf(id), teams: teams));
+      if (!_kicked.contains(id)) send(id, ObjasniTeams(team: game.teamOf(id), teams: teams));
     }
+  }
+
+  /// A kick: the others get the teams again without that player.
+  void kicked(int id) {
+    if (!ids.contains(id) || !_kicked.add(id)) return;
+    _sendTeams();
   }
 
   ObjasniRole _role(int id) => id == game.explainer
@@ -298,7 +311,7 @@ class ObjasniMatch {
 
   void rejoin(int id) {
     if (!ids.contains(id)) return;
-    send(id, ObjasniTeams(team: game.teamOf(id), teams: [game.teamMembers(0), game.teamMembers(1)]));
+    send(id, ObjasniTeams(team: game.teamOf(id), teams: _teamLists()));
     if (stage == ObjasniStageTv.setup || stage == ObjasniStageTv.over) return;
     send(id, _turnMsg(id, stage));
   }

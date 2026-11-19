@@ -147,10 +147,48 @@ class Session {
   void _notify() {
     _kaosvi?.refreshHost(); // a host change in the middle of the merge
     _tellHost();
+    _tellPlayers();
     _changes.value++;
   }
 
   int? _hostTold;
+  String? _playersTold;
+
+  /// Who is still in the running game, as the phones' kick list needs it.
+  /// Null outside a game.
+  GamePlayers? _gamePlayers() {
+    final Iterable<int>? ids = switch (_phase) {
+      Phase.wolf => _wolf?.alive,
+      Phase.uljez => _uljez?.alive,
+      Phase.objasni => _objasni?.ids,
+      Phase.koliko => _koliko?.ids,
+      Phase.blef => _blef?.ids,
+      Phase.tkobi => _tkobi?.ids,
+      Phase.kaosvi => _kaosvi?.ids,
+      Phase.quiz => _quizIds,
+      Phase.curve => _simIdOf.keys,
+      _ => null,
+    };
+    if (ids == null) return null;
+    final in_ = ids.toSet();
+    return GamePlayers([for (final i in playerInfos) if (in_.contains(i.id)) i]);
+  }
+
+  /// The lobby state is not resent mid-game, so the list is sent on its own
+  /// whenever it changes (same for every phone, night included).
+  void _tellPlayers() {
+    final m = _gamePlayers();
+    if (m == null) {
+      _playersTold = null;
+      return;
+    }
+    final key = jsonEncode(m.toJson());
+    if (key == _playersTold) return;
+    _playersTold = key;
+    for (final p in _players) {
+      p.socket?.send(m);
+    }
+  }
 
   /// In a game the lobby state is not resent, so the phones are told on their
   /// own whenever the host changes (kick, drop, return). In the lobby the
@@ -375,6 +413,8 @@ class Session {
     if (_phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi || _phase == Phase.kaosvi) peer.send(_lobbyMsg());
     final host = hostId;
     if (_phase != Phase.lobby && host != null) peer.send(HostIs(host)); // after the lobby state
+    final gp = _gamePlayers();
+    if (gp != null) peer.send(gp);
     switch (_phase) {
       case Phase.lobby:
         _broadcastLobby();
@@ -667,6 +707,7 @@ class Session {
     _wolf?.expel(target.id); // out of a running Vukodlak now
     _uljez?.expel(target.id); // and of a running Uljez
     _objasni?.setAway(target.id, true); // and Objasni counts it as gone
+    _objasni?.kicked(target.id);
     _koliko?.setAway(target.id, true);
     _blef?.setAway(target.id, true);
     _tkobi?.setAway(target.id, true);

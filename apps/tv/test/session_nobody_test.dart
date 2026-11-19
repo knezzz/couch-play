@@ -250,7 +250,7 @@ void main() {
       await t.pump();
       expect(s.pauseText, Strings.waitingForReturn('Ben'));
       expect(a2.last<Waiting>(), Waiting(Strings.waitingForReturn('Ben')));
-      expect(a2.sent.where((m) => m is! HostIs).last, isA<Waiting>(), reason: 'HostIs may follow it');
+      expect(a2.sent.where((m) => m is! HostIs && m is! GamePlayers).last, isA<Waiting>(), reason: 'HostIs and GamePlayers may follow it');
       s.dispose();
     });
   });
