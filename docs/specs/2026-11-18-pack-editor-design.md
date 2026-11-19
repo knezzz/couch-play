@@ -12,10 +12,10 @@ questions, without hand-editing JSON. Changes reach the TV with the next install
 A local tool on the Mac. One command starts it, and it opens a page in the browser on `localhost`.
 
 - **Shows** every bundled pack, grouped by game: Kviz (all `hr-*` packs, from `tool/packs/`), Objasni, Koliko?,
-  Blef, Tko bi?, Kao svi and Uljez (from `apps/tv/assets/<game>/`). Each pack lists its questions. A quiz question
+  Blef, Tko bi? and Uljez (from `apps/tv/assets/<game>/`). Each pack lists its questions. A quiz question
   with a picture shows the picture.
 - **Edit:** question text and answers. Quiz: the 4 choices and which one is right. Koliko?: number and unit. Blef: the
-  answer. Objasni, Tko bi?, Kao svi: the word or prompt. Uljez: both words of the pair.
+  answer. Objasni, Tko bi?: the word or prompt. Uljez: both words of the pair.
 - **Delete** a question. **Add** a question (text only, no picture) at the end of a pack.
 - **Save** writes the pack's source JSON. Before writing, it:
   - checks the pack with the same rules the TV uses (the pack parsers in `packages/core`); a pack that fails is not
@@ -62,3 +62,5 @@ person (or a seat they ask) commits edits by path.
   `dart:ui`. If it can't import them, choose the cheapest way that still runs the same rules, and say which.
 - Where it lives (suggested: `tool/pack_editor/`) and its launch command.
 - Layout of the page.
+
+Kao svi was removed from CouchPlay on 2026-11-19 (person); the editor no longer lists its packs.
