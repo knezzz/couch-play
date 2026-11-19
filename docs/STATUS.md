@@ -50,7 +50,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 43 | Kao svi: match the herd (person, 2026-11-17) | done (QA pass 3/5/8 phones); next TV install | lead + content |
 | 44 | Difficulty: Oblici harder, Matematika/Fizika easier, pub-quiz level (person, 2026-11-17) | done (0713aa3, e430b0e): Oblici 36 new; Matematika 113, Fizika 107; next TV install | content |
 | 45 | Uljez and Vukodlak without fixed timers: Dao sam trag, Idemo glasati majority (person, 2026-11-18) | routed to lead | lead |
-| 46 | Multi-select packs in every game, all selected by default (person, 2026-11-18) | routed to lead | lead |
+| 46 | Multi-select packs in every game, all selected by default (person, 2026-11-18) | done (review 2 must-fixes fixed, QA pass all 7 games; 41ff6dd); next TV install | lead |
 
 ## Open questions for the person
 

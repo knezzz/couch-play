@@ -1014,5 +1014,5 @@ Spec: the Uljez and Vukodlak sections of the design spec ("No timers" / "No fixe
 ### Task 46: Multi-select packs, all on by default (added 2026-11-18, person request)
 
 Spec: main design spec, "Packs are multi-select in every game".
-- [ ] Every game with packs (Quiz, Uljez, Objasni, Koliko?, Blef, Tko bi?, Kao svi): the host's details show a pack checklist, all ticked by default (uploaded packs too); the last pack can't be unticked; the game draws from the union without repeats; the selection is remembered and new packs start ticked; the TV lobby shows "Svi paketi" or the count.
-- [ ] Tests first (union draw without repeats across packs, default all, last-one guard, remembered selection with a new pack added); QA on macOS release with a phone per game; check the canvas details boards and say where the checklist differs.
+- [x] Every game with packs (Quiz, Uljez, Objasni, Koliko?, Blef, Tko bi?, Kao svi): the host's details show a pack checklist, all ticked by default (uploaded packs too); the last pack can't be unticked; the game draws from the union without repeats; the selection is remembered and new packs start ticked; the TV lobby shows "Svi paketi" or the count.
+- [x] Tests first (union draw without repeats across packs, default all, last-one guard, remembered selection with a new pack added); QA on macOS release with a phone per game; check the canvas details boards and say where the checklist differs.
