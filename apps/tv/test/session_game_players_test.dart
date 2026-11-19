@@ -162,4 +162,26 @@ void main() {
     expect(m.stage, ObjasniStageTv.ready);
     s.dispose();
   });
+
+  test('Uljez guess: the list holds the guessing impostor; after the guess it is as before', () {
+    setUpSession(4);
+    ps[0].say(const StartGame(GameKind.uljez, null));
+    final g = s.uljez!.game;
+    while (!g.voteMayStart) {
+      g.nextTurn();
+    }
+    g.startVote();
+    final imp = g.ids.firstWhere(g.isImpostor);
+    for (final i in g.ids) {
+      g.vote(i, i == imp ? null : imp);
+    }
+    g.resolveVote();
+    expect(g.phase, UljezPhase.guess);
+    expect(g.guesser, imp);
+    s.kickFromTv(g.ids.firstWhere((i) => i != imp)); // any change sends the list again
+    final inList = [for (final x in ps.firstWhere((p) => idOf(p) == imp).last<GamePlayers>()!.players) x.id];
+    expect(inList, contains(imp));
+    expect(inList.length, 3);
+    s.dispose();
+  });
 }

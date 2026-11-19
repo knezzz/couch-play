@@ -159,7 +159,8 @@ class Session {
   GamePlayers? _gamePlayers() {
     final Iterable<int>? ids = switch (_phase) {
       Phase.wolf => _wolf?.alive,
-      Phase.uljez => _uljez?.alive,
+      // the caught impostor is out but still in the game while they guess
+      Phase.uljez => _uljez == null ? null : [..._uljez!.alive, ?_uljez!.game.guesser],
       Phase.objasni => _objasni?.ids,
       Phase.koliko => _koliko?.ids,
       Phase.blef => _blef?.ids,
