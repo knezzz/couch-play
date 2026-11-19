@@ -13,7 +13,6 @@ import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
 import 'screens/wait_screen.dart';
 import 'screens/blef_flow.dart';
-import 'screens/kaosvi_flow.dart';
 import 'screens/koliko_flow.dart';
 import 'screens/objasni_flow.dart';
 import 'screens/tkobi_flow.dart';
@@ -34,7 +33,6 @@ enum _Screen {
   koliko,
   blef,
   tkobi,
-  kaosvi,
   kicked,
 }
 
@@ -86,7 +84,6 @@ class _AppState extends State<App> {
   final _koliko = KolikoInbox();
   final _blef = BlefInbox();
   final _tkobi = TkobiInbox();
-  final _kaosvi = KaosviInbox();
   // Vukodlak and Uljez share VotePrompt; the game that started last owns it.
   bool _uljezOn = false;
   List<PlayerInfo>? _inGame; // GamePlayers: who is still in, until a lobby state
@@ -176,10 +173,6 @@ class _AppState extends State<App> {
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
-        case KaosviAsk() || KaosviMerging() || KaosviResult():
-          if (m is KaosviAsk) _error = null;
-          _kaosvi.on(m);
-          _screen = _Screen.kaosvi;
         case TkobiAsk() || TkobiResult():
           _tkobi.on(m);
           _screen = _Screen.tkobi;
@@ -291,12 +284,6 @@ class _AppState extends State<App> {
       key: ValueKey(_question?.number),
     ),
     _Screen.results => ResultsScreen(_placements, _myId),
-    _Screen.kaosvi => KaosviFlow(
-      widget.conn,
-      _kaosvi,
-      error: _error,
-      onSend: () => setState(() => _error = null),
-    ),
     _Screen.tkobi =>
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
@@ -342,8 +329,7 @@ class _AppState extends State<App> {
       children: [
         if (_error != null &&
             _screen != _Screen.join &&
-            _screen != _Screen.blef &&
-            _screen != _Screen.kaosvi)
+            _screen != _Screen.blef)
           Material(
             color: Colors.red.shade900,
             child: SafeArea(

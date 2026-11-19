@@ -70,7 +70,8 @@ class GameLook {
       Color(0xFFE6DAFF),
       null,
     ),
-    GameKind.kaosvi => const GameLook(Color(0xFF3DDC84), ink, ink, null),
+    // Core still has GameKind.kaosvi; this arm goes with it (task 47 stage 2).
+    GameKind.kaosvi => const GameLook(bg, ink, ink, null),
   };
 }
 
@@ -114,7 +115,7 @@ Widget _art(GameKind k) => switch (k) {
   ),
   GameKind.blef => const Icon(Icons.theater_comedy, size: 96, color: ink),
   GameKind.tkobi => const Icon(Icons.how_to_vote, size: 96, color: textColor),
-  GameKind.kaosvi => const Icon(Icons.groups, size: 96, color: ink),
+  GameKind.kaosvi => const SizedBox(), // goes with core's kaosvi (stage 2)
   GameKind.uljez => const Text(
     '?',
     style: TextStyle(
@@ -143,7 +144,6 @@ const supportedGames = [
   GameKind.koliko,
   GameKind.blef,
   GameKind.tkobi,
-  GameKind.kaosvi,
 ];
 
 /// The host's game picker: one card per game and page dots.
@@ -266,7 +266,6 @@ class _GameCarouselState extends State<GameCarousel> {
                   l.kolikoPacks,
                   l.blefPacks,
                   l.tkobiPacks,
-                  l.kaosviPacks,
                 ),
                 key: ValueKey('line-${k.name}'),
                 maxLines: 2,

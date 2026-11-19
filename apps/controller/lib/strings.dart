@@ -104,23 +104,6 @@ abstract final class Strings {
   static const tkobiWrong = 'Ovaj put bez pogotka.';
   static const crowned = 'Pobjednik';
 
-  // Kao svi
-  static const kaosviTitle = 'Odgovori kao većina';
-  static const kaosviSentLabel = 'Tvoj odgovor je poslan.';
-  static const mergeTitle = 'Spoji slične odgovore';
-  static const mergeHint =
-      'Dodirni dva odgovora da ih spojiš (jabuka + jabuke).';
-  static const mergeWait = 'Domaćin spaja slične odgovore. Gledaj TV.';
-  static const done = 'Gotovo';
-  static const yourAnswer = 'Tvoj odgovor';
-  static const noAnswer = 'Bez odgovora';
-  static String groupSize(int n) =>
-      n == 1 ? 'Sam s tim odgovorom' : 'Tvoja skupina: $n';
-  static const largestGroup = 'Najveća skupina!';
-  static const loneAnswer = 'Jedini takav odgovor';
-  static String signedPoints(int n) =>
-      n > 0 ? '+${scoreText(n)}' : (n < 0 ? '−${scoreText(-n)}' : scoreText(0));
-
   static const send = 'Pošalji';
   static const blefHint = 'Tvoj odgovor';
   static const blefSpikeTitle = 'Blef: probno tipkanje';
@@ -169,7 +152,7 @@ abstract final class Strings {
     GameKind.koliko => 'Koliko?',
     GameKind.blef => 'Blef',
     GameKind.tkobi => 'Tko bi?',
-    GameKind.kaosvi => 'Kao svi',
+    GameKind.kaosvi => '',
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
@@ -180,7 +163,7 @@ abstract final class Strings {
     GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
     GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
     GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
-    GameKind.kaosvi => 'Odgovori isto kao većina u sobi.',
+    GameKind.kaosvi => '',
   };
   static String watchingLabel(String? host) => '${host ?? 'Domaćin'} gleda:';
   static String startsWhen(String? host) =>
@@ -206,7 +189,6 @@ abstract final class Strings {
     List<PackInfo> kolikoPacks = const [],
     List<PackInfo> blefPacks = const [],
     List<PackInfo> tkobiPacks = const [],
-    List<PackInfo> kaosviPacks = const [],
   ]) {
     // "Svi paketi" or the number ticked, the same as the TV.
     String pack(List<PackInfo> l, GameKind g) => packCount(
@@ -229,8 +211,8 @@ abstract final class Strings {
         '${pack(kolikoPacks, GameKind.koliko)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
       GameKind.objasni =>
         '${pack(objasniPacks, GameKind.objasni)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
-      GameKind.kaosvi =>
-        '${pack(kaosviPacks, GameKind.kaosvi)} · ${questions(s.kaosviQuestions)} · ${s.kaosviTarget} bodova',
+      // Core still has GameKind.kaosvi; the arm goes with it (task 47 stage 2).
+      GameKind.kaosvi => '',
     };
   }
 

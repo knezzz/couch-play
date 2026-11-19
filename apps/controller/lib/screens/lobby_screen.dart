@@ -7,7 +7,6 @@ import '../theme.dart';
 import '../strings.dart';
 import 'game_cards.dart';
 import 'blef_screens.dart';
-import 'kaosvi_screens.dart';
 import 'kick.dart';
 import 'koliko_screens.dart';
 import 'objasni_screens.dart';
@@ -38,8 +37,6 @@ GameSettings copySettings(
   int? kolikoQuestions,
   int? blefQuestions,
   int? tkobiPrompts,
-  int? kaosviQuestions,
-  int? kaosviTarget,
   // Replace one game's switched-off packs. The old single pack ids are never
   // sent (null): the TV would turn one into 'only that pack'.
   GameKind? offFor,
@@ -59,15 +56,12 @@ GameSettings copySettings(
   kolikoQuestions: kolikoQuestions ?? s.kolikoQuestions,
   blefQuestions: blefQuestions ?? s.blefQuestions,
   tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
-  kaosviQuestions: kaosviQuestions ?? s.kaosviQuestions,
-  kaosviTarget: kaosviTarget ?? s.kaosviTarget,
   quizOffPacks: offFor == GameKind.quiz ? off! : s.quizOffPacks,
   uljezOffPacks: offFor == GameKind.uljez ? off! : s.uljezOffPacks,
   objasniOffPacks: offFor == GameKind.objasni ? off! : s.objasniOffPacks,
   kolikoOffPacks: offFor == GameKind.koliko ? off! : s.kolikoOffPacks,
   blefOffPacks: offFor == GameKind.blef ? off! : s.blefOffPacks,
   tkobiOffPacks: offFor == GameKind.tkobi ? off! : s.tkobiOffPacks,
-  kaosviOffPacks: offFor == GameKind.kaosvi ? off! : s.kaosviOffPacks,
 );
 
 class LobbyScreen extends StatefulWidget {
@@ -192,19 +186,6 @@ class _LobbyScreenState extends State<LobbyScreen> {
       onBack: () => Navigator.of(context).pop(),
     ),
   );
-
-  Widget _kaosviSettings(LobbyState l, void Function(GameSettings) change) {
-    final s = l.settings;
-    return KaosviSettingsView(
-      questions: s.kaosviQuestions,
-      target: s.kaosviTarget,
-      packs: l.kaosviPacks,
-      ticked: _ticked(GameKind.kaosvi, l.kaosviPacks, s),
-      onQuestions: (v) => change(copySettings(s, kaosviQuestions: v)),
-      onTarget: (v) => change(copySettings(s, kaosviTarget: v)),
-      onTogglePack: (id) => change(_toggle(s, GameKind.kaosvi, id)),
-    );
-  }
 
   Widget _tkobiSettings(LobbyState l, void Function(GameSettings) change) {
     final s = l.settings;
@@ -402,8 +383,6 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     _blefSettings(l, change)
                   else if (kind == GameKind.tkobi)
                     _tkobiSettings(l, change)
-                  else if (kind == GameKind.kaosvi)
-                    _kaosviSettings(l, change)
                   else if (kind == GameKind.quiz || kind == GameKind.curve)
                     _GameSettings(kind, s, onChange: change),
                   if (kind == GameKind.curve) ...[
@@ -574,7 +553,6 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     l.kolikoPacks,
                     l.blefPacks,
                     l.tkobiPacks,
-                    l.kaosviPacks,
                   ),
                 ),
               if (l.selected == GameKind.vukodlak)

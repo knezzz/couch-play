@@ -22,17 +22,10 @@ class BlefWriteScreen extends StatefulWidget {
     required this.onSend,
     this.sent,
     this.error,
-    this.title = Strings.blefWriteTitle,
-    this.sentLabel = Strings.blefSentFake,
-    this.maxLength = 40,
   });
   final int number, total, seconds;
   final String question;
 
-  /// Over the field, over the sent text, and the longest answer: Blef's by
-  /// default, Kao svi's own.
-  final String title, sentLabel;
-  final int maxLength;
   final String? sent, error;
   final void Function(String text) onSend;
 
@@ -97,7 +90,7 @@ class _WriteState extends State<BlefWriteScreen> {
             const SizedBox(height: 16),
             if (widget.sent != null) ...[
               Text(
-                widget.sentLabel,
+                Strings.blefSentFake,
                 style: const TextStyle(fontSize: 18, color: muted),
               ),
               const SizedBox(height: 8),
@@ -118,12 +111,12 @@ class _WriteState extends State<BlefWriteScreen> {
               ),
             ] else ...[
               Text(
-                widget.title,
+                Strings.blefWriteTitle,
                 style: const TextStyle(fontSize: 18, color: muted),
               ),
               const SizedBox(height: 8),
               BlefField(
-                maxLength: widget.maxLength,
+                maxLength: 40,
                 enabled: _left > 0,
                 error: widget.error,
                 onSend: widget.onSend,
