@@ -142,14 +142,14 @@ HTML/JS.
   code can be reused; otherwise the first non-loopback IPv4) and a QR code of it in the terminal only if a QR
   package is already in the workspace; no new dependency for it.
 
-- [ ] **Step 1: Failing tests**: `lan_off_refuses_lan_host` (default server, Host `192.168.1.5:<port>` → 403);
+- [x] **Step 1: Failing tests**: `lan_off_refuses_lan_host` (default server, Host `192.168.1.5:<port>` → 403);
   `lan_on_accepts_own_ip` (`lan: true`, request to the Mac's own IPv4 → 200 on `/api/packs`);
   `lan_on_refuses_foreign_origin` (`lan: true`, Origin `http://evil.example` → 403).
-- [ ] **Step 2: Run** `fvm dart test test/server_test.dart`: FAIL.
-- [ ] **Step 3: Implement** the flag, and a narrow layout in `index.html` (below ~700 px: pack list becomes a
+- [x] **Step 2: Run** `fvm dart test test/server_test.dart`: FAIL.
+- [x] **Step 3: Implement** the flag, and a narrow layout in `index.html` (below ~700 px: pack list becomes a
   picker at the top; one column per question; choices stacked; buttons at least 44 px tall; no sideways scroll).
-- [ ] **Step 4: Run** `fvm dart test`: all pass.
-- [ ] **Step 5: QA** on a scratch `--root` copy with `--lan`: Chrome on the person's Pixel 6a (allowed for testing;
+- [x] **Step 4: Run** `fvm dart test`: all pass.
+- [x] **Step 5: QA** on a scratch `--root` copy with `--lan`: Chrome on the person's Pixel 6a (allowed for testing;
   check docs/STATUS.md), else device emulation at 390x844 in Chrome and Safari's responsive mode; open a quiz pack
   with pictures, edit, delete, add, save, refused save. Screenshots.
-- [ ] **Step 6: Commit** by path: `git commit -- tool/pack_editor/bin tool/pack_editor/web tool/pack_editor/test`.
+- [x] **Step 6: Commit** by path: `git commit -- tool/pack_editor/bin tool/pack_editor/web tool/pack_editor/test`.
