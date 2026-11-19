@@ -141,6 +141,16 @@ class PackChecklist extends StatefulWidget {
 
 class _PackChecklistState extends State<PackChecklist> {
   bool _refused = false;
+  final _hint = GlobalKey();
+
+  // The hint appears under the list: scroll it into view, above Igraj.
+  void _showHint() {
+    setState(() => _refused = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final c = _hint.currentContext;
+      if (c != null && c.mounted) Scrollable.ensureVisible(c);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,10 +173,13 @@ class _PackChecklistState extends State<PackChecklist> {
             ),
           ),
         if (_refused)
-          const Text(
-            Strings.lastPackStays,
-            key: ValueKey('pack-refused'),
-            style: TextStyle(fontSize: 18, color: muted),
+          Container(
+            key: _hint,
+            child: const Text(
+              Strings.lastPackStays,
+              key: ValueKey('pack-refused'),
+              style: TextStyle(fontSize: 18, color: muted),
+            ),
           ),
       ],
     );
@@ -182,7 +195,7 @@ class _PackChecklistState extends State<PackChecklist> {
         borderRadius: BorderRadius.circular(14),
         onTap: () {
           if (last) {
-            setState(() => _refused = true);
+            _showHint();
             return;
           }
           setState(() => _refused = false);

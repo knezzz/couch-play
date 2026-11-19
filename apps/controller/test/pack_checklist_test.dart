@@ -111,6 +111,52 @@ void main() {
     expect(t.takeException(), isNull);
   });
 
+  for (final size in [const Size(390, 844), const Size(360, 640)]) {
+    testWidgets('the refusal hint is fully above Igraj on a long list '
+        '(${size.width.toInt()}x${size.height.toInt()})', (t) async {
+      t.view.physicalSize = size;
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      final many = [
+        for (var i = 0; i < 30; i++) PackInfo('p$i', 'Paket $i', 100 + i),
+      ];
+      await t.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                      children: [
+                        PackChecklist(
+                          title: 'Paketi',
+                          packs: many,
+                          ticked: const {'p29'},
+                          onToggle: (_) {},
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(key: ValueKey('igraj'), height: 72),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await t.ensureVisible(find.byKey(const ValueKey('pack-p29')));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('pack-p29')));
+      await t.pumpAndSettle();
+      final hint = t.getRect(find.byKey(const ValueKey('pack-refused')));
+      final button = t.getRect(find.byKey(const ValueKey('igraj')));
+      expect(hint.bottom, lessThanOrEqualTo(button.top));
+      expect(hint.top, greaterThanOrEqualTo(0));
+    });
+  }
+
   test('the count words: all, or the number', () {
     expect(Strings.packCount(5, 5), 'Svi paketi');
     expect(Strings.packCount(1, 5), '1 paket');
