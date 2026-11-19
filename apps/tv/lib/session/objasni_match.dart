@@ -113,7 +113,12 @@ class ObjasniMatch {
   /// A kick: the others get the teams again without that player.
   void kicked(int id) {
     if (!ids.contains(id) || !_kicked.add(id)) return;
+    game.drop(id); // the setup deals again among the rest
     _sendTeams();
+    // An explainer who is kicked mid-turn has nobody to press: the turn ends.
+    if (stage == ObjasniStageTv.play && id == game.explainer) _endTurn();
+    _checkPause();
+    notify?.call();
   }
 
   ObjasniRole _role(int id) => id == game.explainer

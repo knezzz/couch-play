@@ -72,6 +72,7 @@ class ObjasniGame {
 
   final List<List<int>> _teams = [[], []];
   final Set<int> _away = {};
+  final Set<int> _dropped = {};
   final List<int> _rot = [0, 0];
   final List<int> _score = [0, 0];
   var _deck = <String>[];
@@ -96,8 +97,8 @@ class ObjasniGame {
   /// "Promiješaj": draw the teams again. Only before the game begins.
   void reshuffle() {
     if (phase != ObjasniPhase.setup) return;
-    final shuffled = [...ids]..shuffle(_random);
-    final n = ids.length;
+    final shuffled = [for (final i in ids) if (!_dropped.contains(i)) i]..shuffle(_random);
+    final n = shuffled.length;
     final k = n.isOdd && _random.nextBool() ? n ~/ 2 : (n + 1) ~/ 2;
     _teams[0]
       ..clear()
@@ -105,6 +106,21 @@ class ObjasniGame {
     _teams[1]
       ..clear()
       ..addAll(shuffled.skip(k));
+  }
+
+  /// A kicked player is out for good: not dealt again, and in the setup the
+  /// teams are drawn again at once so they stay even (differ by at most 1).
+  void drop(int id) {
+    if (!ids.contains(id) || !_dropped.add(id)) return;
+    _away.add(id);
+    if (phase == ObjasniPhase.setup) {
+      reshuffle();
+    } else {
+      for (final t in _teams) {
+        t.remove(id);
+      }
+      if (phase == ObjasniPhase.ready && id == explainer) _pickExplainer();
+    }
   }
 
   void begin() {
@@ -202,7 +218,7 @@ class ObjasniGame {
     phase = ObjasniPhase.summary;
     final t = turnTeam, m = _teams[t];
     final at = m.indexOf(explainer!);
-    _rot[t] = (at + 1) % m.length;
+    if (m.isNotEmpty) _rot[t] = (at < 0 ? _rot[t] : at + 1) % m.length; // a kicked explainer is no longer listed
   }
 
   /// After the summary: the next explainer is up, or the game is over.

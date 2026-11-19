@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv/session/objasni_match.dart';
 import 'package:tv/session/session.dart';
 
 import 'session_test.dart' show FakePeer, join;
@@ -84,6 +85,42 @@ void main() {
       expect(t.teams.expand((x) => x), isNot(contains(gone)));
       expect(t.teams.expand((x) => x).length, 3);
     }
+    s.dispose();
+  });
+
+  test('Objasni setup: after kicks and any number of Promiješaj the teams differ by at most 1 and the kicked are never dealt', () {
+    for (final n in [5, 6, 7]) {
+      setUpSession(n);
+      ps[0].say(const StartGame(GameKind.objasni, null));
+      final gone = [idOf(ps[2]), if (n >= 6) idOf(ps[4])];
+      for (final g in gone) {
+        ps[0].say(Kick(g));
+        final t = ps[1].last<ObjasniTeams>()!.teams;
+        expect((t[0].length - t[1].length).abs(), lessThanOrEqualTo(1), reason: 'n=$n right after the kick');
+      }
+      for (var i = 0; i < 60; i++) {
+        ps[0].say(const Reshuffle());
+        final t = ps[1].last<ObjasniTeams>()!.teams;
+        final all = t.expand((x) => x).toList();
+        expect(all.length, n - gone.length);
+        expect(all.toSet().intersection(gone.toSet()), isEmpty);
+        expect((t[0].length - t[1].length).abs(), lessThanOrEqualTo(1), reason: 'n=$n reshuffle $i');
+        expect(s.objasni!.teamMembers(0).toSet().intersection(gone.toSet()), isEmpty);
+      }
+      s.dispose();
+    }
+  });
+
+  test('Objasni: kicking the explainer in the middle of a turn ends that turn at once', () {
+    setUpSession(6);
+    ps[0].say(const StartGame(GameKind.objasni, null));
+    ps[0].say(const Go());
+    final m = s.objasni!;
+    final ex = m.explainer!;
+    ps.firstWhere((x) => idOf(x) == ex).say(const Go());
+    expect(m.stage, ObjasniStageTv.play);
+    expect(s.kickFromTv(ex), isTrue);
+    expect(m.stage, ObjasniStageTv.summary);
     s.dispose();
   });
 }

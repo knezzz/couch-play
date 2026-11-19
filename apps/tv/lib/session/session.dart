@@ -177,6 +177,8 @@ class Session {
   /// The lobby state is not resent mid-game, so the list is sent on its own
   /// whenever it changes (same for every phone, night included).
   void _tellPlayers() {
+    // The night's dead are announced with the Morning, not before.
+    if (_phase == Phase.wolf && _wolf?.stage == WolfStage.dawn) return;
     final m = _gamePlayers();
     if (m == null) {
       _playersTold = null;
