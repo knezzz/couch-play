@@ -187,6 +187,43 @@ void main() {
     });
   });
 
+  group('lan', () {
+    Future<String?> ownIp() async {
+      for (final i in await NetworkInterface.list(type: InternetAddressType.IPv4)) {
+        for (final a in i.addresses) {
+          if (!a.isLoopback) return a.address;
+        }
+      }
+      return null;
+    }
+
+    test('lan_off_refuses_lan_host', () async {
+      expect((await call('GET', '/api/packs', headers: {'host': '192.168.1.5:${server.port}'})).$1, 403);
+    });
+
+    test('lan_on_accepts_own_ip', () async {
+      final ip = await ownIp();
+      if (ip == null) return; // no network on this machine
+      final lan = await startServer(root, port: 0, webDir: web, lan: true);
+      addTearDown(() => lan.close(force: true));
+      final req = await client.openUrl('GET', Uri.parse('http://$ip:${lan.port}/api/packs'));
+      expect((await req.close()).statusCode, 200);
+    });
+
+    test('lan_on_refuses_foreign_origin', () async {
+      final ip = await ownIp();
+      final lan = await startServer(root, port: 0, webDir: web, lan: true);
+      addTearDown(() => lan.close(force: true));
+      for (final host in ['localhost', if (ip != null) ip]) {
+        final req = await client.openUrl('POST', Uri.parse('http://$host:${lan.port}/api/pack/kviz/hr-oblici'));
+        req.headers.set('origin', 'http://evil.example');
+        req.headers.contentType = ContentType.json;
+        req.write('{}');
+        expect((await req.close()).statusCode, 403, reason: host);
+      }
+    });
+  });
+
   group('other websites cannot use it', () {
     test('a_post_from_another_origin_is_403_and_writes_nothing', () async {
       final p = await load('kviz', 'hr-oblici');

@@ -8,11 +8,13 @@ final _id = RegExp(r'^[a-z0-9-]{1,60}$');
 final _image = RegExp(r'\.(svg|jpe?g|png|webp)$', caseSensitive: false);
 
 /// Serves the editor on 127.0.0.1 only. [repoRoot] is where the pack files are; [webDir] holds index.html.
-Future<HttpServer> startServer(String repoRoot, {int port = 8765, String webDir = 'web'}) async {
-  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
+/// With [lan] it listens on every interface, so a phone on the same Wi-Fi can open it (no password).
+Future<HttpServer> startServer(String repoRoot, {int port = 8765, String webDir = 'web', bool lan = false}) async {
+  final server = await HttpServer.bind(lan ? InternetAddress.anyIPv4 : InternetAddress.loopbackIPv4, port);
+  final hosts = {'localhost', '127.0.0.1', if (lan) ...await _ownIps()};
   server.listen((req) async {
     try {
-      await _handle(req, repoRoot, webDir, server.port);
+      await _handle(req, repoRoot, webDir, server.port, hosts);
     } catch (e) {
       await _send(req, 500, {'message': '$e'});
     }
@@ -33,10 +35,17 @@ Future<void> _notFound(HttpRequest req) => _send(req, 404, {'message': 'Nema tog
 /// A path segment that could climb out of a folder, once decoded.
 bool _unsafe(String s) => s.isEmpty || s == '.' || s == '..' || s.contains('/') || s.contains(r'\') || s.contains('\u0000');
 
-Future<void> _handle(HttpRequest req, String root, String webDir, int port) async {
+/// This machine's non-loopback IPv4 addresses, Wi-Fi/Ethernet (en*) first.
+Future<List<String>> _ownIps() async {
+  final ifaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
+  ifaces.sort((a, b) => (b.name.startsWith('en') ? 1 : 0) - (a.name.startsWith('en') ? 1 : 0));
+  return [for (final i in ifaces) for (final a in i.addresses) if (!a.isLoopback) a.address];
+}
+
+Future<void> _handle(HttpRequest req, String root, String webDir, int port, Set<String> hosts) async {
   // A web page on another site could call this server from the person's browser: only our own
   // host name and origin get through.
-  final ours = {'localhost:$port', '127.0.0.1:$port'};
+  final ours = {for (final h in hosts) '$h:$port'};
   if (!ours.contains(req.headers.value('host'))) return _send(req, 403, {'message': 'Nedopušteno.'});
   final origin = req.headers.value('origin');
   if (req.method == 'POST' && origin != null && !ours.map((h) => 'http://$h').contains(origin)) {
@@ -122,10 +131,10 @@ Future<void> _getImage(HttpRequest req, String root, List<String> parts) async {
   await req.response.close();
 }
 
-/// `fvm dart run bin/pack_editor.dart [--root <repo>] [--port 8765] [--no-open]`
+/// `fvm dart run bin/pack_editor.dart [--root <repo>] [--port 8765] [--no-open] [--lan]`
 Future<void> main(List<String> args) async {
   String? root;
-  var port = 8765, open = true;
+  var port = 8765, open = true, lan = false;
   for (var i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--root':
@@ -134,6 +143,8 @@ Future<void> main(List<String> args) async {
         port = int.parse(args[++i]);
       case '--no-open':
         open = false;
+      case '--lan':
+        lan = true;
       default:
         stderr.writeln('Nepoznato: ${args[i]}');
         exit(64);
@@ -143,12 +154,17 @@ Future<void> main(List<String> args) async {
   root = Directory(root ?? pkg.parent.parent.path).absolute.path;
   final HttpServer server;
   try {
-    server = await startServer(root, port: port, webDir: '${pkg.path}/web');
+    server = await startServer(root, port: port, webDir: '${pkg.path}/web', lan: lan);
   } on SocketException {
     stderr.writeln('Port $port je zauzet (je li uređivač već pokrenut?).');
     exit(1);
   }
   final url = 'http://localhost:${server.port}';
   print('Uređivač paketa: $url (paketi u $root)');
+  if (lan) {
+    // shortcut: first non-loopback IPv4 (en* first), not the TV's lan_address.dart (it lives in a Flutter app); no QR (qr_flutter is Flutter-only).
+    final ips = await _ownIps();
+    print(ips.isEmpty ? 'Nema mrežne adrese.' : 'Na mobitelu (isti Wi-Fi, bez lozinke): http://${ips.first}:${server.port}');
+  }
   if (open) await Process.run('open', [url]);
 }
