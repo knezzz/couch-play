@@ -3,7 +3,7 @@
 Every question is a number question from a quiz pack (named after it), re-checked on 2026-11-17: the number was found again on the
 quiz question's own source page or in its source line. "izračun" = the answer is a calculation from the numbers in the question.
 
-## hr-koliko-opcenito (Općenito, 30)
+## hr-koliko-opcenito (Općenito, 62)
 
 1. Koliko minuta ima jedan dan? = 1440 (from hr-opce-znanje Q5): 24 × 60 = 1440 (aritmetika)
 2. Koliko igrača jedne nogometne momčadi istodobno igra na terenu? = 11 (from hr-opce-znanje Q8): "dvije momčadi od 11 igrača": https://hr.wikipedia.org/wiki/Nogomet
@@ -33,10 +33,45 @@ quiz question's own source page or in its source line. "izračun" = the answer i
 26. Koliko približno iznosi Eulerov broj e? = 2.718 (from hr-opce-znanje Q317): e ≈ 2.718281828: https://en.wikipedia.org/wiki/E_(mathematical_constant)
 27. Koliko crta ima notno crtovlje? = 5 (from hr-film-glazba Q19): staff ... a set of horizontal lines (usually five): https://en.wikipedia.org/wiki/Staff_(music)
 28. Od koliko se opera sastoji Wagnerov 'Prsten Nibelunga'? = 4 (from hr-film-glazba Q47): Cycle of four operas by Richard Wagner: https://en.wikipedia.org/wiki/Der_Ring_des_Nibelungen
-29. Koji je broj izgovoren u japanskom originalu umjesto slavnog '9000'? = 8000 (from hr-memeovi Q61): in the original Japanese ... read as 'over 8000!': https://en.wikipedia.org/wiki/It's_Over_9000!
+29. Koji je broj izgovoren u japanskom originalu umjesto slavnog '9000'? = 8000 (from hr-memeovi Q57): in the original Japanese ... read as 'over 8000!': https://en.wikipedia.org/wiki/It's_Over_9000!
 30. Koliki je prosječni kvocijent inteligencije na današnjim testovima? = 100 (from hr-psihologija Q60): normal distribution with mean 100 and standard deviation 15: https://en.wikipedia.org/wiki/Intelligence_quotient
 
-## hr-koliko-godine (Koje godine?, 44)
+Items 31–62 written for Koliko and checked on 2026-11-20 against the raw page (the quoted words are on it). Items marked "from" are also asked in a quiz pack.
+
+31. Koliko polja ima šahovska ploča? = 64: "It consists of 64 squares, 8 rows by 8 columns": https://en.wikipedia.org/wiki/Chessboard
+32. S koliko figura svaki igrač počinje partiju šaha? = 16: "Each set comes with at least the following 16 pieces": https://en.wikipedia.org/wiki/Chess
+33. Koliko tipki ima standardni klavir? = 88 (from hr-opce-znanje Q19): "for a total of 88 keys": https://en.wikipedia.org/wiki/Piano
+34. Koliko je dugačak olimpijski bazen? = 50 m: "50-metre long swimming pool": https://en.wikipedia.org/wiki/Olympic-size_swimming_pool
+35. Koliko igrača ima jedna momčad u ragbiju (rugby union)? = 15: "two teams of 15 players each": https://en.wikipedia.org/wiki/Rugby_union
+36. Koliko minuta traje nogometna utakmica bez produžetaka? = 90 min: "two 45-minute halves, for a total match time of 90 minutes": https://en.wikipedia.org/wiki/Association_football
+37. Koliko rupa ima standardna partija golfa? = 18: "A standard round of golf consists of 18 holes": https://en.wikipedia.org/wiki/Golf_course
+38. Koliko obojenih kvadratića ima klasična Rubikova kocka? = 54: "each of the six faces was covered by nine stickers" (izračun 6 × 9): https://en.wikipedia.org/wiki/Rubik's_Cube
+39. Koliko sjecišta ima standardna ploča za go? = 361: "played on a grid (usually 19×19) ... placed on the grid line intersections" (izračun 19 × 19): https://en.wikipedia.org/wiki/Go_(game)
+40. Koliko pločica ima klasični europski komplet domina? = 28: "The traditional European domino set consists of 28 tiles": https://en.wikipedia.org/wiki/Dominoes
+41. Koliko polja ima ploča igre Monopoly? = 40: "The Monopoly game board consists of forty spaces": https://en.wikipedia.org/wiki/Monopoly_(game)
+42. Na kojoj je visini gornji rub odbojkaške mreže za muškarce? = 2.43 m: "The top of the net is 2.43 m above the center of the court for men's competition": https://en.wikipedia.org/wiki/Volleyball
+43. Koliko je dugačak jedan krug standardne atletske staze? = 400 m: "a standard 400-metre running track": https://en.wikipedia.org/wiki/Running_track
+44. Koliko je izvorno bila visoka Velika piramida u Gizi? = 146.6 m: "Original: 146.6 m ... Current: 138.5 m": https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza
+45. Koliko je dugačak Sueski kanal? = 193.3 km: "length_km = 193.3": https://en.wikipedia.org/wiki/Suez_Canal
+46. Koliko je visok sam bakreni Kip slobode, bez postolja? = 46 m: "Height of copper statue || 151 ft 1 in || 46 m": https://en.wikipedia.org/wiki/Statue_of_Liberty
+47. Koliko karata ima klasični špil igre Uno, bez dodatnih džokera? = 108: "Uno includes 108 cards" (newer decks add extra wild cards, so the question says "klasični", per the fact-checker): https://en.wikipedia.org/wiki/Uno_(card_game)
+48. Koliko stalnih članica ima Vijeće sigurnosti UN-a? = 5 (from hr-opce-znanje Q272): "five permanent members": https://en.wikipedia.org/wiki/United_Nations_Security_Council
+49. Koliko je simfonija dovršio Ludwig van Beethoven? = 9: "Beethoven's having written nine symphonies": https://en.wikipedia.org/wiki/Ludwig_van_Beethoven
+50. Koliko je visok neboder Burj Khalifa u Dubaiju? = 828 m: "architectural = 828 m": https://en.wikipedia.org/wiki/Burj_Khalifa
+51. Koliko čunjeva stoji na kraju staze u kuglanju (tenpin bowling)? = 10: "It involves 10 pins arranged in a triangle": https://en.wikipedia.org/wiki/Bowling
+52. Koliko igrača jedne vaterpolske momčadi istodobno igra u vodi, s vratarom? = 7 (from hr-opce-znanje Q62): "two teams of seven players each": https://en.wikipedia.org/wiki/Water_polo
+53. Koliko minuta čiste igre traje hokejaška utakmica bez produžetaka? = 60 min: "about 2 hours and 20 minutes for a 60-minute game": https://en.wikipedia.org/wiki/Ice_hockey
+54. Koliko je dugačak teniski teren? = 23.77 m: "The court is 78 feet (23.77 m) long": https://en.wikipedia.org/wiki/Tennis
+55. Koliko je visok kip Krista Otkupitelja u Riju, bez postolja? = 30 m: "height = 30 m, 38 m with its pedestal": https://en.wikipedia.org/wiki/Christ_the_Redeemer_(statue)
+56. Koliko je dugačak Panamski kanal? = 82 km: "length_km = 82": https://en.wikipedia.org/wiki/Panama_Canal
+57. Koliko je bio dugačak Titanic? = 269 m: "length = 882 ft 9 in overall" (the page's conversion gives 269.1 m): https://en.wikipedia.org/wiki/Titanic
+58. Koliko je država bilo zastupljeno na prvom zasjedanju Opće skupštine UN-a? = 51: "The first meetings of the General Assembly, with 51 nations represented": https://en.wikipedia.org/wiki/United_Nations
+59. Koliko su visoke glave predsjednika isklesane na Mount Rushmoreu? = 18 m: "60 ft (18 m)-tall depictions of the heads": https://en.wikipedia.org/wiki/Mount_Rushmore
+60. Koliko polja ima ploča japanskog šaha šogija? = 81: "with an 81-square board and 40 pieces": https://en.wikipedia.org/wiki/Shogi
+61. S koliko figura svaki igrač počinje partiju tavle (backgammona)? = 15 (from hr-opce-znanje Q70): "to move the 15 pieces around the board": https://en.wikipedia.org/wiki/Backgammon
+62. S koliko se kugli, s bijelom, igra snooker? = 22: "the game is played with 22 balls: a white cue ball, 15 reds and six colours": https://en.wikipedia.org/wiki/Snooker
+
+## hr-koliko-godine (Koje godine?, 62)
 
 1. Koje je godine švicarski inženjer George de Mestral osmislio čičak-traku (velcro)? = 1941 (from hr-opce-znanje Q71): hook-and-loop fastener was conceived in 1941 by Swiss engineer George de Mestral: https://en.wikipedia.org/wiki/Velcro
 2. Koje je godine nadzvučni putnički zrakoplov Concorde povučen iz prometa? = 2003 (from hr-opce-znanje Q78): The remaining aircraft were retired in 2003: https://en.wikipedia.org/wiki/Concorde
@@ -62,12 +97,12 @@ quiz question's own source page or in its source line. "izračun" = the answer i
 22. Koje je godine na tržište izašla lutka Barbie? = 1959 (from hr-opce-znanje Q379): introduced on March 9, 1959: https://en.wikipedia.org/wiki/Barbie
 23. Koje je godine održan glazbeni festival Woodstock? = 1969 (from hr-film-glazba Q66): 1969 music festival in Bethel, New York: https://en.wikipedia.org/wiki/Woodstock
 24. Koje je godine izašla pjesma 'Never Gonna Give You Up' Ricka Astleya? = 1987 (from hr-memeovi Q2): released on 27 July 1987: https://en.wikipedia.org/wiki/Never_Gonna_Give_You_Up
-25. Koje je godine objavljen strip iz kojeg potječe mem 'This is fine'? = 2013 (from hr-memeovi Q10): posted on January 9th, 2013: https://knowyourmeme.com/memes/this-is-fine
-26. Koje je godine snimljen originalni video 'Keyboard Cat'? = 1984 (from hr-memeovi Q26): a video made in 1984 by Charlie Schmidt (uploaded to YouTube 2007): https://en.wikipedia.org/wiki/Keyboard_Cat
-27. Koje je godine britanska vlada izradila plakat 'Keep Calm and Carry On'? = 1939 (from hr-memeovi Q56): Motivational poster produced by the British government in 1939: https://en.wikipedia.org/wiki/Keep_Calm_and_Carry_On
-28. Iz koje je godine snimka 'Trololo' koja je 2010. postala mem? = 1976 (from hr-memeovi Q70): in 2010, when a 1976 clip of him singing: https://en.wikipedia.org/wiki/Eduard_Khil
-29. Koje je godine na YouTube postavljen prvi video, 'Me at the zoo'? = 2005 (from hr-memeovi Q76): uploaded on April 23, 2005, the first video uploaded to the platform: https://en.wikipedia.org/wiki/Me_at_the_zoo
-30. Koje je godine viralni Facebook-događaj pozvao na 'juriš na Area 51'? = 2019 (from hr-memeovi Q86): Facebook event on and around September 20, 2019: https://en.wikipedia.org/wiki/Storm_Area_51
+25. Koje je godine objavljen strip iz kojeg potječe mem 'This is fine'? = 2013 (from hr-memeovi Q9): posted on January 9th, 2013: https://knowyourmeme.com/memes/this-is-fine
+26. Koje je godine snimljen originalni video 'Keyboard Cat'? = 1984 (same page as hr-memeovi Q24): a video made in 1984 by Charlie Schmidt (uploaded to YouTube 2007): https://en.wikipedia.org/wiki/Keyboard_Cat
+27. Koje je godine britanska vlada izradila plakat 'Keep Calm and Carry On'? = 1939 (from hr-memeovi Q52): Motivational poster produced by the British government in 1939: https://en.wikipedia.org/wiki/Keep_Calm_and_Carry_On
+28. Iz koje je godine snimka 'Trololo' koja je 2010. postala mem? = 1976 (from hr-memeovi Q65): in 2010, when a 1976 clip of him singing: https://en.wikipedia.org/wiki/Eduard_Khil
+29. Koje je godine na YouTube postavljen prvi video, 'Me at the zoo'? = 2005 (from hr-memeovi Q70): uploaded on April 23, 2005, the first video uploaded to the platform: https://en.wikipedia.org/wiki/Me_at_the_zoo
+30. Koje je godine viralni Facebook-događaj pozvao na 'juriš na Area 51'? = 2019 (from hr-memeovi Q80): Facebook event on and around September 20, 2019: https://en.wikipedia.org/wiki/Storm_Area_51
 31. Koje su godine Dunning i Kruger objavili rad o efektu nazvanom po njima? = 1999 (from hr-psihologija Q18): formalized ... by David Dunning and Justin Kruger in 1999: https://en.wikipedia.org/wiki/Dunning–Kruger_effect
 32. Koje je godine Franz Müller-Lyer osmislio svoju poznatu iluziju? = 1889 (from hr-psihologija Q24): devised by Franz Carl Müller-Lyer ... in 1889: https://en.wikipedia.org/wiki/Müller-Lyer_illusion
 33. Koje je godine John Ridley Stroop objavio efekt nazvan po njemu? = 1935 (from hr-psihologija Q26): first published the effect in English in 1935: https://en.wikipedia.org/wiki/Stroop_effect
@@ -83,7 +118,28 @@ quiz question's own source page or in its source line. "izračun" = the answer i
 43. Koje je godine Pluton izgubio status planeta i postao patuljasti planet? = 2006 (from hr-znanost Q65): In 2006, the IAU redefined planet to exclude dwarf planets such as Pluto: https://en.wikipedia.org/wiki/Pluto
 44. Koje je godine Fibonacci objavio knjigu Liber Abaci? = 1202 (from hr-matematika Q109): The Liber Abaci ... was a 1202 Latin work ... by Leonardo of Pisa: https://en.wikipedia.org/wiki/Liber_Abaci
 
-## hr-koliko-hrvatska (Hrvatska, 35)
+Items 45–62 written for Koliko and checked on 2026-11-20 against the raw page. "also in <pack>" = a quiz pack has the year in its question text (the quiz asks something else, but the year is given there).
+
+45. Koje je godine Apollo 11 sletio na Mjesec? = 1969: "arrival_date = July 20, 1969": https://en.wikipedia.org/wiki/Apollo_11
+46. Koje je godine potonuo Titanic? = 1912 (also in hr-opce-znanje: "Koji je slavni brod potonuo 1912. ...?"): "14 April 1912 23:40 – 15 April 1912 02:20": https://en.wikipedia.org/wiki/Sinking_of_the_Titanic
+47. Koje je godine Kristofor Kolumbo prvi put doplovio do Amerike? = 1492 (also in hr-opce-znanje: "Kolumbove prve plovidbe 1492."): "1492–1504 voyages to the Americas": https://en.wikipedia.org/wiki/Voyages_of_Christopher_Columbus
+48. Koje je godine pala pariška Bastilla? = 1789 (also in hr-opce-znanje: "Kojeg je datuma 1789. pala pariška Bastilla?"): "on 14 July 1789": https://en.wikipedia.org/wiki/Storming_of_the_Bastille
+49. Koje je godine potpisana američka Deklaracija nezavisnosti? = 1776: "On July 4, 1776, it was adopted unanimously": https://en.wikipedia.org/wiki/United_States_Declaration_of_Independence
+50. Koje su godine Osmanlije osvojili Carigrad? = 1453 (also in hr-opce-znanje: "Koji je sultan 1453. osvojio Carigrad?"): "1453 Ottoman conquest of the Byzantine capital": https://en.wikipedia.org/wiki/Fall_of_Constantinople
+51. Koje je godine predstavljen prvi iPhone? = 2007: "2007 smartphone by Apple": https://en.wikipedia.org/wiki/IPhone_(1st_generation)
+52. Koje se godine dogodila nesreća u nuklearnoj elektrani Černobil? = 1986: "On 26 April 1986, reactor 4": https://en.wikipedia.org/wiki/Chernobyl_disaster
+53. Koje je godine Alexander Fleming otkrio penicilin? = 1928 (also in hr-znanost: "Tko je 1928. otkrio penicilin?"): "in London in 1928, Scottish physician Alexander Fleming": https://en.wikipedia.org/wiki/History_of_penicillin
+54. Koje je godine Darwin objavio knjigu 'O podrijetlu vrsta'? = 1859 (also in hr-znanost: "Koji je znanstvenik 1859. objavio teoriju evolucije ...?"): "1859 book on evolution by Charles Darwin": https://en.wikipedia.org/wiki/On_the_Origin_of_Species
+55. Koje su godine Edmund Hillary i Tenzing Norgay prvi stigli na vrh Mount Everesta? = 1953: "The 1953 British Mount Everest expedition ... first ascent": https://en.wikipedia.org/wiki/1953_British_Mount_Everest_expedition
+56. Koje je godine engleski kralj Ivan bez Zemlje zapečatio Magna Cartu? = 1215 (also in hr-opce-znanje: "Koji je engleski kralj 1215. ... zapečatio Magna Cartu?"): "English charter of freedoms made in 1215": https://en.wikipedia.org/wiki/Magna_Carta
+57. Koje je godine Jurij Gagarin kao prvi čovjek poletio u svemir? = 1961 (also in hr-opce-znanje: "letjelica kojom je Jurij Gagarin 1961. obletio Zemlju"): "12 April 1961 06:07 – 07:55": https://en.wikipedia.org/wiki/Vostok_1
+58. Koje je godine održano prvo Svjetsko nogometno prvenstvo? = 1930 (also in hr-opce-znanje: "U kojoj je državi 1930. održano prvo Svjetsko nogometno prvenstvo?"): "year = 1930": https://en.wikipedia.org/wiki/1930_FIFA_World_Cup
+59. Koje je godine Vezuv zatrpao Pompeje? = 79: "date = 79 AD": https://en.wikipedia.org/wiki/Eruption_of_Mount_Vesuvius_in_79_AD
+60. Koje je godine izašla prva knjiga o Harryju Potteru? = 1997: "publication_date = 26 June 1997": https://en.wikipedia.org/wiki/Harry_Potter_and_the_Philosopher's_Stone
+61. Koje je godine u kina stigao prvi film 'Ratovi zvijezda'? = 1977: "released ... in the United States on May 25, 1977": https://en.wikipedia.org/wiki/Star_Wars_(film)
+62. Koje je godine Ford počeo proizvoditi automobil Model T? = 1908: "American car (1908–1927)": https://en.wikipedia.org/wiki/Ford_Model_T
+
+## hr-koliko-hrvatska (Hrvatska, 62)
 
 1. Od koje je godine ugarski kralj Koloman ujedno i hrvatsko-dalmatinski kralj? = 1102 (from hr-povijest Q7): Koloman "od 1102. i hrvatsko-dalmatinski kralj": https://hr.wikipedia.org/wiki/Koloman
 2. Koje je godine napisan Vinodolski zakonik? = 1288 (from hr-povijest Q9): Vinodolski zakonik, 6. siječnja 1288.: https://hr.wikipedia.org/wiki/Vinodolski_zakonik
@@ -121,7 +177,37 @@ quiz question's own source page or in its source line. "izračun" = the answer i
 34. Koje je godine klapsko pjevanje upisano na UNESCO-ov popis nematerijalne baštine? = 2012 (from hr-film-glazba Q113): UNESCO nematerijalna baština, godina 2012: https://hr.wikipedia.org/wiki/Klapsko_pjevanje
 35. Koje je godine Ramiro Bujas u Zagrebu osnovao laboratorij za eksperimentalnu psihologiju? = 1920 (from hr-psihologija Q35): 1920. u okviru Fiziološkog instituta Medicinskog fakulteta u Zagrebu osnovao prvi laboratorij za eksperimentalnu psihologiju na Balkanu: https://enciklopedija.hr/clanak/eksperimentalna-psihologija
 
-## hr-koliko-znanost (Znanost i priroda, 30)
+Items 36–62 written for Koliko and checked on 2026-11-20 against the raw page (hr.wikipedia unless the link says en). "also in <pack>" = a quiz pack asks the same fact.
+
+36. Koliko je visok vrh Dinara (Sinjal), najviši vrh Hrvatske? = 1831 m: "visina = 1831"; "najviši planinski vrh u Republici Hrvatskoj"; "narod je zove Sinjal": https://hr.wikipedia.org/wiki/Dinara_(vrh)
+37. Koliko je visok Sveti Jure, najviši vrh Biokova? = 1762 m: infobox "visina = 1762": https://hr.wikipedia.org/wiki/Sveti_Jure_(Biokovo)
+38. Koliko je visok Vaganski vrh, najviši vrh Velebita? = 1757 m: "visina = 1757": https://hr.wikipedia.org/wiki/Vaganski_vrh
+39. Koliko je visok Vojak, najviši vrh Učke, bez kule na vrhu? = 1396 m: "Najviši vrh Učke zvan Vojak visok je 1396 m, a s kulom 1401 m": https://hr.wikipedia.org/wiki/Učka
+40. Koliko je visok Veliki Risnjak? = 1528 m: "Visina = Veliki Risnjak - 1528": https://hr.wikipedia.org/wiki/Risnjak
+41. Koliko je visok Hum, najviši vrh otoka Lastova? = 417 m: "visok 417 m (Hum)": https://hr.wikipedia.org/wiki/Lastovo
+42. Kolika je površina otoka Krka? = 405.78 km²: "površina = 405,78": https://hr.wikipedia.org/wiki/Krk
+43. Kolika je površina otoka Mljeta? = 98 km²: "površina = 98,015857": https://hr.wikipedia.org/wiki/Mljet
+44. Kolika je površina Vranskog jezera kod Pakoštana? = 30.16 km²: "obuhvaća 30,16 km²": https://hr.wikipedia.org/wiki/Vransko_jezero_(Dalmacija)
+45. Koliko je duboko Jadransko more na najdubljem mjestu? = 1233 m: "najveća dubina = 1233": https://hr.wikipedia.org/wiki/Jadransko_more
+46. Od koliko se jezera sastoje Plitvička jezera? = 16: "Plitvička jezera sastoje se od 16 jezera": https://hr.wikipedia.org/wiki/Nacionalni_park_Plitvička_jezera
+47. Kolika je ukupna visinska razlika slapišta Skradinski buk? = 45.7 m: "s ukupnom visinskom razlikom od 45,7 metara": https://hr.wikipedia.org/wiki/Skradinski_buk
+48. Koliko je duga rijeka Kupa? = 296 km: "duljina = 296": https://hr.wikipedia.org/wiki/Kupa
+49. Od koliko se otoka, otočića i hridi sastoji Nacionalni park Kornati? = 89: "sastoji se od 89 otoka, otočića i hridi": https://hr.wikipedia.org/wiki/Nacionalni_park_Kornati
+50. Koliko su duge dubrovačke gradske zidine? = 1940 m: "Duge su 1940 m, visoke do 25 m": https://hr.wikipedia.org/wiki/Dubrovačke_gradske_zidine
+51. Koliko su ukupno duge Stonske zidine? = 5.5 km: "u ukupnoj dužini od 5,5 km": https://hr.wikipedia.org/wiki/Stonske_zidine
+52. Koliko je dugačka dulja strana Dioklecijanove palače? = 216 m: "dimenzija 175-181 x 216 m": https://hr.wikipedia.org/wiki/Dioklecijanova_palača
+53. Koliko je dugačka pulska Arena? = 132.5 m: "length = 132.5 m, width = 105.1 m": https://en.wikipedia.org/wiki/Pula_Arena
+54. Koliko je bila visoka zagrebačka katedrala prije potresa 2020.? = 105 m: "Do potresa 2020. godine i rušenja tornjeva bila je visoka 105 metara": https://hr.wikipedia.org/wiki/Zagrebačka_katedrala
+55. Koliko je visok vukovarski vodotoranj? = 50 m: "Visok je 50 metara": https://hr.wikipedia.org/wiki/Vukovarski_vodotoranj
+56. Koliki je najveći raspon luka Krčkog mosta? = 390 m: "Najveći raspon = 390": https://hr.wikipedia.org/wiki/Krčki_most
+57. Koliko je ukupno dugačak Pelješki most? = 2404 m: "Ukupna dužina = 2404": https://hr.wikipedia.org/wiki/Pelješki_most
+58. Koliko se manjih štitova nalazi u kruni iznad hrvatskog grba? = 5: "U krunu je smješteno pet manjih štitova": https://hr.wikipedia.org/wiki/Grb_Republike_Hrvatske
+59. Koliko je kuna vrijedio jedan euro po fiksnom tečaju zamjene 2023.? = 7.5345 kn: "1 EUR = 7.53450 HRK": https://en.wikipedia.org/wiki/Croatian_kuna
+60. Koliko je zlatnih olimpijskih medalja u alpskom skijanju osvojila Janica Kostelić? = 4: "the only woman to win four gold medals in alpine skiing at the Winter Olympics": https://en.wikipedia.org/wiki/Janica_Kostelić
+61. Koliko je centimetara iznosio najbolji skok u vis Blanke Vlašić? = 208 cm: "personal_best = 2.08 m (Zagreb 2009)": https://en.wikipedia.org/wiki/Blanka_Vlašić
+62. Koje je mjesto Hrvatska osvojila na Svjetskom prvenstvu 1998.? = 3 (also in hr-kultura-sport: "Koju je reprezentaciju Hrvatska pobijedila u utakmici za treće mjesto na SP-u 1998.?"): "1998. godine u Francuskoj kada je završila na trećem mjestu": https://hr.wikipedia.org/wiki/Hrvatska_nogometna_reprezentacija
+
+## hr-koliko-znanost (Znanost i priroda, 63)
 
 1. Koliko pari moždanih (kranijalnih) živaca ima čovjek? = 12 (from hr-ljudsko-tijelo Q22): https://en.wikipedia.org/wiki/Cranial_nerves (states: twelve pairs)
 2. Koliko pari moždinskih (spinalnih) živaca ima čovjek? = 31 (from hr-ljudsko-tijelo Q23): https://en.wikipedia.org/wiki/Spinal_nerve (states: 31 pairs)
@@ -153,3 +239,39 @@ quiz question's own source page or in its source line. "izračun" = the answer i
 28. Koliko strana (ploha) ima ikosaedar? = 20 (from hr-matematika Q100): icosahedron: twenty triangular faces: https://en.wikipedia.org/wiki/Platonic_solid
 29. Koliki je zbroj prirodnih brojeva od 1 do 100, koji je kao dječak brzo izračunao Gauss? = 5050 (from hr-matematika Q103): sum the numbers from 1 to 100 ... the correct answer of 5050: https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss
 30. Koliko je „problema tisućljeća” 2000. objavio Clayev matematički institut? = 7 (from hr-matematika Q114): The Millennium Prize Problems are seven ... in 2000: https://en.wikipedia.org/wiki/Millennium_Prize_Problems
+
+Items 31–63 written for Koliko and checked on 2026-11-20 against the raw page. "also in <pack>" = a quiz pack asks the same fact (quoted).
+
+31. Koliko kilometara u sekundi prijeđe svjetlost u vakuumu? = 299792 km/s (also in hr-znanost: "Kolika je približno brzina svjetlosti u vakuumu?"): "299792458" m/s: https://en.wikipedia.org/wiki/Speed_of_light
+32. Koliko metara u sekundi prijeđe zvuk u zraku pri 20 °C? = 343 m/s (also in hr-fizika: "Kolika je, zaokruženo, brzina zvuka u zraku pri 20 °C?"): "At 20 °C, the speed of sound in air is about 343 m/s": https://en.wikipedia.org/wiki/Speed_of_sound
+33. Koliki je prosječni polumjer Zemlje? = 6371 km: "The globally averaged value is 6371 km": https://en.wikipedia.org/wiki/Earth_radius
+34. Koliko milijuna kilometara iznosi jedna astronomska jedinica? = 149.6 milijuna km (also in hr-fizika: "Kolika je, zaokruženo, jedna astronomska jedinica?"): "defined as 149597870700 metres, approximately the average Earth-Sun distance": https://en.wikipedia.org/wiki/Astronomical_unit
+35. Koliko zemaljskih dana traje godina na Marsu? = 687 dana: "1.88 Earth years (687 Earth days)": https://en.wikipedia.org/wiki/Mars
+36. Koliko sati traje dan na Marsu? = 24.6 h: "a Martian solar day (sol) is equal to 24.6 hours": https://en.wikipedia.org/wiki/Mars
+37. Koliko zemaljskih dana traje godina na Merkuru? = 88 dana: "Mercury's sidereal year (88.0 Earth days)": https://en.wikipedia.org/wiki/Mercury_(planet)
+38. Koliko sati traje jedan okret Jupitera oko svoje osi? = 9.9 h: "rotation = 9.9258 hours (9 h 55 m 33 s)": https://en.wikipedia.org/wiki/Jupiter
+39. Koliko zemaljskih godina Neptunu treba za jedan krug oko Sunca? = 164.8 godina: "period = 164.8 yr": https://en.wikipedia.org/wiki/Neptune
+40. Kolika je temperatura površine Sunca u kelvinima? = 5772 K: "the surface has increased in temperature from 5,620 K to 5,772 K": https://en.wikipedia.org/wiki/Sun
+41. Koliko je puta polumjer Sunca veći od polumjera Zemlje? = 109: "Equatorial radius 695500 km, 109 × Earth radius": https://en.wikipedia.org/wiki/Sun
+42. Koliko stupnjeva iznosi nagib Zemljine osi? = 23.44°: "Earth currently has an axial tilt of about 23.44°": https://en.wikipedia.org/wiki/Axial_tilt
+43. Koliko kilometara u sekundi Zemlja u prosjeku prijeđe na putu oko Sunca? = 29.78 km/s: "Earth's orbital speed averages 29.78 km/s": https://en.wikipedia.org/wiki/Earth%27s_orbit
+44. Koliko je milijardi godina stara Zemlja? = 4.54: "estimated to be 4.54 ± 0.05 billion years": https://en.wikipedia.org/wiki/Age_of_Earth
+45. Koliko je milijardi godina star svemir? = 13.8: "the age of the universe is 13.8 billion years": https://en.wikipedia.org/wiki/Age_of_the_universe
+46. Koliko bilijuna kilometara iznosi jedna svjetlosna godina? = 9.46 bilijuna km (10¹² km): "9.4607 × 10^15 m" (= 9.46 × 10^12 km; hr. bilijun = 10^12): https://en.wikipedia.org/wiki/Light-year
+47. Koji je atomski broj zlata? = 79: "Element 79": https://en.wikipedia.org/wiki/Gold
+48. Koji je atomski broj željeza? = 26: "symbol Fe ... and atomic number 26": https://en.wikipedia.org/wiki/Iron
+49. Pri kojoj se temperaturi tali željezo? = 1538 °C: "its freezing point of 1538 °C": https://en.wikipedia.org/wiki/Iron
+50. Pri kojoj se temperaturi tali volfram? = 3422 °C: "the highest melting point of all known elements, at 3422 °C": https://en.wikipedia.org/wiki/Tungsten
+51. Pri kojoj je temperaturi gustoća vode najveća? = 4 °C (also in hr-fizika: "Pri kojoj je temperaturi gustoća vode najveća?"): "maximum density of 999.972 kg/m3 at 3.98 °C": https://en.wikipedia.org/wiki/Water
+52. Koju tvrdoću na Mohsovoj ljestvici ima dijamant? = 10: "mohs = 10 (defining mineral)": https://en.wikipedia.org/wiki/Diamond
+53. Koliko je najveća potvrđena duljina plavog kita? = 30 m: "a maximum confirmed length of 29.9–30.5 m": https://en.wikipedia.org/wiki/Blue_whale
+54. Koliko krakova ima hobotnica? = 8: "Each of the eight arms": https://en.wikipedia.org/wiki/Octopus
+55. Koliko nogu ima pauk? = 8: "Each of the eight legs of a spider": https://en.wikipedia.org/wiki/Spider
+56. Koliko kostiju ima kostur morskog psa? = 0: "Sharks ... have skeletons made of cartilage and connective tissue": https://en.wikipedia.org/wiki/Shark
+57. Koliko komora ima ljudsko srce? = 4: "In humans, the heart is divided into four chambers": https://en.wikipedia.org/wiki/Heart
+58. Koliko slušnih koščica ima srednje uho? = 3 (also in hr-ljudsko-tijelo: "Koje su tri slušne koščice srednjeg uha?"): "the three ossicles of the human ear": https://en.wikipedia.org/wiki/Ossicles
+59. Koliki je zbroj kutova u trokutu? = 180° (also in hr-matematika: "Koliki je zbroj kutova u svakom trokutu?"): "equals a straight angle (180 degrees)": https://en.wikipedia.org/wiki/Sum_of_angles_of_a_triangle
+60. Koliko iznosi broj π, zaokružen na dvije decimale? = 3.14 (also in hr-matematika: "Koliko iznosi broj π zaokružen na dvije decimale?"): "approximately equal to 3.14159": https://en.wikipedia.org/wiki/Pi
+61. Koliko iznosi drugi korijen iz 2, na tri decimale? = 1.414: "decimal = 1.41421 35623...": https://en.wikipedia.org/wiki/Square_root_of_2
+62. Koliko ima prostih brojeva manjih od 100? = 25: "The first 25 prime numbers (all the prime numbers less than 100)": https://en.wikipedia.org/wiki/Prime_number
+63. Koliko je duboko Bajkalsko jezero na najdubljem mjestu? = 1642 m: "max_depth = 1642 m": https://en.wikipedia.org/wiki/Lake_Baikal

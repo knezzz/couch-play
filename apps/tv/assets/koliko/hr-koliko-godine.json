@@ -45,6 +45,24 @@
     {"q": "Koje je godine Léon Foucault njihalom zorno pokazao da se Zemlja vrti?", "answer": 1851, "unit": "", "source": "prvi je izgradio fizičar Léon Foucault 1851: https://hr.wikipedia.org/wiki/Foucaultovo_njihalo"},
     {"q": "Koje je godine Einstein objavio specijalnu teoriju relativnosti?", "answer": 1905, "unit": "", "source": "annus mirabilis papers 1905, special relativity: https://en.wikipedia.org/wiki/Annus_mirabilis_papers"},
     {"q": "Koje je godine Pluton izgubio status planeta i postao patuljasti planet?", "answer": 2006, "unit": "", "source": "In 2006, the IAU redefined planet to exclude dwarf planets such as Pluto: https://en.wikipedia.org/wiki/Pluto"},
-    {"q": "Koje je godine Fibonacci objavio knjigu Liber Abaci?", "answer": 1202, "unit": "", "source": "The Liber Abaci ... was a 1202 Latin work ... by Leonardo of Pisa: https://en.wikipedia.org/wiki/Liber_Abaci"}
+    {"q": "Koje je godine Fibonacci objavio knjigu Liber Abaci?", "answer": 1202, "unit": "", "source": "The Liber Abaci ... was a 1202 Latin work ... by Leonardo of Pisa: https://en.wikipedia.org/wiki/Liber_Abaci"},
+    {"q": "Koje je godine Apollo 11 sletio na Mjesec?", "answer": 1969, "unit": "", "source": "arrival_date = July 20, 1969: https://en.wikipedia.org/wiki/Apollo_11"},
+    {"q": "Koje je godine potonuo Titanic?", "answer": 1912, "unit": "", "source": "14 April 1912 23:40 – 15 April 1912 02:20: https://en.wikipedia.org/wiki/Sinking_of_the_Titanic"},
+    {"q": "Koje je godine Kristofor Kolumbo prvi put doplovio do Amerike?", "answer": 1492, "unit": "", "source": "1492–1504 voyages to the Americas: https://en.wikipedia.org/wiki/Voyages_of_Christopher_Columbus"},
+    {"q": "Koje je godine pala pariška Bastilla?", "answer": 1789, "unit": "", "source": "occurred in Paris, France, on 14 July 1789: https://en.wikipedia.org/wiki/Storming_of_the_Bastille"},
+    {"q": "Koje je godine potpisana američka Deklaracija nezavisnosti?", "answer": 1776, "unit": "", "source": "On July 4, 1776, it was adopted unanimously by the Second Continental Congress: https://en.wikipedia.org/wiki/United_States_Declaration_of_Independence"},
+    {"q": "Koje su godine Osmanlije osvojili Carigrad?", "answer": 1453, "unit": "", "source": "1453 Ottoman conquest of the Byzantine capital: https://en.wikipedia.org/wiki/Fall_of_Constantinople"},
+    {"q": "Koje je godine predstavljen prvi iPhone?", "answer": 2007, "unit": "", "source": "2007 smartphone by Apple: https://en.wikipedia.org/wiki/IPhone_(1st_generation)"},
+    {"q": "Koje se godine dogodila nesreća u nuklearnoj elektrani Černobil?", "answer": 1986, "unit": "", "source": "On 26 April 1986, reactor 4 of the Chernobyl Nuclear Power Plant: https://en.wikipedia.org/wiki/Chernobyl_disaster"},
+    {"q": "Koje je godine Alexander Fleming otkrio penicilin?", "answer": 1928, "unit": "", "source": "at St Mary's Hospital in London in 1928, Scottish physician Alexander Fleming: https://en.wikipedia.org/wiki/History_of_penicillin"},
+    {"q": "Koje je godine Darwin objavio knjigu 'O podrijetlu vrsta'?", "answer": 1859, "unit": "", "source": "1859 book on evolution by Charles Darwin: https://en.wikipedia.org/wiki/On_the_Origin_of_Species"},
+    {"q": "Koje su godine Edmund Hillary i Tenzing Norgay prvi stigli na vrh Mount Everesta?", "answer": 1953, "unit": "", "source": "The 1953 British Mount Everest expedition ... first ascent: https://en.wikipedia.org/wiki/1953_British_Mount_Everest_expedition"},
+    {"q": "Koje je godine engleski kralj Ivan bez Zemlje zapečatio Magna Cartu?", "answer": 1215, "unit": "", "source": "English charter of freedoms made in 1215: https://en.wikipedia.org/wiki/Magna_Carta"},
+    {"q": "Koje je godine Jurij Gagarin kao prvi čovjek poletio u svemir?", "answer": 1961, "unit": "", "source": "mission_duration 12 April 1961 06:07 – 07:55: https://en.wikipedia.org/wiki/Vostok_1"},
+    {"q": "Koje je godine održano prvo Svjetsko nogometno prvenstvo?", "answer": 1930, "unit": "", "source": "FIFA World Cup, year = 1930: https://en.wikipedia.org/wiki/1930_FIFA_World_Cup"},
+    {"q": "Koje je godine Vezuv zatrpao Pompeje?", "answer": 79, "unit": "", "source": "Eruption of Mount Vesuvius in 79 AD, date = 79 AD: https://en.wikipedia.org/wiki/Eruption_of_Mount_Vesuvius_in_79_AD"},
+    {"q": "Koje je godine izašla prva knjiga o Harryju Potteru?", "answer": 1997, "unit": "", "source": "publication_date = 26 June 1997: https://en.wikipedia.org/wiki/Harry_Potter_and_the_Philosopher's_Stone"},
+    {"q": "Koje je godine u kina stigao prvi film 'Ratovi zvijezda'?", "answer": 1977, "unit": "", "source": "released ... in the United States on May 25, 1977: https://en.wikipedia.org/wiki/Star_Wars_(film)"},
+    {"q": "Koje je godine Ford počeo proizvoditi automobil Model T?", "answer": 1908, "unit": "", "source": "American car (1908–1927): https://en.wikipedia.org/wiki/Ford_Model_T"}
   ]
 }
