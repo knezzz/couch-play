@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#e8eef2"/>
+  <rect x="0" y="200" width="400" height="60" fill="#c9c2b6"/>
+  <!-- left: passer-by walking away -->
+  <circle cx="70" cy="70" r="22" fill="#f2c9a0"/>
+  <path d="M48 70 Q70 30 92 70" fill="#3b2a1e"/>
+  <rect x="48" y="96" width="44" height="70" rx="12" fill="#d64545"/>
+  <rect x="52" y="164" width="14" height="40" fill="#2f3b52"/>
+  <rect x="74" y="164" width="14" height="40" fill="#2f3b52"/>
+  <!-- middle: man turning to look back -->
+  <circle cx="200" cy="66" r="24" fill="#f2c9a0"/>
+  <path d="M176 62 Q200 34 224 58" fill="#2b2b2b"/>
+  <circle cx="188" cy="64" r="3" fill="#222"/>
+  <path d="M180 82 Q188 88 196 82" stroke="#222" stroke-width="2" fill="none"/>
+  <rect x="176" y="94" width="50" height="74" rx="12" fill="#5b7fb5"/>
+  <rect x="180" y="166" width="16" height="40" fill="#3a3a3a"/>
+  <rect x="206" y="166" width="16" height="40" fill="#3a3a3a"/>
+  <!-- right: woman, arms crossed -->
+  <path d="M294 72 Q320 30 346 72 L346 104 L294 104 Z" fill="#7a4a2a"/>
+  <circle cx="320" cy="72" r="20" fill="#e8b88f"/>
+  <rect x="298" y="96" width="44" height="72" rx="12" fill="#3f8f6b"/>
+  <rect x="294" y="118" width="52" height="12" rx="6" fill="#e8b88f"/>
+  <rect x="302" y="166" width="14" height="38" fill="#2f3b52"/>
+  <rect x="324" y="166" width="14" height="38" fill="#2f3b52"/>
+  <!-- glance line and frown -->
+  <path d="M170 60 Q130 40 98 62" stroke="#888" stroke-width="2" stroke-dasharray="6 5" fill="none"/>
+  <path d="M312 84 Q320 79 328 84" stroke="#222" stroke-width="2" fill="none"/>
+</svg>
