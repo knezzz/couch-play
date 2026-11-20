@@ -79,6 +79,11 @@ void main() {
       final pack = store.get(e.key)!;
       expect(e.value.pictures, pack.questions.any((q) => q.image != null), reason: e.key);
     }
-    expect(byId.values.any((i) => !i.pictures), isTrue, reason: 'a pack without pictures exists');
+    // Every bundled pack has pictures since 2026-11-20, so an upload covers the no-pictures tag.
+    await store.add(Uint8List.fromList(utf8.encode(jsonEncode({
+      'format': 1, 'id': 'bez-slika', 'title': 'Bez slika',
+      'questions': [{'q': 'q', 'choices': ['a', 'b', 'c', 'd'], 'answer': 0}],
+    }))));
+    expect(store.infos.firstWhere((i) => i.id == 'bez-slika').pictures, isFalse);
   });
 }
