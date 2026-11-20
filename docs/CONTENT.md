@@ -17,7 +17,7 @@ are no longer bundled.
 | hr-opce-znanje | 401 | 0 | biggest; text only |
 | hr-film-glazba | 130 | 14 | |
 | hr-znanost | 130 | 9 | |
-| hr-kultura-sport | 122 | 8 | sport facts age fastest (records, titles) |
+| hr-kultura-sport | 119 | 8 | re-checked 2026-11-20: 3 dropped, 8 fixed, new zvončari photo |
 | hr-umjetnost | 122 | 38 | |
 | hr-memeovi | 119 | 0 | dated by nature; check what still lands |
 | hr-matematika | 113 | 4 | made easier 2026-11-17 |
