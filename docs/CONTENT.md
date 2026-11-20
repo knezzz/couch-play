@@ -19,7 +19,7 @@ are no longer bundled.
 | hr-znanost | 130 | 9 | |
 | hr-kultura-sport | 119 | 8 | re-checked 2026-11-20: 3 dropped, 8 fixed, new zvončari photo |
 | hr-umjetnost | 122 | 38 | |
-| hr-memeovi | 119 | 0 | dated by nature; check what still lands |
+| hr-memeovi | 110 | 0 | re-checked 2026-11-20 (6eb4f71): 0 errors, 9 niche/duplicate cut |
 | hr-matematika | 113 | 4 | made easier 2026-11-17 |
 | hr-psihologija | 112 | 0 | |
 | hr-povijest | 111 | 10 | |
@@ -29,17 +29,17 @@ are no longer bundled.
 | hr-geografija | 100 | 18 | Croatia only |
 | hr-medimurje | 84 | 2 | **person reviews every change** |
 | hr-oblici | 50 | 50 | all generated SVG, script-checked |
-| hr-zastave | 46 | 46 | smallest; ~150 more flags exist |
+| hr-zastave | 154 | 154 | grown 2026-11-20 (2b90db6); coat-of-arms SVGs untested on the TV |
 
 Fix:
-- [routed 2026-11-20: kultura-sport -> fact-checker] Fact re-check pass, pack by pack, starting with the ones most
+- [kultura-sport 1543f98, memeovi 6eb4f71 done; next: film-glazba, opće znanje] Fact re-check pass, pack by pack, starting with the ones most
   likely to age: kultura-sport, memeovi,
   film-glazba, opće znanje ("current" holders, records, "najveći/najnoviji").
 - [open] Native-language read (diacritics, awkward phrasing, giveaway distractors: one choice clearly a different
   kind from the other three).
 
 Add:
-- [open] hr-zastave: more flags (aim ~150; harder lookalikes: Chad/Romania, Indonesia/Monaco, etc.).
+- [done 2b90db6] hr-zastave: more flags (aim ~150; harder lookalikes: Chad/Romania, Indonesia/Monaco, etc.).
 - [open] New packs from pub-quiz topic lists (topics only, our own wording). Candidates: Hrana i piće, Životinje,
   Sport (svijet), Jezik i riječi, Hrvatska pop-kultura, Glazba 2000+. Pick with the person.
 - [open] More pictures where they help (logos are out: trademarks).
@@ -64,21 +64,21 @@ medimurje 101 (person approved: no village names, no easy ones). Rule: ≥ 100 w
 
 `apps/tv/assets/koliko/`: godine 44, hrvatska 35, opcenito 30, znanost 30. Every question has a source. 10 per game,
 so opcenito/znanost last 3 games before repeats.
-- [open] Add: grow each to 60+; convert number questions from the Kviz packs (re-checked against the source each).
+- [done 7a0962c: opcenito 62, znanost 63, hrvatska 62, godine 62] Add: grow each to 60+.
 - [open] Fix: re-check values that change (populations, heights of buildings, records).
 
 ## Blef (2 packs, 63 facts)
 
 `apps/tv/assets/blef/`: priroda 30, svijet 33. 7 per game: **the thinnest game**, repeats after ~9 games.
-- [routed 2026-11-20: priroda -> party-writer; svijet next] Add: grow both to 60+; new pack (Povijest / Hrvatska / Ljudi i izumi).
+- [done 2934dbc: priroda 60, svijet 61] Add: grow both to 60+. [open] new pack (Povijest / Hrvatska / Ljudi i izumi).
 - [open] Fix: check each answer is short and fake-able, and the fact is still true.
 
 ## Tko bi? (2 packs, 86 prompts)
 
 `apps/tv/assets/tkobi/`: blago 45, ljuto 41. 10 per game, repeats after ~8 games. Rules: cheeky but kind; nothing on
 looks, weight, health, money, relationships. Test: `tkobi_packs_test`.
-- [open] Add: grow both to 80+.
-- [open] Fix: read both against the rules.
+- [done a971e99: blago 79, ljuto 77] Add: grow both to 80+ (near-duplicates dropped instead of padding).
+- [done a971e99] Fix: read both against the rules.
 
 ## Vukodlak (story text, no pack)
 
