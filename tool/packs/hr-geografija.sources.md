@@ -126,3 +126,53 @@ Each photo keeps its own licence; changes: resized to 1280 px on the long side a
 - Q28: Krapje and Mužilovčica (distractors) exist on hr.wikipedia, but I did not confirm on a page that they lie inside PP Lonjsko polje.
 - Q34: Since 1957 the Dobra's water is partly diverted to HE Gojak; the question says "završava u Đulinu ponoru", which the page states ("kanjonom svoj tok završava rijeka Dobra").
 - Q91 (photo, Rijeka Korzo): small shop signs are in the frame; none looked readable at 1280 px, but I did not zoom into every sign.
+
+## Pictures added 2026-11-20
+
+Resized to 800 px wide, WebP. Template = licence template on the Commons file page.
+
+2. photos/slika-002.webp: Sveti Jure peak, Biokovo. SKas, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:The_highest_peak_Sv_Jure_%281762_m%29_in_Biokovo_Nature_Park.jpg
+4. photos/slika-004.webp: Vransko jezero near Pakoštane. Dnik, CC BY-SA 3.0, {{self|cc-by-sa-3.0|GFDL}}, https://commons.wikimedia.org/wiki/File:Lake_Vrana_Croatia.jpg
+7. photos/slika-007.webp: walls of Ilok castle. Tournasol7, CC BY 4.0, {{self|cc-by-4.0}}, https://commons.wikimedia.org/wiki/File:Castle_of_Ilok_%281%29.jpg
+9. photos/slika-009.webp: Hum. Ivana, Public domain, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Hum%2C_Croatia.jpg (left part with two passers-by cropped; both car number plates blurred)
+10. photos/slika-010.webp: pine avenue on Brijuni. David Lukšić, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Brijuni_20180401.jpg
+11. photos/slika-011.webp: Veliko jezero, Mljet. August Dominus, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Veliko_jezero_%28NP_Mljet%29.JPG
+12. photos/slika-012.webp: Zlatni rat, Bol. Silverije, CC0, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:Bol_na_Bra%C4%8Du_-_pla%C5%BEa_Zlatni_rat.jpg
+16. photos/slika-016.webp: Obrovac on the Zrmanja. Julian Nyča, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Obrovac_%E2%80%93_Zrmanja_03.jpg
+19. photos/slika-019.webp: ski slope on Bjelolasica. Rabko, CC BY-SA 3.0, {{cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Bjelolasica_-_Panorama.jpg
+20. photos/slika-020.webp: cross on Vidova gora. Argo Navis, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Vidova_gora_20210718_05.jpg (plaque that names Brač cropped)
+21. photos/slika-021.webp: bell tower of St. Lucy, Jurandvor. Sibinia, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:St._Lucy_Ba%C5%A1ka_Jurandvor_01.jpg
+22. photos/slika-022.webp: Vransko jezero on Cres. MickMorton, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Vransko_jezero_Cres_16.03.2009..jpg
+23. photos/slika-023.webp: lake Mir, Telašćica. Guba Zoky Rabko, CC BY-SA 3.0, {{cc-by-sa-3.0|Guba Zoky Rabko}}, https://commons.wikimedia.org/wiki/File:Jezero_Mir%2C_Tela%C5%A1%C4%87ica_Nature_Park_-_Panoramio.jpg (date stamp cropped)
+25. photos/slika-025.webp: Pelješac bridge. kallerna, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Pelje%C5%A1ac_Bridge_1.jpg
+26. photos/slika-026.webp: Blue Cave, Biševo. Pierre-Selim Huard, CC BY 4.0, {{self|cc-by-4.0}}, https://commons.wikimedia.org/wiki/File:Bi%C5%A1evo_-_Blue_Cave_-_2021-07-30_11-56-09_2642.jpg
+27. photos/slika-027.webp: Red Lake, Imotski. Modro jezero, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Red_Lake_Imotski_001.jpg
+28. photos/slika-028.webp: wooden house with storks' nests, Čigoć. Fraxinus, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Cigoc_roda.jpg
+30. photos/slika-030.webp: Visovac island, Krka. Petra-81, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Visovac_Island%2C_National_Park_Krka.jpg
+32. photos/slika-032.webp: Rastoke in winter. MarioCRO, CC BY 3.0, {{self|cc-by-3.0}}, https://commons.wikimedia.org/wiki/File:Slunj_Rastoke_Waterfalls_Winter_01.jpg
+42. photos/slika-042.webp: Sakadaš lake, Kopački rit. Antimuonium, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Kopa%C4%8Dki_Rit%2C_Sakada%C5%A1_lake%2C_Kopa%C4%8Devo%2C_2025_%282%29.jpg
+51. photos/slika-051.webp: Lokrum. Bernard Gagnon, CC BY-SA 4.0, {{self|GFDL|cc-by-sa-4.0,3.0,2.5,2.0,1.0}}, https://commons.wikimedia.org/wiki/File:Lokrum_Island%2C_Croatia.jpg
+52. photos/slika-052.webp: bridge at Ždrelac. Urbe, CC BY-SA 3.0, {{self|GFDL|cc-by-sa-3.0|migration=redundant}}, https://commons.wikimedia.org/wiki/File:UgljanMostZdrelac1.jpg
+53. photos/slika-053.webp: bridge at Tisno. Ante Perkovic, CC BY-SA 3.0, {{self|GFDL|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Road_bridge_to_island_of_Murter%2C_in_Tisno%2C_Croatia%2C_14.10.2007.jpg
+54. photos/slika-054.webp: cliff at Kamenjak. Christian Harrer, CC BY 3.0, {{Cc-by-3.0}}, https://commons.wikimedia.org/wiki/File:Cliff_At_Cape_Kamenjak_Croatia_%288259609%29.jpeg
+55. photos/slika-055.webp: Church of the Croatian Martyrs, Udbina. Croq, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Crkva_hrvatskih_mu%C4%8Denika_in_Udbina.JPG
+56. photos/slika-056.webp: Peruča lake from above. Mario Knezović, CC BY-SA 3.0, {{Mario_Knezovic_2-Picasa}} (expands to {{Cc-by-sa-3.0}} with VRT ticket 2010112610007155), https://commons.wikimedia.org/wiki/File:Peru%C4%8Dko_jezero075.JPG
+67. photos/slika-067.webp: sea organ steps, Zadar. Andrej Šalov, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Sea_organ_Zadar_3.JPG
+69. photos/slika-069.webp: atrium and bell tower, Euphrasian Basilica. Viktar Palstsiuk, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Euphrasian_Basilica%2C_Pore%C4%8D.jpg
+71. photos/slika-071.webp: Trakošćan castle. Maxman (hr.wikipedia, original uploader), CC BY-SA 3.0, {{Cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Trako%C5%A1%C4%87an_2007.JPG
+72. photos/slika-072.webp: Krk bridge. Viktar Palstsiuk, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Krk_Bridge%2C_Croatia.jpg
+74. photos/slika-074.webp: Rječina upstream near Kukuljani. d.graso, CC BY 3.0, {{cc-by-3.0}}, https://commons.wikimedia.org/wiki/File:Rje%C4%8Dina_before_Kukuljani.jpg
+75. photos/slika-075.webp: Dragonja river bed in summer. Gregor Rom, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Dragonja_river_in_summer.JPG
+
+### Rewordings (2)
+
+- 21 (after the fact-check, not for a picture): "…u kojem je mjestu na Krku pronađena…" -> "…u kojem je mjestu pronađena…"; "na Krku" answered hr-povijest Q42.
+
+- 9: "Koje se istarsko mjesto često naziva „najmanjim gradom na svijetu”?" -> "Koje je ovo istarsko mjesto, često nazivano „najmanjim gradom na svijetu”?"
+- 51: "Koji se otok nalazi pola nautičke milje jugoistočno od Dubrovnika?" -> "Koji je ovo otok, pola nautičke milje jugoistočno od Dubrovnika?"
+Choices and answers are unchanged. Q4, Q7, Q54, Q74 and Q75 keep their text: the picture shows the place, but a lay viewer cannot tell which lake, wall, cliff or river it is.
+
+### Picture notes
+
+- Not used from the researcher's list: 21 original (shows the Bašćanska ploča, which hr-povijest Q111 asks), 57 (a Plitvice waterfall next to text naming Plitvička jezera makes Q88 "Koji je ovo nacionalni park?" a visual match), 68 (Stari Grad Plain is already hr-povijest Q79's picture, next to text naming Stari Grad), 74 original (a view of Rijeka next to text naming Rijeka answers Q91), 32 original ({{PD-self}} with author only "assumed", 641 px).
+- Added beyond the list: 19 (the researcher's spare, Bjelolasica), 53 (Tisno bridge).
