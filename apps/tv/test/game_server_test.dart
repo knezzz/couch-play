@@ -110,7 +110,7 @@ void main() {
     });
     final c = HttpClient();
     final req = await c.post('127.0.0.1', s.port, '/packs?token=t');
-    req.add(Uint8List(5 * 1024 * 1024 + 1));
+    req.add(Uint8List(10 * 1024 * 1024 + 1));
     final res = await req.close();
     expect(res.statusCode, 413);
     expect(await utf8.decodeStream(res), PackStrings.tooBig);

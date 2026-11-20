@@ -3,7 +3,7 @@
 class PackStrings {
   const PackStrings._();
 
-  static const tooBig = 'Paket je veći od 5 MB. Smanji ga ili izbaci neke slike pa pokušaj ponovno.';
+  static const tooBig = 'Paket je veći od 10 MB. Smanji ga ili izbaci neke slike pa pokušaj ponovno.';
   static const notJson =
       'Paket nije ispravan JSON. Provjeri da je datoteka tekst (UTF-8) i da počinje znakom {.';
   static const badFormat = 'Nepodržan format paketa. Upiši "format": 1.';

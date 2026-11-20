@@ -5,7 +5,7 @@ import 'package:archive/archive.dart';
 
 import '../strings.dart';
 
-const _maxPack = 5 * 1024 * 1024;
+const _maxPack = 10 * 1024 * 1024;
 const _maxUnzipped = 20 * 1024 * 1024;
 
 /// SVG or a photo; the extension tells which.

@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:core/core.dart';
 
-const _maxUpload = 5 * 1024 * 1024;
+const _maxUpload = 10 * 1024 * 1024;
 const _maxMessage = 64 * 1024;
 
 const _types = {

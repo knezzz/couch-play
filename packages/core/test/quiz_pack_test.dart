@@ -47,8 +47,9 @@ void main() {
     expect(parsePack(json(pack())), isA<PackOk>());
   });
 
-  test('over 5 MB', () {
-    expect(err(Uint8List(5 * 1024 * 1024 + 1)), PackStrings.tooBig);
+  test('over 10 MB', () {
+    expect(err(Uint8List(10 * 1024 * 1024 + 1)), PackStrings.tooBig);
+    expect(err(Uint8List(6 * 1024 * 1024)), isNot(PackStrings.tooBig), reason: 'the limit was 5 MB until 2026-11-20');
   });
 
   test('garbage never throws', () {

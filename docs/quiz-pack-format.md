@@ -39,7 +39,7 @@ A quiz pack is either a single `.json` file (text only) or a `.zip` (JSON plus p
 
 ## Limits
 
-- The file you upload: 5 MB at most.
+- The file you upload: 10 MB at most.
 - Everything inside the zip, unzipped: 20 MB at most.
 
 ## Error messages
@@ -48,7 +48,7 @@ The TV shows these in Croatian. They live in `packages/core/lib/strings.dart` (`
 
 | Message | Cause |
 |---|---|
-| Paket je veći od 5 MB. Smanji ga ili izbaci neke slike pa pokušaj ponovno. | File over 5 MB. |
+| Paket je veći od 10 MB. Smanji ga ili izbaci neke slike pa pokušaj ponovno. | File over 10 MB. |
 | Paket nije ispravan JSON. Provjeri da je datoteka tekst (UTF-8) i da počinje znakom {. | Not UTF-8 JSON, or not an object. |
 | Nepodržan format paketa. Upiši "format": 1. | `format` is not 1. |
 | Oznaka paketa smije imati samo mala slova, brojke i crtice (1 do 40 znakova). | Bad `id`. |
