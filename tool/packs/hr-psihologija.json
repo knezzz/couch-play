@@ -64,7 +64,7 @@
     {"q": "S kim je Alfred Binet sastavio prvi praktični test inteligencije?", "choices": ["Pierreom Janetom", "Jeanom Charcotom", "Jeanom Piagetom", "Théodoreom Simonom"], "answer": 3},
     {"q": "Koliki je prosječni kvocijent inteligencije na današnjim testovima?", "choices": ["50", "75", "100", "150"], "answer": 2},
     {"q": "Što je Phineasu Gageu probilo glavu i promijenilo mu osobnost?", "choices": ["Metak", "Željezna šipka", "Kamen", "Sjekira"], "answer": 1},
-    {"q": "U kojem se režnju mozga nalazi Brocino područje, važno za govor?", "choices": ["Sljepoočnom", "Zatiljnom", "Čeonom", "Tjemenom"], "answer": 2},
+    {"q": "U kojem se režnju mozga nalazi Brocino područje?", "choices": ["Sljepoočnom", "Zatiljnom", "Čeonom", "Tjemenom"], "answer": 2},
     {"q": "Kako se zove sklonost da bolje pamtimo prve stavke s popisa?", "choices": ["Halo efekt", "Efekt sidrenja", "Efekt recentnosti", "Efekt primarnosti"], "answer": 3},
     {"q": "Koji efekt kaže da bolje pamtimo prekinute nego dovršene zadatke?", "choices": ["Pigmalionov efekt", "Efekt Zeigarnik", "Stroopov efekt", "Halo efekt"], "answer": 1},
     {"q": "Pamćenje kojeg je radnika potaknulo istraživanje Zeigarničina efekta?", "choices": ["Poštara", "Taksista", "Konobara", "Blagajnika"], "answer": 2},

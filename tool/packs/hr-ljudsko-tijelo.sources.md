@@ -135,3 +135,65 @@ Each image keeps its own licence (author, licence and file page below; "Public d
 - Q "Do kolikog udjela energije tijela troši mozak?": en.wikipedia says "up to 20%"; the choices are far apart, so the rounded answer holds.
 - Q on the egg cell: en.wikipedia says "one of the largest cells"; the question says "jedna od najvećih", not "najveća".
 - The thyroid render was too faint to use; dropped.
+
+## Pictures added 2026-11-20
+
+Resized to 800 px wide, WebP. Template = licence template on the Commons file page.
+
+14. photos/slika-014.webp: capillary with a red blood cell (TEM). Louisa Howard, Public domain, {{PD-author|Louisa Howard}}, https://commons.wikimedia.org/wiki/File:A_red_blood_cell_in_a_capillary%2C_pancreatic_tissue_-_TEM.jpg (bottom scale bar cropped)
+17. photos/slika-017.webp: lung alveoli (micrograph). Yale Rosen from USA, CC BY-SA 2.0, {{cc-by-sa-2.0}}, https://commons.wikimedia.org/wiki/File:Normal_lung_Alveoli_%283678762542%29.jpg
+20. photos/slika-020.webp: cerebellum shown in red (3D render). RAZVAN V. MARINESCU, CC BY 4.0, {{self|cc-by-4.0}}, https://commons.wikimedia.org/wiki/File:Cerebellum_-_DK_ATLAS.png
+26. photos/slika-026.webp: three patellae and a coin. MAKY.OREL, CC0, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:Patella_-_facies_anterior_patellae.jpg
+30. photos/slika-030.webp: alarm clock. Santeri Viinamäki, CC BY-SA 4.0, {{cc-by-sa-4.0|Santeri Viinamäki}}, https://commons.wikimedia.org/wiki/File:Classic_alarm_clock_20180513.jpg (maker's name on the dial blurred)
+31. photos/slika-031.webp: thyroid gland (micrograph). Bhavya akula, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Histology_of_Thyroid_gland.jpg
+37. photos/slika-037.webp: haemoglobin structure (render). PDB 2DN1 render (uploader's own work), CC0, {{cc-zero}}, https://commons.wikimedia.org/wiki/File:Human_Oxy-Hemoglobin_Protein.jpg
+39. photos/slika-039.webp: blood cells (SEM). Bruce Wetzel, Harry Schaefer (NCI), Public domain, {{PD-USGov}}, https://commons.wikimedia.org/wiki/File:SEM_blood_cells.jpg
+42. photos/slika-042.webp: retina (fundus photo). Ktkvtsh, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Fundus_photo_Retina_OD.jpg
+49. photos/slika-049.webp: intestinal villi (engraving). Wellcome Collection, CC BY 4.0, {{cc-by-4.0}}, https://commons.wikimedia.org/wiki/File:The_villi_of_various_parts_of_the_small_intestine._Wellcome_L0001374.jpg ("Fig. 64." cropped)
+50. photos/slika-050.webp: plastic model of the caecum and appendix. John Campbell, CC0, {{cc-zero}}, https://commons.wikimedia.org/wiki/File:Caecum_and_appendix_%2827370207556%29.jpg
+53. photos/slika-053.webp: plasma B cell (illustration). Courtesy of NIAID Ryan Kissinger, Public domain, {{PD-USGov-NIH-NIAID}}, https://commons.wikimedia.org/wiki/File:Plasma_B_Cell_%28NIH_BioArt_640981%29.png
+55. photos/slika-055.webp: skin section (micrograph). Kilbad, Public domain, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Normal_Epidermis_and_Dermis_with_Intradermal_Nevus_10x.JPG
+56. photos/slika-056.webp: fingernails. Kommissar, Public domain, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Fingernails2.jpg
+57. photos/slika-057.webp: dense regular connective tissue, tendon (micrograph). Echinaceapallida, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Dense_regular1.jpg
+59. photos/slika-059.webp: egg cell (illustration). Courtesy of NIAID Ryan Kissinger, Public domain, {{PD-USGov-NIH-NIAID}}, https://commons.wikimedia.org/wiki/File:Human_Egg_%28NIH_BioArt_213_-_630752%29.png
+64. photos/slika-064.webp: taking a pulse at the wrist. U.S. Air Force Staff Sgt. Jeanette Copeland, Public domain, {{PD-USGov-Military-Air Force}}, https://commons.wikimedia.org/wiki/File:Radial_pulse.jpg (monitor with digits cropped away)
+65. photos/slika-065.webp: 12-lead ECG trace. Glenlarson, Public domain, {{PD-self}}, https://commons.wikimedia.org/wiki/File:12_lead_generated_sinus_rhythm.JPG (header (patient fields, HR) and footer (maker's name) cropped)
+66. photos/slika-066.webp: sphygmomanometer. ML5 at English Wikipedia, Public domain, {{PD-user-en|ML5}}, https://commons.wikimedia.org/wiki/File:Sphygmomanometer%26Cuff.JPG (maker's name on the dial blurred, cuff label cropped)
+71. photos/slika-071.webp: skull with the mandible in red. Anatomist90, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Mandible.jpg ("MANDIBLE" label painted over, logo cropped)
+73. photos/slika-073.webp: hand X-ray. Mikael Häggström, CC0, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:X-ray_of_normal_hand_by_dorsoplantar_projection.jpg (side marker painted over)
+74. photos/slika-074.webp: knee X-ray. Mikael Häggström, CC0, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:X-ray_of_a_normal_knee_by_anteroposterior_projection.jpg
+76. photos/slika-076.webp: smooth muscle (micrograph). Berkshire Community College Bioscience Image Library, CC0, {{cc-zero}}, https://commons.wikimedia.org/wiki/File:Muscle_Tissue_Smooth_%2840087099220%29.jpg
+79. photos/slika-079.webp: brain, side view (illustration). Courtesy of NIAID Ryan Kissinger, Public domain, {{PD-USGov-NIH-NIAID}}, https://commons.wikimedia.org/wiki/File:Brain_Lateral_%28NIH_BioArt_60%29.png
+80. photos/slika-080.webp: portrait of Paul Broca. Pierre Petit, Public domain, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Paul_Broca.jpg
+82. photos/slika-082.webp: lungs (illustration). Courtesy of NIAID Ryan Kissinger, Public domain, {{PD-USGov-NIH-NIAID}}, https://commons.wikimedia.org/wiki/File:Human_Lungs_%28NIH_BioArt_231_-_630887%29.png
+87. photos/slika-087.webp: spirometer. Joe Mabel, CC BY-SA 3.0, {{self|GFDL|cc-by-sa-3.0|author=[[User:Jmabel|Joe Mabel]]|migration=redundant}}, https://commons.wikimedia.org/wiki/File:Device_for_Spirometry_or_Body_Plethysmography_02.jpg (maker's logo and tissue-box text covered)
+89. photos/slika-089.webp: islet of Langerhans (micrograph). Berkshire Community College Bioscience Image Library, CC0, {{cc-zero}}, https://commons.wikimedia.org/wiki/File:Islet_of_Langerhans_in_Human_Pancreas_by_Phase_Contrast_%2847674614782%29.jpg
+90. photos/slika-090.webp: pepsin (3D model). uploader's own work, Public domain, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Pepsin%2BPepstatin_1PSO.png
+91. photos/slika-091.webp: potato starch grains (micrograph). Makergreen, CC BY 4.0, {{self|cc-by-4.0}}, https://commons.wikimedia.org/wiki/File:Potato_starch_microscope-20240525.jpg
+97. photos/slika-097.webp: human eye, iris. Petr Novák, Wikipedia, CC BY-SA 2.5, {{cc-by-sa-2.5|Petr Novák, Wikipedia}}, https://commons.wikimedia.org/wiki/File:Eye_iris.jpg
+99. photos/slika-099.webp: blurred view, myopia simulation. National Eye Institute, National Institutes of Health, Public domain, {{PD-USGov-HHS-NIH}}, https://commons.wikimedia.org/wiki/File:Eye_disease_simulation%2C_myopia.jpg
+100. photos/slika-100.webp: portrait of John Dalton. Charles Turner / After James Lonsdale, Public domain, {{PD-art|PD-old-100-1923}}, https://commons.wikimedia.org/wiki/File:John_Dalton_by_Charles_Turner.jpg
+101. photos/slika-101.webp: kidney and nephron models. Rayhana Alhour, CC0, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:Kidney_anatomy_model.jpg (maker's logo painted over)
+102. photos/slika-102.webp: neutrophil (SEM). National Institutes of Health (NIH), Public domain, {{PD-USGov}}, https://commons.wikimedia.org/wiki/File:Human_neutrophil_ingesting_MRSA.jpg
+103. photos/slika-103.webp: sugar cubes. CostaPPPR, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:AcucarCubosDSC6111.jpg
+104. photos/slika-104.webp: roller coaster loop. Jiaqian AirplaneFan, CC BY 3.0, {{cc-by-3.0|Jiaqian AirplaneFan}}, https://commons.wikimedia.org/wiki/File:Roller_coaster_loop_-_panoramio.jpg (right ~16% cropped off to remove the plush toys)
+106. photos/slika-106.webp: spleen (micrograph). Bhavya akula, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Histology_of_Spleen.jpg
+
+### Rewordings (8)
+
+- 20: "Koji dio mozga ponajviše usklađuje pokrete i ravnotežu?" -> "Koji dio mozga, ovdje označen crvenom bojom, ponajviše usklađuje pokrete i ravnotežu?"
+- 26: "Kako se zove kost s prednje strane koljena?" -> "Kako se zove ova kost s prednje strane koljena?"
+- 59: "Koja je stanica ljudskog tijela jedna od najvećih, vidljiva i golim okom?" -> "Koja je ovo stanica, jedna od najvećih u ljudskom tijelu, vidljiva i golim okom?"
+- 71: "Koja je jedina pokretna kost lubanje?" -> "Koja je kost, ovdje označena crvenom bojom, jedina pokretna kost lubanje?"
+- 74: "Koji je najveći zglob ljudskog tijela?" -> "Koji je ovo zglob, najveći u ljudskom tijelu?" (wording after the picture check)
+- 80: "Za što je ponajprije zaduženo Brocino područje mozga?" -> "Za što je ponajprije zaduženo Brocino područje mozga, nazvano po ovom liječniku?"
+- 100: "Po kojem je znanstveniku nazvan daltonizam, sljepoća za boje?" -> "Po kojem je znanstveniku, ovome na slici, nazvan daltonizam, sljepoća za boje?"
+- 101: "Koji organ luči hormon eritropoetin, …?" -> "Koji organ, ovdje prikazan modelom, luči hormon eritropoetin, …?"
+Choices and answers are unchanged.
+
+### Picture notes
+
+- The other pictures support the question without showing the answer to a lay viewer (micrographs, instruments, neutral scenes: 30 alarm clock, 79 brain, 103 sugar, 104 roller coaster).
+- Dropped after the picture check: 92 thermometer (37 °C answers hr-fizika Q82, mercury hints hr-znanost Q30) and 32 pituitary micrograph (labels; the question duplicates hr-znanost Q95). Both questions stay, without a picture.
+- Not used from the researcher's list: 16 (dried bull gallbladder), 25 (rib count visible; neck vertebrae answer Q24), 47 (a child's mouth), 51 ("Duodenum" printed on the plate), 58 (karyotype: 46 is countable, hr-znanost asks it), 73 original (Boer War X-ray, shrapnel), 79 original (human brain in a jar), 95 (otoscope photo, labels name the malleus, Q96), 21 (seahorse shape answers hr-psihologija "S morskim konjićem"), 84 (rhesus macaque answers hr-psihologija "Makakima rezusima"), 54 (journal figure, licence unclear), 57 original (taken from a commercial blog, licence unclear).
+- Tried and dropped: a heart drawing for 63 (answers hr-znanost "Koji organ pumpa krv?"), a crescent moon for 30 (answers hr-memeovi "Mjesec"), choir photos for 69 (shop signs, identifiable children), a blood bag for 85 (blood).
