@@ -115,7 +115,7 @@ Items 31–62 written for Koliko and checked on 2026-11-20 against the raw page 
 40. Koje je godine Magellan otkrio prolaz na jugu Južne Amerike koji nosi njegovo ime? = 1520 (from hr-zemljopis-svijeta Q68): https://hr.wikipedia.org/wiki/Magellanov_prolaz ("Prolaz je 1520. otkrio ... Fernão de Magalhães")
 41. Koje je godine Léon Foucault njihalom zorno pokazao da se Zemlja vrti? = 1851 (from hr-fizika Q9): prvi je izgradio fizičar Léon Foucault 1851: https://hr.wikipedia.org/wiki/Foucaultovo_njihalo
 42. Koje je godine Einstein objavio specijalnu teoriju relativnosti? = 1905 (from hr-fizika Q87): annus mirabilis papers 1905, special relativity: https://en.wikipedia.org/wiki/Annus_mirabilis_papers
-43. Koje je godine Pluton izgubio status planeta i postao patuljasti planet? = 2006 (from hr-znanost Q65): In 2006, the IAU redefined planet to exclude dwarf planets such as Pluto: https://en.wikipedia.org/wiki/Pluto
+43. Koje je godine Pluton izgubio status planeta i postao patuljasti planet? = 2006 (from hr-znanost Q64): In 2006, the IAU redefined planet to exclude dwarf planets such as Pluto: https://en.wikipedia.org/wiki/Pluto
 44. Koje je godine Fibonacci objavio knjigu Liber Abaci? = 1202 (from hr-matematika Q109): The Liber Abaci ... was a 1202 Latin work ... by Leonardo of Pisa: https://en.wikipedia.org/wiki/Liber_Abaci
 
 Items 45–62 written for Koliko and checked on 2026-11-20 against the raw page. "also in <pack>" = a quiz pack has the year in its question text (the quiz asks something else, but the year is given there).
@@ -222,8 +222,8 @@ Items 36–62 written for Koliko and checked on 2026-11-20 against the raw page 
 11. Koliko kostiju ima tijelo odraslog čovjeka? = 206 (from hr-znanost Q9): decreases to around 206 bones by adulthood: https://en.wikipedia.org/wiki/Human_skeleton
 12. Koliki je pH čiste vode pri 25 °C? = 7 (from hr-znanost Q20): pH of 7 at 25 °C are neutral, the same as pure water: https://en.wikipedia.org/wiki/PH
 13. Koliko otprilike treba svjetlosti da sa Sunca stigne do Zemlje? = 8 minuta (from hr-znanost Q24): light travels 1 au in slightly more than 8 minutes 19 seconds: https://en.wikipedia.org/wiki/Astronomical_unit
-14. Koliko zuba obično ima odrasla osoba, s umnjacima? = 32 (from hr-znanost Q47): 32 permanent (adult) teeth: https://en.wikipedia.org/wiki/Human_tooth
-15. Otprilike svakih koliko se godina Halleyev komet vraća u Zemljinu blizinu? = 76 godina (from hr-znanost Q70): Halley's orbital period has varied between 74 and 80 years: https://en.wikipedia.org/wiki/Halley's_Comet
+14. Koliko zuba obično ima odrasla osoba, s umnjacima? = 32 (from hr-znanost Q46): 32 permanent (adult) teeth: https://en.wikipedia.org/wiki/Human_tooth
+15. Otprilike svakih koliko se godina Halleyev komet vraća u Zemljinu blizinu? = 76 godina (from hr-znanost Q69): Halley's orbital period has varied between 74 and 80 years: https://en.wikipedia.org/wiki/Halley's_Comet
 16. Koliko puta naraste kinetička energija tijela kad mu se brzina udvostruči? = 4 (from hr-fizika Q14): an object doubling its speed has four times as much kinetic energy: https://en.wikipedia.org/wiki/Kinetic_energy
 17. Koliko je puta, približno, težina tijela na Mjesecu manja nego na Zemlji? = 6 (from hr-fizika Q80): Its surface gravity is about one-sixth of Earth's: https://en.wikipedia.org/wiki/Moon
 18. Grmljavinu čujemo 3 s nakon munje. Koliko je daleko munja ako zvuk prijeđe 340 m/s? = 1020 m (from hr-fizika Q101): izračun (s = v·t)
