@@ -39,7 +39,7 @@ converted to Croatian notation.
 24. Vader is ... the father of Luke and Leia: https://en.wikipedia.org/wiki/Darth_Vader
 25. Hogwarts School of Witchcraft and Wizardry ... Harry Potter series: https://en.wikipedia.org/wiki/Hogwarts
 26. Film o ribi klaun po imenu Marlin (Nemov otac); hr naslov 'Potraga za Nemom': https://hr.wikipedia.org/wiki/Potraga_za_Nemom
-27. Buzz Lightyear, a space ranger toy: https://en.wikipedia.org/wiki/Buzz_Lightyear + hr https://hr.wikipedia.org/wiki/Priča_o_igračkama (Buzz Lightyear)
+27. Buzz Lightyear, a space ranger toy: https://en.wikipedia.org/wiki/Buzz_Lightyear + hr https://hr.wikipedia.org/wiki/Priča_o_igračkama (Hrvatska sinkronizacija: "Buzz Svjetlosni")
 28. Johnny Depp ... Captain Jack Sparrow: https://en.wikipedia.org/wiki/Jack_Sparrow
 29. 'I'll be back' made famous in The Terminator (1984): https://en.wikipedia.org/wiki/I'll_be_back
 30. Let It Go is from Disney's Frozen (hr 'Snježno kraljevstvo'): https://en.wikipedia.org/wiki/Let_It_Go ; https://hr.wikipedia.org/wiki/Snježno_kraljevstvo_(2013.)
@@ -88,7 +88,7 @@ converted to Croatian notation.
 73. cultural origins: late 19th century, New Orleans: https://en.wikipedia.org/wiki/Jazz
 74. Jamaican reggae musician: https://en.wikipedia.org/wiki/Bob_Marley
 75. The Jazz Singer, 1927 ... first feature-length motion picture with synchronized recorded music and lip-synchronous singing and speech: https://en.wikipedia.org/wiki/The_Jazz_Singer
-76. first commercial public screening on 28 December 1895 ... birth of cinema: https://en.wikipedia.org/wiki/Lumière_brothers
+76. first commercial public screening on 28 December 1895 ... has traditionally been regarded as the birth of cinema: https://en.wikipedia.org/wiki/Lumière_brothers
 77. A Trip to the Moon, 1902 French short film by Georges Méliès: https://en.wikipedia.org/wiki/A_Trip_to_the_Moon
 78. Snow White (1937), first animated feature produced in the US / Disney's first feature-length film: https://en.wikipedia.org/wiki/Snow_White_and_the_Seven_Dwarfs_(film) ; https://hr.wikipedia.org/wiki/Snjeguljica_i_sedam_patuljaka_(1937.)
 79. 1941 drama film by Orson Welles: https://en.wikipedia.org/wiki/Citizen_Kane ; https://hr.wikipedia.org/wiki/Građanin_Kane
@@ -133,11 +133,11 @@ converted to Croatian notation.
 118. https://en.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart (states: the mozart family - wolfgang amadeus mozart headshot.jpg)
 119. https://en.wikipedia.org/wiki/Antonio_Vivaldi (states: vivaldi.jpg)
 120. https://en.wikipedia.org/wiki/Fr%C3%A9d%C3%A9ric_Chopin (states: frederic chopin photo.jpeg)
-121. https://en.wikipedia.org/wiki/Louis_Armstrong (states: louis armstrong in color (restored).jpg)
-122. https://en.wikipedia.org/wiki/Elvis_Presley (states: elvis presley promoting jailhouse rock.jpg)
+121. https://en.wikipedia.org/wiki/Louis_Armstrong (photo: Commons "Louis Armstrong (1955)", Anefo, titled with his name)
+122. "Home of Elvis Presley in Memphis, Tennessee"; "opened to the public as a house museum on June 7, 1982": https://en.wikipedia.org/wiki/Graceland
 123. https://en.wikipedia.org/wiki/Charlie_Chaplin (states: charlie chaplin portrait)
-124. https://en.wikipedia.org/wiki/Audrey_Hepburn (states: audreykhepburn.jpg)
-125. https://en.wikipedia.org/wiki/Alfred_Hitchcock (states: hitchcock, alfred 02.jpg)
+124. https://en.wikipedia.org/wiki/Audrey_Hepburn (photo: Commons "Audrey Hepburn in 1966", Anefo, titled with her name)
+125. https://en.wikipedia.org/wiki/Alfred_Hitchcock (photo: Commons "Filmregisseur Alfred Hitchcock (Kiel 40.297)", Kiel city archive, titled with his name)
 126. https://hr.wikipedia.org/wiki/Dora_Peja%C4%8Devi%C4%87 (states: dora pejačević (soa praha) cr.jpg)
 127. https://hr.wikipedia.org/wiki/Vatroslav_Lisinski (states: vatroslav_lisinski.jpg)
 128. https://hr.wikipedia.org/wiki/Ivan_Zajc (states: ivan pl. zajc 1907 mosinger.png)
@@ -152,11 +152,11 @@ Each image keeps its own licence (author, licence, file page). Changes: resized 
 118. photos/foto-02.webp: Wolfgang Amadeus Mozart. Johann Nepomuk della Croce, Public domain, https://commons.wikimedia.org/wiki/File:The_Mozart_Family_-_Wolfgang_Amadeus_Mozart_headshot.jpg (resized, WebP)
 119. photos/foto-03.webp: Antonio Vivaldi. Unidentified painter, Public domain, https://commons.wikimedia.org/wiki/File:Vivaldi.jpg (resized, WebP)
 120. photos/foto-04.webp: Frédéric Chopin. Louis-Auguste Bisson, Public domain, https://commons.wikimedia.org/wiki/File:Frederic_Chopin_photo.jpeg (resized, WebP)
-121. photos/foto-05.webp: Louis Armstrong. Harry Warnecke / Gus Schoenbaechler, Public domain, https://commons.wikimedia.org/wiki/File:Louis_Armstrong_in_Color_(restored).jpg (resized, WebP)
-122. photos/foto-06.webp: Elvis Presley. Metro-Goldwyn-Mayer, Inc. Reproduction Number: LC-USZ6-2067 Location: NYWTS -- BIOG, Public domain, https://commons.wikimedia.org/wiki/File:Elvis_Presley_promoting_Jailhouse_Rock.jpg (resized, WebP)
+121. photos/foto-05.webp: Louis Armstrong (1955). Herbert Behrens / Anefo (Nationaal Archief), {{cc-zero}}, https://commons.wikimedia.org/wiki/File:Louis_Armstrong_(1955).jpg (WebP, 1280 px wide)
+122. photos/foto-06.webp: Graceland Memphis Tennessee. Joseph Novak (Flickr josephleenovak), {{cc-by-2.0}}, https://commons.wikimedia.org/wiki/File:Graceland_Memphis_Tennessee.jpg (WebP, 800 px wide, the original size; no name sign in the picture)
 123. photos/foto-07.webp: Charlie Chaplin. Strauss-Peyton Studio, Public domain, https://commons.wikimedia.org/wiki/File:Charlie_Chaplin_portrait_Getty_1739411952.jpg (resized, WebP)
-124. photos/foto-08.webp: Audrey Hepburn. Bud Fraker (1916-2002) [1], Public domain, https://commons.wikimedia.org/wiki/File:AudreyKHepburn.jpg (resized, WebP)
-125. photos/foto-09.webp: Alfred Hitchcock. Ante Brkan, Public domain, https://commons.wikimedia.org/wiki/File:Hitchcock,_Alfred_02.jpg (resized, WebP)
+124. photos/foto-08.webp: Audrey Hepburn in 1966. Anefo (Nationaal Archief), {{Cc-by-sa-3.0-nl}}, https://commons.wikimedia.org/wiki/File:Audrey_Hepburn_in_1966.jpg (resized to 1280 px high, WebP)
+125. photos/foto-09.webp: Filmregisseur Alfred Hitchcock (Kiel 40.297) (cropped). Friedrich Magnussen (1914-1987), Stadtarchiv Kiel, {{Cc-by-sa-3.0-de}}, https://commons.wikimedia.org/wiki/File:Filmregisseur_Alfred_Hitchcock_(Kiel_40.297)_(cropped).jpg (resized to 1280 px high, WebP)
 126. photos/foto-10.webp: Dora Pejačević. AnonymousUnknown author, Public domain, https://commons.wikimedia.org/wiki/File:Dora_Peja%C4%8Devi%C4%87_(SOA_Praha)_cr.jpg (resized, WebP)
 127. photos/foto-11.webp: Vatroslav Lisinski. unknow, picture taken around 1850., Public domain, https://commons.wikimedia.org/wiki/File:Vatroslav_Lisinski.jpg (resized, WebP)
 128. photos/foto-12.webp: Ivan Zajc. Rudolf Mosinger, Public domain, https://commons.wikimedia.org/wiki/File:Ivan_pl._Zajc_1907_Mosinger.png (resized, WebP)
