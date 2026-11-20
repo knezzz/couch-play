@@ -134,7 +134,43 @@ Checked online on 2026-11-14, read-only (page text fetched through the Wikipedia
 
 ## Photo questions (Task 28)
 
+Pictures added 2026-11-20 (from tool/packs/hr-povijest.pictures.md, each one looked at; licence template read on the Commons file page). New files are named by question number (foto-NNN); the 10 Task 28 photos (foto-01 to foto-10, questions 102-111) keep their names.
+
 Each image keeps its own licence (author, licence, file page). Changes: resized (at most 1280 px on the long side) and saved as WebP.
+
+1. photos/foto-001.webp: Kralj_Tomislav_(Robert_Frangeš).jpg. Croativ, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Kralj_Tomislav_(Robert_Frangeš).jpg (WebP, longest side 800 px; question wording unchanged, the statue is a mild hint)
+5. photos/foto-005.webp: Basilica_of_Saint_Peter_and_Moses,_Solin,_Croatia_20231226_01.jpg. Argo Navis, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Basilica_of_Saint_Peter_and_Moses,_Solin,_Croatia_20231226_01.jpg (WebP, longest side 800 px)
+7. photos/foto-007.webp: Képes_krónika_-_101.oldal_-_Kálmánt_királlyá_koronázzák.jpg. Márk Kálti, {{PD-art|PD-old-100}}, https://commons.wikimedia.org/wiki/File:Képes_krónika_-_101.oldal_-_Kálmánt_királlyá_koronázzák.jpg (WebP, longest side 800 px)
+8. photos/foto-008.webp: Povaljska_listina.JPG. Bijeli grab (razgovor), {{PD-Croatia}} + {{PD-1996}}, https://commons.wikimedia.org/wiki/File:Povaljska_listina.JPG (WebP, longest side 800 px)
+9. photos/foto-009.webp: Novi_Vinodolski,_Kastel_Frankopan.jpg. Ante Perkovic, {{Self|GFDL|Cc-by-sa-3.0-migrated}}, https://commons.wikimedia.org/wiki/File:Novi_Vinodolski,_Kastel_Frankopan.jpg (WebP, longest side 800 px)
+10. photos/foto-010.webp: Pazinski_kaštel_-_detalj_kule.jpg. Silverije, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Pazinski_kaštel_-_detalj_kule.jpg (WebP, longest side 800 px)
+12. photos/foto-012.webp: Marko_Marulic_Split_0807.jpg. Roberta F., {{self|cc-by-sa-3.0|author=Roberta F.}}, https://commons.wikimedia.org/wiki/File:Marko_Marulic_Split_0807.jpg (WebP, longest side 800 px; cropped to the statue, without the film poster behind it; reworded to ask who is shown, the picture identified by its Commons title and description)
+15. photos/foto-015.webp: Lazareti_LS1.JPG. Lasta, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Lazareti_LS1.JPG (WebP, longest side 800 px)
+17. photos/foto-017.webp: Dubrovnik,_Palacio_del_Gobernador_10.jpg. LBM1948, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Dubrovnik,_Palacio_del_Gobernador_10.jpg (WebP, longest side 800 px)
+18. photos/foto-018.webp: Krbavsko_polje_094540.jpg. Quahadi Añtó 18:12, 24 May 2016 (UTC), {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Krbavsko_polje_094540.jpg (WebP, longest side 800 px)
+19. photos/foto-019.webp: Cetingrad_013.jpg. Marijan, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Cetingrad_013.jpg (WebP, longest side 800 px)
+20. photos/foto-020.webp: Star-shaped_walled_city_of_Karlovac.jpg. nepoznat, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Star-shaped_walled_city_of_Karlovac.jpg (WebP, longest side 800 px; cropped to remove the title "Festung Carlstadt" and the river label)
+21. photos/foto-021.webp: Johann_Peter_Krafft_005.jpg. Johann Peter Krafft, {{PD-Art|PD-old-auto-expired|deathyear=1856}}, https://commons.wikimedia.org/wiki/File:Johann_Peter_Krafft_005.jpg (WebP, longest side 800 px)
+22. photos/foto-022.webp: Kapela_mira_8380_34.jpg. Ванилица, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Kapela_mira_8380_34.jpg (WebP, longest side 800 px)
+36. photos/foto-036.webp: Nikola_Tesla_by_Sarony_-_Seifer_archives_(cropped).jpeg. Napoleon Sarony, {{PD-old-100-expired}}, https://commons.wikimedia.org/wiki/File:Nikola_Tesla_by_Sarony_-_Seifer_archives_(cropped).jpeg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+38. photos/foto-038.webp: Homo_Volans.jpg. Faust Vrančić, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Homo_Volans.jpg (WebP, longest side 800 px)
+39. photos/foto-039.webp: Juan_Vucetich.jpg. José María Cao Luaces, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Juan_Vucetich.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+40. photos/foto-040.webp: Leopold Ruzicka ETH-Bib Portr 00239.jpg. Fr. Schmelhaus / ETH Zürich (ETH-Bibliothek), {{PermissionTicket|id=2009102110047803}} + {{cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Leopold_Ruzicka_ETH-Bib_Portr_00239.jpg (WebP, longest side 539 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+45. photos/foto-045.webp: Ljubljana,_Illyrian_Column_01.jpg. Ajznponar, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:Ljubljana,_Illyrian_Column_01.jpg (WebP, longest side 800 px)
+60. photos/foto-060.webp: Battle_of_Mohi_1241.PNG. Anonymous illumination, {{PD-Art|PD-old-100-expired}}, https://commons.wikimedia.org/wiki/File:Battle_of_Mohi_1241.PNG (WebP, longest side 800 px)
+65. photos/foto-065.webp: Battle_of_Mohacs_1526.png. Székely Bertalan, {{PD-Art|PD-old-auto-expired|deathyear=1910}}, https://commons.wikimedia.org/wiki/File:Battle_of_Mohacs_1526.png (WebP, longest side 800 px)
+66. photos/foto-066.webp: Fortress_of_Klis_06.jpg. Bernard Gagnon, {{self|GFDL|cc-by-sa-4.0,3.0,2.5,2.0,1.0}}, https://commons.wikimedia.org/wiki/File:Fortress_of_Klis_06.jpg (WebP, longest side 800 px)
+68. photos/foto-068.webp: 2019_Gubec_linden_HR.jpg. Public institutions archive, {{cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:2019_Gubec_linden_HR.jpg (WebP, longest side 800 px)
+71. photos/foto-071.webp: Khuen-Héderváry_1883.jpg. J. és G. Varga Co. Photography, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Khuen-Héderváry_1883.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+77. photos/foto-077.webp: Krapina-Neanderthal-1.JPG. Modzzak, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Krapina-Neanderthal-1.JPG (WebP, longest side 800 px)
+78. photos/foto-078.webp: Roman_temple_Augustum_in_Narona,_1._cent.,_Vid,_Metkovic,_Croatia_2010.JPG. Prof saxx, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Roman_temple_Augustum_in_Narona,_1._cent.,_Vid,_Metkovic,_Croatia_2010.JPG (WebP, longest side 800 px)
+79. photos/foto-079.webp: Aerial_image_of_the_Stari_Grad_Plain_(view_from_the_southwest).jpg. Carsten Steger, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Aerial_image_of_the_Stari_Grad_Plain_(view_from_the_southwest).jpg (WebP, longest side 800 px)
+80. photos/foto-080.webp: Anton_Romako_-_Tegetthoff_in_der_Seeschlacht_bei_Lissa_II_-_2198_-_Österreichische_Galerie_Belvedere.jpg. Anton Romako, {{Licensed-PD-Art|PD-old-auto-1923|cc-by-sa-4.0|deathyear=1889}}, https://commons.wikimedia.org/wiki/File:Anton_Romako_-_Tegetthoff_in_der_Seeschlacht_bei_Lissa_II_-_2198_-_Österreichische_Galerie_Belvedere.jpg (WebP, longest side 800 px)
+81. photos/foto-081.webp: Eduard_Slavoljub_Penkala.jpg. Photo is a scanner of a 19th century daguerreotype, author unknown, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Eduard_Slavoljub_Penkala.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+83. photos/foto-083.webp: Croatia-00609_-_Birth_House_of_Tito_(9370093765).jpg. Dennis G. Jarvis, {{cc-by-sa-2.0}}, https://commons.wikimedia.org/wiki/File:Croatia-00609_-_Birth_House_of_Tito_(9370093765).jpg (WebP, longest side 800 px)
+92. photos/foto-092.webp: Croatia-02138_-_Walls_of_Ston_(10091668384).jpg. Dennis G. Jarvis, {{cc-by-sa-2.0}}, https://commons.wikimedia.org/wiki/File:Croatia-02138_-_Walls_of_Ston_(10091668384).jpg (WebP, longest side 800 px)
+94. photos/foto-094.webp: Siege_of_Zadar.jpg. Andrea Vicentino, {{PD-art|PD-old-100-expired}}, https://commons.wikimedia.org/wiki/File:Siege_of_Zadar.jpg (WebP, longest side 800 px)
+101. photos/foto-101.webp: Kőszeg_-_Jurisics_Castle.jpg. Civertan Grafikai Stúdió, CC BY-SA 2.5 ({{civertan license}}, Civertan Grafikai Stúdió), https://commons.wikimedia.org/wiki/File:Kőszeg_-_Jurisics_Castle.jpg (WebP, longest side 800 px)
 
 102. photos/foto-01.webp: Josip Jelačić. Ivan Zasche (1826-1863), Public domain, https://commons.wikimedia.org/wiki/File:Ban-josip-jelacic.jpg (resized, WebP)
 103. photos/foto-02.webp: Ljudevit Gaj. Unknown author, Public domain, https://commons.wikimedia.org/wiki/File:Matica,_ljudevit_gaj.jpg (resized, WebP)

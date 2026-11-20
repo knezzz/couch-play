@@ -14,7 +14,7 @@
     {"q": "Kako se zove kolo iz Dalmatinske zagore koje se pleše bez glazbene pratnje?", "choices": ["Nijemo kolo", "Linđo", "Drmeš", "Poskočica"], "answer": 0},
     {"q": "Čiji se blagdan svečano slavi u Dubrovniku 3. veljače?", "choices": ["Svetog Duje", "Svetog Vlaha", "Svetog Roka", "Svetog Stjepana"], "answer": 1},
     {"q": "Iz kojeg je kraja soparnik, pita od blitve pečena pod žeravicom?", "choices": ["Poljica", "Konavala", "Ravnih kotara", "Imotske krajine"], "answer": 0},
-    {"q": "U kojem je gradu 1521. prvi put tiskana Marulićeva 'Judita'?", "choices": ["U Senju", "U Veneciji", "U Rimu", "U Dubrovniku"], "answer": 1},
+    {"q": "U kojem je gradu 1521. prvi put tiskana 'Judita'?", "choices": ["U Senju", "U Veneciji", "U Rimu", "U Dubrovniku"], "answer": 1},
     {"q": "Tko je autor epa 'Osman' o sultanu Osmanu II.?", "choices": ["Ivan Gundulić", "Marko Marulić", "Petar Hektorović", "Džore Držić"], "answer": 0},
     {"q": "Čiji je ovo spomenik u Dubrovniku? Napisao je komediju 'Dundo Maroje'.", "image": "photos/slika-014.webp", "choices": ["Marina Držića", "Ivana Gundulića", "Hanibala Lucića", "Petra Hektorovića"], "answer": 0},
     {"q": "Tko je napisao spjev 'Smrt Smail-age Čengića'?", "choices": ["Ivan Mažuranić", "Petar Preradović", "Stanko Vraz", "August Šenoa"], "answer": 0},
