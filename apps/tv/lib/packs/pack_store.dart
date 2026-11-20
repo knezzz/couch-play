@@ -62,7 +62,7 @@ class PackStore {
     return PackStore._(userDir, b, u);
   }
 
-  /// The bundled packs of Task 28 count as new, and so does any pack uploaded
+  /// The bundled packs of Task 28 and newer count as new, and so does any pack uploaded
   /// since this app started (a pack on disk from an earlier run does not).
   static const newBundledIds = {
     'hr-umjetnost',
@@ -71,6 +71,7 @@ class PackStore {
     'hr-memeovi',
     'hr-fizika',
     'hr-matematika',
+    'hr-hrana-pice',
   };
   final _uploadedNow = <String>{};
 
