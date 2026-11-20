@@ -126,3 +126,48 @@ Task 44 (2026-11-17): made easier for a pub-quiz audience. 55 of the hardest que
 111. https://en.wikipedia.org/wiki/Per_mille (states: per thousand)
 112. https://en.wikipedia.org/wiki/Square (states: four equal sides)
 113. https://en.wikipedia.org/wiki/Circular_sector (states: two radii and an arc)
+114. https://en.wikipedia.org/wiki/Regular_dodecahedron (states: "a polyhedron with 12 faces) composed of regular pentagonal faces")
+115. https://en.wikipedia.org/wiki/Octahedron (states: "the regular octahedron, a Platonic solid composed of eight equilateral triangles")
+116. https://en.wikipedia.org/wiki/Tangram (states: "a dissection puzzle consisting of seven flat polygons, called tans")
+117. https://en.wikipedia.org/wiki/Abacus (states: "also called a counting frame, is a hand-operated calculating tool"); Croatian name: https://hr.wikipedia.org/wiki/Abak
+118. https://en.wikipedia.org/wiki/Slide_rule (states: "a hand-operated mechanical calculator consisting of slidable rulers for conducting mathematical operations such as multiplication, division"); Croatian name: Hrvatski jezični portal, "računalo" (2. a. pov. "pomagalo za računanje [mehaničko računalo (abak); logaritamsko računalo]")
+119. https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle (states: "a fractal with the overall shape of an equilateral triangle, subdivided recursively into smaller equilateral triangles"); Croatian name: https://hr.wikipedia.org/wiki/Trokut_Sierpi%C5%84skog
+120. https://en.wikipedia.org/wiki/Mandelbrot_set (states: "the boundary of the Mandelbrot set is a fractal curve"); Croatian name: https://hr.wikipedia.org/wiki/Mandelbrotov_skup
+121. https://en.wikipedia.org/wiki/Seven_Bridges_of_K%C3%B6nigsberg (states: "the city of Königsberg (now Kaliningrad) where each of the city's bridges is crossed exactly once" and "proof of impossibility by Leonhard Euler, in 1736")
+
+## Pictures added 2026-11-20
+
+Resized to 800 px wide, WebP. Template = licence template on the Commons file page.
+
+26. photos/slika-026.webp: four dice. Diacritica, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:6sided_dice.jpg
+38. photos/slika-038.webp: Pythagoras monument by the harbour, Pythagoreio. Lakey, CC BY-SA 3.0, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Pythagoras_Monument%2C_Pythagoreion%2C_Samos%2C_Greece_02.JPG (inscription on the plinth blurred (it names Samos))
+40. photos/slika-040.webp: Archimedes, painting by Domenico Fetti, 1620. Domenico Fetti, Public domain, {{PD-Art-old-100}}, https://commons.wikimedia.org/wiki/File:Domenico-Fetti_Archimedes_1620.jpg
+56. photos/slika-056.webp: Möbius strip. David Benbennick, CC BY-SA 3.0, {{Self|GFDL|Cc-by-sa-3.0-migrated|cc-by-sa-2.0}}, https://commons.wikimedia.org/wiki/File:M%C3%B6bius_strip.jpg
+58. photos/slika-058.webp: Carl Friedrich Gauss, portrait by C. A. Jensen, 1840. Christian Albrecht Jensen, Public domain, {{PD-Art|PD-old-auto-expired|deathyear=1870}}, https://commons.wikimedia.org/wiki/File:Carl_Friedrich_Gauss_1840_by_Jensen.jpg
+61. photos/slika-061.webp: page of a Liber Abaci manuscript. unknown scribe, 13th/14th century, Public domain, {{PD-Art|PD-old-100}}, https://commons.wikimedia.org/wiki/File:Liber_abbaci_magliab_f124r.jpg
+62. photos/slika-062.webp: Chaturbhuj temple, Gwalior fort (zero inscription). Varun Shiv Kapur from New Delhi, India, CC BY 2.0, {{cc-by-2.0}}, https://commons.wikimedia.org/wiki/File:876_CE_monolithic_rock_Chaturbhuj_Hindu_Temple_Gwalior_Fort%2C_Zero_Inscription.jpg
+64. photos/slika-064.webp: Pascal's triangle, rows 0–5. Conrad Irwin (original by Drini), CC BY-SA 3.0, {{self|GFDL|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Pascal%27s_triangle_5.svg (rendered from SVG on white)
+66. photos/slika-066.webp: Niels Henrik Abel, portrait by Johan Gørbitz. Johan Gørbitz, Public domain, {{PD-Art|PD-old-auto|deathyear=1853}}, https://commons.wikimedia.org/wiki/File:Johan_G%C3%B8rbitz_-_Niels_Henrik_Abel_-_Norsk_portrettarkiv_-_Riksantikvaren_-_A000005.jpg
+99. photos/slika-099.webp: bust of Pythagoras, Capitoline Museums. Cmick25, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Bust_of_Pythagoras_at_the_Capitoline_Museum.jpg
+114. photos/slika-114.webp: regular dodecahedron. Kjell André (original), DTR (vector), CC BY-SA 3.0, {{GFDL-user|DTR|migration=relicense}}, https://commons.wikimedia.org/wiki/File:Dodecahedron.svg (rendered from SVG on white)
+115. photos/slika-115.webp: regular octahedron. Stannered, CC BY-SA 3.0, {{Self|cc-by-sa-3.0-migrated|GFDL}}, https://commons.wikimedia.org/wiki/File:Octahedron.svg (rendered from SVG on white)
+117. photos/slika-117.webp: Japanese abacus (soroban). Syced, CC0, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:Abacus_actually_in_use_at_kimono_shop_in_Otaru.jpg (cropped to the wooden abacus; the electronic calculator above it (brand name) removed)
+118. photos/slika-118.webp: slide rule in front of its box. Berthold Werner, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Rechenschieber_BW_2026-02-15_17-55-08.jpg (maker's mark on the box blurred)
+119. photos/slika-119.webp: Sierpiński triangle. Medvedev, Public domain, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Big_Sierpinski_triangle.svg (rendered from SVG on white)
+120. photos/slika-120.webp: Mandelbrot set. Helibene, CC BY-SA 4.0, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Mandelbrot_Set_B%26W_1920x1080.png (cropped around the set)
+121. photos/slika-121.webp: Merian's plan of Königsberg with the seven bridges coloured. Merian-Erben, Public domain, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Konigsberg_Bridge.png (title "KONINGSBERGA" and the legend cropped)
+116. photos/slika-116.webp: tangram, the seven pieces assembled into a square. Our own drawing (drawn with PIL for this pack), no outside source.
+
+### Rewordings (2, portraits)
+
+- 58: "Kojeg su matematičara nazivali „princem matematičara”?" -> "Kojeg su matematičara, ovoga s portreta, nazivali „princem matematičara”?" (choices unchanged)
+- 99: "Po kojem je matematičaru nazvan poučak a² + b² = c²?" -> "Po kojem je matematičaru, čija je ovo bista, nazvan poučak a² + b² = c²?" (choices unchanged)
+
+### New picture questions 114–121 (added 2026-11-20)
+
+Sources are in the numbered list above. Distractors were chosen so that no new question rules out another one's answer (e.g. no "Pascalov trokut", which would answer Q64; abacus and slide rule are not choices in each other's question).
+
+### Picture notes
+
+- Not used from the researcher's list: 39 (hr-opce-znanje Q296 already shows Euclid for a question about him), 43 (any Giza pyramid photo answers Q102 "Kakvog su oblika strane egipatske piramide u Gizi?"), 55 (no author on the file page; the solids now come in Q114/115), 59 (the same Frans Hals file is hr-opce-znanje Q132 "Koji je filozof na ovom portretu?" -> Descartes), 68 (Getaldić's house shows Dubrovnik, the answer).
+- B3: the listed tangram file is a dissection diagram with Bengali labels, so the pack uses our own drawing.
