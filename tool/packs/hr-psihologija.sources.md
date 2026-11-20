@@ -77,7 +77,7 @@ prison experiment is asked only for what happened (who ran it, how long).
 66. people tend to develop a liking ... merely because they are familiar with them: https://en.wikipedia.org/wiki/Mere-exposure_effect
 67. The scholar best known for developing the mere-exposure effect is Robert Zajonc: https://en.wikipedia.org/wiki/Mere-exposure_effect
 68. Introduced as The Five Stages of Death by ... Elisabeth Kübler-Ross in 1969: https://en.wikipedia.org/wiki/Five_stages_of_grief
-69. denial, anger, bargaining, depression, and acceptance: https://en.wikipedia.org/wiki/Five_stages_of_grief
+69. denial, anger, bargaining, depression, and acceptance (the model introduced in 1969, see 68): https://en.wikipedia.org/wiki/Five_stages_of_grief
 70. He coined the phrase identity crisis: https://en.wikipedia.org/wiki/Erik_Erikson
 71. the theory expresses eight stages of development: https://en.wikipedia.org/wiki/Erikson%27s_stages_of_psychosocial_development
 72. The concept was introduced ... by psychologist Lev Vygotsky: https://en.wikipedia.org/wiki/Zone_of_proximal_development
@@ -121,3 +121,32 @@ prison experiment is asked only for what happened (who ran it, how long).
 110. grčkog psiha = duh, duša, život, um, dah i logos = govor, riječ: https://hr.wikipedia.org/wiki/Psihologija
 111. a natural oscillation that repeats roughly every 24 hours: https://en.wikipedia.org/wiki/Circadian_rhythm
 112. riječ psihologija ... nalazi se u naslovu izgubljena djela Marka Marulića Psichiologia de ratione animae humanae: https://proleksis.lzmk.hr/42901/
+113. Penrose triangle, "Impossible object": https://en.wikipedia.org/wiki/Penrose_triangle
+114. Hermann grid illusion, "Dark blobs appear at the intersections": https://en.wikipedia.org/wiki/Grid_illusion
+115. Ishihara color test plate; "Viewers with red–green color blindness will read it as 21": https://en.wikipedia.org/wiki/Ishihara_test
+116. rabbit–duck illusion, "The earliest known version is an unattributed drawing from the 23 October 1892 issue of Fliegende Blätter, a German humour magazine": https://en.wikipedia.org/wiki/Rabbit%E2%80%93duck_illusion
+117. "The Ebbinghaus illusion or Titchener circles is an optical illusion of relative size perception": https://en.wikipedia.org/wiki/Ebbinghaus_illusion
+118. "Zener cards are cards used to conduct experiments for extrasensory perception (ESP)": https://en.wikipedia.org/wiki/Zener_cards
+
+## Pictures (2026-11-20)
+
+From tool/packs/hr-psihologija.pictures.md, each one looked at; licence template read on the Commons file page. Questions 113-118 are new picture questions. SVG originals were rendered by Commons to PNG thumbnails and saved as WebP (no SVG shipped); transparent backgrounds flattened onto white. US federal work: 98 (PD-USGov-Military-Army).
+
+5. photos/foto-005.webp: Philip_Zimbardo.jpg. Elekes Andor, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Philip_Zimbardo.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+7. photos/foto-007.webp: Ivan_Pavlov_NLM2.jpg. Deschiens, {{PD-old}} + {{Cc-by-4.0}}, https://commons.wikimedia.org/wiki/File:Ivan_Pavlov_NLM2.jpg (WebP, longest side 800 px)
+9. photos/foto-009.webp: Skinner_boxes_01.jpg. Luis Dantas, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Skinner_boxes_01.jpg (WebP, longest side 640 px)
+27. photos/foto-027.webp: William_James_by_Alice_M._Boughton,_c._1907,_platinum_print,_from_the_National_Portrait_Gallery_-_NPG-NPG_87_37James-000001_(cropped).jpg. Alice Boughton, {{cc0}} + {{PD-Art|PD-old-auto-expired|deathyear=1943}}, https://commons.wikimedia.org/wiki/File:William_James_by_Alice_M._Boughton,_c._1907,_platinum_print,_from_the_National_Portrait_Gallery_-_NPG-NPG_87_37James-000001_(cropped).jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+30. photos/foto-030.webp: Sigmund_Freud,_by_Max_Halberstadt_(cropped).jpg. Max Halberstadt, {{PD-old-auto-1923|deathyear=1940}}, https://commons.wikimedia.org/wiki/File:Sigmund_Freud,_by_Max_Halberstadt_(cropped).jpg (WebP, longest side 800 px)
+33. photos/foto-033.webp: PSM_V80_D211_Edward_Lee_Thorndike.png. Popular Science Monthly, vol. 80 (1912), {{PD-US}}, https://commons.wikimedia.org/wiki/File:PSM_V80_D211_Edward_Lee_Thorndike.png (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+46. photos/foto-046.webp: Wilhelm_Wundt.jpg. nepoznat, {{PD-EU-no author disclosure}}, https://commons.wikimedia.org/wiki/File:Wilhelm_Wundt.jpg (WebP, longest side 800 px)
+64. photos/foto-064.webp: Bluma_Zeigarnik,_1970-1980s.jpg. Andrey Zeigarnik, {{PD-author-FlickrPDM}}, https://commons.wikimedia.org/wiki/File:Bluma_Zeigarnik,_1970-1980s.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+68. photos/foto-068.webp: Elisabeth_Kubler-Ross_©Lynn_Gilbert.jpg. Lynn Gilbert, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Elisabeth_Kubler-Ross_©Lynn_Gilbert.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+88. photos/foto-088.webp: Elizabeth_Loftus-TAM_9-July_2011.JPG. BDEngler, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Elizabeth_Loftus-TAM_9-July_2011.JPG (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+89. photos/foto-089.webp: Mihaly_Csikszentmihalyi.jpg. Ehirsh, {{PD-self}}, https://commons.wikimedia.org/wiki/File:Mihaly_Csikszentmihalyi.jpg (WebP, longest side 774 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+98. photos/foto-098.webp: Martin_Seligman.png. U.S. Army, {{PD-USGov-Military-Army}}, https://commons.wikimedia.org/wiki/File:Martin_Seligman.png (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
+113. photos/foto-113.webp: Penrose-dreieck.svg. Tobias R. – Metoc, {{pd-trivial}}, https://commons.wikimedia.org/wiki/File:Penrose-dreieck.svg (WebP, longest side 800 px)
+114. photos/foto-114.webp: HermannGrid.svg. Mrmw, {{self|Cc-zero}}, https://commons.wikimedia.org/wiki/File:HermannGrid.svg (WebP, longest side 800 px)
+115. photos/foto-115.webp: Ishihara_tests_12_74.svg. RWhitwam, {{self|cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:Ishihara_tests_12_74.svg (WebP, 800x322 px; cropped to the two plates, without the English caption that mentions colour blindness)
+116. photos/foto-116.webp: Kaninchen_und_Ente.svg. unknown (Fliegende Blätter, 1892), {{PD-old-70-1923}}, https://commons.wikimedia.org/wiki/File:Kaninchen_und_Ente.svg (WebP, longest side 800 px; cropped to remove the German caption ("Welche Thiere ...", "Kaninchen und Ente"))
+117. photos/foto-117.webp: Ebbinghaus_Illusion.svg. AlexWorth91, {{self|Cc-zero}}, https://commons.wikimedia.org/wiki/File:Ebbinghaus_Illusion.svg (WebP, longest side 800 px)
+118. photos/foto-118.webp: Zener_cards_(color).svg. Mikhail Ryazanov, {{GFDL|migration=relicense}} (Commons: also CC BY-SA 3.0), https://commons.wikimedia.org/wiki/File:Zener_cards_(color).svg (WebP, longest side 800 px)
