@@ -31,7 +31,7 @@ void main() {
 
   testWidgets('the bundled packs load', (t) async {
     final packs = await loadBlefPacks(rootBundle);
-    expect(packs.length, 2);
+    expect(packs.length, 3);
     expect(packs.every((p) => p.questions.length >= 10), isTrue);
   });
 
