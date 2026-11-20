@@ -25,7 +25,7 @@ void main() {
 
   testWidgets('the bundled packs load', (t) async {
     final packs = await loadUljezPacks(rootBundle);
-    expect(packs.length, 8);
+    expect(packs.length, 10);
     expect(packs.every((p) => p.pairs.length >= 40), isTrue);
     expect(packs.map((p) => p.id), contains('uljez-hrana'));
   });

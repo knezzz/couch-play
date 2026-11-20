@@ -38,7 +38,7 @@ void main() {
 
   testWidgets('the bundled packs load', (t) async {
     final packs = await loadObjasniPacks(rootBundle);
-    expect(packs.length, 7);
+    expect(packs.length, 9);
     expect(packs.every((p) => p.words.length >= 100), isTrue);
   });
 
