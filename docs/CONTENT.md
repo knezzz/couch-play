@@ -6,7 +6,7 @@ item yet). Status per line: open / routed / checking / done.
 Known gaps across all games, from the earlier content seats' own hand-backs: **no native Croatian read** of the new
 wording, and **quiz distractors not page-checked**. The content tests guard format and duplicates only, not facts.
 
-## Kviz (17 bundled packs, 2,146 questions, 383 with pictures)
+## Kviz (17 bundled packs, 2,159 questions, 974 with pictures = 45%; ~50 MB of zips)
 
 Sources in `tool/packs/` (`hr-*.json` or `hr-*/` folder + `hr-*.sources.md`); `tool/pack_zip.sh` copies/zips every
 `hr-*` into `apps/tv/assets/packs/`. The English `film-music`, `general`, `geography`, `science`, `flags`, `shapes`
@@ -14,20 +14,20 @@ are no longer bundled.
 
 | Pack | Questions | Pictures | Note |
 |---|---|---|---|
-| hr-opce-znanje | 397 | 0 | re-checked 2026-11-20 (08a5663): 401/401 right, 4 dropped, 7 reworded |
-| hr-film-glazba | 130 | 14 | re-checked 2026-11-20 (fcbe960): Q76 fixed, 4 US-only-PD photos replaced |
+| hr-opce-znanje | 397 | 141 | re-checked (08a5663); pictures 2c81dd5; 7.5 MB |
+| hr-film-glazba | 130 | 41 | re-checked (fcbe960); pictures d86f716, a0d9944 |
 | hr-hrana-pice | 99 | 49 | new 2026-11-20 (b2c179d), fact-checked; NEW tag (0fbf2b1) |
-| hr-znanost | 130 | 9 | |
-| hr-kultura-sport | 119 | 8 | re-checked 2026-11-20: 3 dropped, 8 fixed, new zvončari photo |
-| hr-umjetnost | 122 | 38 | |
-| hr-memeovi | 110 | 0 | re-checked 2026-11-20 (6eb4f71): 0 errors, 9 niche/duplicate cut |
-| hr-matematika | 113 | 4 | made easier 2026-11-17 |
-| hr-psihologija | 112 | 0 | |
-| hr-povijest | 111 | 10 | |
-| hr-fizika | 107 | 6 | made easier 2026-11-17 |
-| hr-ljudsko-tijelo | 106 | 10 | |
-| hr-zemljopis-svijeta | 102 | 11 | |
-| hr-geografija | 100 | 18 | Croatia only |
+| hr-znanost | 129 | 64 | pictures 46daa7b (Q34 dropped as a ljudsko-tijelo duplicate) |
+| hr-kultura-sport | 119 | 54 | re-checked (1543f98); pictures cc9cfe0 |
+| hr-umjetnost | 122 | 59 | pictures 3397f81; 5.9 MB |
+| hr-memeovi | 110 | 100 | re-checked (6eb4f71); pictures 5059cb5 (person asked ≥ 90%) |
+| hr-matematika | 121 | 22 | pictures + 8 new picture questions 3877367 |
+| hr-psihologija | 118 | 18 | pictures + 6 new picture questions db076ad |
+| hr-povijest | 111 | 43 | pictures 3748e3b |
+| hr-fizika | 107 | 36 | pictures a9ee33c |
+| hr-ljudsko-tijelo | 106 | 48 | pictures e2a6470 (family-safe) |
+| hr-zemljopis-svijeta | 102 | 43 | pictures a59cef2 |
+| hr-geografija | 100 | 50 | Croatia only; pictures 5fba511; 5.5 MB |
 | hr-medimurje | 84 | 2 | **person reviews every change** |
 | hr-oblici | 50 | 50 | all generated SVG, script-checked |
 | hr-zastave | 154 | 154 | grown 2026-11-20 (2b90db6); coat-of-arms SVGs untested on the TV |
@@ -35,6 +35,10 @@ are no longer bundled.
 Fix:
 - [done: kultura-sport 1543f98, memeovi 6eb4f71, film-glazba fcbe960, opće znanje 08a5663] Fact re-check of the
   packs most likely to age. [open] The other 11 packs (znanost, umjetnost, povijest, ...) have not been re-checked.
+- [open] Cross-pack duplicate clean-up (found during the picture checks): hr-ljudsko-tijelo Q37 = hr-znanost Q94
+  (hemoglobin metal), Q32 ~ znanost Q95 (hormon rasta), Q33 ~ znanost Q28 (vitamin D); in-pack Q9 picture -> Q19
+  (Ošit); hr-psihologija Q104 ~ hr-ljudsko-tijelo Q21 (hipokampus / morski konjić). pack_duplicates_test only
+  catches identical text.
 - [open] Native-language read (diacritics, awkward phrasing, giveaway distractors: one choice clearly a different
   kind from the other three).
 
@@ -42,12 +46,14 @@ Add:
 - [done 2b90db6] hr-zastave: more flags (aim ~150; harder lookalikes: Chad/Romania, Indonesia/Monaco, etc.).
 - [Hrana i piće done b2c179d; open] New packs from pub-quiz topic lists (topics only, our own wording). Candidates
   left: Životinje, Sport (svijet), Jezik i riječi, Hrvatska pop-kultura, Glazba 2000+. Pick with the person.
-- [routed 2026-11-20] Pictures (person): hr-memeovi ≥ 90%, every other pack ~50% (hr-medimurje only with the
-  person's review). Free licence only (Commons; no screenshots, stock photos or logos), picture must not give the
-  answer away. Researcher sources per pack (`tool/packs/<pack>.pictures.md`), writers wire them in. Pack limit
-  is 10 MB since 748ce9c. In progress: memeovi (quiz writer), sourcing from opće znanje down (researcher).
-  Risk (build-lead): the TV loads every Kviz pack into memory at start; check start time and memory on the TV once
-  the picture packs land (needs the person's yes for the install).
+- [done 2026-11-20] Pictures (person): hr-memeovi ≥ 90% (90%), every other pack ~50% (12 packs, 15-50%; packs
+  where pictures would show the answer stayed lower rather than pad). Free licence only, checked on every Commons
+  file page; no picture gives away an answer in any pack (checked both ways). Researcher lists in
+  `tool/packs/<pack>.pictures.md`. Pack limit 10 MB since 748ce9c. hr-medimurje not done (person's call).
+  [open, person] Second pass for packs under 40% (opće znanje, fizika, film-glazba, povijest): new picture
+  questions from the unsearched questions listed in each pictures.md.
+  [open, needs the person's yes] TV check: the TV loads every Kviz pack (~50 MB of zips now) into memory at start;
+  check start time and memory on the BRAVIA (build-lead's risk note).
 
 ## Uljez (10 packs, 436 pairs)
 
