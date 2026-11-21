@@ -518,7 +518,7 @@ void main() {
     expect(a.last<CurveStatus>()!.alive, isTrue);
   });
 
-  test('match_over_finishes_the_game_with_placement_points', () {
+  testWidgets('match_over_finishes_the_game_with_placement_points', (t) async {
     final a = join(s, 'A');
     final b = join(s, 'B');
     a.say(const SetBots(1));
@@ -530,6 +530,8 @@ void main() {
       ..[2] = 12;
     sim.matchOver = true;
     s.curveEvents([RoundOver(0), MatchOver(0)]);
+    expect(s.phase, Phase.curve, reason: 'the winner shows first (Task 52)');
+    await t.pump(Session.momentTime);
     expect(s.phase, Phase.results);
     final bot = s.players.firstWhere((p) => p.bot);
     // 1st gets N-1=2 points, 2nd 1, last 0; the bot is on the scoreboard too.

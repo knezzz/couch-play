@@ -109,6 +109,10 @@ void main() {
     s.sim!.roundOver = true;
     s.curveEvents([RoundOver(0)]);
     await t.pump();
+    expect(find.byKey(const ValueKey('winner-banner')), findsOneWidget, reason: 'the winner first');
+    expect(find.byKey(const ValueKey('round-break')), findsNothing);
+    at += Session.momentTime;
+    await t.pump(Session.momentTime);
     expect(s.roundBreak, isTrue);
     expect(find.byKey(const ValueKey('round-break')), findsOneWidget);
     expect(find.text(Strings.curveBreakTitle(1)), findsOneWidget);

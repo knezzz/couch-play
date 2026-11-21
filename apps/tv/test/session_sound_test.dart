@@ -104,6 +104,7 @@ void main() {
     });
 
     testWidgets('pickup_crash_round_and_match_events', (t) async {
+      // (the winner moment's timer is cancelled by dispose)
       await start(t);
       s.curveEvents([PickedUp(0, PowerUpKind.values.first)]);
       s.curveEvents([PickedUp(1, PowerUpKind.values.last)]);

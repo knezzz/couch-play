@@ -13,7 +13,15 @@ import '../../strings.dart';
 /// The arena is scaled to fit the screen, letterboxed.
 class CurveGame extends FlameGame {
   CurveGame(this.sim, this.colors,
-      {this.onBeforeTick, this.onEvents, this.holdWhen, this.characters = const {}});
+      {this.onBeforeTick, this.onEvents, this.holdWhen, this.characters = const {}, this.bottomBand = 0});
+
+  /// The share of the screen height kept free under the arena for the names strip (Task 52).
+  /// 63 px of 1080: the arena scale goes from x1.2 to x1.13; the simulation is untouched.
+  static const bandFraction = 0.058;
+  final double bottomBand;
+
+  /// Heads to ring while the winner moment holds the field (set by the TV; empty otherwise).
+  Set<int> ring = const {};
 
   final CurveSim sim;
   final List<Color> colors;
@@ -106,10 +114,11 @@ class CurveGame extends FlameGame {
   @override
   void render(Canvas canvas) {
     final w = sim.config.arenaW.toDouble(), h = sim.config.arenaH.toDouble();
-    final k = size.x / w < size.y / h ? size.x / w : size.y / h;
+    final free = size.y * (1 - bottomBand);
+    final k = size.x / w < free / h ? size.x / w : free / h;
     canvas
       ..save()
-      ..translate((size.x - w * k) / 2, (size.y - h * k) / 2)
+      ..translate((size.x - w * k) / 2, (free - h * k) / 2)
       ..scale(k)
       ..drawRect(Rect.fromLTWH(0, 0, w, h), Paint()..color = const Color(0xFF14141E))
       ..clipRect(Rect.fromLTWH(0, 0, w, h));
@@ -127,6 +136,10 @@ class CurveGame extends FlameGame {
     final counting = sim.countingDown;
     if (counting) _drawCountdownNumber(canvas, w, h);
     for (final hd in sim.heads) {
+      if (ring.contains(hd.id)) {
+        canvas.drawCircle(Offset(hd.x, hd.y), 44,
+            _icon..style = PaintingStyle.stroke..strokeWidth = 8..color = const Color(0xFFFFFFFF));
+      }
       if (!hd.alive) continue;
       canvas.drawCircle(Offset(hd.x, hd.y), base * (counting ? 1.6 : 0.8),
           _head..color = counting ? _color(hd.id) : (sim.effectLeft(hd.id, PowerUpKind.ghost) > 0 ? const Color(0x59FFFFFF) : const Color(0xFFFFFFFF)));

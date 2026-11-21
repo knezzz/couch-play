@@ -29,16 +29,19 @@ void main() {
     a.say(const StartGame(GameKind.curve, null));
   }
 
-  void endRound() {
+  /// The round ends; the winner moment (Task 52) runs out, then the break begins.
+  Future<void> endRound(WidgetTester t) async {
     s.sim!.scores[0] = 4;
     s.sim!.roundOver = true;
     s.curveEvents([RoundOver(0)]);
+    at += Session.momentTime; // the break's clock starts when the moment ends
+    await t.pump(Session.momentTime);
   }
 
   testWidgets('a round over starts a 4 s break; the next round starts when it ends, not before', (t) async {
     startMatch();
     expect(s.roundBreak, isFalse);
-    endRound();
+    await endRound(t);
     expect(s.roundBreak, isTrue);
     expect(s.roundBreakRemaining, Session.roundBreakTime);
     expect(Session.roundBreakTime, const Duration(seconds: 4));
@@ -57,7 +60,7 @@ void main() {
     startMatch();
     var notified = 0;
     s.changes.addListener(() => notified++);
-    endRound();
+    await endRound(t);
     final n = notified;
     expect(n, greaterThan(0), reason: 'the TV is told the break began');
     await wait(t, 1);
@@ -76,6 +79,8 @@ void main() {
     s.sim!.matchOver = true;
     s.sim!.roundOver = true;
     s.curveEvents([RoundOver(0), MatchOver(0)]);
+    expect(s.phase, Phase.curve, reason: 'the winner of the match shows first');
+    await t.pump(Session.momentTime);
     expect(s.phase, Phase.results);
     expect(s.roundBreak, isFalse);
     s.dispose();
@@ -83,7 +88,7 @@ void main() {
 
   testWidgets('abandoning the game in a break cancels it', (t) async {
     startMatch();
-    endRound();
+    await endRound(t);
     s.endGame();
     expect(s.roundBreak, isFalse);
     await wait(t, 5);
@@ -94,7 +99,7 @@ void main() {
 
   testWidgets('nextRound called by hand ends the break at once and the timer does not start a second round', (t) async {
     startMatch();
-    endRound();
+    await endRound(t);
     s.nextRound();
     expect(s.roundBreak, isFalse);
     expect(s.curveRound, 2);
@@ -106,7 +111,7 @@ void main() {
   testWidgets('every round gets its break', (t) async {
     startMatch();
     for (var r = 1; r <= 3; r++) {
-      endRound();
+      await endRound(t);
       expect(s.roundBreak, isTrue, reason: 'round $r');
       await wait(t, 4);
       expect(s.curveRound, r + 1);
@@ -117,7 +122,7 @@ void main() {
   testWidgets('the phones are told the round number, and it counts up', (t) async {
     startMatch();
     expect(a.last<CurveStatus>()!.round, 1);
-    endRound();
+    await endRound(t);
     await wait(t, 4);
     expect(a.last<CurveStatus>()!.round, 2);
     s.dispose();

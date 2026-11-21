@@ -28,7 +28,7 @@ void main() {
     await t.pump(const Duration(milliseconds: 400));
     await t.tap(find.text(Strings.kickPlayer));
     await t.pump(const Duration(milliseconds: 400));
-    await t.tap(find.textContaining('Cvita'));
+    await t.tap(find.textContaining('Cvita').last); // the first is the names strip under the menu
     await t.pump(const Duration(milliseconds: 400));
     await t.tap(find.text(Strings.yes));
     await t.pump(const Duration(milliseconds: 400));

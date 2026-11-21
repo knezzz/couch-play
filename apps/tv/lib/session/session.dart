@@ -139,6 +139,7 @@ class Session {
     _blef?.dispose();
     _tkobi?.dispose();
     _roundBreakTimer?.cancel();
+    _momentTimer?.cancel();
     _changes.dispose();
   }
 
@@ -1637,9 +1638,12 @@ class Session {
   void curveEvents(List<CurveEvent> events) {
     if (_phase != Phase.curve || _sim == null) return;
     var roundOver = false, matchOver = false;
+    final died = <int>[];
+    int? survivor, matchWinner;
     for (final e in events) {
       switch (e) {
         case Died(:final id):
+          died.add(id);
           sfx.play(Sound.crash);
           final p = _byId(_simIdOf.entries.where((x) => x.value == id).firstOrNull?.key ?? -1);
           final status = p == null ? null : _statusFor(p);
@@ -1649,10 +1653,12 @@ class Session {
                 alive: false, score: status.score, target: status.target, round: status.round));
           }
           p?.socket?.send(const Effect('colorPulse')); // bots have no socket
-        case RoundOver():
+        case RoundOver(:final survivorId):
           roundOver = true;
-        case MatchOver():
+          survivor = survivorId;
+        case MatchOver(:final winnerId):
           matchOver = true;
+          matchWinner = winnerId;
         case PickedUp():
           sfx.play(Sound.pickup);
       }
@@ -1664,10 +1670,35 @@ class Session {
     }
     if (roundOver) _sendStatuses();
     if (matchOver) {
-      finishGame(_gameScores());
+      _startMoment(CurveMoment([matchWinner!], match: true), () => finishGame(_gameScores()));
     } else if (roundOver) {
-      _startRoundBreak();
+      // Nobody left standing: those who crashed on this last tick tie.
+      final tie = survivor == null;
+      _startMoment(CurveMoment(tie ? died : [survivor!], tie: tie), _startRoundBreak);
     }
+  }
+
+  // --- the winner moment (Task 52) ---
+
+  /// How long the frozen field shows who won, before the scores card or the results.
+  static const momentTime = Duration(milliseconds: 1500);
+  Timer? _momentTimer;
+  CurveMoment? _moment;
+
+  /// Non-null from the last crash until the card (or results) follows.
+  CurveMoment? get moment => _moment;
+
+  void _startMoment(CurveMoment m, void Function() then) {
+    _momentTimer?.cancel();
+    _moment = m;
+    _momentTimer = Timer(momentTime, () {
+      _momentTimer = null;
+      _moment = null;
+      // The game may have ended meanwhile (someone left, Back): then there is nothing to follow.
+      if (_phase == Phase.curve) then();
+      _notify();
+    });
+    _notify();
   }
 
   // --- between rounds (Task 37) ---
@@ -1702,6 +1733,9 @@ class Session {
   }
 
   void _endRoundBreak() {
+    _momentTimer?.cancel();
+    _momentTimer = null;
+    _moment = null;
     _roundBreakTimer?.cancel();
     _roundBreakTimer = null;
     _roundBreakEnd = null;
@@ -1791,4 +1825,12 @@ class Session {
     _broadcastLobby();
     _notify();
   }
+}
+
+/// What the TV shows over the frozen Curve field after the last crash: [ids] are sim ids (colour
+/// indexes): the round winner, the match winner, or those who crashed together ([tie]).
+class CurveMoment {
+  const CurveMoment(this.ids, {this.match = false, this.tie = false});
+  final List<int> ids;
+  final bool match, tie;
 }

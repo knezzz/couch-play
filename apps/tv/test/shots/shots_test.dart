@@ -79,8 +79,8 @@ void main() {
     return host;
   }
 
-  Future<void> shot(WidgetTester t, GlobalKey key, String name) async {
-    await t.pump(const Duration(seconds: 2));
+  Future<void> shot(WidgetTester t, GlobalKey key, String name, {Duration settle = const Duration(seconds: 2)}) async {
+    await t.pump(settle);
     await t.runAsync(() async {
       final b = key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
       final img = await b.toImage();
@@ -193,6 +193,33 @@ void main() {
       host.say(SetSettings(const GameSettings(wolfHideRoles: false)));
       await t.pump();
       await shot(t, key, '10-panel-vukodlak-$tag');
+    });
+
+    // Plays a real Curve round (nobody steers: heads run into walls) until [stop] holds.
+    Future<Session> play(WidgetTester t, Size size, GlobalKey key, bool Function(Session) stop) async {
+      final s = await start(t, size, key);
+      players(s).say(const StartGame(GameKind.curve, null));
+      await t.pump();
+      for (var i = 0; i < 1200 && !stop(s); i++) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      expect(stop(s), isTrue, reason: 'the round got there');
+      return s;
+    }
+
+    testWidgets('11 Curve mid-play: the names strip, a crashed one dimmed $tag', skip: skip != null, (t) async {
+      final key = GlobalKey();
+      await play(t, size, key, (s) => s.sim!.heads.any((h) => !h.alive) && s.sim!.heads.any((h) => h.alive) && !s.sim!.countingDown);
+      await t.pump(const Duration(milliseconds: 600)); // the dead one's trail stays, the rest run on
+      await shot(t, key, '11-curve-names-strip-$tag', settle: Duration.zero);
+    });
+
+    testWidgets('12 Curve: the winner banner over the frozen field $tag', skip: skip != null, (t) async {
+      final key = GlobalKey();
+      final s = await play(t, size, key, (s) => s.moment != null);
+      await shot(t, key, '12-curve-winner-banner-$tag', settle: const Duration(milliseconds: 300));
+      await t.pumpWidget(const SizedBox());
+      s.dispose(); // its moment timer
     });
   }
 }

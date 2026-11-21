@@ -17,7 +17,9 @@ import 'server/lan_address.dart';
 import 'session/session.dart';
 import 'ui/back_guard.dart';
 import 'ui/curve/curve_game.dart';
+import 'ui/curve/name_strip.dart';
 import 'ui/curve/round_break_card.dart';
+import 'ui/curve/winner_banner.dart';
 import 'ui/home_screen.dart';
 import 'ui/pack_tiles.dart';
 import 'ui/pause_card.dart';
@@ -156,6 +158,8 @@ class _TvAppState extends State<TvApp> {
       _resultsTimer = null;
     }
     final sim = _session.sim;
+    final m = _session.moment;
+    _game?.ring = m == null || m.tie ? const {} : m.ids.toSet(); // the winner's head
     if (_session.phase == Phase.curve && sim != null) {
       if (sim != _gameSim || _session.curveRound != _gameRound) {
         _newGame(sim);
@@ -201,20 +205,57 @@ class _TvAppState extends State<TvApp> {
           characters: {for (final p in _session.playerInfos) p.colorIndex: p.character},
           onBeforeTick: _session.beforeGameTick,
           onEvents: _onCurveEvents,
-          holdWhen: () => _session.paused);
+          bottomBand: CurveGame.bandFraction,
+          // Stopped while the winner shows (no sim work, nothing to catch up afterwards).
+          holdWhen: () => _session.paused || _session.moment != null);
     });
+  }
+
+  /// The match's players for the strip and the banner, in colour order.
+  List<StripName> _stripNames(CurveSim sim, Iterable<int> ids) {
+    final infos = {for (final p in _session.playerInfos) p.colorIndex: p};
+    return [
+      for (final id in ids)
+        StripName(
+          name: infos[id]?.name ?? sim.names[id] ?? 'P${id + 1}',
+          colorIndex: id,
+          character: infos[id]?.character ?? '',
+          alive: sim.heads.where((h) => h.id == id).firstOrNull?.alive ?? false,
+        ),
+    ];
+  }
+
+  /// Every player's name in their line colour under the field. Rebuilt when a round starts and on a crash.
+  Widget? _stripOverlay() {
+    final sim = _gameSim;
+    if (sim == null || _session.roundBreak) return null;
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: MediaQuery.sizeOf(context).height * CurveGame.bandFraction,
+      child: NameStrip(names: _stripNames(sim, sim.heads.map((h) => h.id))),
+    );
+  }
+
+  /// Over the frozen field after the last crash: who won, or the tie.
+  Widget? _momentOverlay() {
+    final sim = _gameSim, m = _session.moment;
+    if (sim == null || m == null) return null;
+    return Positioned.fill(child: WinnerBanner(who: _stripNames(sim, m.ids), match: m.match, tie: m.tie));
   }
 
   void _onCurveEvents(List<CurveEvent> events) {
     _session.curveEvents(events);
     final fx = _nav.currentContext;
-    if (fx != null) {
-      for (final e in events) {
-        if (e is Died) {
-          EffectLayer.play(fx, EffectName.edgeGlow, color: playerColors[e.id % playerColors.length]);
-        }
+    var died = false;
+    for (final e in events) {
+      if (e is Died) {
+        died = true;
+        if (fx != null) EffectLayer.play(fx, EffectName.edgeGlow, color: playerColors[e.id % playerColors.length]);
       }
     }
+    if (died && mounted) setState(() {}); // the strip dims the one who crashed
     // The next round starts by itself after the scores break (Session.roundBreak).
   }
 
@@ -301,6 +342,8 @@ class _TvAppState extends State<TvApp> {
               ? Scaffold(
                   body: Stack(children: [
                     GameWidget(key: ValueKey('$_gameSim-$_gameRound'), game: game, autofocus: false),
+                    ?_stripOverlay(),
+                    ?_momentOverlay(),
                     ?_breakOverlay(),
                     ?_pauseOverlay(),
                   ]),
