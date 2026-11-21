@@ -301,6 +301,8 @@ class Session {
         _selectGame(peer, game);
       case SetSettings(:final settings):
         _setSettings(peer, settings);
+      case PackScreen(:final open):
+        _packScreen(peer, open);
       case Answer(:final index):
         final p = _playerOf(peer);
         if (p != null) _answer(p, index);
@@ -495,7 +497,10 @@ class Session {
   }
 
   void _broadcastLobby() {
-    if (_selectedBy != hostId) _selected = null; // a new host starts clean
+    if (_viewHost != hostId) {
+      _viewHost = hostId;
+      _packs = false; // the pack screen was the old host's
+    }
     final lobby = _lobbyMsg();
     for (final p in _players) {
       p.socket?.send(lobby);
@@ -508,7 +513,10 @@ class Session {
         players: playerInfos,
         packs: packStore?.infos ?? const [],
         hostId: hostId ?? -1,
-        selected: _selected,
+        selected: _game,
+        changes: List.unmodifiable(_feed),
+        changed: _changed,
+        hostView: hostView,
         uljezPacks: [for (final p in uljezPacks) PackInfo(p.id, p.title, p.pairs.length)],
         objasniPacks: [for (final p in objasniPacks) PackInfo(p.id, p.title, p.words.length)],
         tkobiPacks: [for (final p in tkobiPacks) PackInfo(p.id, p.title, p.prompts.length)],
@@ -565,10 +573,7 @@ class Session {
     if (_phase != Phase.lobby) return;
     sfx.play(Sound.menuMove); // moving on an empty home clicks too
     if (hostId == null) return;
-    _selected = game;
-    _selectedBy = hostId;
-    _broadcastLobby();
-    _notify();
+    _moveTo(game, ChangeBy.remote);
   }
 
   /// OK on the TV home: Igraj for the host, with the same checks. Null when the
@@ -707,18 +712,98 @@ class Session {
       peer.send(const ErrorMsg(Strings.botsBetweenGames));
       return;
     }
+    final before = _players.where((p) => p.bot).length;
     setBotCount(count);
+    final after = _players.where((p) => p.bot).length;
+    if (after != before) {
+      _changedSetting('bots', before, after, ChangeBy.phone);
+      _broadcastLobby();
+      _notify();
+    }
   }
 
   /// What the host set for this session (no persistence). A game takes the
   /// values it starts with; changes only count from the next game.
   GameSettings get settings => _settings;
 
-  /// The game whose details the host has open; null while they browse. It goes
-  /// when a game starts or ends and when the host changes.
-  GameKind? get selectedGame => _selected;
-  GameKind? _selected;
-  int? _selectedBy; // the host who chose it
+  /// The one game every screen shows (the host's ‹ › and the remote's ◀ ▶
+  /// move it). It is remembered across games and hosts; quiz at the start.
+  GameKind? get selectedGame => _game;
+  GameKind get homeGame => _game;
+  GameKind _game = GameKind.values.first;
+
+  // ---- the shared lobby state: what changed, where the host is ----
+
+  final _feed = <LobbyChange>[];
+  LobbyChange? _changed;
+  bool _panel = false; // the TV settings panel is open
+  bool _packs = false; // the host is in the pack screen
+  int? _viewHost;
+
+  /// What the host changed, newest first, at most 5. Lives in the session only.
+  List<LobbyChange> get feed => List.unmodifiable(_feed);
+
+  /// The setting change every screen outlines; a game change clears it.
+  LobbyChange? get changed => _changed;
+
+  /// Where the host is: the pack screen, the settings (the TV panel), the card.
+  HostView get hostView => _packs ? HostView.packs : _panel ? HostView.settings : HostView.home;
+
+  void _log(LobbyChange c) {
+    _feed.insert(0, c);
+    if (_feed.length > 5) _feed.removeLast();
+  }
+
+  void _moveTo(GameKind game, ChangeBy by) {
+    if (game == _game) return;
+    _game = game;
+    _changed = null;
+    _panel = false;
+    _packs = false;
+    _log(LobbyChange.game(game, by));
+    _broadcastLobby();
+    _notify();
+  }
+
+  /// A game starts or ends: no outline, no panel, no pack screen. The feed and
+  /// the shown game stay.
+  void _closeHostView() {
+    _changed = null;
+    _panel = false;
+    _packs = false;
+  }
+
+  /// ▼ on the TV home: the settings panel opens (once).
+  void openSettingsFromTv() {
+    if (_phase != Phase.lobby || _panel) return;
+    _panel = true;
+    _log(LobbyChange.settings(_game, ChangeBy.remote));
+    _broadcastLobby();
+    _notify();
+  }
+
+  /// Natrag on the TV panel.
+  void closeSettingsFromTv() {
+    if (_phase != Phase.lobby || !_panel) return;
+    _panel = false;
+    _broadcastLobby();
+    _notify();
+  }
+
+  /// The remote edits the panel: the same as the host's settings message.
+  void setSettingsFromTv(GameSettings wanted) {
+    if (_phase != Phase.lobby) return;
+    _applySettings(wanted, ChangeBy.remote);
+  }
+
+  void _packScreen(PeerSocket peer, bool open) {
+    final from = _playerOf(peer);
+    if (from == null || _phase != Phase.lobby || from.id != hostId || _packs == open) return;
+    _packs = open;
+    if (open) _log(LobbyChange.packs(_game, ChangeBy.phone));
+    _broadcastLobby();
+    _notify();
+  }
 
   void _selectGame(PeerSocket peer, GameKind? game) {
     final from = _playerOf(peer);
@@ -727,10 +812,7 @@ class Session {
       peer.send(_onlyHost);
       return;
     }
-    _selected = game;
-    _selectedBy = from.id;
-    _broadcastLobby();
-    _notify();
+    if (game != null) _moveTo(game, ChangeBy.phone);
   }
   GameSettings _settings = const GameSettings();
 
@@ -859,14 +941,31 @@ class Session {
       peer.send(_onlyHost);
       return;
     }
+    _applySettings(wanted, ChangeBy.phone);
+  }
+
+  void _applySettings(GameSettings wanted, ChangeBy by) {
     final previous = _settings;
     _settings = wanted.clamped();
     _normalizePacks(previous);
     try {
       _settingsFile?.writeAsStringSync(jsonEncode(_settings.toJson()));
     } catch (_) {} // not remembered, still set for this session
+    final was = previous.toJson(), now = _settings.toJson();
+    for (final k in now.keys) {
+      if (jsonEncode(was[k]) != jsonEncode(now[k])) _changedSetting(k, was[k], now[k], by);
+    }
     _broadcastLobby();
     _notify();
+  }
+
+  /// One setting changed: an entry, the outline, and the TV panel opens (the
+  /// pack screen stays when the host is in it).
+  void _changedSetting(String key, Object? old, Object? now, ChangeBy by) {
+    final c = LobbyChange.setting(_game, key, old, now, by);
+    _log(c);
+    _changed = c;
+    _panel = true;
   }
 
   /// Sets the number of bots, clamped so players + bots <= 8. Lobby only.
@@ -924,7 +1023,7 @@ class Session {
   void _startTkobi(List<Player> parts, TkobiPack pack) {
     _tkobi?.dispose();
     _gameHost = hostId;
-    _selected = null;
+    _closeHostView();
     _phase = Phase.tkobi;
     _tkobi = TkobiMatch(
       ids: [for (final p in parts) p.id],
@@ -954,7 +1053,7 @@ class Session {
   void _startBlef(List<Player> parts, BlefPack pack) {
     _blef?.dispose();
     _gameHost = hostId;
-    _selected = null;
+    _closeHostView();
     _phase = Phase.blef;
     _blef = BlefMatch(
       ids: [for (final p in parts) p.id],
@@ -984,7 +1083,7 @@ class Session {
   void _startKoliko(List<Player> parts, KolikoPack pack) {
     _koliko?.dispose();
     _gameHost = hostId;
-    _selected = null;
+    _closeHostView();
     _phase = Phase.koliko;
     _koliko = KolikoMatch(
       ids: [for (final p in parts) p.id],
@@ -1015,7 +1114,7 @@ class Session {
   void _startObjasni(List<Player> parts, ObjasniPack pack) {
     _objasni?.dispose();
     _gameHost = hostId;
-    _selected = null;
+    _closeHostView();
     _phase = Phase.objasni;
     _objasni = ObjasniMatch(
       ids: [for (final p in parts) p.id],
@@ -1048,7 +1147,7 @@ class Session {
   void _startUljez(List<Player> parts, UljezPack pack) {
     _uljez?.dispose();
     _gameHost = hostId;
-    _selected = null;
+    _closeHostView();
     _phase = Phase.uljez;
     _uljez = UljezMatch(
       ids: [for (final p in parts) p.id],
@@ -1083,7 +1182,7 @@ class Session {
   void _startWolf(List<Player> parts) {
     _wolf?.dispose();
     _gameHost = hostId;
-    _selected = null;
+    _closeHostView();
     _phase = Phase.wolf;
     _wolf = WolfMatch(
       ids: [for (final p in parts) p.id],
@@ -1105,7 +1204,7 @@ class Session {
   }
 
   void _startCurve(List<Player> parts) {
-    _selected = null;
+    _closeHostView();
     _wasCounting = false; // the last match may have ended mid-countdown
     _countTicks = 0;
     _simIdOf
@@ -1205,7 +1304,7 @@ class Session {
   Duration? _quizPausedAt; // _clock() when the pause began
 
   void _startQuiz(QuizPack pack, List<Player> parts) {
-    _selected = null; // Igraj: the details are done with
+    _closeHostView(); // Igraj: the details are done with
     _quizPack = pack;
     _quizIds
       ..clear()
@@ -1663,7 +1762,7 @@ class Session {
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
   void returnToLobby() {
     _phase = Phase.lobby;
-    _selected = null;
+    _closeHostView();
     _gameHost = null;
     _stopWait();
     _placements = [];

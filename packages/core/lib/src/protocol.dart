@@ -617,7 +617,7 @@ enum ChangeBy { phone, remote }
 enum HostView { home, settings, packs }
 
 /// One line of "what the host changed". Each screen words it with its own
-/// labels. [old] and [new] are the raw JSON values of the `GameSettings` key
+/// labels. `old` and `new` are the raw JSON values of the `GameSettings` key
 /// (an int, a bool, an enum name, a sorted list of ids for a `*OffPacks` key);
 /// 'bots' is the one key that is not a setting (an int).
 class LobbyChange with _JsonEq {
