@@ -321,6 +321,7 @@ sealed class Message with _JsonEq {
         'number' => NumberAnswer((m['value'] as num).toDouble()),
         'blefFake' => BlefFake(m['text'] as String),
         'blefPick' => BlefPick(m['index'] as int),
+        'packScreen' => PackScreen(m['open'] as bool),
         'reshuffle' => const Reshuffle(),
         'go' => const Go(),
         'objasniAction' => ObjasniAction(ObjasniAct.values.byName(m['act'] as String), wordNo: m['wordNo'] as int?),
@@ -341,6 +342,9 @@ sealed class Message with _JsonEq {
             selected: m['selected'] == null
                 ? null
                 : GameKind.values.byName(m['selected'] as String),
+            changes: _changes(m['changes']),
+            changed: _change(m['changed']),
+            hostView: HostView.values.asNameMap()[m['hostView']] ?? HostView.home,
             settings: m['settings'] == null
                 ? const GameSettings()
                 : GameSettings.fromJson(m['settings'] as Map<String, dynamic>)),
@@ -562,6 +566,18 @@ class SelectGame extends Message {
   Map<String, Object?> get fields => {'game': game?.name};
 }
 
+/// Host phone -> TV, lobby only: the host opened ([open]) or closed the pack
+/// screen. The TV shows its pack grid meanwhile. A phone that is not the host
+/// is ignored.
+class PackScreen extends Message {
+  final bool open;
+  const PackScreen(this.open);
+  @override
+  String get type => 'packScreen';
+  @override
+  Map<String, Object?> get fields => {'open': open};
+}
+
 class Ping extends Message {
   final int t;
   const Ping(this.t);
@@ -587,6 +603,68 @@ class Welcome extends Message {
       {'playerId': playerId, 'colorIndex': colorIndex, 'token': token, 'character': character};
 }
 
+/// What a lobby change was: a setting's value ([setting], with [LobbyChange.key]
+/// and the old and new value), the host moving to another game ([game]), the
+/// TV settings panel opened with the remote ([settings]) or the host opening
+/// the pack screen ([packs]).
+enum ChangeKind { setting, game, settings, packs }
+
+/// Who made it: the host's phone or the TV remote.
+enum ChangeBy { phone, remote }
+
+/// Where the host is, for the screens that watch: the game card ([home]), the
+/// settings (the TV panel is open) or the pack screen ([packs]).
+enum HostView { home, settings, packs }
+
+/// One line of "what the host changed". Each screen words it with its own
+/// labels. [old] and [new] are the raw JSON values of the `GameSettings` key
+/// (an int, a bool, an enum name, a sorted list of ids for a `*OffPacks` key);
+/// 'bots' is the one key that is not a setting (an int).
+class LobbyChange with _JsonEq {
+  final ChangeKind kind;
+
+  /// The game the change is about; null when no game was open.
+  final GameKind? game;
+  final String? key;
+  final Object? old, new_;
+  final ChangeBy by;
+  const LobbyChange.setting(this.game, String this.key, this.old, this.new_, this.by) : kind = ChangeKind.setting;
+  const LobbyChange.game(this.game, this.by)
+      : kind = ChangeKind.game,
+        key = null,
+        old = null,
+        new_ = null;
+  const LobbyChange.settings(this.game, this.by)
+      : kind = ChangeKind.settings,
+        key = null,
+        old = null,
+        new_ = null;
+  const LobbyChange.packs(this.game, this.by)
+      : kind = ChangeKind.packs,
+        key = null,
+        old = null,
+        new_ = null;
+  const LobbyChange._(this.kind, this.game, this.key, this.old, this.new_, this.by);
+
+  /// Throws on an unknown kind or by (the lobby decode drops such an entry).
+  factory LobbyChange.fromJson(Map<String, dynamic> j) => LobbyChange._(
+      ChangeKind.values.byName(j['kind'] as String),
+      j['game'] == null ? null : GameKind.values.byName(j['game'] as String),
+      j['key'] as String?,
+      j['old'],
+      j['new'],
+      ChangeBy.values.byName(j['by'] as String));
+  @override
+  Map<String, Object?> toJson() => {
+        'kind': kind.name,
+        'game': game?.name,
+        'key': key,
+        'old': old,
+        'new': new_,
+        'by': by.name,
+      };
+}
+
 class LobbyState extends Message {
   final List<PlayerInfo> players;
   final List<PackInfo> packs;
@@ -599,13 +677,26 @@ class LobbyState extends Message {
   /// The packs of the party games (questionCount = words / questions / prompts).
   final List<PackInfo> objasniPacks, kolikoPacks, blefPacks, tkobiPacks;
 
-  /// The game the host has open, or null.
+  /// The game every screen shows (the host moves it with ‹ › or the remote's
+  /// ◀ ▶). Set whenever the TV runs a lobby; null only from an older TV.
   final GameKind? selected;
+
+  /// What the host changed, newest first, at most 5.
+  final List<LobbyChange> changes;
+
+  /// The setting change to outline on every screen (cleared by a game change).
+  final LobbyChange? changed;
+
+  /// Where the host is (the TV opens its settings panel or pack grid to match).
+  final HostView hostView;
   const LobbyState(
       {required this.players,
       required this.packs,
       required this.hostId,
       this.selected,
+      this.changes = const [],
+      this.changed,
+      this.hostView = HostView.home,
       this.uljezPacks = const [],
       this.objasniPacks = const [],
       this.kolikoPacks = const [],
@@ -620,6 +711,9 @@ class LobbyState extends Message {
         'packs': [for (final p in packs) p.toJson()],
         'hostId': hostId,
         'selected': selected?.name,
+        'changes': [for (final c in changes) c.toJson()],
+        'changed': changed?.toJson(),
+        'hostView': hostView.name,
         'uljezPacks': [for (final p in uljezPacks) p.toJson()],
         'objasniPacks': [for (final p in objasniPacks) p.toJson()],
         'kolikoPacks': [for (final p in kolikoPacks) p.toJson()],
@@ -1286,3 +1380,16 @@ class TkobiResult extends Message {
         'total': total,
       };
 }
+
+/// A lobby change from the wire; an entry this build does not know is dropped.
+LobbyChange? _change(Object? v) {
+  if (v is! Map<String, dynamic>) return null;
+  try {
+    return LobbyChange.fromJson(v);
+  } catch (_) {
+    return null;
+  }
+}
+
+List<LobbyChange> _changes(Object? v) =>
+    v is List ? [for (final e in v) ?_change(e)] : const [];

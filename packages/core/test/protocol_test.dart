@@ -477,4 +477,60 @@ void main() {
       expect(Message.decode('{"type":"select","game":"kaosvi"}'), isNull);
     });
   });
+
+  group('Task 48: shared lobby state (changes, changed, hostView)', () {
+    const a = LobbyChange.setting(GameKind.quiz, 'quizQuestions', 10, 15, ChangeBy.phone);
+    const b = LobbyChange.setting(GameKind.quiz, 'quizOffPacks', <String>[], ['p1', 'p2'], ChangeBy.phone);
+
+    test('every entry kind round-trips, with old and new as JSON values', () {
+      final entries = [
+        a,
+        b,
+        const LobbyChange.game(GameKind.uljez, ChangeBy.remote),
+        const LobbyChange.settings(GameKind.uljez, ChangeBy.remote),
+        const LobbyChange.packs(GameKind.quiz, ChangeBy.phone),
+      ];
+      for (final e in entries) {
+        expect(LobbyChange.fromJson(e.toJson()), e, reason: e.toJson().toString());
+      }
+      expect(a.toJson(), {'kind': 'setting', 'game': 'quiz', 'key': 'quizQuestions', 'old': 10, 'new': 15, 'by': 'phone'});
+    });
+
+    test('a lobby with changes, changed and hostView round-trips', () {
+      final m = LobbyState(
+          players: const [],
+          packs: const [],
+          hostId: 1,
+          selected: GameKind.quiz,
+          changes: [a, const LobbyChange.game(GameKind.quiz, ChangeBy.remote)],
+          changed: a,
+          hostView: HostView.settings);
+      final back = Message.decode(m.encode()) as LobbyState;
+      expect(back, m);
+      expect(back.changes.length, 2);
+      expect(back.changed, a);
+      expect(back.hostView, HostView.settings);
+    });
+
+    test('an old lobby (no new fields) decodes to empty / home; an unknown entry is dropped, not fatal', () {
+      final old = Message.decode('{"type":"lobby","players":[],"packs":[],"hostId":1}') as LobbyState;
+      expect(old.changes, isEmpty);
+      expect(old.changed, isNull);
+      expect(old.hostView, HostView.home);
+      final odd = Message.decode('{"type":"lobby","players":[],"packs":[],"hostId":1,'
+          '"changes":[{"kind":"nope","by":"phone"},{"kind":"game","game":"quiz","by":"remote"}],'
+          '"changed":{"kind":"zzz"},"hostView":"elsewhere"}') as LobbyState;
+      expect(odd.changes, [const LobbyChange.game(GameKind.quiz, ChangeBy.remote)]);
+      expect(odd.changed, isNull);
+      expect(odd.hostView, HostView.home);
+    });
+
+    test('PackScreen: the host phone says it opened or closed the pack screen; a wrong type is null', () {
+      for (final on in [true, false]) {
+        expect(Message.decode(PackScreen(on).encode()), PackScreen(on));
+      }
+      expect(Message.decode('{"type":"packScreen","open":"yes"}'), isNull);
+      expect(Message.decode('{"type":"packScreen"}'), isNull);
+    });
+  });
 }
