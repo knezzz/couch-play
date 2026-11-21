@@ -23,11 +23,14 @@ class UljezMatch {
     required this.send,
     required this.clock,
     required this.random,
+    this.avoid = const {},
     this.sfx = const SilentSfx(),
     this.notify,
     this.onOver,
   });
 
+  /// Last game's impostors: not picked again if others are left.
+  final Set<int> avoid;
   final List<int> ids;
   final UljezPack pack;
   final GameSettings settings;
@@ -93,7 +96,7 @@ class UljezMatch {
   int get wishNeeded => WishBox.needed(present.length);
 
   void start() {
-    game = UljezGame(ids, pack, impostors: settings.uljezImpostors, random: random);
+    game = UljezGame(ids, pack, impostors: settings.uljezImpostors, random: random, avoid: avoid);
     for (final id in ids) {
       send(id, UljezWord(game.wordOf(id)));
     }

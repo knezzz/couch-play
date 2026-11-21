@@ -64,7 +64,9 @@ class UljezVoteResult {
 }
 
 class UljezGame {
-  UljezGame(List<int> ids, UljezPack pack, {int impostors = 1, Random? random})
+  /// [avoid]: last game's impostors. They are picked only if too few others
+  /// are left for [impostors] (then the pick is plain random).
+  UljezGame(List<int> ids, UljezPack pack, {int impostors = 1, Random? random, Set<int> avoid = const {}})
       : ids = List.unmodifiable(ids),
         _pack = pack,
         _random = random ?? Random() {
@@ -76,7 +78,8 @@ class UljezGame {
     villageWord = flip ? pair.b : pair.a;
     impostorWord = flip ? pair.a : pair.b;
     final shuffled = [...ids]..shuffle(_random);
-    _impostors.addAll(shuffled.take(impostorCount));
+    final others = [for (final i in shuffled) if (!avoid.contains(i)) i];
+    _impostors.addAll((others.length >= impostorCount ? others : shuffled).take(impostorCount));
     order = [...ids]..shuffle(_random);
     votesLeft = impostorCount;
   }

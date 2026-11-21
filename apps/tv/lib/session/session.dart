@@ -1136,6 +1136,7 @@ class Session {
   List<UljezPack> uljezPacks = [];
   UljezMatch? _uljez;
   UljezMatch? get uljez => _uljez;
+  Set<int> _lastImpostors = {};
 
   /// The pack with [id], or the first one for null; null if there is none.
   UljezPack? uljezPack(String? id) {
@@ -1155,12 +1156,15 @@ class Session {
       send: (id, m) => _byId(id)?.socket?.send(m),
       clock: _clock,
       random: _random,
+      avoid: _lastImpostors,
       sfx: sfx,
       notify: _notify,
       onOver: (scores) => finishGame(scores, game: UljezText.name),
     )
       ..onAbandon = returnToLobby
       ..start();
+    // Kept for the whole session; a leaver in it is harmless (not in the next ids).
+    _lastImpostors = {for (final p in parts) if (_uljez!.game.isImpostor(p.id)) p.id};
     _notify();
   }
 
