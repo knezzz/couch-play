@@ -1025,6 +1025,6 @@ Spec: main design spec, "Packs are multi-select in every game".
 
 Spec: main design spec, "Phone home, live with the TV"; boards in `docs/design/phone-home/` (no Kao svi).
 - [ ] Host phone: game card with edges, settings inline on the home, Igraj pinned; packs keep the Task 46 checklist.
-- [ ] Guest phone: same card read-only ("Ana gleda …"), settings list with the changed row outlined and the old value struck through, "Što je Ana promijenila" (last 5), the read-only pack checklist while the host is in it.
+- [ ] Guest phone: same card read-only ("Ana gleda …"), settings list with the changed row outlined and the old value struck through, "Zadnje promjene" (last 5, gender-neutral entries), the read-only pack checklist while the host is in it.
 - [ ] TV: settings panel opens by itself on a host change (phone or ▼), changed row highlighted; Natrag or a game change closes it; pack grid while the host is in packs.
 - [ ] Tests first (one shared selection and settings state to all phones and the TV; change marking and the last-5 list; panel open/close; a guest joining mid-change gets the current state); QA on macOS release with a host and 2+ guests at 360–390 px and the remote; compare per board and say where it differs. Kick strip, Promijeni lik and the game flows unchanged.

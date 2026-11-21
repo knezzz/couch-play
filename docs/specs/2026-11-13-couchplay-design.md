@@ -281,8 +281,10 @@ Without Kao svi (removed). Packs stay the multi-select checklist (Task 46) where
   settings list, and while the host is in the pack screen, the same checklist read-only ("Ana bira pakete"). The
   footer says "Igru pokreće Ana". Promijeni lik stays.
 - **Changes are visible.** The setting just changed is outlined in the accent on every phone and the TV; guests see
-  the old value struck through next to the new one. Guests get a short list "Što je Ana promijenila" (newest first,
-  last 5, with "mobitelom" / "daljinskim"); empty: "Još ništa. Promjene se pojave ovdje čim ih Ana napravi."
+  the old value struck through next to the new one. Guests get a short list "Zadnje promjene" (newest first, last 5,
+  with "mobitelom" / "daljinskim"; entries gender-neutral: "Odabrana igra: X", "Otvorene postavke: X", "Otvoreni
+  paketi: X"), since the host can be anyone (2026-11-21; the board's "Što je Ana promijenila" / "Otvorila" are
+  feminine).
 - **TV:** when the host changes a setting (phone or ▼ on the remote) the TV opens its settings panel by itself under
   the title, with the changed row highlighted; Natrag or a game change closes it. In the pack screen the TV shows the
   pack grid with the count summary.
