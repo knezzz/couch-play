@@ -180,6 +180,26 @@ void main() {
       expect(find.byKey(const ValueKey('change-character')), findsOneWidget);
     });
 
+    testWidgets('a key that is not in its game never prints raw', (t) async {
+      const stray = LobbyChange.setting(GameKind.curve, 'quizOffPacks', [], [
+        'hr-fizika',
+      ], ChangeBy.phone);
+      const noGame = LobbyChange.setting(null, 'x', 1, 2, ChangeBy.phone);
+      await _show(t, _lobby(changes: const [stray, noGame, secs]), 1);
+      final lines = find.byKey(const ValueKey('feed-line'));
+      expect(lines, findsNWidgets(2)); // the one with no game is skipped
+      expect(
+        find.descendant(
+          of: lines.first,
+          matching: find.text(Strings.changedSettings(Strings.curve)),
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('quizOffPacks'), findsNothing);
+      expect(find.textContaining('hr-fizika'), findsNothing);
+      expect(find.textContaining('['), findsNothing);
+    });
+
     testWidgets('the feed: newest first, at most 5, phone or remote', (
       t,
     ) async {
@@ -344,6 +364,25 @@ void main() {
       await t.binding.handlePopRoute(); // the system back button
       await t.pumpAndSettle();
       expect(c.sent.last, const PackScreen(false));
+    });
+
+    testWidgets('a game change from the remote closes the pack screen', (
+      t,
+    ) async {
+      final c = await _show(t, _lobby(), 0);
+      await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('pack-a')), findsOneWidget);
+      // The same game again (a setting changed by the guests' side): stays.
+      c.inbox.add(_lobby(view: HostView.packs));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('pack-a')), findsOneWidget);
+      c.inbox.add(_lobby(selected: GameKind.curve));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('pack-a')), findsNothing);
+      expect(find.byKey(const ValueKey('game-banner')), findsOneWidget);
+      expect(c.sent.last, const PackScreen(false));
+      expect(c.sent.where((m) => m == const PackScreen(false)).length, 1);
     });
 
     for (final k in GameKind.values) {

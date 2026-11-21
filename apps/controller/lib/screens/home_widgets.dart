@@ -550,9 +550,11 @@ class ChangeFeed extends StatelessWidget {
         final row = c.game == null
             ? null
             : homeRows(c.game!, lobby).where((r) => r.key == c.key).firstOrNull;
+        // A key that is not one of the game's rows: never print it raw.
+        if (row == null) return Strings.changedSettings(game);
         return Strings.changedSetting(
           game,
-          row?.label ?? '${c.key}',
+          row.label,
           changeValue(c, c.old, lobby),
           changeValue(c, c.new_, lobby),
         );
@@ -579,31 +581,32 @@ class ChangeFeed extends StatelessWidget {
           style: const TextStyle(fontSize: 14, color: muted),
         ),
       for (final c in lobby.changes.take(5))
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            key: const ValueKey('feed-line'),
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Expanded(
-                child: Text(
-                  _text(c),
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.35,
-                    color: c.kind == ChangeKind.setting ? textColor : muted,
+        if (c.game != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              key: const ValueKey('feed-line'),
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Expanded(
+                  child: Text(
+                    _text(c),
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.35,
+                      color: c.kind == ChangeKind.setting ? textColor : muted,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                c.by == ChangeBy.remote ? Strings.byRemote : Strings.byPhone,
-                style: const TextStyle(fontSize: 12, color: muted),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Text(
+                  c.by == ChangeBy.remote ? Strings.byRemote : Strings.byPhone,
+                  style: const TextStyle(fontSize: 12, color: muted),
+                ),
+              ],
+            ),
           ),
-        ),
     ],
   );
 }

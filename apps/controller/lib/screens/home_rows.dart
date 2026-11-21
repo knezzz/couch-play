@@ -255,11 +255,12 @@ List<HomeRow> homeRows(GameKind k, LobbyState l) {
 /// text when no row has that key (a newer TV).
 String changeValue(LobbyChange c, Object? raw, LobbyState l) {
   final k = c.game;
-  if (k == null || c.key == null) return '$raw';
-  for (final r in homeRows(k, l)) {
-    if (r.key == c.key) return r.text(raw);
+  if (k != null) {
+    for (final r in homeRows(k, l)) {
+      if (r.key == c.key) return r.text(raw);
+    }
   }
-  return '$raw';
+  return ''; // no row to word it with: never the raw value
 }
 
 /// The row of [l]'s selected game that `changed` points at, or null.

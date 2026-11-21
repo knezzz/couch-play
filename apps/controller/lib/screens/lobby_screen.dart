@@ -208,16 +208,20 @@ class _LobbyScreenState extends State<LobbyScreen> {
   void _openPacks(GameKind k) {
     widget.conn.send(const PackScreen(true));
     _pushLive(
-      (l) => PackGridScreen(
-        packs: packsOf(k, l),
-        ticked: _ticked(k, packsOf(k, l), l.settings),
-        title: _packsTitle(k),
-        addPack: k == GameKind.quiz && widget.addPack != null
-            ? () => widget.addPack!(widget.conn.token)
-            : null,
-        onToggle: (id) =>
-            widget.conn.send(SetSettings(_toggle(l.settings, k, id))),
-        onBack: () => Navigator.of(context).pop(),
+      (l) => _ClosesWhen(
+        // The game moved on (the remote): the TV and the guests left the packs.
+        closeIf: l.selected != k,
+        child: PackGridScreen(
+          packs: packsOf(k, l),
+          ticked: _ticked(k, packsOf(k, l), l.settings),
+          title: _packsTitle(k),
+          addPack: k == GameKind.quiz && widget.addPack != null
+              ? () => widget.addPack!(widget.conn.token)
+              : null,
+          onToggle: (id) =>
+              widget.conn.send(SetSettings(_toggle(l.settings, k, id))),
+          onBack: () => Navigator.of(context).pop(),
+        ),
       ),
     ).then((_) => widget.conn.send(const PackScreen(false)));
   }
@@ -598,4 +602,43 @@ class _HomeHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Pops its own route once, after the frame, when [closeIf] turns true.
+class _ClosesWhen extends StatefulWidget {
+  const _ClosesWhen({required this.closeIf, required this.child});
+  final bool closeIf;
+  final Widget child;
+
+  @override
+  State<_ClosesWhen> createState() => _ClosesWhenState();
+}
+
+class _ClosesWhenState extends State<_ClosesWhen> {
+  bool _closed = false;
+
+  void _check() {
+    if (!widget.closeIf || _closed) return;
+    _closed = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _check();
+  }
+
+  @override
+  void didUpdateWidget(_ClosesWhen old) {
+    super.didUpdateWidget(old);
+    _check();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
