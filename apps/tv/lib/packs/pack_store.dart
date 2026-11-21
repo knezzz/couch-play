@@ -75,6 +75,8 @@ class PackStore {
     'hr-sport-svijet',
     'hr-zivotinje',
     'hr-jezik',
+    'hr-pop-kultura',
+    'hr-glazba-2000',
   };
   final _uploadedNow = <String>{};
 
