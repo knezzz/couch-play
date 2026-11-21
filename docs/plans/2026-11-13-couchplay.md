@@ -1031,4 +1031,4 @@ Spec: main design spec, "Phone home, live with the TV"; boards in `docs/design/p
 
 ### Task 49: Uljez impostor never twice in a row (added 2026-11-21, person request)
 
-- [ ] Each new Uljez game picks the impostor(s) at random but never last game's impostor (with 2 impostors: neither of last game's), when enough players remain; otherwise random. Tests first (extend session_uljez_impostor_test: no repeat across consecutive games, still spread over the others); suites green; review.
+- [x] Each new Uljez game picks the impostor(s) at random but never last game's impostor (with 2 impostors: neither of last game's), when enough players remain; otherwise random. Tests first (extend session_uljez_impostor_test: no repeat across consecutive games, still spread over the others); suites green; review.
