@@ -6,7 +6,7 @@ item yet). Status per line: open / routed / checking / done.
 Known gaps across all games, from the earlier content seats' own hand-backs: **no native Croatian read** of the new
 wording, and **quiz distractors not page-checked**. The content tests guard format and duplicates only, not facts.
 
-## Kviz (20 bundled packs, 2,443 questions, 1,086 with pictures = 44%; ~55 MB of zips)
+## Kviz (20 bundled packs, 2,442 questions, 1,086 with pictures = 44%; ~55 MB of zips)
 
 Sources in `tool/packs/` (`hr-*.json` or `hr-*/` folder + `hr-*.sources.md`); `tool/pack_zip.sh` copies/zips every
 `hr-*` into `apps/tv/assets/packs/`. The English `film-music`, `general`, `geography`, `science`, `flags`, `shapes`
@@ -28,7 +28,7 @@ are no longer bundled.
 | hr-ljudsko-tijelo | 106 | 48 | pictures e2a6470 (family-safe) |
 | hr-zemljopis-svijeta | 102 | 43 | pictures a59cef2 |
 | hr-geografija | 100 | 50 | Croatia only; pictures 5fba511; 5.5 MB |
-| hr-medimurje | 84 | 2 | **person reviews every change** |
+| hr-medimurje | 83 | 2 | **person reviews every change**; 5 fact-check fixes approved (b1e0ca9) |
 | hr-oblici | 50 | 50 | all generated SVG, script-checked |
 | hr-zastave | 154 | 154 | grown 2026-11-20 (2b90db6); coat-of-arms SVGs untested on the TV |
 | hr-zivotinje | 99 | 51 | new 2026-11-21 (325f919), fact-checked; NEW tag |
