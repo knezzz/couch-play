@@ -16,7 +16,7 @@
     {"q": "Kolika je, zaokruženo, brzina zvuka u zraku pri 20 °C?", "choices": ["34 m/s", "343 m/s", "1500 m/s", "3430 m/s"], "answer": 1},
     {"q": "Kroz što se zvuk NE može širiti?", "image": "photos/foto-012.webp", "choices": ["Vakuum", "Čelik", "Vodu", "Drvo"], "answer": 0},
     {"q": "Kako se zove zvuk frekvencije iznad 20 kHz, koji čovjek ne čuje?", "choices": ["Infrazvuk", "Šum", "Hiperzvuk", "Ultrazvuk"], "answer": 3},
-    {"q": "O kojoj veličini zvučnog vala ovisi visina tona?", "choices": ["O frekvenciji", "O amplitudi", "O brzini", "O glasnoći"], "answer": 0},
+    {"q": "O kojoj veličini zvučnog vala ovisi visina tona?", "image": "photos/foto-014.webp", "choices": ["O frekvenciji", "O amplitudi", "O brzini", "O glasnoći"], "answer": 0},
     {"q": "Kroz koje od ovih sredstava zvuk putuje najbrže?", "choices": ["Zrak", "Vodu", "Helij", "Čelik"], "answer": 3},
     {"q": "Kako se zove odbijeni zvuk koji čujemo kao ponavljanje izvornog?", "choices": ["Jeka", "Rezonancija", "Interferencija", "Šum"], "answer": 0},
     {"q": "Kakvim se lećama ispravlja kratkovidnost?", "image": "photos/foto-017.webp", "choices": ["Sabirnim", "Ravnim", "Cilindričnim", "Rasipnim"], "answer": 3},
@@ -109,6 +109,9 @@
     {"q": "Kojim procesom nuklearna elektrana dobiva energiju?", "image": "photos/foto-104.webp", "choices": ["Izgaranjem ugljena", "Fotosintezom", "Fuzijom", "Fisijom"], "answer": 3},
     {"q": "Kako se zove energija iz topline Zemljine unutrašnjosti?", "image": "photos/foto-105.webp", "choices": ["Hidroenergija", "Geotermalna", "Biomasa", "Plimna"], "answer": 1},
     {"q": "Što se nalazi između dviju stijenki termos-boce?", "choices": ["Vakuum", "Voda", "Stiropor", "Pijesak"], "answer": 0},
-    {"q": "Zašto metalna žlica u vrućem čaju brzo postane vruća?", "choices": ["Metal dobro vodi toplinu", "Čaj je kiseo", "Žlica upija vodu", "Metal privlači paru"], "answer": 0}
+    {"q": "Zašto metalna žlica u vrućem čaju brzo postane vruća?", "choices": ["Metal dobro vodi toplinu", "Čaj je kiseo", "Žlica upija vodu", "Metal privlači paru"], "answer": 0},
+    {"q": "Koju pojavu prikazuje ova fotografija?", "image": "photos/foto-108.webp", "choices": ["Pomrčinu Mjeseca", "Polarnu svjetlost", "Potpunu pomrčinu Sunca", "Sunčeve pjege"], "answer": 2},
+    {"q": "Zbog koje se pojave tanki sloj sapunice sa slike prelijeva duginim bojama?", "image": "photos/foto-109.webp", "choices": ["Interferencije svjetlosti", "Fluorescencije", "Polarizacije svjetlosti", "Apsorpcije svjetlosti"], "answer": 0},
+    {"q": "Veliki svijetli prsten oko Sunca na fotografiji nastaje kad sunčeva svjetlost prolazi kroz što u atmosferi?", "image": "photos/foto-110.webp", "choices": ["Kapljice kiše", "Čestice prašine", "Ledene kristaliće", "Molekule ozona"], "answer": 2}
   ]
 }

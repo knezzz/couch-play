@@ -434,3 +434,115 @@ Sourced 2026-11-20 for the content lead (queue task qitem-20261120143701-7140f03
 - Portretna preoblikovanja (max 10): 21, 22, 26, 38, 43, 47, 48, 63, 65, 73. Ivan Supek (46): nema dobre fotografije na Commonsu (nađena samo spomen-ploča s natpisom), preskočeno.
 - Preskočeno bez prikladne slike: 2, 3, 4, 11, 14, 15, 16, 19, 20, 24, 31, 32, 34 (nije nađeno), 35, 36, 40, 44, 50-53, 60, 62, 64, 68, 69, 71, 74, 75, 76, 78, 79, 80, 81, 83, 84, 86-90, 92-94, 96, 97, 99, 102, 107. 62/64/84 (Joule, Volta, Kelvin) imaju PD portrete, ali bi premašili limit portreta. 79/78 multimetar ne razlikuje ampermetar od voltmetra. 99 nije nađena fotografija raspršenja neba.
 - Moguće upozorenje: slike uz 9, 27, 45, 49, 66 prikazuju poznata mjesta/predmete; 49 je Einsteinov portret (odgovor je godina, pa nije preoblikovano).
+
+## Pass 2 (2026-11-21)
+
+Queue task qitem-20261121132155-039fdcdf35282b5a. 7 candidates (target was about 12; not padded): 4 NEW + 3 existing. All 7 opened and looked at; licence template read on each file page. WebP sizes measured with PIL on a 960 px thumbnail (Commons gives 960, not 800). Not checked: apps/tv/assets question data, no second source for the NEW facts, most unsearched numbers got no search. NEW-3 (Tesla coil) leaks the name Tesla across packs: drop if unacceptable.
+
+
+### NEW-1 Koja se pojava vidi na ovoj fotografiji?
+- Odgovor: Potpuna pomrčina Sunca (distraktori: mjesečeva mijena, polarna svjetlost, ...)
+- Vrsta: NEW
+- Činjenica: Pomrčina Sunca nastaje kad Mjesec prođe između Zemlje i Sunca. Izvor: https://en.wikipedia.org/wiki/Solar_eclipse Citat: "A solar eclipse occurs when the Moon passes between Earth and the Sun, thereby obscuring the view of the Sun from a small part of Earth, totally or partially." (hr: https://hr.wikipedia.org/wiki/Pomrčina_Sunca; a draft alternative question: "Što se nalazi između Zemlje i Sunca tijekom pomrčine Sunca?" -> Mjesec)
+- Slika: https://commons.wikimedia.org/wiki/File:April_8_2024_Solar_Eclipse_Totality.jpg
+- Autor: Lambda
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0 (source {{own}}, no credit template)
+- Veličina: 3000x3000 px, image/jpeg
+- Vidi se: viewed. Crni disk Mjeseca, bijela korona, dvije ružičaste protuberance, crna pozadina; nema teksta ni znakova.
+- Provjera podudaranja: grep svih packova (pomrčin|eclipse|polarn|aurora): "Pomrčinu Sunca" je samo distraktor u hr-memeovi Q44 (odgovor je dvostruka duga), nije odgovor nigdje; datoteka nije na popisu korištenih (sources/pictures.md).
+- Preslikavanje/crop: nije potrebno (kvadrat); po želji crop na sredinu.
+- Procjena veličine: ~8 KB as 800 px WebP (measured via PIL)
+- Preoblikovati?: ne
+
+### NEW-2 Zašto mjehur od sapunice šara u duginim bojama? (ili: "Koja pojava stvara boje na sapunici?")
+- Odgovor: Interferencija svjetlosti (u tankom filmu)
+- Vrsta: NEW
+- Činjenica: boje na mjehuru od sapunice nastaju interferencijom u tankom sloju. Izvor: https://en.wikipedia.org/wiki/Thin-film_interference Citat: "Thin-film interference explains the multiple colors seen in light reflected from soap bubbles and oil films on water and also many colors found in nature."
+- Slika: https://commons.wikimedia.org/wiki/File:Thin_Film_Interference_Soap_Bubble.jpg
+- Autor: Pksois23
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0 (source {{own}}, Wiki Science Competition 2023)
+- Veličina: 3891x2918 px, image/jpeg
+- Vidi se: viewed. Bliska fotografija filma sapunice, vrtlozi narančaste, plave, ljubičaste; bez teksta, bez ičega prepoznatljivog.
+- Provjera podudaranja: grep "interferenc": u fizici samo distraktor u Q100 (odgovor je Disperzija); slika ne odgovara ni na što u packovima, ali je apstraktna pa ne daje ni odgovor Q100 (disperzija prizme).
+- Preslikavanje/crop: nije potrebno
+- Procjena veličine: ~55 KB as 800 px WebP (measured at 960 px; ~40 KB at 800). Blizu granice, jer je vrtložna tekstura.
+- Preoblikovati?: ne
+
+### NEW-3 Kako se zove ovaj uređaj koji stvara iskre visokog napona, a bežično pali i fluorescentnu cijev?
+- Odgovor: Teslin svitak
+- Vrsta: NEW
+- Činjenica: Teslin svitak je rezonantni transformator koji je izumio Nikola Tesla. Izvor: https://en.wikipedia.org/wiki/Tesla_coil Citat: "Electrical resonant transformer circuit invented by Nikola Tesla" (short description of the article)
+- Slika: https://commons.wikimedia.org/wiki/File:225W_Zeus_Tesla_coil_-_arcs3_(cropped).jpg
+- Autor: Airarcs
+- Licenca: {{self|cc-by-sa-3.0}} / CC BY-SA 3.0 (source {{own}})
+- Veličina: 4240x3744 px, image/jpeg
+- Vidi se: viewed. Domaći Teslin svitak u mraku, ljubičasti iskreći izboji iz torusa, fluorescentna cijev iza svijetli, dolje kondenzatori i iskrište; stolica, stalak za note, polica u pozadini. Bez teksta.
+- Provjera podudaranja: UPOZORENJE: "Teslin svitak" je distraktor u fizici Q27 i Q29, a odgovor "Nikola Tesla" / "Nikoli Tesli" je u hr-znanost (jedinica tesla, portret u hr-povijest Q41): slika bi donekle navela na ime Tesla pa je to curenje između pitanja. Predlažem da pisac odluči; ako je curenje neprihvatljivo, odbaciti.
+- Preslikavanje/crop: moguć crop na gornjih 2/3 (iskre i torus) radi manje detalja
+- Procjena veličine: ~50 KB as 800 px WebP (measured at 960 px: 50 KB)
+- Preoblikovati?: ne
+
+### Q43 existing Tko je 1929. pokazao da se udaljene galaktike udaljavaju od nas?
+- Odgovor: Edwin Hubble
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Hubble_ultra_deep_field.jpg
+- Autor: NASA and the European Space Agency
+- Licenca: {{PD-Hubble}} / Public domain
+- Veličina: 3100x3100 px, image/jpeg
+- Vidi se: viewed. Crno polje sa tisućama galaktika (spirale, elipse, žuto-crvene i plave), nekoliko zvijezda s bodljama; nema teksta ni logotipa.
+- Provjera podudaranja: slika ne sadrži ime; u fizici nijedno drugo pitanje o galaksijama; hr-znanost ima Mliječni put/Andromeda s drugim slikama, ovo ne odgovara ni na jedno. Slika je ipak snimka Hubblea (ime u naslovu datoteke, ne na slici); hr-opce-znanje Q293 (Hubble, odgovor) ima vlastitu sliku teleskopa, ovo mu ne daje odgovor jer je pitanje drugačije ali ime "Hubble" je odgovor u OBA pitanja pa se mogu "podupirati". Smatram malim rizikom.
+- Preslikavanje/crop: nije potrebno, kvadrat; može i crop središnjih 70 %
+- Procjena veličine: ~87 KB at 960 px, ~65 KB at 800 px WebP (est.), over 60 KB flag (mnogo sitnih detalja)
+- Preoblikovati?: ne
+
+### NEW-4 Kako se zove svijetli prsten oko Sunca na ovoj fotografiji, koji nastaje na ledenim kristalićima u atmosferi?
+- Odgovor: Halo (22° halo)
+- Vrsta: NEW
+- Činjenica: halo nastaje međudjelovanjem svjetlosti (Sunca ili Mjeseca) i ledenih kristalića u atmosferi. Izvor: https://en.wikipedia.org/wiki/Halo_(optical_phenomenon) Citat: "A halo ... is an optical phenomenon produced by light (typically from the Sun or Moon) interacting with ice crystals suspended in the atmosphere" (iz uvodne rečenice, izvaci s "..." jer je etimologija u zagradi). Ako pitanje ne smije imati odgovor u tekstu, pisac može pitati "Što u atmosferi stvara ovaj prsten oko Sunca?" -> ledeni kristalići.
+- Slika: https://commons.wikimedia.org/wiki/File:Sun_halo_with_flower_silhouette.jpg
+- Autor: Sanskritidubey
+- Licenca: {{self|cc-by-4.0}} / CC BY 4.0 (source {{own}})
+- Veličina: 3644x2731 px, image/jpeg
+- Vidi se: viewed. Žuti cvijet u silueti pred Suncem, oko njega blago šareni kružni halo na plavosivom nebu; bez teksta, bez ljudi.
+- Provjera podudaranja: grep halo|ice|duga: "Halo efekt" u hr-psihologija (Q38 tekst i distraktori Q39/68/105) je drugi pojam, ali riječ "halo" bi se ponavljala (blagi rizik zamjene); duga u hr-opce-znanje Q17 (broj boja) ne odgovara slikom jer halo nije duga. Datoteka nije u korištenim.
+- Preslikavanje/crop: nije potrebno
+- Procjena veličine: ~15 KB as 800 px WebP (measured at 960 px)
+- Preoblikovati?: ne
+
+### Q14 existing O kojoj veličini zvučnog vala ovisi visina tona?
+- Odgovor: O frekvenciji
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Neurological_tuning_forks.jpg
+- Autor: Karl Weihmann
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0 (source {{own}})
+- Veličina: 899x1199 px, image/jpeg
+- Vidi se: viewed. Dvije metalne ugađalice (viljuške) na bijeloj podlozi, crne drške, na donjem kraju male skale; sitni "CE" i oznake na metalu nečitljivi, nema riječi koje imenuju odgovor.
+- Provjera podudaranja: grep ugađal|tuning fork|zvučna vilica u svim packovima: nema pitanja o tome; slika ne odgovara ni na jedno pitanje. 
+- Preslikavanje/crop: nije potrebno (možda crop da se mali natpis na žutoj naljepnici ne vidi; ionako nečitljiv)
+- Procjena veličine: ~11 KB as 800 px WebP (measured)
+- Preoblikovati?: ne
+
+### Q96 existing Kako se zove putanja tijela bačenog koso u zrak (bez otpora zraka)?
+- Odgovor: Parabola
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Bouncing_ball_strobe_edit.jpg
+- Autor: MichaelMaggs, edit Richard Bartz
+- Licenca: {{self|cc-by-sa-3.0}} / CC BY-SA 3.0 (source {{own}}; {{RetouchedPicture}}, bez credit templatea)
+- Veličina: 1800x1159 px, image/jpeg
+- Vidi se: viewed. Stroboskopska snimka žute lopte koja odskače, dva luka na crnoj pozadini; nema teksta ni logotipa (crte na lopti su košarkaški uzorak bez marke).
+- Provjera podudaranja: grep lopta|košark|odskak: nijedno pitanje se ne odnosi na ovo. DOUBT: slika zorno pokazuje oblik putanje (lukovi), pa djelomično odgovara na ponuđene oblike (kružnica/spirala/parabola/pravac) onome tko razlikuje krivulje; to je "podupire", ali nije imenovanje. Pisac neka odluči; alternativa je pitanje o energiji (potencijalna u kinetičku) uz istu sliku.
+- Preslikavanje/crop: nije potrebno
+- Procjena veličine: ~24 KB as 800 px WebP (measured at 960 px)
+- Preoblikovati?: ne
+
+## Sažetak
+- 7 kandidata: 4 NEW (NEW-1 pomrčina, NEW-2 mjehur sapunice, NEW-3 Teslin svitak (sumnja), NEW-4 halo) i 3 existing (Q14 ugađalica, Q43 Hubble Deep Field, Q96 odskakujuća lopta). Svih 7 sam otvorio i pogledao; veličina WebP mjerena PIL-om na 960 px minijaturi (Commons daje 960, ne 800).
+- Tražio sam: magnetske strugotine, aurore, pomrčine, Van de Graaff, mjehure sapunice, izolatore, Teslin svitak, termograme, Apollo 15, plimu, LIGO, maglev, Hubble Deep Field, mraz, Mjesec, Magdeburške polutke, halo, ugađalice, putanje, ISS, zalazak Sunca. Nisam stigao do pitanja bez slike: 2, 3, 4, 7, 11, 16, 19, 20, 24, 31, 34-36, 40, 44, 50-53, 62, 64, 68-69, 71, 74-81, 83-84, 86-94, 97-99, 101-102, 106-107 (nisam pretraživao ili nisam našao ništa prikladno).
+
+## Preskočeno / sumnje
+- NEW-3 (Teslin svitak): curenje prema hr-znanost (odgovor "Nikoli Tesli" na jedinicu tesla) i hr-povijest Q41 (Tesla portret) pa je rizik između pitanja; "Teslin svitak" je distraktor u fizici Q27, Q29. Odbaciti ako pisac to ne želi.
+- Q43 s Hubble Deep Field: imenom (Hubble) je snimljena, a Hubble je odgovor i u hr-opce-znanje Q293 (teleskop); sama slika nema teksta. Procjena ~65 KB na 800 px (granično).
+- NEW-2 (mjehur): ~40-55 KB, vrtložna tekstura, granično.
+- NEW-4: riječ "halo" ponavlja se u hr-psihologija (halo efekt); blagi rizik zabune.
+- Odbačeno nakon gledanja ili provjere: Van de Graaff (754 px), termogrami (svi ispod 800 px), LIGO Hanford (PD-USGov oznaka na slici koju je snimio LIGO Lab, Caltech/MIT, nije savezna služba: sumnjiva licenca), Shanghai maglev (SMT logo i natpisi), Mjesec FullMoon2010 (125 KB), željezne strugotine (155 KB; isto hr-znanost već ima), plima Bay of Fundy (imena brodova, 170+ KB), Magdeburške polutke (crtež 224 KB s potpisom; muzejska fotografija s odsjajima 107 KB), mraz na listu (80-127 KB), izolatori na dalekovodu (preprljano, velik), zalazak Sunca (Malene Thyssen ima credit template; ostali "Unknown author" CC0 sumnjivi), Mrtvo more (daje odgovor hr-zemljopis-svijeta Q60), Apollo 15 (samo video), aurora (već u hr-znanost Q112 i hr-memeovi), ISS/NASA (logotipi), Pisa/kompas/Geiger/barometar (već odbačeno kao giveaway u prvom prolazu).
+- Nisam provjeravao: Koliko/Blef/Objasni podatke u apps/tv/assets (nisam grep-ao), samo tool/packs *.json i *.sources.md/pictures.md. Dvije licence čitane u wikitextu: svih 7 (pomrčina, mjehur, Tesla, halo, ugađalica, lopta, HUDF); činjenice za NEW citirane iz en.wikipedia (jedan citat za halo djelomičan, s "..."). Nisam tražio drugi izvor.
