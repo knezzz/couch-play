@@ -25,6 +25,20 @@ class WolfInbox {
   /// Which screen is up now.
   String screen = 'idle'; // idle | night | vote | farewell | end
 
+  /// Back in the lobby: forget the last game, so the next one starts on its
+  /// role card (a rejoin mid-game is sent the lobby, then its role and stage).
+  void reset() {
+    role = null;
+    night = null;
+    morning = null;
+    vote = null;
+    farewell = null;
+    end = null;
+    ready = null;
+    wish = null;
+    screen = 'idle';
+  }
+
   void on(Message m) {
     switch (m) {
       case RoleMsg():

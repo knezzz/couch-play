@@ -345,6 +345,29 @@ void main() {
     expect(find.text('Vidovnjakinja'), findsOneWidget);
   });
 
+  testWidgets('a second game on the same phone starts on its role card with Spreman, not on game 1\'s end screen', (
+    t,
+  ) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, const PlayWait(ready: false, count: 0, total: 6));
+    expect(find.byKey(const ValueKey('play-ready')), findsOneWidget);
+    await _send(t, c, _night(night: 1));
+    await _send(
+      t,
+      c,
+      const WolfEnd(WolfWinner.village, {0: WolfRole.wolf, 2: WolfRole.seer}),
+    );
+    expect(find.text(Strings.wolfWinner(WolfWinner.village)), findsOneWidget);
+    // back in the lobby, then the next game
+    await _send(t, c, _lobby());
+    await _send(t, c, _role);
+    await _send(t, c, const PlayWait(ready: false, count: 0, total: 6));
+    expect(find.text(Strings.wolfWinner(WolfWinner.village)), findsNothing);
+    expect(find.text(Strings.holdHere), findsOneWidget);
+    expect(find.byKey(const ValueKey('play-ready')), findsOneWidget);
+  });
+
   testWidgets('the roles list opens from the hold screen, and goes back', (
     t,
   ) async {

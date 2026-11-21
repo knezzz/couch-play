@@ -238,6 +238,19 @@ void main() {
       expect(c.sent.last, const Kick(2));
     });
 
+    testWidgets('on the Spreman screen the host has the kick bar, a guest not', (
+      t,
+    ) async {
+      final host = await _app(t, 0);
+      await _send(t, host, _role);
+      await _send(t, host, const PlayWait(ready: false, count: 1, total: 4));
+      expect(find.byKey(_bar), findsOneWidget);
+      final guest = await _app(t, 1);
+      await _send(t, guest, _role);
+      await _send(t, guest, const PlayWait(ready: false, count: 1, total: 4));
+      expect(find.byKey(_bar), findsNothing);
+    });
+
     testWidgets('a GamePlayers at night changes nothing on the phone', (
       t,
     ) async {

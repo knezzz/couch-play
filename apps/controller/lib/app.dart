@@ -141,6 +141,7 @@ class _AppState extends State<App> {
           _lobby = m;
           _host = null; // the lobby state says who hosts
           _uljezOn = false; // back in the lobby: no game is on
+          _wolf.reset();
           _inGame = null;
           final me = m.players.where((p) => p.id == _myId).firstOrNull;
           if (me != null && !_rejoining) {

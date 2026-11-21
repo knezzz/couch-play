@@ -80,6 +80,9 @@ Map<String, Object?> shape(Message m) => {
       'text': m is NightPrompt ? m.text.length : (m is Morning ? m.text.length : 0),
       // Night 1's second list is not compared: only phones with a night action
       // have it now (Task 51; step 3 removes the second pick altogether).
+      // From night 2 every phone has the same picks and lists.
+      'picks': m is NightPrompt && m.night > 1 ? m.picks : 0,
+      'lists2': m is NightPrompt && m.night > 1 ? m.choices2.isEmpty : null,
     };
 
 void main() {

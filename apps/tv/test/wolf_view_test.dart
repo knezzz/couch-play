@@ -24,7 +24,7 @@ const _roles7 = {
 };
 
 class _Game {
-  _Game(Map<int, WolfRole> roles, {bool hide = true}) {
+  _Game(Map<int, WolfRole> roles, {bool hide = true, bool ready = true}) {
     match = WolfMatch(
       ids: roles.keys.toList(),
       nameOf: (id) => 'P$id',
@@ -34,8 +34,10 @@ class _Game {
       random: Random(1),
       fixedRoles: roles,
     )..start();
-    for (final id in roles.keys) {
-      match.onReadyToPlay(id); // everyone is ready: these tests start at night 1
+    if (ready) {
+      for (final id in roles.keys) {
+        match.onReadyToPlay(id); // everyone is ready: these tests start at night 1
+      }
     }
     players = [for (final id in roles.keys) PlayerInfo(id, 'P$id', id - 1, true, 0, character: characterIds[id - 1])];
   }
@@ -84,6 +86,21 @@ Future<void> _close(WidgetTester t, _Game g) async {
 }
 
 void main() {
+  testWidgets('before night 1: the village by day with "Spremni: x / y", no role on screen, the count follows the phones', (t) async {
+    _big(t);
+    final g = _Game(_roles7, ready: false);
+    await t.pumpWidget(g.view());
+    expect(t.widget<VillageScreen>(find.byType(VillageScreen)).night, isFalse);
+    expect(find.text('Spremni: 0 / 7'), findsOneWidget);
+    for (var id = 1; id <= 3; id++) {
+      g.match.onReadyToPlay(id);
+    }
+    await t.pumpWidget(g.view());
+    expect(find.text('Spremni: 3 / 7'), findsOneWidget);
+    expect(_roleWordsOnScreen(t), isEmpty);
+    await _close(t, g);
+  });
+
   testWidgets('night: the village with every house lit and no role on screen', (t) async {
     _big(t);
     final g = _Game(_roles7);
