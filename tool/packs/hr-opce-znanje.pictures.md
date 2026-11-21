@@ -1661,3 +1661,337 @@ Other exclusions:
 - old 228: question dropped from the pack (08a5663)
 - old 295: question dropped from the pack (08a5663)
 - old 375: question dropped from the pack (08a5663)
+
+## Pass 2 (2026-11-21)
+
+Queue task qitem-20261121132155-039fdcdf35282b5a. Question numbers here are CURRENT numbers (not the old ones used in the first pass skip lists). Part 1 covers Q1-200; part 2 (Q201-397) follows below once done. PM size rule: pack zip 7.1 MB, limit about 8.5 MB; every candidate over 60 KB (800 px WebP) is flagged.
+
+### Part 1: Q1-200 (13 candidates: 10 existing + 3 NEW; target about 15, not padded)
+
+All opened as thumbnails; licence template read on file pages. NEW facts have one source (en.wikipedia). Doubts: Q100 safety pin is GFDL(migration=relicense), API says CC BY-SA 3.0: drop if not accepted. Q180 grapes drawing carries PD-US-expired (US-only template; Rackham d. 1939, free in EU): writer confirm. Q167 shows the answer (keys, rooster): drop. Q141 weak. Q27 crop left edge (bottle label). NEW-2 Stonehenge: 3000 BC is the first ditch and bank only. NEW-1 Colosseum ~72 KB (crop to ~55). Not covered: Q15, 22, 40, 57, 70, 81, 85, 87, 113, 116, 120, 186, 46, 48, 51, 79. Not checked: apps/tv/assets; object copyright of things shown in photos.
+
+# Pass 2, hr-opce-znanje, Q1-200 (FINAL)
+Sažetak: 13 kandidata (10 existing, 3 NEW; Q141 i Q167 slabi/preoblikovati, Q100 licencna sumnja, Q180 licencna sumnja). Samo jedan iznad 60 KB (NEW-1 Kolosej ~72 KB). Pretraženo (Commons API): boršč, humus, kimči, vanilija, Moby Dick, Gulliver, Bayeux, smrt Cezara, Penelopa, Petrovo zatajenje, klinopis, glagoljica/Bašćanska ploča, Brailleovo pismo, devanagari, marke, denar, caddie, sigurnosna igla, čičak, guacamole, ouzo, kapučino, Orient Express, kartice, ledene kocke, duga, šah, sari, Stonehenge, Kolosej, origami, didgeridoo, bumerang, bootprint, uganuta lisica i grožđe.
+Nisam mogao: pronaći dobre slike za čičak (Q70 u starom popisu), caddie, R.U.R., ouzo, Braille, devanagari (nema rezultata ili samo PDF-ovi). Sve slike su gledane Read alatom (thumbnail 800-960 px), osim onih izričito navedenih u "Preskočeno".
+Napomena: Commons FilePath daje 960 px; veličine su preračunate na 800 px WebP q75 PIL-om.
+Alati: Commons API, sve gledano Read alatom (thumbnail). Veličine su procjene (PIL, 800 px WebP q75).
+
+### Q52 Koje povrće daje boršču njegovu karakterističnu crvenu boju?
+- Odgovor: Cikla
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:A_bowl_of_Borscht_soup,_made_from_beets_-_20130420-051-of-365_(8666575157).jpg
+- Autor: Calgary Reviews (Flickr)
+- Licenca: {{cc-by-2.0}} + FlickreviewR passed / CC BY 2.0
+- Veličina: 1280x960 px, image/jpeg
+- Vidi se (viewed): crvena juha u bijeloj zdjelici, žlica; nema teksta, nema cikle na vidiku.
+- Provjera podudaranja: grep svih pack JSON-a i sources: hr-hrana-pice ima boršč pitanje (UNESCO, država) s DRUGOM slikom (Borscht served.jpg); ova slika ne odgovara ničemu (ne otkriva državu). Datoteka nije korištena ni u jednom packu.
+- Preslikavanje/crop: bez; po želji crop na zdjelicu.
+- Procjena veličine: ~19 KB
+- Preoblikovati?: ne
+
+### Q89 Iz koje kuhinje potječe kimči, fermentirano ljuto povrće?
+- Odgovor: Iz korejske
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Kimchi_jars.jpg
+- Autor: Madison Scott-Clary (Flickr "Kimchi pots")
+- Licenca: {{cc-by-2.0}} / CC BY 2.0
+- Veličina: 1280x853 px, image/jpeg
+- Vidi se (viewed): smeđi glineni lonci (onggi) za kimči, bliski plan, bez teksta. Slabije: ne vidi se samo jelo, ali nema odgovora ni drugih tragova.
+- Provjera podudaranja: grep kimch/kimči: samo ovo pitanje; datoteka nije korištena.
+- Procjena veličine: ~38 KB
+- Preoblikovati?: ne
+
+### Q197 Kojeg je dana 44. pr. Kr. ubijen Julije Cezar?
+- Odgovor: 15. ožujka
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Vincenzo_Camuccini_-_La_morte_di_Cesare.jpg
+- Autor: Vincenzo Camuccini (u. 1844.)
+- Licenca: {{PD-Art|PD-old-auto-expired|deathyear=1844}} / Public domain
+- Veličina: 2048x1161 px, image/jpeg
+- Vidi se (viewed): slika ubojstva u senatu, rimski senatori, kip golog muškarca u pozadini (klasični kip, obiteljski prihvatljivo), bez teksta/potpisa.
+- Provjera podudaranja: grep Cezar/Caesar/Camuccini u svim packovima: Cezar se spominje u Q131 (bista), Q129, Q163 itd., ali nijedan odgovor ne ovisi o ovoj slici. Slika nije korištena. Pitanje o datumu, slika ne daje datum.
+- Preslikavanje/crop: bez
+- Procjena veličine: ~51 KB
+- Preoblikovati?: ne
+
+### Q121 Koji je drevni narod razvio klinasto pismo?
+- Odgovor: Sumerani
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Sumerian_Cuneiform_Clay_Tablet_(28185829592).jpg
+- Autor: Gary Todd (Flickr)
+- Licenca: {{cc-zero}} + FlickreviewR passed / CC0
+- Veličina: 5184x3456 px, image/jpeg
+- Vidi se (viewed): glinena pločica s klinastim znakovima i točkama (arhaična administrativna pločica) u vitrini; mala bijela pločica s brojem "4" (nečitljiva ime). Nema imena naroda.
+- Provjera podudaranja: grep cuneiform/klinast: samo ovo pitanje; datoteka nije korištena. Naslov datoteke sadrži "Sumerian" ali naslov se ne prikazuje.
+- Preslikavanje/crop: crop na pločicu (bez staklene police i oznake "4") poželjan.
+- Procjena veličine: ~42 KB
+- Preoblikovati?: ne
+
+### Q100 Koji je američki mehaničar izumio modernu zihernadlu (sigurnosnu iglu)?
+- Odgovor: Walter Hunt
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Safety_Pin.jpg
+- Autor: Haragayato (vlastita fotografija)
+- Licenca: {{GFDL|migration=relicense}} (Commons: CC BY-SA 3.0 + GFDL; |Permission = "Released into the GFDL by creator"). DOUBT: licenca je samo GFDL s "migration=relicense"; API kaže CC BY-SA 3.0, ali izvorna dozvola spominje samo GFDL. Ako writer to ne prihvaća, odbaciti.
+- Veličina: 1264x924 px, image/jpeg
+- Vidi se (viewed): jedna srebrna zihernadla na bijeloj pozadini, bez teksta.
+- Provjera podudaranja: grep safety pin/zihernadl: samo ovo pitanje (sources Q100); datoteka nije korištena.
+- Procjena veličine: ~16 KB
+- Preoblikovati?: ne
+
+### Q141 Kako se zove Odisejeva vjerna supruga?
+- Odgovor: Penelopa
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Angelica_Kaufmann_-_Penelope_at_her_Loom.jpg
+- Autor: Angelica Kauffmann (u. 1807.)
+- Licenca: {{PD-old-100}} / Public domain
+- Veličina: 851x1200 px, image/jpeg
+- Vidi se (viewed): slikana žena u zlatno-plavoj haljini, naslonjena glavom, uz nju pas i luk na podu; sitni potpis slikarice u donjem lijevom kutu (nečitljiv). Naslov datoteke nije vidljiv. Slika "prikazuje odgovor" samo ikonografijom (netko tko poznaje sliku). DOUBT: pitanje ne spominje sliku; slabi oslonac.
+- Provjera podudaranja: grep Penelop/Odisej: ne koristi se ni u jednom packu; ostala pitanja o Odiseju bez slike s ovim sadržajem.
+- Preslikavanje/crop: crop donjeg lijevog kuta s potpisom (opcionalno).
+- Procjena veličine: ~49 KB
+- Preoblikovati?: ne (slika ne imenuje), ali slabo "podupire": zbog toga niski prioritet.
+
+### Q167 Koji je apostol triput zatajio Isusa prije nego što je pijetao zapjevao?
+- Odgovor: Petar
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Lisboa-Museu_Nacional_de_Arte_Antiga-Negação_de_São_Pedro-20140917.jpg
+- Autor: nepoznati majstor (slika, PD-old-100); fotograf Daniel Villafruela
+- Licenca: {{PD-art|PD-old-100}} + {{Self|Cc-by-sa-3.0|author=Daniel VILLAFRUELA}} / Public domain
+- Veličina: 2422x3035 px, image/jpeg
+- Vidi se (viewed): tamna barokna slika bradatog starca koji gleda uvis, drži ključ; na desnom rubu crveni pijetlov greben. DOUBT: prikazuje samog Petra s ključevima (odgovor, prepoznatljiv po ključevima), pa je to praktički "Tko je na slici?". Zato Preoblikovati: da (ili izbaciti).
+- Provjera podudaranja: grep Petar/Peter: nijedan pack nema pitanje o sv. Petru s ovom slikom; datoteka nije korištena.
+- Procjena veličine: ~20 KB
+- Preoblikovati?: da, slika otkriva odgovor (ključevi)
+
+### NEW-1 Pod kojim je rimskim carem 80. godine dovršen Kolosej?
+- Odgovor: Titu (distraktori: Vespazijan, Neron, Trajan, Domicijan)
+- Vrsta: NEW
+- Činjenica: Kolosej je počet pod Vespazijanom, a dovršen 80. pod njegovim nasljednikom Titom. Izvor: https://en.wikipedia.org/wiki/Colosseum (en raw, dohvaćeno) Citat: "and was completed in AD 80 under his successor and heir, [[Titus]] ({{Reign|79|81}})."
+- Slika: https://commons.wikimedia.org/wiki/File:Colosseum,_Rome,_Italy.jpg
+- Autor: Christoph Strässler
+- Licenca: {{cc-by-sa-2.0}} + FlickreviewR passed / CC BY-SA 2.0
+- Veličina: 7546x4245 px, image/jpeg
+- Vidi se (viewed): Kolosej izvana s plavim nebom i dva oblaka, borovi, mali ljudi na ulici, ograda gradilišta; nema čitljivog teksta/loga.
+- Provjera podudaranja: grep Kolos/Colosseum/Vespaz/Titus u svim packovima i sources: nema pitanja ni slike Koloseja; Pitanja o Rimu imaju druge odgovore. Slika ne otkriva odgovor. Pitanje ne smije u tekstu imati "Kolosej" ako writer želi "Što je na slici" – ovdje je u tekstu, slika samo podupire.
+- Preslikavanje/crop: crop na zgradu (odrezati gradilišne ograde i ulicu).
+- Procjena veličine: ~72 KB (FLAG > 60 KB; crop na gornji dio i q70 vjerojatno ~55 KB)
+- Preoblikovati?: ne
+
+### NEW-2 Koliko je otprilike star kameni krug sa slike (prvi nasip i jarak)?
+- Odgovor: Oko 5000 godina (prvi nasip i jarak oko 3000. pr. Kr.)
+- Vrsta: NEW
+- Činjenica: Stonehenge, prapovijesna megalitska građevina na ravnici Salisbury; ostaci iz oko 3000. pr. Kr. Izvor: https://en.wikipedia.org/wiki/Stonehenge (en raw) Citat: "Deposits containing human bone date from as early as 3000 BC, when the ditch and bank were first" (rečenica nastavlja u izvoru). Drugi citat: "Stonehenge is a prehistoric megalithic structure on Salisbury Plain in Wiltshire, England". NAPOMENA: 3000 BC je prvi nasip/jarak, kamenje je mlađe (cca 2500. pr. Kr.); writer treba formulirati "prvi nasip i jarak" ili pitati "u kojem tisućljeću pr. Kr." (fact-checker neka provjeri s drugim izvorom).
+- Slika: https://commons.wikimedia.org/wiki/File:Stonehenge_sunset.jpg
+- Autor: Bkamprath
+- Licenca: {{PD-self}} / Public domain
+- Veličina: 3264x2448 px, image/jpeg
+- Vidi se (viewed): silueta Stonehengea u zalasku sunca, zelena trava, nebo, nekoliko malih ljudi; nema teksta.
+- Provjera podudaranja: grep Stonehenge u svim packovima i sources: nula pogodaka. Ne otkriva nijedan odgovor.
+- Preslikavanje/crop: bez.
+- Procjena veličine: ~23 KB
+- Preoblikovati?: ne
+
+### Q37 Pri kojoj se temperaturi (u °C) voda smrzava?
+- Odgovor: 0
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Icecubes.jpg
+- Autor: Editor at Large (vlastiti rad; i na Flickru)
+- Licenca: |permission = {{self|cc-by-sa-2.5}} / CC BY-SA 2.5
+- Veličina: 3648x2736 px, image/jpeg
+- Vidi se (viewed): bliski plan prozirnih ledenih kocki, plavkasto-bijele, bez teksta.
+- Provjera podudaranja: hr-fizika ima pitanje o ledu s drugom slikom (photo-072) i Q o temperaturi smrzavanja bez slike; ova slika ne otkriva ni jedan odgovor. Datoteka nije korištena.
+- Procjena veličine: ~10 KB
+- Preoblikovati?: ne
+
+### Q27 Od kojeg se ploda tradicionalno radi guacamole?
+- Odgovor: Avokada
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Guacamole_in_a_bowl_by_Jon_Sullivan_(4_April_2004).jpg
+- Autor: Jon Sullivan (pdphoto.org)
+- Licenca: {{PD-PDphoto.org}} / Public domain
+- Veličina: 1024x768 px, image/jpeg
+- Vidi se (viewed): plava zdjelica zgnječene zelene mase s komadićima crvene paprike/luka, žlica, limeta i korijander, nož na dasci; rub etikete s natpisom "O...T" u gornjem lijevom kutu (nečitljivo). Cijeli avokado se ne vidi (ali zgnječena zelena masa i dalje je blizu odgovora).
+- Provjera podudaranja: grep guacamole: samo ovo pitanje; hr-hrana-pice ima guacamole u izvorima? (samo "sources", pitanje nije pronađeno u JSON-u). Datoteka nije korištena. DOUBT: PD-PDphoto.org je predložak za "pdphoto" izvor (autor sam stavio PD) – OK ako je autor Jon Sullivan, nije nepovezana osoba.
+- Preslikavanje/crop: odrezati lijevi rub (etiketa) i nož.
+- Procjena veličine: ~43 KB
+- Preoblikovati?: ne
+
+### NEW-3 Što na japanskom znači "kami" u riječi origami?
+- Odgovor: Papir (distraktori: ptica, savijanje, ždral/kutija)
+- Vrsta: NEW
+- Činjenica: Origami je od ori "savijanje" i kami "papir". Izvor: https://en.wikipedia.org/wiki/Origami (en raw dohvaćeno) Citat: "from ''ori'' meaning {{gloss|folding}}, and ''kami'' meaning {{gloss|paper}} (''kami'' changes to ''gami'' due to [[rendaku]])"
+- Slika: https://commons.wikimedia.org/wiki/File:Origami_crane_cropped.jpg
+- Autor: WP user Laitche
+- Licenca: {{PD-author|Laitche at english Wikipedia}} / Public domain
+- Veličina: 930x776 px, image/jpeg
+- Vidi se (viewed): crveni origami ždral s bijelim cvjetićima na bež pozadini; nema teksta. Napomena: ako se uključi distraktor "ždral/ptica", slika ga djelomice sugerira.
+- Provjera podudaranja: grep origami/papir/ždral u svim packovima i sources: nula. Datoteka nije korištena.
+- Procjena veličine: ~15 KB
+- Preoblikovati?: ne
+
+### Q180 Kojem se antičkom basnopiscu pripisuje basna o lisici i grožđu?
+- Odgovor: Ezopu
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Aesops_Fables-Rackham-039-1.jpg
+- Autor: Arthur Rackham (u. 1939.; Commons ga vodi kao "Aesop")
+- Licenca: {{PD-scan|PD-US-expired}} / Public domain. DOUBT: predložak je američki PD-US-expired; stvarni autor Rackham umro 1939. => PD u EU od 2010. Writer neka potvrdi.
+- Veličina: 1592x500 px, image/jpeg
+- Vidi se (viewed): crtež lozе s tri crna grozda i lišćem, bez teksta. Lisica se ne vidi.
+- Provjera podudaranja: grep fox/lisica/grožđe: samo ova basna u opce-znanju; datoteka nije korištena. Slika ne imenuje Ezopa (odgovor).
+- Preslikavanje/crop: bez (široki format 3.2:1; TV ga može letterbox).
+- Procjena veličine: ~29 KB
+- Preoblikovati?: ne
+
+## Preskočeno / sumnje
+- Pregledano i odbačeno: hummus (Lebanese style hummus.jpg: slanutak je vidljiv, daje odgovor Q40), koala jede eukaliptus (pokazuje odgovor), Apollo 11 bootprint (154 KB i Apollo 11 je već u packu), rimski denar (152 KB), Orient Express vagon (83 KB), Hanukka menora (117 KB), Draper Zlatno runo (87 KB i polugola figura), Gulliver Rijksmuseum (92 KB), duga (133 KB), Lilliput Grandville (210 KB), vanilija (64 KB, uspravni format, rezervna), kapučino (bizarna šalica s ljudima), Bašćanska ploča (već u hr-povijest), Pompeji NEW (Vezuv je u hr-zemljopis-svijeta), Bayeux scena 51 (73 KB; Bayeux scena 57 je već u hr-povijest za Normane), šalica kapučina, Sicherheitsnadeln (698 px), Pinocchio Chiostri (415 px), cuneiform Ur III (735 px), Doritos guacamole (marka).
+- Nije pronađeno ništa prikladno: Q15 gitara (brandovi vidljivi), Q22 (bubamara već u packu), Q70 čičak, Q81 caddie, Q85 al dente, Q87 julienne, Q113 R.U.R., Q108/109, Q116/120/186 pisma, Q46 sake, Q48 tekila, Q51 ouzo, Q79 marke, Q80 denar (preveliki), Q111 sari (fotografije ljudi, nije dalje pregledavano).
+- Nije provjereno: tuđa autorska prava na predmete na slikama (npr. šalica); svaka slika je gledana samo kao 800-960 px thumbnail; fact-checker treba provjeriti NEW-1/2/3 drugim izvorom (dohvaćen samo en.wikipedia). Pretražene stare "nepretražene" brojeve 101-105 samo djelomice (zihernadla nađena; traperice/QR/Nîmes/Tuxedo nisu).
+
+### Part 2: Q201-397 (10 candidates: 8 existing + 2 NEW; target about 15, not padded)
+
+All opened as thumbnails; licence template read on file pages. NEW facts have one source (en.wikipedia). Only Q312 is over 60 KB (~124 KB; ~101 KB at q60): drop if the size limit is tight. Doubts: Q376 teddy weakest licence (PD-Art/PD-1923 on a photo of a 3D object, museum says copyright undetermined). Q247 metre bar: NIST, unknown author, 1889 prototype. Q237 Braille cells bear on Q187 (six dots): use only one. Q251 vase is Panathenaic, not Olympic, stylised nude runners. NEW-2 is a Swiss Enigma-K. Q329 PD-US template from the retoucher, original Gardner d. 1882, free in EU. Not found: Z3, Belusic, Hilbert, Pemberton. Not checked: apps/tv/assets; many numbers unsearched (final section).
+
+# Pass 2, hr-opce-znanje, CURRENT Q201-397 (FINAL)
+Sažetak: 10 kandidata (8 existing + 2 NEW; cilj ~15, nisam punio). Iznad 60 KB samo Q312 Noordung (~124 KB; q60 ~101 KB), uz blizu granice NEW-2 Enigma (~59 KB) i Q376 teddy (~56 KB). Licencne sumnje: Q376 teddy (PD-1923/muzejski "undetermined"), Q247 metar (NIST, autor nepoznat). Sadržajna sumnja: Q237 Braille (slika pokazuje ćeliju od 6 točaka, dira Q187). Slabije: Q251 (panatenejska, ne olimpijska vaza).
+Pretraženo (Commons API): Tutankamon, Dunant, Gerry, Napierove kosti, Noordung, Grgur XIII, Belušić, Mendel, Halloween, Braille, metar-etalon, Napoleon/David, Staljin, NATO/Truman, Kon-Tiki, Thatcher, Lincoln, Pulitzer, Z3, Fermat/Diophantus, Fibonacci kip, Hilbert, Apollo 11 Columbia, Rimski ugovor, Stephenson, Lister, Zeus u Olimpiji, teddy, Pemberton, Nobel, talir, brilijant, Bogojavljenje, panatenejske vaze, Crécy, Tordesillas, uskršnja jaja, Nike iz Samotrake, Panteon, ARPANET, Rubik, matrjoška, Schuman, Frisbee, Enigma, Voyager Golden Record, patent, Nokia, Christ the Redeemer, Harrison, Ether Dome, Marengo kostur, Antikythera, Edison fonograf, Thatcher/Reagan, Lister sprej.
+Nisam mogao / nije provjereno: Z3 (samo Z1 replika), Belušić (samo male slike <800 px), Hilbert (437 px), Pemberton (<800 px), Trygve Lie (nije ponovno tražen). Nisam provjeravao apps/tv/assets (Koliko/Blef/Objasni podaci). Sve slike gledane kao 800-960 px thumbnail Read alatom; licenca čitana iz wikitexta datoteke (raw). Veličine su PIL WebP q75 na 800 px (procjene). Autorska prava na predmete na slikama (muzejski predmeti) nisam posebno ispitivao osim gdje je navedeno.
+Napomena o redoslijedu brojeva: svi brojevi su TRENUTNI.
+
+### Q316 Koji je škotski matematičar otkrio logaritme?
+- Odgovor: John Napier
+- Vrsta: existing (Q316)
+- Slika: https://commons.wikimedia.org/wiki/File:Napier's_Bones_circa_1700,_Computer_History_Museum.jpg
+- Autor: The wub (own work)
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0
+- Veličina: 3299x2199 px, image/jpeg
+- Vidi se (viewed): drvene Napierove kosti (štapići za množenje) u uokvirenoj kutiji, brojevi na štapićima, sivo-plava pozadina; nema natpisa/imena.
+- Provjera podudaranja: grep Napier u svim packovima/sources/pictures.md: samo Q316; datoteka nije korištena. Ne odgovara nijednom drugom pitanju (nema ENIAC/Pascal sličnog sadržaja; Q282 Pascal ima drugu sliku).
+- Preslikavanje/crop: bez.
+- Procjena veličine: ~44 KB
+- Preoblikovati?: ne (slika podupire: pomagalo koje je izumio isti čovjek; ne imenuje ga)
+
+### Q312 Koji je teoretičar astronautike rođen 1892. u Puli, a pisao je pod imenom Noordung?
+- Odgovor: Herman Potočnik
+- Vrsta: existing (Q312)
+- Slika: https://commons.wikimedia.org/wiki/File:Noordung's_Space_Station_Habitat_Wheel_-_GPN-2003-00101.jpg
+- Autor: Herman Potočnik (Noordung), 1929., iz knjige "Das Problem der Befahrung des Weltraums"; digitalizirao NASA
+- Licenca: {{PD-old-auto|1929}} + {{NASA-image}} / Public domain (Potočnik u. 1929.)
+- Veličina: 3958x4500 px, image/jpeg
+- Vidi se (viewed): ilustracija svemirske stanice u obliku kotača (bijeli torus, crna unutrašnjost, žbice, zrcalo) na tamnoplavoj pozadini sa zvijezdama; nema teksta.
+- Provjera podudaranja: grep Noordung/Potočnik/Wohnrad: samo Q312; ime u naslovu datoteke se ne prikazuje. Datoteka nije korištena.
+- Preslikavanje/crop: bez (uspravni format ~ 0.88:1).
+- Procjena veličine: ~124 KB (FLAG > 60 KB; zrnata tiskana ilustracija; q60 ~101 KB, q50 ~87 KB). Zato samo ako writer želi tu sliku, inače odbaciti.
+- Preoblikovati?: ne
+
+### Q243 Uoči kojeg se blagdana slavi Noć vještica (Halloween)?
+- Odgovor: Svih svetih
+- Vrsta: existing (Q243)
+- Slika: https://commons.wikimedia.org/wiki/File:Halloween_Pumpkin_Lantern,_Ayrshire,_Scotland.jpg
+- Autor: Rosser1954 (own work)
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0
+- Veličina: 4608x3456 px, image/jpeg
+- Vidi se (viewed): izrezana bundeva sa svijetlom, noću, crno pozadina, narančasto-crvena lica; nema teksta.
+- Provjera podudaranja: grep Halloween/Noć vještica: samo Q243; datoteka nije korištena. Ne otkriva Svih svetih.
+- Procjena veličine: ~7 KB
+- Preoblikovati?: ne (slika podupire temu, odgovor je blagdan)
+
+### Q237 Koji je Francuz kao učenik razvio taktilno pismo za slijepe?
+- Odgovor: Louis Braille
+- Vrsta: existing (Q237)
+- Slika: https://commons.wikimedia.org/wiki/File:A_person_reading_a_braille_book.jpg
+- Autor: antonioxalonso (Flickr "fotoblasete")
+- Licenca: {{cc-by-2.0}} + FlickreviewR reviewed-pass (19 Apr 2010) / CC BY 2.0
+- Veličina: 1280x960 px, image/jpeg
+- Vidi se (viewed): dva prsta na papiru s izbočenim točkicama Brailleova pisma, drveni stol u pozadini; bez lica, bez teksta.
+- Provjera podudaranja: grep Braille: Q187 (broj točaka = 6) u istom packu, hr-jezik foto-063 (ključ). DOUBT: slika pokazuje dvije ćelije točkica, pa pažljiv igrač može prebrojati 6 mjesta u ćeliji (Q187). Zato Q187 ne bi smio dobiti istu sliku; ako se piše Q237, Q187 mora ostati bez slike ili sa slikom koja ne pokazuje ćeliju.
+- Procjena veličine: ~9 KB
+- Preoblikovati?: ne
+
+### Q329 U kakvoj je kući rođen Abraham Lincoln?
+- Odgovor: U brvnari od jedne sobe
+- Vrsta: existing (Q329)
+- Slika: https://commons.wikimedia.org/wiki/File:Abraham_Lincoln_O-77_by_Gardner,_1863.jpg
+- Autor: Alexander Gardner (u. 1882.), LoC; retuš: Scewing
+- Licenca: {{PD-US}} (Gardner umro 1882., pa PD i u EU) / Public domain
+- Veličina: 4322x5441 px, image/jpeg
+- Vidi se (viewed): crno-bijeli portret Lincolna s mašnom, neutralna siva pozadina; nema teksta.
+- Provjera podudaranja: grep Lincoln: Q329 (ovo), Q369 Mount Rushmore (slika planine; ova fotografija ga ne otkriva), blef pitanja bez slike. Datoteka nije korištena.
+- Preslikavanje/crop: bez.
+- Procjena veličine: ~44 KB
+- Preoblikovati?: ne (pitanje imenuje Lincolna; slika ne pokazuje kuću). Napomena: nema odgovor "Tko je", pa je to potporna slika.
+
+### Q251 Koje se godine tradicionalno smatraju prve antičke Olimpijske igre?
+- Odgovor: 776. pr. Kr.
+- Vrsta: existing (Q251)
+- Slika: https://commons.wikimedia.org/wiki/File:Greek_vase_with_runners_at_the_panathenaic_games_530_bC.jpg
+- Autor: MatthiasKabel (Bilderwerkstatt: AlMare)
+- Licenca: {{Self|GFDL|Cc-by-sa-3.0-migrated|Cc-by-2.5}} / CC BY-SA 3.0 (+ CC BY 2.5)
+- Veličina: 3115x2282 px, image/jpeg
+- Vidi se (viewed): crnofiguralna panatenejska amfora, ca. 530. pr. Kr., četiri trkača (goli, crne silhuete; stilizirano), narančasta površina, tamni rub; na vazi sitna grčka oznaka (nečitljiva).
+- Provjera podudaranja: grep Olimpij/amphora u svim packovima: hr-sport-svijet ima Olimpijske igre pitanja (Olimpija kao mjesto paljenja plamena, Coubertin), ali nijedan odgovor nije "trčanje/vaza". Datoteka nije korištena. NAPOMENA: to su PANATENEJSKE igre u Ateni, ne Olimpijske; slika ilustrira antički atletski natječaj općenito. Gole figure (antička vaza): obiteljski prihvatljivo, ali writer neka potvrdi.
+- Preslikavanje/crop: bez.
+- Procjena veličine: ~45 KB
+- Preoblikovati?: ne
+
+### Q376 Po kojem je američkom predsjedniku dobio ime plišani medvjedić 'teddy'?
+- Odgovor: T. Rooseveltu
+- Vrsta: existing (Q376)
+- Slika: https://commons.wikimedia.org/wiki/File:Steiff_Teddy_Bear.jpg
+- Autor: nepoznat (Missouri History Museum, oko 1904-1905)
+- Licenca: {{PD-Art|PD-1923}}; izvor Missouri History Museum navodi "Copyright undetermined" i otvoreni pristup ("likely public domain"). DOUBT: PD-Art vrijedi za 2D reprodukcije, ovo je fotografija 3D predmeta; PD-1923 je američki predložak. Pravno slabije od drugih; writer/fact-checker neka odluče.
+- Veličina: 3876x3744 px, image/jpeg
+- Vidi se (viewed): bež medvjedić (mohair) s crvenim pletenim šalom, bijela pozadina; na jednom stopalu papirnata oznaka muzeja "1949.68.1" (crop ili ostaviti); marka Steiff se ne vidi.
+- Provjera podudaranja: grep teddy/plišan/medvjed: samo Q376; Q267 (medvjed = pad burze) bi mogla dobiti sliku medvjeda ali ne istog. DOUBT: igrač može povezati s Q267 (Medvjed). Datoteka nije korištena.
+- Preslikavanje/crop: odrezati oznaku "1949.68.1" na stopalu (donji desni kut) ako se želi.
+- Procjena veličine: ~56 KB
+- Preoblikovati?: ne
+
+### NEW-1 Koji je ruski slikar krajem 19. stoljeća nacrtao uzorak za prvu matrjošku?
+- Odgovor: Sergej Maljutin (distraktori: Vasilij Kandinski, Ilja Rjepin, Viktor Vasnjecov; Zvyozdochkin je izrađivač)
+- Vrsta: NEW
+- Činjenica: Prvi ruski set ugniježđenih lutaka izrezbario je 1890-ih Vasilij Zvjozdočkin prema nacrtu Sergeja Maljutina. Izvor: https://en.wikipedia.org/wiki/Matryoshka_doll (en raw, dohvaćeno). Citat: "The first Russian nested doll set was made during the 1890s by woodturning craftsman and wood carver Vasily Zvyozdochkin from a design by Sergey Malyutin, who was a folk crafts painter at Abramtsevo."
+- Slika: https://commons.wikimedia.org/wiki/File:Early_matryoshka_-_All-Russian_Decorative_Art_Museum.jpg
+- Autor: Лапоть (own work)
+- Licenca: {{self|cc-zero}} / CC0
+- Veličina: 5602x3501 px, image/jpeg
+- Vidi se (viewed): šest ranih matrjoški (žene u maramama, najveća drži pijetla) u vitrini muzeja, plavosivo staklo; nema teksta, nema natpisa.
+- Provjera podudaranja: grep matrjo/matryoshka/Malyutin/Maljutin u svim packovima: nula. Datoteka nije korištena. Slika prikazuje pijetla (iz izvora: "mother holding a red-combed rooster") ali pitanje ne pita o tome.
+- Preslikavanje/crop: bez (ili lagani crop gornjeg i donjeg ruba).
+- Procjena veličine: ~21 KB
+- Preoblikovati?: ne. Lakša varijanta za TV: "Iz koje je zemlje potječe matrjoška?" (Rusija) ali tada slika otkriva odgovor (ruske marame): prihvatljivo samo ako writer želi identifikacijsko pitanje.
+
+### Q247 Koji je dio puta od ekvatora do Sjevernog pola 1791. određen kao metar?
+- Odgovor: Desetmilijunti
+- Vrsta: existing (Q247)
+- Slika: https://commons.wikimedia.org/wiki/File:Platinum-Iridium_meter_bar.jpg
+- Autor: nepoznat; NIST (zaposlenik američke savezne vlade), slika s NIST-ove stranice
+- Licenca: {{PD-USGov-NIST}} / Public domain. DOUBT: autor nepoznat, PD temelji se na izvoru NIST-a; na slici nema znaka agencije, ali writer neka prosudi.
+- Veličina: 4232x2781 px, image/jpeg
+- Vidi se (viewed): dva komada metalne šipke X-presjeka (međunarodni prototip metra, Pt-Ir) na crvenoj podlozi; nema teksta ni oznaka.
+- Provjera podudaranja: grep metar/Platinum/meter: pitanja o metru samo Q247 (koliko-pack ima "koliko cm u metru" tipa bez slike, odgovor ne ovisi o ovoj slici). Datoteka nije korištena. Napomena: prototip je iz 1889., ne iz 1791.; slika ilustrira tematiku metra, ne tvrdi 1791.
+- Procjena veličine: ~14 KB
+- Preoblikovati?: ne
+
+### NEW-2 U kojem su se engleskom parku u Drugom svjetskom ratu razbijale njemačke šifre, među njima i šifre stroja sa slike?
+- Odgovor: Bletchley Park (distraktori: Hyde Park, Windsor Great Park, Richmond Park)
+- Vrsta: NEW
+- Činjenica: Bletchley Park je bio glavno središte savezničkog razbijanja šifri u Drugom svjetskom ratu; probijalo se njemačku Enigmu. Izvor: https://en.wikipedia.org/wiki/Bletchley_Park (en raw, dohvaćeno). Citat: "the estate housed the Government Code and Cypher School (GC&CS), which regularly penetrated the secret communications of the Axis powers - most importantly the German Enigma and Lorenz ciphers."
+- Slika: https://commons.wikimedia.org/wiki/File:Enigma-IMG_0487-black.jpg
+- Autor: Rama (Wikimedia Commons; supported by Wikimedia CH)
+- Licenca: {{Self|CeCILL|Cc-by-sa-2.0-fr}} / CC BY-SA 2.0 FR (+ CeCILL); QualityImage
+- Veličina: 5616x3744 px, image/jpeg
+- Vidi se (viewed): crni Enigma-K (švicarska vojska) u drvenoj kutiji: tipke sa slovima Q W E R T..., rotori, pločica s brojem "857"; crna pozadina na lijevom rubu. Nema imena stroja ni muzeja. Napomena: to je Enigma-K (komercijalna/švicarska inačica), ne njemačka vojna Enigma I, pa pitanje piše "stroja poput onog sa slike" ili samo "Enigme".
+- Provjera podudaranja: grep Enigma/Bletchley/Turing/šifr u svim packovima: nema; Q264 (Turingova nagrada) nije otkrivena (slika ne imenuje Turinga). Datoteka nije korištena.
+- Preslikavanje/crop: crop gornjeg desnog dijela (papir u poklopcu) po želji.
+- Procjena veličine: ~59 KB (blizu 60 KB; crna pozadina, metalni detalji)
+- Preoblikovati?: ne
+
+## Preskočeno / sumnje
+- Odbačeno nakon pregleda (preveliko ili otkriva odgovor): Q207 Tutankamonova maska (196 KB), Q237 Braille portret (odgovor), Q240 Grgur XIII portret (142 KB), Q256 Dunant portret (101 KB), Q269/Gerry mezzotinta (128 KB), Q261/262 Pulitzer (117 KB), Q293 Diophantus/Fermat stranica (134 KB), Q325 Napoleon prelazi Alpe (156 KB) i Marengov kostur (75 KB, u pozadini Napoleon), Q331 Staljin 1902 (108 KB), Q339 Kon-Tiki splav (na slici je norveška zastava = otkriva odgovor), Q342 Stephenson gravura (83 KB), Q355 Lister (Wellcome siluete/ 192 KB), Q358 Ether Dome (61 KB, golo kip Apolon i mumija), Q242 uskršnja jaja iz Hrvatske (113 KB), Q245 brilijant (20 KB, ali otkriva odgovor na hr-znanost "najtvrđa tvar = dijamant"), NEW Panteon (79 KB), NEW Antikythera (88 KB), NEW Voyager Golden Record (90 KB), Q310 Columbia CSM (56 KB, ali znakovi muzeja na rubu).
+- Nedopušteno zbog drugog packa: Q233 Bell i Q235 Watt (portreti već u hr-znanost/hr-fizika), Q234/Q300 Nobel (Alfred Nobel SPA.jpg već korištena), Q388 Nike iz Samotrake (Victoire de Samothrace već korištena), Q368 Krist Otkupitelj (već korišten), Q257 Coubertin (hr-sport-svijet pitanje "tko je na slici"), Q307 bug (slika bi pokazala moljca).
+- Nije tražen/nije pronađena slika: Q202, Q205, Q210, Q212, Q214, Q216/218/227 (autorska prava), Q232, Q238, Q248, Q250, Q252, Q254, Q255 (samo 594 px gif), Q267, Q270, Q273-275, Q277-280, Q284, Q291, Q294-295, Q297-299, Q301-303, Q306-308, Q313, Q315, Q317-320, Q322-323 (samo grupne fotografije Reagan/Thatcher), Q336-337, Q344, Q347-348, Q350-351, Q356-357, Q359, Q362, Q364, Q371, Q374-375, Q377-387, Q389, Q391-397. Većinom: marke/logotipi, odgovor bi bio otkriven slikom, ili nema dobre slike. Nisam ih sve pretražio.
+- Q237 (Braille čitanje): slika pokazuje ćelije točkica; za Q187 (broj točaka) bi bila oštećenje ako se koristi uz isti pack, pa jedno od dva.
+- Q376 teddy: licenca je najslabija (muzejska otvorena politika, predložak PD-Art za 3D predmet). Ako nije prihvaćeno, odbaciti.
+- Q312 Noordung: stvarno lijepa slika, ali 124 KB; jedan je od razloga za odbacivanje ako se čuva limit od 8,5 MB.
+- Napomena o PD-US: Q329 Lincoln nosi {{PD-US}} (retuš korisnika Scewing), ali je original Gardnerov (u. 1882.), pa je slobodan i u EU.
