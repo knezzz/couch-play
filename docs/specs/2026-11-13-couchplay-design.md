@@ -267,6 +267,26 @@ screens" (https://claude.ai/artifact/SX8ertCTfhPyLpSpti4PKe), with a copy of its
 The built screens follow it. Tokens: background #14141E, surface #1F1F2C, raised #2A2A3A, text #F4F4F8, muted #A9A9BC,
 accent and focus #4DD9FF; Roboto; TV text at least 40 px, phone text at least 16 px, phone buttons at least 56–64 px.
 
+### Phone home, live with the TV (person approved, 2026-11-21)
+
+Reference: canvas "Phone Home Redesign" (https://claude.ai/artifact/KubYHAdsEemypKYNBZH8LK), copy in
+`docs/design/phone-home/` (`Main.dc.html`: host phone, TV, guest phone; `GuestAll.dc.html`: the guest card per game).
+Without Kao svi (removed). Packs stay the multi-select checklist (Task 46) where the canvas still shows one pack.
+
+- **One state, three screens.** The host changes game with ‹ › on the phone or ◀ ▶ on the remote; every phone and the
+  TV show the same game at once, with its background art, title, blurb, settings line and page dots.
+- **Host phone:** the game card with prev/next edges, then "Postavke · svi ih vide": each setting inline on the home
+  (− / + for numbers, ‹ › for choices, Da/Ne toggles; packs and roles open their screen), Igraj pinned at the bottom.
+- **Guest phone:** the same card read-only with "Ana gleda" (plus "postavke" / "pakete" while the host is in them), the
+  settings list, and while the host is in the pack screen, the same checklist read-only ("Ana bira pakete"). The
+  footer says "Igru pokreće Ana". Promijeni lik stays.
+- **Changes are visible.** The setting just changed is outlined in the accent on every phone and the TV; guests see
+  the old value struck through next to the new one. Guests get a short list "Što je Ana promijenila" (newest first,
+  last 5, with "mobitelom" / "daljinskim"); empty: "Još ništa. Promjene se pojave ovdje čim ih Ana napravi."
+- **TV:** when the host changes a setting (phone or ▼ on the remote) the TV opens its settings panel by itself under
+  the title, with the changed row highlighted; Natrag or a game change closes it. In the pack screen the TV shows the
+  pack grid with the count summary.
+
 ## Left to the builder
 
 - Exact Flutter/Flame versions, folder details, build script.

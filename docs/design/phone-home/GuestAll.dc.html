@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Guest phone, every game</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#4DD9FF}a:hover{color:#9BE9FF}
+</style>
+</helmet>
+<div style="width: 1560px; height: 1640px; box-sizing: border-box; padding: 48px; background: #0B0B12; color: #F4F4F8; font-family: Roboto, system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; gap: 28px">
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <h1 style="margin: 0; font-size: 34px; font-weight: 900">Što gost vidi za svaku igru</h1>
+    <p style="margin: 0; font-size: 17px; color: #A9A9BC">Kad Ana otvori igru na TV-u ili na mobitelu, gosti vide istu karticu kao TV, sa svim postavkama.</p>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px">
+    <sc-for list="{{games}}" as="g" hint-placeholder-count="9">
+      <div style="border-radius: 28px; overflow: hidden; background: #14141E; border: 1px solid #2A2A3A; height: 448px; display: flex; flex-direction: column">
+        <section style="position: relative; height: 230px; flex-shrink: 0; overflow: hidden; background: {{g.bg}}">
+          <div aria-hidden="true" style="position: absolute; right: -60px; top: -50px; width: 200px; height: 200px; border-radius: 50%; opacity: .28; background: {{g.tint}}"></div>
+          <div aria-hidden="true" style="position: absolute; left: -70px; bottom: -80px; width: 180px; height: 180px; border-radius: 50%; opacity: .22; background: {{g.tint2}}"></div>
+          <div style="position: absolute; left: 16px; top: 14px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,.5); font-size: 13px; font-weight: 700">Ana gleda</div>
+          <div style="position: absolute; left: 32px; right: 32px; top: 62px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+            <div style="font-size: 46px; font-weight: 900; letter-spacing: -1px; line-height: 1; text-shadow: 0 4px 20px rgba(0,0,0,.6)">{{g.name}}</div>
+            <div style="font-size: 14px; line-height: 1.35; color: #E6E6F0">{{g.blurb}}</div>
+          </div>
+          <div style="position: absolute; left: 16px; right: 16px; bottom: 14px; font-size: 12px; color: #C9C9D8; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{g.meta}}</div>
+        </section>
+        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="3">
+            <div style="display: flex; align-items: center; gap: 8px; min-height: 40px; box-sizing: border-box; padding: 6px 14px; background: #1F1F2C; border-radius: 12px">
+              <span style="flex: 1; font-size: 14px; color: #C9C9D8">{{r.label}}</span>
+              <span style="font-size: 15px; font-weight: 700">{{r.value}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1560,"height":1640}}'>
+const G = [
+  ['Curve', 'Vozi svoju krivulju i ne udari ni u koga.', '2–8 igrača · Uravnoteženo · 2 s · 0 rob.', '#0B0B18', '#1A1236', '#FF4D6D', '#2ECC71', [['Način igre', 'Uravnoteženo'], ['Pauza prije runde', '2 s'], ['Roboti', '0']]],
+  ['Kviz', 'Pitanja s četiri odgovora. Odgovaraš na mobitelu.', '1–8 igrača · Svi paketi · 10 · 20 s · 4 s', '#0E1A2E', '#132744', '#22B8F0', '#FFB020', [['Paketi pitanja', 'Svi paketi'], ['Broj pitanja', '10'], ['Vrijeme za odgovor', '20 s'], ['Pauza između pitanja', '4 s']]],
+  ['Vukodlak', 'Netko u selu nije ono što se čini.', '5–8 igrača · Da · bez robota', '#05060F', '#101A3A', '#F2E9C9', '#3A2D5C', [['Uloge u igri', '6 uloga'], ['Skrivene uloge', 'Da']]],
+  ['Uljez', 'Svi imaju istu riječ, osim uljeza. Nađi ga.', '3–8 igrača · Sport · 1 · bez robota', '#1A0E2E', '#2A1646', '#E7B36A', '#9B5CFF', [['Paket riječi', 'Sport'], ['Broj uljeza', '1']]],
+  ['Objasni', 'Objasni riječ svojoj ekipi, a da je ne izgovoriš.', '4–8 igrača · Općenito · 60 s · 30 · bez robota', '#2A1410', '#14283A', '#FF8A4D', '#22B8F0', [['Paket riječi', 'Općenito'], ['Vrijeme po potezu', '60 s'], ['Bodova do pobjede', '30']]],
+  ['Koliko?', 'Pogodi broj. Tko je najbliže, nosi bodove.', '2–8 igrača · Općenito · 30 s · 10 · bez robota', '#0B1F1A', '#12304A', '#3DDCC4', '#22B8F0', [['Paket pitanja', 'Općenito'], ['Vrijeme za odgovor', '30 s'], ['Broj pitanja', '10']]],
+  ['Blef', 'Izmisli lažan odgovor i pronađi pravi.', '3–8 igrača · Čudna priroda · 7 · bez robota', '#3A2008', '#2A0E0E', '#FF4D6D', '#FFB020', [['Paket pitanja', 'Čudna priroda'], ['Broj pitanja', '7']]],
+  ['Tko bi?', 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.', '3–8 igrača · Blago · 10 · bez robota', '#2A1030', '#3A1430', '#9B5CFF', '#FF4D6D', [['Paket pitanja', 'Blago'], ['Broj pitanja', '10']]],
+  ['Kao svi', 'Odgovori isto kao većina u sobi.', '3–8 igrača · Općenito · 12 · 8 · bez robota', '#0E2A1E', '#1A3A2A', '#3DDC84', '#22B8F0', [['Paket pitanja', 'Općenito'], ['Broj pitanja', '12'], ['Bodova do pobjede', '8']]],
+];
+class Component extends DCLogic {
+  renderVals() {
+    return { games: G.map(([name, blurb, meta, b0, b1, tint, tint2, rows]) => ({
+      name, blurb, meta, tint, tint2, bg: 'linear-gradient(160deg, ' + b0 + ', ' + b1 + ')',
+      rows: rows.map(([label, value]) => ({ label, value })),
+    })) };
+  }
+}
+</script>
+</body>
+</html>

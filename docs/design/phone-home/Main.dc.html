@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Phone home, live with the TV</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#4DD9FF}a:hover{color:#9BE9FF}
+button{font-family:inherit;cursor:pointer}
+button:disabled{opacity:.35;cursor:default}
+</style>
+</helmet>
+<div style="width: 1560px; height: 1000px; box-sizing: border-box; padding: 40px; background: #0B0B12; color: #F4F4F8; font-family: Roboto, system-ui, -apple-system, sans-serif; display: flex; gap: 40px; align-items: flex-start">
+
+<!-- HOST PHONE -->
+<div style="display: flex; flex-direction: column; gap: 12px; width: 390px">
+<div style="font-size: 15px; font-weight: 700; color: #A9A9BC">Domaćin · Ana</div>
+<div style="position: relative; width: 390px; height: 844px; border-radius: 40px; overflow: hidden; background: #14141E; border: 1px solid #2A2A3A; display: flex; flex-direction: column">
+  <div style="height: 60px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px">
+    <div style="width: 36px; height: 36px; border-radius: 50%; background: #FF4D6D; color: #14141E; display: flex; align-items: center; justify-content: center; font-weight: 900">A</div>
+    <span style="font-size: 18px; font-weight: 900">Ana</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-label="Domaćin" role="img"><path d="M12 2l3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z" fill="#FFB020"></path></svg>
+    <div style="flex: 1"></div>
+    <sc-for list="{{players}}" as="p" hint-placeholder-count="5">
+      <div style="width: 22px; height: 22px; border-radius: 50%; margin-left: -6px; border: 2px solid #14141E; background: {{p.color}}"></div>
+    </sc-for>
+    <span style="font-size: 14px; color: #A9A9BC">5 igrača</span>
+  </div>
+
+  <div style="flex: 1; overflow-y: auto">
+    <section style="position: relative; height: 290px; overflow: hidden; background: {{bg}}">
+      <div aria-hidden="true" style="position: absolute; right: -60px; top: -50px; width: 220px; height: 220px; border-radius: 50%; opacity: .28; background: {{tint}}"></div>
+      <div aria-hidden="true" style="position: absolute; left: -70px; bottom: -80px; width: 200px; height: 200px; border-radius: 50%; opacity: .22; background: {{tint2}}"></div>
+      <button aria-label="Prethodna igra: {{prevName}}" onClick="{{prev}}" style="position: absolute; left: -24px; top: 104px; width: 92px; height: 72px; border: 0; border-radius: 20px; background: rgba(255,255,255,.08); color: rgba(244,244,248,.6); font-size: 13px; font-weight: 900; text-align: right; padding: 0 10px 0 0">‹<br>{{prevName}}</button>
+      <button aria-label="Sljedeća igra: {{nextName}}" onClick="{{next}}" style="position: absolute; right: -24px; top: 104px; width: 92px; height: 72px; border: 0; border-radius: 20px; background: rgba(255,255,255,.08); color: rgba(244,244,248,.6); font-size: 13px; font-weight: 900; text-align: left; padding: 0 0 0 10px">›<br>{{nextName}}</button>
+      <div style="position: absolute; left: 76px; right: 76px; top: 64px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+        <div style="font-size: 54px; font-weight: 900; letter-spacing: -1px; line-height: 1; text-shadow: 0 4px 20px rgba(0,0,0,.6)">{{name}}</div>
+        <div style="font-size: 15px; line-height: 1.35; color: #E6E6F0">{{blurb}}</div>
+      </div>
+      <div style="position: absolute; left: 16px; right: 16px; bottom: 16px; font-size: 13px; color: #C9C9D8; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{meta}}</div>
+    </section>
+    <div style="display: flex; justify-content: center; gap: 6px; padding: 12px 0 4px">
+      <sc-for list="{{dots}}" as="d" hint-placeholder-count="9">
+        <div style="height: 8px; border-radius: 4px; width: {{d.w}}px; background: {{d.c}}"></div>
+      </sc-for>
+    </div>
+    <div style="padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #A9A9BC">Postavke · svi ih vide</h2>
+      </div>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+        <div style="display: flex; align-items: center; gap: 6px; min-height: 64px; box-sizing: border-box; padding: 4px 4px 4px 16px; background: #1F1F2C; border-radius: 16px; border: 2px solid {{r.border}}">
+          <span style="flex: 1; font-size: 16px">{{r.label}}</span>
+          <sc-if value="{{r.adjustable}}" hint-placeholder-val="{{true}}">
+            <button aria-label="{{r.label}}: manje" onClick="{{r.dec}}" disabled="{{r.decOff}}" style="width: 52px; height: 52px; border: 0; border-radius: 12px; background: #2A2A3A; color: #F4F4F8; font-size: 24px">{{r.decGlyph}}</button>
+            <span style="width: 96px; text-align: center; font-size: 17px; font-weight: 700; line-height: 1.2">{{r.display}}</span>
+            <button aria-label="{{r.label}}: više" onClick="{{r.inc}}" disabled="{{r.incOff}}" style="width: 52px; height: 52px; border: 0; border-radius: 12px; background: #2A2A3A; color: #F4F4F8; font-size: 24px">{{r.incGlyph}}</button>
+          </sc-if>
+          <sc-if value="{{r.info}}" hint-placeholder-val="{{false}}">
+            <button onClick="{{r.open}}" style="height: 52px; max-width: 210px; border: 0; border-radius: 12px; background: #2A2A3A; color: #F4F4F8; font-size: 16px; font-weight: 700; padding: 0 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.display}} ›</button>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="flex-shrink: 0; padding: 12px 16px 20px; background: #14141E; border-top: 1px solid #1F1F2C">
+    <button onClick="{{play}}" style="width: 100%; height: 64px; border: 0; border-radius: 18px; background: #4DD9FF; color: #14141E; font-size: 22px; font-weight: 900">Igraj {{name}}</button>
+  </div>
+
+  <sc-if value="{{grid}}" hint-placeholder-val="{{false}}">
+  <div style="position: absolute; left: 0; right: 0; top: 60px; bottom: 0; background: #14141E; display: flex; flex-direction: column">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 4px 16px 8px">
+      <button onClick="{{closeGrid}}" style="height: 44px; border: 0; border-radius: 10px; background: #1F1F2C; color: #4DD9FF; font-size: 16px; font-weight: 700; padding: 0 14px">‹ Gotovo</button>
+      <div style="flex: 1"></div>
+      <button onClick="{{allOn}}" disabled="{{allAreOn}}" style="height: 44px; border: 0; border-radius: 10px; background: #1F1F2C; color: #F4F4F8; font-size: 15px; font-weight: 700; padding: 0 14px">Uključi sve</button>
+    </div>
+    <h2 style="margin: 0; padding: 0 16px 2px; font-size: 26px; font-weight: 900">Paketi pitanja</h2>
+    <p style="margin: 0; padding: 0 16px 12px; font-size: 14px; line-height: 1.4; color: #A9A9BC">{{packSummary}}<br>Pitanja dolaze iz svih uključenih paketa. Dodirni paket da ga isključiš.</p>
+    <div style="flex: 1; overflow-y: auto; padding: 0 16px 20px">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <sc-for list="{{packs}}" as="p" hint-placeholder-count="6">
+          <button onClick="{{p.pick}}" aria-pressed="{{p.on}}" style="position: relative; min-height: 116px; box-sizing: border-box; text-align: left; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; padding: 14px; border-radius: 16px; opacity: {{p.opacity}}; background: {{p.bg}}; border: 2px solid {{p.border}}; color: #F4F4F8">
+            <span style="font-size: 17px; font-weight: 900; line-height: 1.2; padding-right: 22px">{{p.t}}</span>
+            <span style="display: flex; flex-direction: column; gap: 3px">
+              <span style="font-size: 14px; color: #C9C9D8">{{p.qText}}</span>
+              <span style="display: flex; align-items: center; gap: 5px; font-size: 14px; color: {{p.imgColor}}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 17l-5-5-9 8"></path></svg>{{p.imgText}}</span>
+            </span>
+            <span aria-hidden="true" style="position: absolute; right: 10px; top: 10px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%; background: {{p.checkBg}}; border: 2px solid {{p.checkRing}}; color: #14141E; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center">{{p.checkMark}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{oneLeft}}" hint-placeholder-val="{{false}}">
+        <p style="margin: 14px 0 0; font-size: 14px; color: #A9A9BC; text-align: center">Barem jedan paket mora ostati uključen.</p>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</div>
+
+<!-- TV -->
+<div style="display: flex; flex-direction: column; gap: 12px; width: 600px">
+<div style="font-size: 15px; font-weight: 700; color: #A9A9BC">TV</div>
+<div style="position: relative; width: 600px; height: 338px; border: 8px solid #000; border-radius: 12px; overflow: hidden; background: {{bg}}">
+  <div aria-hidden="true" style="position: absolute; right: -40px; top: -30px; width: 200px; height: 200px; border-radius: 50%; opacity: .28; background: {{tint}}"></div>
+  <div aria-hidden="true" style="position: absolute; left: -40px; bottom: -60px; width: 180px; height: 180px; border-radius: 50%; opacity: .22; background: {{tint2}}"></div>
+  <div style="position: absolute; left: 14px; top: 12px; display: flex; gap: 6px; align-items: center; padding: 4px 8px 4px 4px; border-radius: 8px; background: rgba(0,0,0,.5)">
+    <div style="width: 40px; height: 40px; border-radius: 4px; background: #FFFFFF; color: #14141E; font-size: 9px; font-weight: 900; display: flex; align-items: center; justify-content: center">QR</div>
+    <span style="font-size: 10px; font-weight: 900">Uđi u igru</span>
+  </div>
+  <div style="position: absolute; left: 0; right: 0; top: 16px; text-align: center; font-size: 11px; font-weight: 900; color: rgba(244,244,248,.75)">CouchPlay</div>
+  <div style="position: absolute; right: 16px; top: 16px; display: flex; gap: 4px; align-items: center">
+    <sc-for list="{{players}}" as="p" hint-placeholder-count="5">
+      <div style="width: 14px; height: 14px; border-radius: 50%; background: {{p.color}}"></div>
+    </sc-for>
+  </div>
+  <div style="position: absolute; left: -24px; top: 136px; width: 94px; height: 62px; border-radius: 10px; background: rgba(255,255,255,.07); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; box-sizing: border-box; font-size: 15px; font-weight: 900; color: rgba(244,244,248,.5)">{{prevName}}</div>
+  <div style="position: absolute; right: -24px; top: 136px; width: 94px; height: 62px; border-radius: 10px; background: rgba(255,255,255,.07); display: flex; align-items: center; padding-left: 10px; box-sizing: border-box; font-size: 15px; font-weight: 900; color: rgba(244,244,248,.5)">{{nextName}}</div>
+  <div style="position: absolute; left: 80px; right: 80px; top: {{tvTop}}px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+    <div style="font-size: 62px; font-weight: 900; letter-spacing: -1px; line-height: 1; text-shadow: 0 3px 12px rgba(0,0,0,.6)">{{name}}</div>
+    <div style="font-size: 14px; color: #E6E6F0">{{blurb}}</div>
+    <div style="font-size: 11px; color: #C9C9D8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">{{meta}}</div>
+  </div>
+  <sc-if value="{{tvSettings}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; left: 87px; right: 87px; bottom: 34px; padding: 10px 16px; border-radius: 10px; border: 2px solid #4DD9FF; background: rgba(31,31,44,.92); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 14px">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+        <div style="font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #A9A9BC">{{r.label}}: <b style="color: {{r.tvColor}}">{{r.display}}</b></div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{tvDots}}" hint-placeholder-val="{{true}}">
+    <div style="position: absolute; left: 0; right: 0; top: 262px; display: flex; justify-content: center; gap: 4px">
+      <sc-for list="{{dots}}" as="d" hint-placeholder-count="9">
+        <div style="height: 5px; border-radius: 3px; width: {{d.tw}}px; background: {{d.c}}"></div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{grid}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(20,20,30,.95); padding: 40px 24px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 16px; font-weight: 900">Kviz · Paketi pitanja <span style="font-size: 11px; font-weight: 400; color: #C9C9D8">{{packSummary}}</span></div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px">
+        <sc-for list="{{packs}}" as="p" hint-placeholder-count="8">
+          <div style="padding: 5px 7px; border-radius: 6px; background: {{p.bg}}; border: 1.5px solid {{p.border}}; opacity: {{p.opacity}}; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+            <span style="font-size: 10px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.t}}</span>
+            <span style="font-size: 8px; color: #C9C9D8; white-space: nowrap">{{p.q}} · {{p.imgText}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <div style="position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; font-size: 9px; color: #C9C9D8">◀ ▶ igra · OK igraj · ▼ postavke · Natrag</div>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+  <span style="font-size: 14px; color: #A9A9BC; margin-right: 4px">Ana na daljinskom:</span>
+  <button aria-label="Daljinski lijevo" onClick="{{tvPrev}}" style="width: 48px; height: 44px; border: 0; border-radius: 10px; background: #2A2A3A; color: #F4F4F8; font-size: 16px">◀</button>
+  <button aria-label="Daljinski desno" onClick="{{tvNext}}" style="width: 48px; height: 44px; border: 0; border-radius: 10px; background: #2A2A3A; color: #F4F4F8; font-size: 16px">▶</button>
+  <button onClick="{{tvDown}}" style="height: 44px; border: 0; border-radius: 10px; background: #2A2A3A; color: #F4F4F8; font-size: 14px; padding: 0 14px">▼ Postavke</button>
+  <button onClick="{{tvUp}}" style="height: 44px; border: 0; border-radius: 10px; background: #2A2A3A; color: #F4F4F8; font-size: 14px; padding: 0 14px">Natrag</button>
+</div>
+<div style="margin-top: 12px; padding: 16px 18px; border-radius: 16px; background: #14141E; border: 1px solid #2A2A3A; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.45; color: #A9A9BC">
+  <b style="color: #F4F4F8; font-size: 15px">Kako je povezano</b>
+  <span>Jedno stanje, tri ekrana. Domaćin mijenja igru strelicama na mobitelu ili daljinskim na TV-u, i gosti odmah vide istu igru, istu pozadinu i iste postavke.</span>
+  <span>Svaka promjena postavke zasvijetli na svim mobitelima i upiše se u popis promjena. Kad domaćin mijenja postavke, TV sam otvara panel postavki.</span>
+</div>
+</div>
+
+<!-- GUEST PHONE -->
+<div style="display: flex; flex-direction: column; gap: 12px; width: 390px">
+<div style="font-size: 15px; font-weight: 700; color: #A9A9BC">Gost · Marko</div>
+<div style="position: relative; width: 390px; height: 844px; border-radius: 40px; overflow: hidden; background: #14141E; border: 1px solid #2A2A3A; display: flex; flex-direction: column">
+  <div style="height: 60px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px">
+    <div style="width: 36px; height: 36px; border-radius: 50%; background: #22B8F0; color: #14141E; display: flex; align-items: center; justify-content: center; font-weight: 900">M</div>
+    <span style="font-size: 18px; font-weight: 900">Marko</span>
+    <button style="height: 44px; border: 0; border-radius: 10px; background: #1F1F2C; color: #4DD9FF; font-size: 14px; font-weight: 700; padding: 0 12px">Promijeni lik</button>
+    <div style="flex: 1"></div>
+    <sc-for list="{{players}}" as="p" hint-placeholder-count="5">
+      <div style="width: 18px; height: 18px; border-radius: 50%; margin-left: -6px; border: 2px solid #14141E; background: {{p.color}}"></div>
+    </sc-for>
+  </div>
+
+  <div style="flex: 1; overflow-y: auto">
+    <section style="position: relative; height: 250px; overflow: hidden; background: {{bg}}">
+      <div aria-hidden="true" style="position: absolute; right: -60px; top: -50px; width: 200px; height: 200px; border-radius: 50%; opacity: .28; background: {{tint}}"></div>
+      <div aria-hidden="true" style="position: absolute; left: -70px; bottom: -80px; width: 180px; height: 180px; border-radius: 50%; opacity: .22; background: {{tint2}}"></div>
+      <div style="position: absolute; left: 16px; top: 14px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,.5); font-size: 13px; font-weight: 700; color: #F4F4F8">Ana gleda{{watchingWhat}}</div>
+      <div aria-hidden="true" style="position: absolute; left: -24px; top: 100px; width: 70px; height: 56px; border-radius: 16px; background: rgba(255,255,255,.07); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; box-sizing: border-box; font-size: 11px; font-weight: 900; color: rgba(244,244,248,.45)">{{prevName}}</div>
+      <div aria-hidden="true" style="position: absolute; right: -24px; top: 100px; width: 70px; height: 56px; border-radius: 16px; background: rgba(255,255,255,.07); display: flex; align-items: center; padding-left: 8px; box-sizing: border-box; font-size: 11px; font-weight: 900; color: rgba(244,244,248,.45)">{{nextName}}</div>
+      <div style="position: absolute; left: 56px; right: 56px; top: 64px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+        <div style="font-size: 46px; font-weight: 900; letter-spacing: -1px; line-height: 1; text-shadow: 0 4px 20px rgba(0,0,0,.6)">{{name}}</div>
+        <div style="font-size: 14px; line-height: 1.35; color: #E6E6F0">{{blurb}}</div>
+      </div>
+      <div style="position: absolute; left: 16px; right: 16px; bottom: 14px; font-size: 12px; color: #C9C9D8; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{meta}}</div>
+    </section>
+    <div style="display: flex; justify-content: center; gap: 6px; padding: 10px 0 2px">
+      <sc-for list="{{dots}}" as="d" hint-placeholder-count="9">
+        <div style="height: 8px; border-radius: 4px; width: {{d.w}}px; background: {{d.c}}"></div>
+      </sc-for>
+    </div>
+    <div style="padding: 8px 16px 12px; display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #A9A9BC">Postavke</h2>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+        <div style="display: flex; align-items: center; gap: 8px; min-height: 48px; box-sizing: border-box; padding: 8px 14px; background: #1F1F2C; border-radius: 14px; border: 2px solid {{r.border}}">
+          <span style="flex: 1; font-size: 15px; color: #C9C9D8">{{r.label}}</span>
+          <sc-if value="{{r.changed}}" hint-placeholder-val="{{false}}">
+            <span style="font-size: 14px; color: #A9A9BC; text-decoration: line-through">{{r.old}}</span>
+          </sc-if>
+          <span style="font-size: 16px; font-weight: 700; color: {{r.tvColor}}">{{r.display}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #A9A9BC">Što je Ana promijenila</h2>
+      <sc-if value="{{noFeed}}" hint-placeholder-val="{{true}}">
+        <span style="font-size: 14px; color: #A9A9BC">Još ništa. Promjene se pojave ovdje čim ih Ana napravi.</span>
+      </sc-if>
+      <sc-for list="{{feed}}" as="f" hint-placeholder-count="2">
+        <div style="display: flex; gap: 10px; align-items: baseline; font-size: 14px; line-height: 1.35">
+          <span style="flex: 1; color: {{f.color}}">{{f.text}}</span>
+          <span style="color: #A9A9BC; font-size: 12px; white-space: nowrap">{{f.where}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="flex-shrink: 0; padding: 14px 16px 22px; text-align: center; font-size: 15px; color: #A9A9BC; border-top: 1px solid #1F1F2C">{{footer}}</div>
+
+  <sc-if value="{{grid}}" hint-placeholder-val="{{false}}">
+  <div style="position: absolute; left: 0; right: 0; top: 60px; bottom: 0; background: #14141E; display: flex; flex-direction: column">
+    <div style="padding: 4px 16px 8px"><span style="display: inline-block; padding: 4px 10px; border-radius: 999px; background: #1F1F2C; font-size: 13px; font-weight: 700">Ana bira pakete</span></div>
+    <h2 style="margin: 0; padding: 0 16px 2px; font-size: 26px; font-weight: 900">Paketi pitanja</h2>
+    <p style="margin: 0; padding: 0 16px 12px; font-size: 14px; color: #A9A9BC">{{packSummary}}</p>
+    <div style="flex: 1; overflow-y: auto; padding: 0 16px 20px">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <sc-for list="{{packs}}" as="p" hint-placeholder-count="6">
+          <div style="position: relative; min-height: 116px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; padding: 14px; border-radius: 16px; opacity: {{p.opacity}}; background: {{p.bg}}; border: 2px solid {{p.border}}">
+            <span style="font-size: 17px; font-weight: 900; line-height: 1.2; padding-right: 22px">{{p.t}}</span>
+            <span style="display: flex; flex-direction: column; gap: 3px">
+              <span style="font-size: 14px; color: #C9C9D8">{{p.qText}}</span>
+              <span style="display: flex; align-items: center; gap: 5px; font-size: 14px; color: {{p.imgColor}}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 17l-5-5-9 8"></path></svg>{{p.imgText}}</span>
+            </span>
+            <span aria-hidden="true" style="position: absolute; right: 10px; top: 10px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%; background: {{p.checkBg}}; border: 2px solid {{p.checkRing}}; color: #14141E; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center">{{p.checkMark}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1560,"height":1000}}'>
+const BOTS = { key: 'bots', label: 'Roboti', type: 'step', min: 0, max: 3, step: 1, unit: '', value: 0 };
+const GAMES = [
+  { id: 'curve', name: 'Curve', blurb: 'Vozi svoju krivulju i ne udari ni u koga.', players: '2–8 igrača', bg: ['#0B0B18', '#1A1236'], tint: '#FF4D6D', tint2: '#2ECC71', bots: true, settings: [
+    { key: 'mode', label: 'Način igre', type: 'choice', options: ['Kaos', 'Uravnoteženo', 'Mirno', 'Samo za tebe'], value: 1 },
+    { key: 'cd', label: 'Pauza prije runde', type: 'step', min: 1, max: 10, step: 1, unit: ' s', value: 2 }, BOTS] },
+  { id: 'quiz', name: 'Kviz', blurb: 'Pitanja s četiri odgovora. Odgovaraš na mobitelu.', players: '1–8 igrača', bg: ['#0E1A2E', '#132744'], tint: '#22B8F0', tint2: '#FFB020', bots: true, settings: [
+    { key: 'pack', label: 'Paketi pitanja', type: 'pack', value: null }, // null: all packs on
+    { key: 'qs', label: 'Broj pitanja', type: 'step', min: 5, max: 30, step: 5, unit: '', value: 10 },
+    { key: 'sec', label: 'Vrijeme za odgovor', type: 'step', min: 10, max: 60, step: 5, unit: ' s', value: 20 },
+    { key: 'rev', label: 'Pauza između pitanja', type: 'step', min: 2, max: 15, step: 1, unit: ' s', value: 4 }, BOTS] },
+  { id: 'vukodlak', name: 'Vukodlak', blurb: 'Netko u selu nije ono što se čini.', players: '5–8 igrača', bg: ['#05060F', '#101A3A'], tint: '#F2E9C9', tint2: '#3A2D5C', settings: [
+    { key: 'roles', label: 'Uloge u igri', type: 'info', display: '6 uloga' },
+    { key: 'hide', label: 'Skrivene uloge', type: 'toggle', value: true }] },
+  { id: 'uljez', name: 'Uljez', blurb: 'Svi imaju istu riječ, osim uljeza. Nađi ga.', players: '3–8 igrača', bg: ['#1A0E2E', '#2A1646'], tint: '#E7B36A', tint2: '#9B5CFF', settings: [
+    { key: 'pack', label: 'Paket riječi', type: 'choice', options: ['Sport', 'Predmeti u kući', 'Mjesta', 'Crtići i likovi'], value: 0 },
+    { key: 'imp', label: 'Broj uljeza', type: 'step', min: 1, max: 2, step: 1, unit: '', value: 1 }] },
+  { id: 'objasni', name: 'Objasni', blurb: 'Objasni riječ svojoj ekipi, a da je ne izgovoriš.', players: '4–8 igrača', bg: ['#2A1410', '#14283A'], tint: '#FF8A4D', tint2: '#22B8F0', settings: [
+    { key: 'pack', label: 'Paket riječi', type: 'choice', options: ['Filmovi i serije', 'Međimurje', 'Hrana i piće', 'Općenito'], value: 3 },
+    { key: 'sec', label: 'Vrijeme po potezu', type: 'step', min: 30, max: 120, step: 15, unit: ' s', value: 60 },
+    { key: 'tgt', label: 'Bodova do pobjede', type: 'step', min: 10, max: 50, step: 5, unit: '', value: 30 }] },
+  { id: 'koliko', name: 'Koliko?', blurb: 'Pogodi broj. Tko je najbliže, nosi bodove.', players: '2–8 igrača', bg: ['#0B1F1A', '#12304A'], tint: '#3DDCC4', tint2: '#22B8F0', settings: [
+    { key: 'pack', label: 'Paket pitanja', type: 'choice', options: ['Općenito', 'Znanost i priroda', 'Hrvatska', 'Koje godine?'], value: 0 },
+    { key: 'sec', label: 'Vrijeme za odgovor', type: 'step', min: 10, max: 60, step: 5, unit: ' s', value: 30 },
+    { key: 'qs', label: 'Broj pitanja', type: 'step', min: 5, max: 20, step: 5, unit: '', value: 10 }] },
+  { id: 'blef', name: 'Blef', blurb: 'Izmisli lažan odgovor i pronađi pravi.', players: '3–8 igrača', bg: ['#3A2008', '#2A0E0E'], tint: '#FF4D6D', tint2: '#FFB020', settings: [
+    { key: 'pack', label: 'Paket pitanja', type: 'choice', options: ['Čudna priroda', 'Čudni svijet'], value: 0 },
+    { key: 'qs', label: 'Broj pitanja', type: 'step', min: 3, max: 15, step: 1, unit: '', value: 7 }] },
+  { id: 'tkobi', name: 'Tko bi?', blurb: 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.', players: '3–8 igrača', bg: ['#2A1030', '#3A1430'], tint: '#9B5CFF', tint2: '#FF4D6D', settings: [
+    { key: 'pack', label: 'Paket pitanja', type: 'choice', options: ['Blago', 'Ljuto'], value: 0 },
+    { key: 'qs', label: 'Broj pitanja', type: 'step', min: 5, max: 20, step: 5, unit: '', value: 10 }] },
+  { id: 'kaosvi', name: 'Kao svi', blurb: 'Odgovori isto kao većina u sobi.', players: '3–8 igrača', bg: ['#0E2A1E', '#1A3A2A'], tint: '#3DDC84', tint2: '#22B8F0', settings: [
+    { key: 'pack', label: 'Paket pitanja', type: 'choice', options: ['Općenito', 'Međimurje', 'Pop kultura', 'Hrvatska'], value: 0 },
+    { key: 'qs', label: 'Broj pitanja', type: 'step', min: 6, max: 20, step: 2, unit: '', value: 12 },
+    { key: 'tgt', label: 'Bodova do pobjede', type: 'step', min: 4, max: 15, step: 1, unit: '', value: 8 }] },
+];
+// The real quiz packs (apps/tv/assets/packs): title, questions, questions with a picture.
+const PACKS = [['Film i glazba', 130, 14], ['Fizika', 107, 6], ['Hrvatska – geografija', 100, 18], ['Hrvatska – kultura i sport', 122, 8], ['Ljudsko tijelo', 106, 10], ['Matematika', 113, 4], ['Međimurje', 84, 2], ['Memeovi', 119, 0], ['Oblici i logika', 50, 50], ['Opće znanje', 401, 0], ['Hrvatska – povijest', 111, 10], ['Psihologija', 112, 0], ['Umjetnost', 122, 38], ['Zastave', 46, 46], ['Zemljopis svijeta', 102, 11], ['Znanost', 130, 9]];
+const PLAYERS = ['#FF4D6D', '#22B8F0', '#FFB020', '#2ECC71', '#9B5CFF'];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { i: 1, vals: {}, feed: [], last: null, tv: false, started: false, grid: false };
+  }
+  val(g, s) {
+    const v = this.state.vals[g.id + '.' + s.key];
+    if (v !== undefined) return v;
+    return s.type === 'pack' ? PACKS.map(() => true) : s.value;
+  }
+  show(s, v) {
+    if (s.type === 'step') return v + s.unit;
+    if (s.type === 'choice') return s.options[v];
+    if (s.type === 'toggle') return v ? 'Da' : 'Ne';
+    if (s.type === 'pack') {
+      const n = v.filter(Boolean).length;
+      return n === PACKS.length ? 'Svi paketi' : n === 1 ? PACKS[v.indexOf(true)][0] : n + ' od ' + PACKS.length;
+    }
+    return s.display;
+  }
+  log(text, where, color) {
+    return [{ text, where, color: color || '#F4F4F8' }, ...this.state.feed].slice(0, 5);
+  }
+  change(g, s, nv) {
+    const old = this.show(s, this.val(g, s));
+    this.setState({
+      vals: { ...this.state.vals, [g.id + '.' + s.key]: nv },
+      last: { g: g.id, key: s.key, old },
+      tv: true, started: false,
+      feed: this.log(g.name + ' · ' + s.label + ': ' + old + ' → ' + this.show(s, nv), 'mobitelom'),
+    });
+  }
+  move(by, where) {
+    const i = (this.state.i + by + GAMES.length) % GAMES.length;
+    this.setState({ i, last: null, tv: false, started: false, grid: false, feed: this.log('Otvorila ' + GAMES[i].name, where, '#A9A9BC') });
+  }
+  renderVals() {
+    const g = GAMES[this.state.i], n = GAMES.length, st = this.state;
+    const rows = g.settings.map((s) => {
+      const v = this.val(g, s);
+      const changed = !!st.last && st.last.g === g.id && st.last.key === s.key;
+      const r = { label: s.label, display: this.show(s, v), changed, old: changed ? st.last.old : '',
+        border: changed ? '#4DD9FF' : 'transparent', tvColor: changed ? '#4DD9FF' : '#F4F4F8',
+        adjustable: s.type !== 'info' && s.type !== 'pack', info: s.type === 'info' || s.type === 'pack', decOff: false, incOff: false,
+        decGlyph: s.type === 'step' ? '−' : '‹', incGlyph: s.type === 'step' ? '+' : '›' };
+      if (s.type === 'step') {
+        r.decOff = v - s.step < s.min; r.incOff = v + s.step > s.max;
+        r.dec = () => !r.decOff && this.change(g, s, v - s.step);
+        r.inc = () => !r.incOff && this.change(g, s, v + s.step);
+      } else if (s.type === 'choice') {
+        const k = s.options.length;
+        r.dec = () => this.change(g, s, (v + k - 1) % k);
+        r.inc = () => this.change(g, s, (v + 1) % k);
+      } else if (s.type === 'toggle') {
+        r.dec = r.inc = () => this.change(g, s, !v);
+      } else if (s.type === 'pack') {
+        r.open = () => this.setState({ grid: true, feed: this.log('Otvorila pakete pitanja', 'mobitelom', '#A9A9BC') });
+      }
+      return r;
+    });
+    const packSetting = g.settings.find((s) => s.type === 'pack');
+    const onSet = packSetting ? this.val(g, packSetting) : PACKS.map(() => true);
+    const onCount = onSet.filter(Boolean).length;
+    // 1 955 grouping with a no-break space, as the TV's grouped().
+    const fmt = (x) => String(x).replace(/\B(?=(\d{3})+$)/g, ' ');
+    const setPacks = (next, text) => this.setState({
+      vals: { ...st.vals, [g.id + '.pack']: next },
+      last: { g: g.id, key: 'pack', old: this.show(packSetting, onSet) },
+      tv: true, feed: this.log(g.name + ' · ' + text, 'mobitelom'),
+    });
+    const packs = PACKS.map(([t, q, img], k) => {
+      const on = onSet[k], locked = on && onCount === 1;
+      return {
+        t, q, on,
+        qText: fmt(q) + (q % 10 === 1 && q % 100 !== 11 ? ' pitanje' : ' pitanja'),
+        imgText: img === 0 ? 'bez slika' : img === q ? 'sve sa slikom' : img + ' sa slikom',
+        imgColor: img === 0 ? '#A9A9BC' : '#4DD9FF',
+        opacity: on ? 1 : 0.45,
+        bg: on ? '#1C2E3A' : '#1F1F2C', border: on ? '#4DD9FF' : '#2A2A3A',
+        checkBg: on ? '#4DD9FF' : 'transparent', checkRing: on ? '#4DD9FF' : '#A9A9BC', checkMark: on ? '✓' : '',
+        pick: () => {
+          if (locked) return; // the last pack on stays on
+          setPacks(onSet.map((x, j) => (j === k ? !x : x)), (on ? 'isključila ' : 'uključila ') + t);
+        },
+      };
+    });
+    const sum = (i) => PACKS.reduce((a, p, k) => a + (onSet[k] ? p[i] : 0), 0);
+    const packSummary = onCount + ' od ' + PACKS.length + ' uključeno · ' + fmt(sum(1)) + ' pitanja · ' + fmt(sum(2)) + ' sa slikom';
+    const meta = [g.players, ...rows.filter((r) => !r.info).map((r) => r.label === 'Roboti' ? r.display + ' rob.' : r.display)].join(' · ') + (g.bots ? '' : ' · bez robota');
+    return {
+      name: g.name, blurb: g.blurb, meta, tint: g.tint, tint2: g.tint2,
+      bg: 'linear-gradient(160deg, ' + g.bg[0] + ', ' + g.bg[1] + ')',
+      prevName: GAMES[(st.i + n - 1) % n].name, nextName: GAMES[(st.i + 1) % n].name,
+      dots: GAMES.map((_, k) => ({ w: k === st.i ? 24 : 8, tw: k === st.i ? 14 : 5, c: k === st.i ? '#F4F4F8' : 'rgba(255,255,255,.35)' })),
+      rows,
+      players: PLAYERS.map((color) => ({ color })),
+      tvSettings: st.tv, tvDots: !st.tv, tvTop: st.tv ? 70 : 112,
+      watchingWhat: st.grid ? ' pakete' : st.tv ? ' postavke' : '',
+      packs, grid: st.grid, closeGrid: () => this.setState({ grid: false }),
+      packSummary, oneLeft: onCount === 1, allAreOn: onCount === PACKS.length,
+      allOn: () => onCount < PACKS.length && setPacks(PACKS.map(() => true), 'uključila sve pakete'),
+      feed: st.feed, noFeed: st.feed.length === 0,
+      footer: st.started ? 'Ana pokreće ' + g.name + '…' : 'Igru pokreće Ana',
+      prev: () => this.move(-1, 'mobitelom'), next: () => this.move(1, 'mobitelom'),
+      tvPrev: () => this.move(-1, 'daljinskim'), tvNext: () => this.move(1, 'daljinskim'),
+      tvDown: () => this.setState({ tv: true, feed: this.log('Otvorila postavke: ' + g.name, 'daljinskim', '#A9A9BC') }),
+      tvUp: () => this.setState({ tv: false }),
+      play: () => this.setState({ started: true }),
+    };
+  }
+}
+</script>
+</body>
+</html>

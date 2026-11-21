@@ -52,6 +52,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 45 | Uljez and Vukodlak without fixed timers: Dao sam trag, Idemo glasati majority (person, 2026-11-18) | done (review clean after 7 rounds, QA pass 3-8 phones; kicks from host phone by day and TV Back menu any time); next TV install | lead |
 | 46 | Multi-select packs in every game, all selected by default (person, 2026-11-18) | done (review 2 must-fixes fixed, QA pass all 7 games; 41ff6dd); next TV install | lead |
 | 47 | Remove Kao svi (person, 2026-11-19) | done (review clean, suites green; visual QA skipped by the person: no screen recording); next TV install | lead |
+| 48 | Phone home live with the TV: guests see the host's card and settings, changes marked and listed, TV settings panel (person, 2026-11-21) | routed | lead |
 
 ## Open questions for the person
 
@@ -354,3 +355,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-21: Person: "You can add new packs." Routed to content-lead (content-newpacks-20261121): Kviz candidates from CONTENT.md, tell PM before a pack over ~5 MB. Second picture pass and hr-medimurje changes still unanswered.
 - 2026-11-21: content-lead claimed it: hr-zivotinje, hr-sport-svijet, hr-jezik first (~100 q, ~50% pictures, under 4 MB each); pop-kultura and Glazba 2000+ later. hr-medimurje: person told content-lead "all five" on 2026-11-20; the five fixes (84→83 q, new castle photo, sources note) are in the working tree, suites green, uncommitted until the person reviews them. Second picture pass waiting.
 - 2026-11-21: Person asked about the "mobile redesign". Found canvas "Phone Home Redesign" (https://claude.ai/artifact/KubYHAdsEemypKYNBZH8LK, 2026-11-18/19): guests see the host's full game card with settings live, changes light up and list on guests, TV opens its settings panel when the host edits. Never in the plan or routed; only bits exist (carousel Task 27, "Ana gleda" line). Asked the person whether to build it.
+- 2026-11-21: Person: "yes build it without kao svi game". Spec section, Task 48, boards copied to docs/design/phone-home/; routed to lead.
