@@ -45,9 +45,9 @@
     {"q": "Koji je superjunak u stvarnom životu Peter Parker?", "choices": ["Batman", "Spider-Man", "Flash", "Daredevil"], "answer": 1},
     {"q": "Koje se trzalačko glazbalo s pedalama često viđa u orkestru?", "choices": ["Violončelo", "Harfa", "Lutnja", "Kontrabas"], "answer": 1},
     {"q": "U kojem se austrijskom gradu rodio Mozart?", "choices": ["Beču", "Salzburgu", "Grazu", "Linzu"], "answer": 1},
-    {"q": "Tko je skladao operu 'Carmen'?", "choices": ["Bizet", "Gounod", "Massenet", "Offenbach"], "answer": 0},
+    {"q": "Tko je skladao operu 'Carmen'?", "image": "photos/foto-043.webp", "choices": ["Bizet", "Gounod", "Massenet", "Offenbach"], "answer": 0},
     {"q": "Koja je Verdijeva opera praizvedena 1871. u Kairu?", "choices": ["Nabucco", "Aida", "Rigoletto", "Otello"], "answer": 1},
-    {"q": "Iz koje je Puccinijeve opere arija 'Nessun dorma'?", "choices": ["Tosca", "La bohème", "Turandot", "Madama Butterfly"], "answer": 2},
+    {"q": "Iz koje je Puccinijeve opere arija 'Nessun dorma'?", "image": "photos/foto-045.webp", "choices": ["Tosca", "La bohème", "Turandot", "Madama Butterfly"], "answer": 2},
     {"q": "Tko je skladao operu 'Seviljski brijač' iz 1816.?", "choices": ["Donizetti", "Verdi", "Bellini", "Rossini"], "answer": 3},
     {"q": "Od koliko se opera sastoji Wagnerov 'Prsten Nibelunga'?", "image": "photos/foto-047.webp", "choices": ["3", "4", "5", "6"], "answer": 1},
     {"q": "Tko je skladao 'Bolero' (1928.)?", "choices": ["Ravel", "Satie", "Debussy", "Fauré"], "answer": 0},
@@ -87,7 +87,7 @@
     {"q": "Kako se zove junakinja filma 'Zameo ih vjetar' (1939.)?", "choices": ["Daisy Buchanan", "Scarlett O'Hara", "Blanche DuBois", "Jane Eyre"], "answer": 1},
     {"q": "Tko je režirao '2001.: Odiseju u svemiru' (1968.)?", "choices": ["Steven Spielberg", "George Lucas", "Stanley Kubrick", "Andrej Tarkovski"], "answer": 2},
     {"q": "Koji je japanski redatelj snimio 'Sedam samuraja' (1954.)?", "choices": ["Yasujirō Ozu", "Masaki Kobayashi", "Kenji Mizoguchi", "Akira Kurosawa"], "answer": 3},
-    {"q": "U kojem filmu Ingmara Bergmana vitez igra šah sa Smrću?", "choices": ["Sedmi pečat", "Persona", "Divlje jagode", "Fanny i Alexander"], "answer": 0},
+    {"q": "U kojem filmu Ingmara Bergmana vitez igra šah sa Smrću?", "image": "photos/foto-085.webp", "choices": ["Sedmi pečat", "Persona", "Divlje jagode", "Fanny i Alexander"], "answer": 0},
     {"q": "Tko je režirao nijemi film 'Oklopnjača Potemkin' (1925.)?", "image": "photos/foto-086.webp", "choices": ["Dziga Vertov", "Sergej Ejzenštejn", "Vsevolod Pudovkin", "Andrej Tarkovski"], "answer": 1},
     {"q": "Pod kojim su imenom kod nas bili poznati Laurel i Hardy?", "choices": ["Pat i Patachon", "Max i Moritz", "Stanlio i Olio", "Bud i Terence"], "answer": 2},
     {"q": "Koja glumica igra Holly Golightly u 'Doručku kod Tiffanyja'?", "choices": ["Grace Kelly", "Elizabeth Taylor", "Marilyn Monroe", "Audrey Hepburn"], "answer": 3},
@@ -96,7 +96,7 @@
     {"q": "Koji je prvi dugometražni film u potpunosti izrađen računalnom animacijom?", "choices": ["Shrek", "Ledeno doba", "Priča o igračkama", "Čudovišta iz ormara"], "answer": 2},
     {"q": "Koji je japanski redatelj snimio 'Avanture male Chihiro'?", "image": "photos/foto-092.webp", "choices": ["Isao Takahata", "Katsuhiro Otomo", "Akira Kurosawa", "Hayao Miyazaki"], "answer": 3},
     {"q": "U kojem filmu astronaut javlja 'Houston, imamo problem'?", "choices": ["Apollo 13", "Armageddon", "Gravitacija", "Interstellar"], "answer": 0},
-    {"q": "Koji je glumac utjelovio i Hana Sola i Indianu Jonesa?", "choices": ["Kurt Russell", "Harrison Ford", "Mark Hamill", "Tom Selleck"], "answer": 1},
+    {"q": "Koji je glumac utjelovio i Hana Sola i Indianu Jonesa?", "image": "photos/foto-094.webp", "choices": ["Kurt Russell", "Harrison Ford", "Mark Hamill", "Tom Selleck"], "answer": 1},
     {"q": "Tko je utjelovio Hannibala Lectera u filmu 'Kad jaganjci utihnu'?", "choices": ["Jack Nicholson", "Gene Hackman", "Anthony Hopkins", "Ralph Fiennes"], "answer": 2},
     {"q": "Koja obitelj pjeva u filmu 'Moje pjesme, moji snovi' (1965.)?", "image": "photos/foto-096.webp", "choices": ["Osmond", "Kelly", "Jackson", "Von Trapp"], "answer": 3},
     {"q": "Koji je hrvatski producent osvojio Oscare za 'Schindlerovu listu' i 'Gladijatora'?", "choices": ["Branko Lustig", "Antun Vrdoljak", "Veljko Bulajić", "Dušan Vukotić"], "answer": 0},
@@ -132,6 +132,11 @@
     {"q": "Koji je hrvatski skladatelj na ovom portretu?", "image": "photos/foto-11.webp", "choices": ["Franjo Kuhač", "Ivan Zajc", "Vatroslav Lisinski", "Jakov Gotovac"], "answer": 2},
     {"q": "Koji je hrvatski skladatelj na ovom portretu?", "image": "photos/foto-12.webp", "choices": ["Ivan Zajc", "Vatroslav Lisinski", "Franjo Kuhač", "Blagoje Bersa"], "answer": 0},
     {"q": "Kako se zove ovo tradicijsko glazbalo?", "image": "photos/foto-13.webp", "choices": ["Lijerica", "Gusle", "Tamburica", "Sopile"], "answer": 0},
-    {"q": "Koje je ovo tradicijsko glazbalo?", "image": "photos/foto-14.webp", "choices": ["Tambura", "Balalajka", "Buzuki", "Mandolina"], "answer": 0}
+    {"q": "Koje je ovo tradicijsko glazbalo?", "image": "photos/foto-14.webp", "choices": ["Tambura", "Balalajka", "Buzuki", "Mandolina"], "answer": 0},
+    {"q": "Tko je 1877. izumio fonograf, uređaj sa slike koji snima i reproducira zvuk?", "image": "photos/foto-131.webp", "choices": ["Alexander Graham Bell", "Nikola Tesla", "Guglielmo Marconi", "Thomas Edison"], "answer": 3},
+    {"q": "U kojoj je pjesmi Beatlesa George Harrison svirao indijsko glazbalo sa slike?", "image": "photos/foto-132.webp", "choices": ["Yesterday", "Hey Jude", "Let It Be", "Norwegian Wood"], "answer": 3},
+    {"q": "Koji orkestar 1. siječnja prijepodne svira Novogodišnji koncert u dvorani sa slike?", "image": "photos/foto-133.webp", "choices": ["Bečka filharmonija", "Berlinska filharmonija", "Londonski simfonijski orkestar", "Češka filharmonija"], "answer": 0},
+    {"q": "Koje je širine filmska vrpca na koju snima kamera sa slike, i danas najčešća za igrane filmove snimljene na vrpcu?", "image": "photos/foto-134.webp", "choices": ["8 mm", "16 mm", "70 mm", "35 mm"], "answer": 3},
+    {"q": "Koji je američki državnik izumio staklenu harmoniku, glazbalo sa slike?", "image": "photos/foto-135.webp", "choices": ["Benjamin Franklin", "Thomas Jefferson", "Alexander Hamilton", "John Adams"], "answer": 0}
   ]
 }

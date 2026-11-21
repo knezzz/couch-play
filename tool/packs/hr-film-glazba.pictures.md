@@ -432,3 +432,181 @@ Sve licence provjerene preko Commons API-ja (LicenseShortName). Sve su JPG osim 
 - Nije pronađeno (ništa slobodno/korisno): 44 Aida (kairska opera spaljena 1971., nema dobre slobodne slike), 46 Rossini (Teatro Argentina), 57 Schubert (rukopis), 7 (Mjesečeva sonata rukopis), 19/115/116 (notni zapis; pretraga vraća samo PDF knjige), 74 Bob Marley (samo 560 px), 87 Stanlio i Olio (samo plakati), 88 Tiffany (trgovina nosi logotip), 50 Dunav (samo slabe fotografije Novog Dunava), 78 Snjeguljica.
 - Nisu tražena (filmski kadrovi/likovi bez slobodne slike): većina pitanja o glumcima i likovima (24, 27-34, 36, 37, 40, 80, 82-85, 89-91, 94, 95, 97, 98), te hrvatska pitanja 102-104, 106, 108-111, 113 (nema očitih povijesnih fotografija; Runjanin, Tijardović, Grgić, Dragić, Blažeković moguće kao portreti, nisu tražena zbog ograničenja od 10 portreta).
 - Opća napomena: pretraživanje Commonsa često je vraćalo 429; zato su neka pitanja ostala nepokrivena.
+
+## Pass 2 (2026-11-21)
+
+Queue task qitem-20261121132155-039fdcdf35282b5a. 11 candidates (target about +15; not padded): 5 existing (Q11, Q43, Q45, Q85, Q94) + 6 NEW (phonograph, sitar, praxinoscope, Musikverein, Bell & Howell camera, glass harmonica). All opened and looked at; licence template read on each file page. WebP sizes measured with PIL at 800 px. Over 60 KB: Q85 96, Q43 72, Q45 84, Q94 132 (portrait; ~60 cropped 4:3), Musikverein 86, praxinoscope 71 (~50 cropped), Bell & Howell 78 (~45 cropped), Q11 67. Praxinoscope shows printed text LE PRAXINOSCOPE: lead decides. Sitar and Musikverein need rewording (picture is the answer). Q43: file page carries a request from the author to be emailed on use outside Commons (not a licence condition). Not checked: apps/tv/assets, Q89, Q30, Q36, Q44 and most actor/character/Croatian questions; NEW facts have one source (en.wikipedia).
+
+# hr-film-glazba, second picture pass
+
+**Counts:** 11 candidates: 5 for existing questions (Q11, Q43, Q45, Q85, Q94) and 6 NEW (phonograph, sitar, praxinoscope, Musikverein, Bell & Howell camera, glass harmonica). 2 of the 11 (NEW-2 sitar, NEW-4 Musikverein) have a picture that is the answer itself (marked `Preoblikovati: da`). Target was about 15; stopped at 11 because the rest of the unsearched film questions have no clean free picture (see the last section).
+
+**How:** Commons search per topic (instruments, halls, film equipment, filming locations of questions with `---`), every kept file downloaded as a thumbnail and opened (viewed), licence template read from the file page wikitext (`?action=raw`), WebP size measured with PIL at 800 px, q75. Facts for NEW questions quoted from en.wikipedia raw wikitext. Greps run over all `tool/packs/**/*.json`, `*.sources.md`, `*.pictures.md` and `apps/tv/assets/{blef,koliko,objasni,tkobi,uljez}`.
+
+**Not used (already used in the first pass):** none of the files below are in `hr-film-glazba.pictures.md`.
+
+---
+
+### Q85 existing U kojem filmu Ingmara Bergmana vitez igra šah sa Smrću?
+- Odgovor: Sedmi pečat
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Hovs_hallar_1.jpg
+- Autor: Zejo
+- Licenca: {{PD-self}} / Public domain
+- Veličina: 4416x3312 px, image/jpeg
+- Vidi se: viewed. Stjenovita obala Hovs Hallar, more i horizont, trava i klekovina, nekoliko sitnih ljudi daleko. Bez teksta.
+- Činjenica (za fact-checker): en.wikipedia The_Seventh_Seal: "the famous opening scene with Death and the Knight playing chess by the sea, and the ending with the dance of death, which were both shot at Hovs Hallar, a rocky, precipitous beach area in north-western Scania."
+- Provjera podudaranja: grep "Hovs", "Bergman" u svim packovima i sources.md: samo Q85; ništa drugo nije odgovoreno slikom (ne imenuje film). Datoteka nije korištena nigdje.
+- Preslikavanje/crop: 4:3, bez cropa.
+- Procjena veličine: ~96 KB as 800 px WebP (measured with PIL), OVER 60 KB (busy stones and bushes)
+- Preoblikovati?: ne
+
+### Q11 existing U kojem se baletu Čajkovskog pojavljuje Vila šećerne šljive?
+- Odgovor: Orašar
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Celesta_Schiedmayer_MIM_1592.jpg
+- Autor: Museumsinsulaner
+- Licenca: {{PD-self}} / Public domain
+- Veličina: 2501x2223 px, image/jpeg
+- Vidi se: viewed. Celesta (Schiedmayer, Stuttgart, 1920., Musikinstrumentenmuseum Berlin): klavirska klaviatura u hrastovom kućištu s pedalom. Na pločici piše "SCHIEDMAYER PIANOFORTEFABRIK STUTTGART" (naziv proizvođača, ne odgovor).
+- Činjenica (za fact-checker): en.wikipedia Celesta: "One of the best-known works that uses the celesta is Pyotr Ilyich Tchaikovsky's 'Dance of the Sugar Plum Fairy' from The Nutcracker."
+- Provjera podudaranja: grep celest/čelest: samo slikar Medović (nepovezano); nijedno drugo pitanje o celesti. Slika ne imenuje Orašar. Nije korištena.
+- Preslikavanje/crop: pločicu s imenom proizvođača može se izrezati ako smeta (dolje, ne gore).
+- Procjena veličine: ~67 KB as 800 px WebP (measured), blago iznad 60 KB
+- Preoblikovati?: ne (slika podržava pitanje samo onima koji prepoznaju celestu; ne otkriva odgovor)
+
+### Q43 existing Tko je skladao operu 'Carmen'?
+- Odgovor: Bizet
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Plaza_de_toros_de_la_Maestranza_06.jpg
+- Autor: Alberto-g-rovi
+- Licenca: {{self|cc-by-4.0}} / CC BY 4.0 (na stranici je i molba autora da ga se obavijesti o uporabi izvan Commonsa; to nije uvjet licence, ali neka PM zna)
+- Veličina: 7050x4705 px, image/jpeg
+- Vidi se: viewed. Prazna arena (bikoborilačka) u Sevilli: žuti pijesak, crvena ograda, bijeli i žuti lukovi galerije. Nema ljudi, nema čitljivog teksta.
+- Činjenica (za fact-checker): en.wikipedia Carmen: "Place: Seville, Spain, and surrounding hills. Time: Around 1820" (četvrti čin igra se pred arenom).
+- Provjera podudaranja: grep sevill/seville/corrida: samo distraktori i pitanja o El Grecu/festivalu, nijedan odgovor nije otkriven; Q46 (Seviljski brijač) ima Sevillu u tekstu, ali slika bi bila uz Q43 i ne daje Rossinija. Datoteka nije korištena.
+- Preslikavanje/crop: 3:2, bez cropa.
+- Procjena veličine: ~72 KB as 800 px WebP (measured), OVER 60 KB
+- Preoblikovati?: ne
+
+### Q45 existing Iz koje je Puccinijeve opere arija 'Nessun dorma'?
+- Odgovor: Turandot
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Hall_of_Supreme_Harmony_in_snow_(20220318153418).jpg
+- Autor: N509FZ
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0
+- Veličina: 6850x4567 px, image/jpeg
+- Vidi se: viewed. Dvorana vrhovne harmonije u Zabranjenom gradu pod snijegom, nekoliko turista u daljini (lica neprepoznatljiva), bez teksta.
+- Činjenica (za fact-checker): en.wikipedia Turandot: "Place: Peking, China. Time: Legendary times."
+- Provjera podudaranja: grep peking/beijing/forbidden/zabranjen: samo olimpijska pitanja (Peking je distraktor) i sapunica "Zabranjena ljubav"; nijedan odgovor nije otkriven. Datoteka nije korištena.
+- Preslikavanje/crop: 3:2, bez cropa.
+- Procjena veličine: ~84 KB as 800 px WebP (measured), OVER 60 KB (snijeg i ljudi)
+- Preoblikovati?: ne
+
+### Q94 existing Koji je glumac utjelovio i Hana Sola i Indianu Jonesa?
+- Odgovor: Harrison Ford
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Al_Khazneh_Petra_edit_2.jpg
+- Autor: Graham Racher (original, Flickr), derivative work MrPanyGoff (ispravak perspektive)
+- Licenca: {{self|Cc-by-sa-2.0}} na izvedenoj datoteci; original File:Al_Khazneh_Petra.jpg ima {{cc-by-sa-2.0}} i {{flickrreview|Electron|...}} (provjereno)
+- Veličina: 1683x2810 px, image/jpeg (portret, uspravno)
+- Vidi se: viewed. Pročelje Al-Khazneh (Riznica) u Petri, ružičasti pješčenjak, pred njim leže tri-četiri deve. Bez teksta, bez ljudi.
+- Činjenica (za fact-checker): en.wikipedia Indiana_Jones_and_the_Last_Crusade: "filming moved to the ancient city of Petra, Jordan, where Al Khazneh (The Treasury) stood in for the temple housing the Grail."
+- Provjera podudaranja: grep petra/jordan/khazne/treasury: samo imena Petar i zastave Jordana; nijedan odgovor nije otkriven. Datoteka nije korištena.
+- Preslikavanje/crop: uspravan format, treba ga staviti u okvir ili izrezati na sredinu (cijela fasada je u gornjih ~75 %).
+- Procjena veličine: ~132 KB as 800 px WebP (measured) at full height; OVER 60 KB. Izrezano na 4:3 oko fasade bilo bi ~60 KB. Najteža slika u popisu.
+- Preoblikovati?: ne (slika podržava Indiana Jonesa samo onima koji znaju lokaciju; slaba veza)
+
+### NEW-1 Tko je 1877. izumio fonograf, uređaj sa slike, prvi koji je mogao snimiti i reproducirati zvuk?
+- Odgovor: Thomas Edison
+- Vrsta: NEW
+- Činjenica: Fonograf je izumio Edison 1877. Izvor: https://en.wikipedia.org/wiki/Phonograph Citat: "The phonograph was invented in 1877 by Thomas Edison;"
+- Slika: https://commons.wikimedia.org/wiki/File:Tinfoil_phonograph,_1878,_invented_by_Thomas_Alva_Edison_-_National_Museum_of_American_History_-_DSC06217.JPG
+- Autor: Daderot (fotograf; predmet je u Nacionalnom muzeju američke povijesti)
+- Licenca: {{self|cc-zero}} / CC0
+- Veličina: 4320x3240 px, image/jpeg
+- Vidi se: viewed. Mjedeni i crni mehanizam s valjkom s utorima i iglom/membranom u muzejskoj vitrini. Bez teksta.
+- Provjera podudaranja: grep fonograf/gramofon/phonograph/edison: Edison je samo ponuđeni odgovor u Q77 i u fizika/znanost pitanjima (žarulja, bel), tamo se slika ne prikazuje. Nijedno pitanje o fonografu. Datoteka nije korištena. Edison se pojavljuje i u imenskim bankama Objasni/Uljez (osobe), ali ne uz sliku.
+- Preslikavanje/crop: ništa.
+- Procjena veličine: ~53 KB as 800 px WebP (measured)
+- Preoblikovati?: ne
+
+### NEW-2 Koje je indijsko glazbalo George Harrison svirao u pjesmi 'Norwegian Wood'? (slika je odgovor)
+- Odgovor: Sitar
+- Vrsta: NEW
+- Činjenica: Harrison je svirao sitar. Izvor: https://en.wikipedia.org/wiki/Sitar Citat: "George Harrison played it on the Beatles' songs "Norwegian Wood (This Bird Has Flown)", "Love You To" and "Within You Without You", recorded between 1965 and 1967."
+- Slika: https://commons.wikimedia.org/wiki/File:Sitar_MET_259651.jpg
+- Autor: Metropolitan Museum of Art (Open Access)
+- Licenca: |permission={{Cc-zero}} / CC0
+- Veličina: 5195x3201 px, image/jpeg
+- Vidi se: viewed. Crno-bijela fotografija sitara iz 18. st. (glava u obliku ptice, dvije tikve) na jednolikoj pozadini. Bez teksta.
+- Provjera podudaranja: grep sitar: nijedan pogodak; Q2/Q67 spominju Beatlese/Harrisona samo kao ponuđene odgovore. Datoteka nije korištena.
+- Preslikavanje/crop: ništa (široka, 16:10).
+- Procjena veličine: ~17 KB as 800 px WebP (measured)
+- Preoblikovati?: da, slika je glazbalo koje je odgovor ("Koje je ovo indijsko glazbalo?"). Ako se želi pitanje o nečem drugom: "Kojem se Beatlesu pripisuje uvođenje sitara u pop?" ima odgovor Harrison, ali tada Q2/Q67 gube raznolikost.
+
+### NEW-3 Koji je Francuz 1877. izumio praksinoskop, uređaj sa slike, nasljednika zootropa?
+- Odgovor: Émile Reynaud
+- Vrsta: NEW
+- Činjenica: Izvor: https://en.wikipedia.org/wiki/Praxinoscope Citat: "The praxinoscope is an animation device, the successor to the zoetrope. It was invented in France in 1877 by Charles-Émile Reynaud."
+- Slika: https://commons.wikimedia.org/wiki/File:Toy_praxinoscope_by_Charles_%C3%89mile_Reynaud_-_CnAM_16696-2_-_01.jpg
+- Autor: Sukkoria
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0
+- Veličina: 3888x5184 px, image/jpeg (uspravno)
+- Vidi se: viewed. Igračka-praksinoskop (Musée des arts et métiers, CnAM) s dvanaestostranim bubnjem s ogledalima, slikama klauna i abažurom. Na abažuru i bubnju piše "LE PRAXINOSCOPE", "PRAX-THEATRE", "LAMPASCOPE" i monogram "ER" (naziv uređaja, ne odgovor; monogram izdavača malen). Pitanje ne smije imenovati uređaj, onda je natpis neškodljiv, ali je rubno prema pravilu o natpisima/logotipima: odluka za voditelja.
+- Alternativa bez natpisa: File:Praxinoscope_-_Reynaud_-_CnAM_16554.jpg (Sukkoria, {{self|cc-by-sa-4.0}} sličan; viewed, crni zrcalni bubanj iz stražnje strane, bez natpisa, ali manje prepoznatljiv; ~65 KB). Licencu te druge datoteke nisam čitao iz wikiteksta, samo API (CC BY-SA 4.0).
+- Provjera podudaranja: grep praksinoskop/reynaud/zoetrope/kinetoskop: nijedan pogodak. Datoteka nije korištena.
+- Preslikavanje/crop: uspravno; izrezati na kvadrat oko bubnja i abažura.
+- Procjena veličine: ~71 KB as 800 px WebP (measured) uspravno, OVER 60 KB; izrezano na kvadrat ~50 KB.
+- Preoblikovati?: ne
+
+### NEW-4 Koja se dvorana u Beču, poznata po Zlatnoj dvorani, svake godine ugošćuje Novogodišnji koncert? (slika je odgovor)
+- Odgovor: Musikverein
+- Vrsta: NEW
+- Činjenica: Izvor: https://en.wikipedia.org/wiki/Musikverein Citat: "it is the venue for the annual Vienna New Year's Concert."
+- Slika: https://commons.wikimedia.org/wiki/File:Wien_Musikverein_innen_2010_2.jpg
+- Autor: Andreas Praefcke
+- Licenca: {{self|cc-by-3.0}} / CC BY 3.0
+- Veličina: 4130x2708 px, image/jpeg
+- Vidi se: viewed. Zlatna dvorana puna publike, orkestar i zbor na pozornici, orgulje u pozadini. Publika u prvom planu s leđa, lica neprepoznatljiva. Bez čitljivog teksta.
+- Provjera podudaranja: grep musikverein/filharmoni/novogodi: nijedan pogodak; Beč se ne pojavljuje kao odgovor drugdje uz sliku. Datoteka nije korištena. Prva dva pokušaja (File:Wien_-_Musikverein,_großer_Saal.JPG, Bwag, ima {{User:Bwag/Credits}}; File:Musikverein_Goldener_Saal.jpg ima obvezni atribut "Clemens PFEIFFER, A-1190 Wien") odbačena prema pravilu o credit-predlošcima.
+- Preslikavanje/crop: 3:2, bez cropa.
+- Procjena veličine: ~86 KB as 800 px WebP (measured), OVER 60 KB (publika)
+- Preoblikovati?: da, slika je odgovor (sama dvorana); pitanje "Koja je ovo koncertna dvorana?" ili kao gore.
+
+### NEW-5 Koliko je milimetara široka standardna filmska vrpca kojom snima kamera sa slike (Bell & Howell iz 1913.)?
+- Odgovor: 35 mm
+- Vrsta: NEW
+- Činjenica: Izvor: https://en.wikipedia.org/wiki/35_mm_movie_film Citat: "35 mm film is a film gauge used in filmmaking. For motion pictures photographed on film, 35 mm is the most commonly used standard."
+- Slika: https://commons.wikimedia.org/wiki/File:Filmmuseum_Berlin_-_Bell_and_Howell_Camera.jpg
+- Autor: SunOfErat
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0
+- Veličina: 3024x4032 px, image/jpeg (uspravno)
+- Vidi se: viewed. Kamera Bell & Howell 2709 B na drvenom stativu u osvijetljenoj niši muzeja (Filmmuseum Berlin), tamna ljubičasta okolica; mali broj "302" lijevo; sitni, nečitljivi natpisi na kameri. Naziv "Bell & Howell" se na slici ne čita. Daje samo kameru, ne širinu vrpce.
+- Provjera podudaranja: grep kamera/camera/35 mm: nema pitanja o širini vrpce; Q47 i Q19 imaju drukčije brojeve. Datoteka nije korištena.
+- Preslikavanje/crop: obavezno izrezati na kvadrat oko niše (odstraniti tamni rub i broj "302").
+- Procjena veličine: ~78 KB as 800 px WebP uspravno (measured); izrezano na kvadrat ~45 KB (procjena).
+- Preoblikovati?: ne
+
+### NEW-6 Koji je američki državnik 1761. izumio staklenu harmoniku (armoniku), glazbalo sa slike?
+- Odgovor: Benjamin Franklin
+- Vrsta: NEW
+- Činjenica: Izvor: https://en.wikipedia.org/wiki/Glass_harmonica Citat: "It was invented in 1761 by Benjamin Franklin and produces sound that is ethereal and haunting"; također "Wolfgang Amadeus Mozart wrote his 1791 K. 617 and K.356 (K.617a) for the glass harmonica."
+- Slika: https://commons.wikimedia.org/wiki/File:Unterlinden-Glass_harmonica_(3).jpg
+- Autor: Ji-Elle
+- Licenca: {{self|cc-by-sa-3.0}} / CC BY-SA 3.0
+- Veličina: 3490x2242 px, image/jpeg
+- Vidi se: viewed. Staklena harmonika (Abresch, Karlsruhe, 1805., Musée Unterlinden, Colmar): niz staklenih zdjela na osovini s pozlaćenim rubovima u drvenom kućištu, parket u pozadini. Bez teksta.
+- Provjera podudaranja: grep armonik/franklin: Franklin je odgovor u hr-fizika (pokus sa zmajem) i ponuđena opcija u hr-opce-znanje (Mount Rushmore); slika ne odaje ta pitanja, ali isto ime kao odgovor dva puta u igri. Datoteka nije korištena.
+- Preslikavanje/crop: 3:2, bez cropa.
+- Procjena veličine: ~55 KB as 800 px WebP (measured)
+- Preoblikovati?: ne
+
+---
+
+## Preskočeno / sumnje
+
+- **Pregledano, ali odbačeno:** Q13 prizma (fizika već ima prizmu; slaba veza); Q7 Mjesečeva sonata + Lucernsko jezero (Wikipedia kaže da Rellstab nije spomenuo Lucern, dodao ga Lenz: sporan podatak); Q48 Boléro + doboš (jedini slobodni doboš, Met, ima američki grb i orla; nije slika koja pomaže); Q80 Savoca (Bar Vitelli ima natpis i naziv filma; Dunn's River za Q89 nisam tražio); hurdy-gurdy MIM Berlin (ljudske noge u kadru); Kinetoscope fotografije na Commonsu su <800 px ili stari mutni skenovi; projektor Cameragraph/Simplex (plakati i natpisi u kadru); Palais Garnier (natpis na pročelju, Pariz); Petra: Diego Delso (credit predložak) i Argenberg ({{User:Argenberg/License}}) odbačeni.
+- **Nije tražilo se (nema očito dobre slobodne slike ili samo portreti):** glumačka i likovna pitanja 24, 27-34, 36, 37, 40, 80-84, 87-91, 95, 97, 98; hrvatska 102-104, 106, 108-111, 113 (nisam nastavio zbog ograničenja vremena i jer bi slike bile portreti ili scenski kadrovi); notacija 18, 19, 115, 116 (slika bi bila odgovor); Q41/61/63/64/72 (slika glazbala = odgovor, već označeno u prvom prolazu); Q56 Beethovenov rukopis Devete (Commons ima samo Gallica skenove, nisam pronašao slobodni raster).
+- **Nisam provjerio:** je li Hieke/Praefcke Musikverein datoteka u 3:2 formatu prikladna za TV bez crop-a; stvarni WebP od 800 px ponovno izračunao u PIL, ali ne s točnom konfiguracijom aplikacije (q75 as brief). Licencu druge praxinoscope datoteke (Praxinoscope_-_Reynaud_-_CnAM_16554.jpg) čitao samo preko API-ja. Činjenice za NEW pitanja izvučene iz en.wikipedije samo jedan izvor; fact-checker neka potvrdi druge izvore (osobito 1877. za fonograf i 1761. za armoniku).
+- **Sumnje:** NEW-3 natpis "LE PRAXINOSCOPE" na slici (rubno prema pravilu o natpisima); NEW-2 i NEW-4 slika je odgovor; Q94 Petra slaba veza i velika slika; Q85 slika je generična obala (ne identificira se bez teksta); Q11 celesta podržava pitanje samo uz znanje.
