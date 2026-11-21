@@ -32,6 +32,12 @@ setUp_() {
   }
 }
 
+/// The Croatian quiz packs bundled for the TV, so a new pack doesn't need a test edit.
+Set<String> _bundledQuizIds(String repo) => {
+      for (final f in Directory('$repo/apps/tv/assets/packs').listSync().whereType<File>())
+        if (f.path.split('/').last.startsWith('hr-')) f.path.split('/').last.split('.').first
+    };
+
 bool _same(List<int> a, List<int> b) => a.length == b.length && Iterable.generate(a.length).every((i) => a[i] == b[i]);
 
 void main() {
@@ -42,7 +48,7 @@ void main() {
 
   test('lists_every_game', () {
     final refs = listPacks(root);
-    expect(refs.where((r) => r.game == Game.kviz), hasLength(16));
+    expect({for (final r in refs) if (r.game == Game.kviz) r.id}, _bundledQuizIds(root));
     for (final g in Game.values.skip(1)) {
       expect(refs.where((r) => r.game == g), isNotEmpty, reason: g.name);
     }

@@ -71,7 +71,11 @@ void main() {
     expect(code, 200);
     expect(type?.mimeType, 'application/json');
     final list = (jsonDecode(text) as List).cast<Map<String, dynamic>>();
-    expect(list.where((p) => p['game'] == 'kviz'), hasLength(16));
+    final bundled = {
+      for (final f in Directory('$root/apps/tv/assets/packs').listSync().whereType<File>())
+        if (f.path.split('/').last.startsWith('hr-')) f.path.split('/').last.split('.').first
+    };
+    expect({for (final p in list) if (p['game'] == 'kviz') p['id']}, bundled);
     expect(list.firstWhere((p) => p['id'] == 'hr-oblici'), {'game': 'kviz', 'id': 'hr-oblici', 'title': 'Oblici i logika', 'count': 50});
   });
 
