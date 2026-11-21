@@ -56,6 +56,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 49 | Uljez impostor never the same person twice in a row (person, 2026-11-21) | done (a889bd1, review clean); on the TV since a889bd1 | lead |
 | 50 | Hide sent answers and typed text on phones behind the hold card, all games (person, 2026-11-21) | routed (task50-51-20261121) | lead |
 | 51 | Vukodlak: role card + Spreman before night 1; one sum per night; night-1 second list reworked after UX review + field test (person, 2026-11-21) | routed (task50-51-20261121) | lead |
+| 52 | Curve: names along the bottom in line colors during play; clear round-winner moment; UX pass on a whole round (person, 2026-11-21) | routed (task52-20261121) | lead |
 
 ## Open questions for the person
 
@@ -378,3 +379,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-21: content-lead: picture pass 2 done. 147bf73 hr-fizika 107 -> 110 q, 36 -> 40 pictures (1.5 MB); bbc58de hr-film-glazba 130 -> 135 q, 41 -> 50 (3.4 MB); 7c86231 hr-povijest 111 -> 112 q, 43 -> 49 (3.4 MB); docs 9a86f2a. Fact-check fixes applied (charter crop showed the answer, Musikverein wording, Hubble picture dropped as a name hint). Whole pass +39 pictures, 14 new picture questions. Kviz 2,646 q, 43% pictures, ~57 MB. TV 761, core 426, pack editor 50 green. Not on the TV. content-pop-pictures-20261121 closed.
 - 2026-11-21: Windows app: the person couldn't download the GitHub artifact (not signed in); PM zipped run 44913959186's CouchPlay-windows and shared it by a 72 h Litterbox link (person asked for a file link). Still not checked on a real PC.
 - 2026-11-21: Person feedback after playing: hide sent answers behind the hold card in every game (Task 50); Vukodlak role first with Spreman, one sum per night, rework the confusing night-1 second list after a UX review and field test (Task 51). Spec and plan updated; routed as task50-51-20261121.
+- 2026-11-21: Person on Curve: names always visible (bottom, line colors) and a clear round winner; a close finish left the room unsure, which UX should have caught. Task 52, routed as task52-20261121 with a UX pass over a whole round first.

@@ -166,6 +166,10 @@ Home (one game full screen, QR, players, the "Večeras" strip) → host picks a 
   as time runs out; several effects are concentric rings. Wrap keeps the shrinking white border.
 - **After each round** the TV shows the current scores (faces, points, the target) for a few seconds before the next
   countdown; no score bar during play (user choice, 2026-11-17).
+- **Names always visible (person, 2026-11-21):** during play every player's name stays on screen along the bottom
+  edge, each in its line's color (names only, no scores).
+- **Clear round winner (person, 2026-11-21):** when a round ends the TV first says clearly who won it (name, color,
+  character), before the scores, so a close finish is never in doubt.
 - **Power-up legend:** ▼ on the Curve card on the home (and the host's Curve details on the phone) lists every power-up
   with its icon and one line on what it does (user choice, 2026-11-17).
 - **Curve modes (user request, 2026-11-16):** the host picks a mode in the lobby settings:

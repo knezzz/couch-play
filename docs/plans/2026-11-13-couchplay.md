@@ -1044,3 +1044,8 @@ Spec: main design spec, Vukodlak, "Role first" and "One task per night".
 - [ ] Role card with Spreman before night 1; TV shows the ready count; night 1 starts when all living players are ready.
 - [ ] Roles with no night action get one sum per night, night 1 included.
 - [ ] Night 1 without the confusing second list: a UX review (current screens, 2 options, a recommendation) before building, every phone still alike at night; then a field test (QA, 5–8 phones, a full game) that a first-time player understands night 1. Tests first; review.
+
+### Task 52: Curve names on screen, clear round winner (added 2026-11-21, person request)
+
+Spec: main design spec, Curve, "Names always visible" and "Clear round winner".
+- [ ] Names along the bottom in each line's color during play; a clear round-winner moment before the scores. A UX pass on the whole Curve round (start, play, close finishes, end) first, and name anything else that leaves the room unsure. Tests first; QA on macOS release with 8 lines (bots) at 1080p, including a near-simultaneous crash; review.
