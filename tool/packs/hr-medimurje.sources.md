@@ -90,15 +90,14 @@ Shorthand:
 78. "Muraköz megye": https://en.wikipedia.org/wiki/Me%C4%91imurje_County
 79. "u izvorima na mađarskom jeziku, grad se zove Csáktornya": ČK
 80. spomenici i znamenitosti: "mlin (vodenica) na Muri", "brod (skela) na Muri": https://hr.wikipedia.org/wiki/Sveti_Martin_na_Muri
-81. "Dubravsko jezero je najveće od četiri umjetnih jezera sagrađenih na Dravi": https://hr.wikipedia.org/wiki/Dubravsko_jezero
-82. "Muzej Međimurja osnovan je 1954. godine kao gradski muzej": https://hr.wikipedia.org/wiki/Muzej_Me%C4%91imurja_%C4%8Cakovec
+81. "Muzej Međimurja osnovan je 1954. godine kao gradski muzej": https://hr.wikipedia.org/wiki/Muzej_Me%C4%91imurja_%C4%8Cakovec
 
 ## Photo questions (Task 22)
 
 Each photo keeps its own licence; changes: resized to 1280 px on the long side and saved as WebP.
 
-83. photos/foto-01.webp: Stari grad Zrinskih, Čakovec (aerial). Subject from the Commons file page. Photo: Silverije, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Stari_grad_Zrinskih,_%C4%8Cakovec_-_pogled_iz_zraka.JPG (resized to 1280 px, WebP)
-84. photos/foto-02.webp: Crkva sv. Jeronima, Štrigova. Subject from the Commons file page. Photo: Silverije, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Crkva_sv._Jeronima,_%C5%A0trigova_(Croatia)_-_sjeverozapad.jpg (resized to 1280 px, WebP)
+82. photos/foto-01.webp: Stari grad Zrinskih, Čakovec (ground level, after the 2021 renovation). Subject from the Commons file page. Photo: Silverije, CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Stari_grad_Zrinskih,_%C4%8Cakovec_(2021).JPG (resized to 1280 px, WebP)
+83. photos/foto-02.webp: Crkva sv. Jeronima, Štrigova. Subject from the Commons file page. Photo: Silverije, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Crkva_sv._Jeronima,_%C5%A0trigova_(Croatia)_-_sjeverozapad.jpg (resized to 1280 px, WebP)
 
 ## Dropped from the first version, and why
 
@@ -143,3 +142,11 @@ The person reviewed and approved the Task 21 additions (the old Q43–Q94), with
 - In their place, 6 facts about Međimurje (Q77–Q82), not new words, as the person asked earlier. Goričan, Toplice Sveti Martin and where the Muzej Međimurja is were left out again as too easy (see "Dropped" above); the museum question asks its founding year instead.
 - Counts: 94 → 84 questions; dictionary-word questions 49 → 33 (16 easy removed, replaced by 6 facts; tiblica, Q31, is counted with the facts).
 - Not yet read by a native Međimurje speaker.
+
+## Fact-check fixes (2026-11-20, the person chose all five)
+
+- Q66 zabadav: wrong choice "Besplatno" was also a right meaning; now "Brzo".
+- Old Q81 (Dubravsko jezero, "najveće od četiriju umjetnih jezera"): removed. Q72's source counts three Croatian plants on the Drava, and the count of four (with Slovenian lakes) could not be confirmed. 84 → 83 questions.
+- Q82 photo (Čakovec castle): the old aerial photo looked like a photo of a printed picture (summer scene, February date, print border), so its licence was doubtful. Replaced by a ground-level own-work photo.
+- Q22 no longer names the church ("svetog Jeronima"): it gave away Q28 (Stridon, sv. Jeronim) and helped with Q83 (the Štrigova church photo).
+- Q19 and Q79 (Hungarian names): wrong choices no longer include the answers of Q19, Q78 and Q79. Now Alsólendva (Lendava), Muraszombat (Murska Sobota), Lenti, Letenye.
