@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
+import 'hold.dart';
 import 'look.dart';
 
 LobbyState _lobby({
@@ -88,9 +89,11 @@ void main() {
     await t.pump();
     await t.tap(find.byKey(const ValueKey('night-confirm')));
     expect(c.sent.last, const Vote(2));
-    await t.tap(find.byKey(const ValueKey('night-3')));
-    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    await t.pump();
+    expect(find.byKey(const ValueKey('night-3')), findsNothing);
+    expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
     expect(c.sent.whereType<Vote>().length, 1);
+    await expectHiddenUntilHeld(t, 'P2');
   });
 
   testWidgets('after a reload the vote shows the pick the TV already has', (
@@ -103,8 +106,9 @@ void main() {
       c,
       const VotePrompt(day: 1, seconds: 20, ids: [0, 2, 3], picked: 3),
     );
-    await t.tap(find.byKey(const ValueKey('night-confirm')));
-    expect(c.sent.last, const Vote(3));
+    expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+    expect(c.sent.whereType<Vote>(), isEmpty);
+    await expectHiddenUntilHeld(t, 'P3');
   });
 
   testWidgets('you cannot vote for yourself: the row is greyed and refuses', (
@@ -215,6 +219,9 @@ void main() {
     await t.pump();
     await t.tap(find.byKey(const ValueKey('night-confirm')));
     expect(c.sent.last, const Guess(2));
+    await t.pump();
+    expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+    await expectHiddenUntilHeld(t, 'Garfield');
   });
 
   testWidgets('UljezEnd shows the words and who the impostors were', (t) async {

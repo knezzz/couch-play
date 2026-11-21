@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
+import 'hold.dart';
 
 Future<void> _show(
   WidgetTester t,
@@ -107,7 +108,8 @@ void main() {
       expect(sent, [330]);
       expect(find.byKey(const ValueKey('koliko-sent')), findsOneWidget);
       expect(find.byKey(const ValueKey('key-1')), findsNothing);
-      expect(_display(t), '330');
+      expect(find.byKey(const ValueKey('koliko-display')), findsNothing);
+      await expectHiddenUntilHeld(t, '330 m');
     });
 
     testWidgets('a decimal comma goes out as a number', (t) async {
@@ -122,7 +124,7 @@ void main() {
       'after a reload the sent number is shown and nothing is sendable',
       (t) async {
         await _show(t, _ask(sent: 1234.5));
-        expect(_display(t), '1234,5');
+        await expectHiddenUntilHeld(t, '1234,5 m');
         expect(find.byKey(const ValueKey('koliko-sent')), findsOneWidget);
         expect(find.byKey(const ValueKey('koliko-send')), findsNothing);
       },
@@ -392,7 +394,7 @@ void main() {
           sent: 42,
         ),
       );
-      expect(_display(t), '42');
+      await expectHiddenUntilHeld(t, '42');
       expect(find.byKey(const ValueKey('koliko-send')), findsNothing);
     });
 

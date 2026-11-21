@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
+import 'hold.dart';
 
 Future<void> _show(
   WidgetTester t,
@@ -114,13 +115,8 @@ void main() {
         await _show(t, write(sent: '38 minuta'));
         expect(find.byKey(const ValueKey('blef-field')), findsNothing);
         expect(find.byKey(const ValueKey('blef-send')), findsNothing);
-        expect(
-          find.descendant(
-            of: find.byKey(const ValueKey('blef-sent')),
-            matching: find.text('38 minuta'),
-          ),
-          findsOneWidget,
-        );
+        expect(find.byKey(const ValueKey('blef-sent')), findsOneWidget);
+        await expectHiddenUntilHeld(t, '38 minuta');
       },
     );
 
@@ -150,9 +146,11 @@ void main() {
       );
       await t.tap(find.byKey(const ValueKey('option-9')));
       await t.pump();
-      await t.tap(find.byKey(const ValueKey('option-4')));
+      expect(find.byKey(const ValueKey('option-4')), findsNothing);
       expect(picks, [9], reason: 'the first tap is final');
       expect(find.byKey(const ValueKey('blef-picked')), findsOneWidget);
+      await expectHiddenUntilHeld(t, '2 sata');
+      expect(find.text('45 dana'), findsNothing);
     });
 
     testWidgets('two quick taps send one pick', (t) async {
@@ -185,9 +183,10 @@ void main() {
           onPick: picks.add,
         ),
       );
-      await t.tap(find.byKey(const ValueKey('option-1')));
+      expect(find.byKey(const ValueKey('option-1')), findsNothing);
       expect(picks, isEmpty);
       expect(find.byKey(const ValueKey('blef-picked')), findsOneWidget);
+      await expectHiddenUntilHeld(t, 'b');
     });
 
     testWidgets('the result: points, the truth, the fooled, the total', (
@@ -362,6 +361,7 @@ void main() {
         ),
       );
       expect(find.byKey(const ValueKey('blef-picked')), findsOneWidget);
+      await expectHiddenUntilHeld(t, 'a');
     });
 
     testWidgets('host settings: banner line, rows, the whole settings sent', (

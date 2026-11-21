@@ -73,8 +73,11 @@ abstract final class Strings {
 
   // Koliko?
   static String questionOf(int n, int total) => 'Pitanje $n od $total';
-  static const sentNumber = 'Poslano.';
   static const waitTv = 'Gledaj TV.';
+  static const sentHint = 'Poslano. Gledaj TV.\nOdgovor se vidi samo dok držiš.';
+  static const yourAnswerCaps = 'TVOJ ODGOVOR';
+  static const yourNumberCaps = 'TVOJ BROJ';
+  static const yourVoteCaps = 'TVOJ GLAS';
   static const correctAnswer = 'Točan odgovor';
   static const yourNumber = 'Tvoj broj';
   static const noNumber = 'Bez odgovora';
@@ -88,14 +91,11 @@ abstract final class Strings {
   // Blef
   static const blefWriteTitle = 'Smisli lažan odgovor';
   static const blefPickTitle = 'Koji je odgovor točan?';
-  static const blefSentFake = 'Tvoj odgovor je poslan.';
-  static const blefPicked = 'Odabir je poslan. Gledaj TV.';
   static const truthFound = 'Točan odgovor: pronađen';
   static const truthMissed = 'Točan odgovor: promašen';
   static String fooledN(int n) => 'Prevarenih: $n';
 
   // Tko bi?
-  static const tkobiVoted = 'Glas je poslan. Gledaj TV.';
   static const tkobiRight = 'Pogodak! Tvoj glas je pogodio krunu.';
   static const tkobiWrong = 'Ovaj put bez pogotka.';
   static const crowned = 'Pobjednik';
@@ -362,6 +362,11 @@ abstract final class Strings {
     ),
     ('tramp', 'Lutalica', 'Pobjeđuje sam ako ga selo izglasa van.', 2, false),
   ];
+
+  // Vukodlak, before night 1
+  static const readyButton = 'Spreman';
+  static const readyDone = 'Spreman ✓';
+  static String readyCount(int count, int total) => 'Spremni: $count / $total';
 
   // Uljez and the day discussion
   static const clueDone = 'Dao sam trag';

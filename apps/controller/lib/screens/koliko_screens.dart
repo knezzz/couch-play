@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../number_entry.dart';
 import '../strings.dart';
 import '../theme.dart';
+import 'sent_hold.dart';
 
 /// A Koliko? question: the question, a number pad and Pošalji. After sending
 /// (or when the TV says [sent]) the number stays on screen and the pad is shut.
@@ -68,7 +69,17 @@ class _AskState extends State<KolikoAskScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => _sent
+      ? SentHoldScreen(
+          key: const ValueKey('koliko-sent'),
+          title: Strings.questionOf(widget.number, widget.total),
+          label: Strings.yourNumberCaps,
+          answer:
+              _entry.shown + (widget.unit.isEmpty ? '' : ' ${widget.unit}'),
+        )
+      : _form();
+
+  Widget _form() => Scaffold(
     body: SafeArea(
       child: LayoutBuilder(
         builder: (_, c) => SingleChildScrollView(
@@ -109,28 +120,16 @@ class _AskState extends State<KolikoAskScreen> {
                 const SizedBox(height: 12),
                 _display(),
                 const SizedBox(height: 12),
-                if (_sent)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Text(
-                      '${Strings.sentNumber} ${Strings.waitTv}',
-                      key: ValueKey('koliko-sent'),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24, color: muted),
-                    ),
-                  )
-                else ...[
-                  _pad(),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 64,
-                    child: FilledButton(
-                      key: const ValueKey('koliko-send'),
-                      onPressed: _open && !_entry.isEmpty ? _send : null,
-                      child: const Text(Strings.send),
-                    ),
+                _pad(),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 64,
+                  child: FilledButton(
+                    key: const ValueKey('koliko-send'),
+                    onPressed: _open && !_entry.isEmpty ? _send : null,
+                    child: const Text(Strings.send),
                   ),
-                ],
+                ),
               ],
             ),
           ),

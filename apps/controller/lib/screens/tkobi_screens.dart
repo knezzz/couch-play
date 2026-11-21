@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../strings.dart';
 import '../theme.dart';
+import 'sent_hold.dart';
 
 /// A player on the vote or the result.
 class TkobiPlayer {
@@ -64,7 +65,18 @@ class _AskState extends State<TkobiAskScreen> {
   bool get _open => _picked == null && _left > 0;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final who = widget.players.where((p) => p.id == _picked).firstOrNull;
+    if (who == null) return _form();
+    return SentHoldScreen(
+      key: const ValueKey('tkobi-voted'),
+      title: Strings.questionOf(widget.number, widget.total),
+      label: Strings.yourVoteCaps,
+      answer: who.name,
+    );
+  }
+
+  Widget _form() => Scaffold(
     body: SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
@@ -156,16 +168,6 @@ class _AskState extends State<TkobiAskScreen> {
                 ],
               ),
             ),
-            if (_picked != null)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Text(
-                  Strings.tkobiVoted,
-                  key: ValueKey('tkobi-voted'),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: muted),
-                ),
-              ),
           ],
         ),
       ),

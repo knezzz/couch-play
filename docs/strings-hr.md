@@ -240,7 +240,6 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 
 | key | Croatian | English | where it shows |
 |---|---|---|---|
-| tkobiVoted | Glas je poslan. Gledaj TV. | Vote sent. Watch the TV. | after the tap |
 | tkobiRight / tkobiWrong | Pogodak! Tvoj glas je pogodio krunu. / Ovaj put bez pogotka. | Hit! Your vote hit the crown. / No hit this time. | result (no gendered form) |
 
 ### Blef (phone)
@@ -249,9 +248,7 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 |---|---|---|---|
 | blefHint | Tvoj odgovor | Your answer | the text field's hint |
 | blefWriteTitle | Smisli lažan odgovor | Make up a false answer | above the field |
-| blefSentFake | Tvoj odgovor je poslan. | Your answer is sent. | after the TV accepted the fake |
 | blefPickTitle | Koji je odgovor točan? | Which answer is correct? | the list |
-| blefPicked | Odabir je poslan. Gledaj TV. | Your pick is sent. Watch the TV. | after the pick |
 | truthFound / truthMissed | Točan odgovor: pronađen / promašen | Correct answer: found / missed | result |
 | fooledN(n) | Prevarenih: {n} | Fooled: {n} | result |
 | (TV's refusal) BlefText.truth | To je točan odgovor! Smisli laž. | That is the correct answer! Make up a lie. | under the field, shown as received |
@@ -264,7 +261,9 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | key | Croatian | English | where it shows |
 |---|---|---|---|
 | questionOf(n, total) | Pitanje {n} od {total} | Question {n} of {total} | the pad, top left |
-| sentNumber + waitTv | Poslano. Gledaj TV. | Sent. Watch the TV. | after Pošalji |
+| sentHint | Poslano. Gledaj TV.<br>Odgovor se vidi samo dok držiš. | Sent. Watch the TV.<br>The answer shows only while you hold. | hold card after any sent answer (Koliko, Blef, Tko bi?, Uljez vote and guess); same card as the Vukodlak role |
+| yourNumberCaps / yourAnswerCaps / yourVoteCaps | TVOJ BROJ / TVOJ ODGOVOR / TVOJ GLAS | YOUR NUMBER / YOUR ANSWER / YOUR VOTE | small label over the held answer |
+| waitTv | Gledaj TV. | Watch the TV. | under the held answer |
 | send | Pošalji | Send | Koliko? and Blef |
 | del | Obriši | Delete | the ⌫ key (screen reader) |
 | correctAnswer / yourNumber | Točan odgovor / Tvoj broj | The correct answer / Your number | result |
@@ -412,7 +411,7 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | UljezText.needPlayers / noBots | Uljez traži 3 do 8 igrača na mobitelima. / Uljez se igra bez botova. Ukloni botove. | Uljez needs 3 to 8 players on phones. / No bots in Uljez. Remove the bots. | error to the host |
 | Uljez guessing (Waiting) | Uljez pogađa riječ sela. | The impostor is guessing the village's word. | Waiting for everyone but the caught impostor |
 | curveBreakTitle(n) / curveBreakTarget(n) / curveBreakNext(s) | Rezultat nakon runde 3 / Pobjeđuje tko prvi dosegne 30 / Sljedeća runda za 4 s | Score after round 3 / First to reach 30 wins / Next round in 4 s | TV, between Curve rounds |
-| pauseSub(s) | Igra je zaustavljena. Još 22 s, onda završava. | The game is paused. 22 s more, then it ends. | TV pause card |
+| curveRoundWinner / curveMatchWinner / curveTie | POBJEDNIK RUNDE / POBJEDNIK IGRE / Neriješeno | ROUND WINNER / MATCH WINNER / Tied | TV, banner over the frozen Curve field for 1.5 s after the last crash. The names strip under the field has the players names only; a crashed one is dimmed with ×. || pauseSub(s) | Igra je zaustavljena. Još 22 s, onda završava. | The game is paused. 22 s more, then it ends. | TV pause card |
 | curveCountdownHint | Pronađi svoju točku. Strelica pokazuje kamo kreneš. | Find your dot. The arrow shows where you go. | TV, Curve countdown |
 | legendTitle | Pojačanja | Power-ups | TV home, Curve legend |
 | tonight | Večeras | Tonight | TV home strip with the evening's totals |

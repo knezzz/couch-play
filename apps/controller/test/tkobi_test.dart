@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
+import 'hold.dart';
 
 const _players = [
   TkobiPlayer(0, 'Luka', 'fox', 0),
@@ -59,9 +60,11 @@ void main() {
       await _show(t, ask(onVote: votes.add));
       await t.tap(find.byKey(const ValueKey('vote-1')));
       await t.pump();
-      await t.tap(find.byKey(const ValueKey('vote-2')));
+      expect(find.byKey(const ValueKey('vote-2')), findsNothing);
       expect(votes, [1]);
       expect(find.byKey(const ValueKey('tkobi-voted')), findsOneWidget);
+      await expectHiddenUntilHeld(t, 'Ana');
+      expect(find.text('Marko'), findsNothing);
     });
 
     testWidgets('after a reload the vote is shown and the list is shut', (
@@ -69,9 +72,10 @@ void main() {
     ) async {
       final votes = <int>[];
       await _show(t, ask(onVote: votes.add, picked: 2));
-      await t.tap(find.byKey(const ValueKey('vote-0')));
+      expect(find.byKey(const ValueKey('vote-0')), findsNothing);
       expect(votes, isEmpty);
       expect(find.byKey(const ValueKey('tkobi-voted')), findsOneWidget);
+      await expectHiddenUntilHeld(t, 'Marko');
     });
 
     testWidgets('when the time is out nothing can be voted', (t) async {

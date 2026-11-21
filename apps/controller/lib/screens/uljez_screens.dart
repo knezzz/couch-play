@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../strings.dart';
+import 'sent_hold.dart';
 import 'wolf_screens.dart';
 
 // Uljez on the phone. Built from the Vukodlak pieces: the word is the hold
@@ -38,7 +39,7 @@ class UljezWordScreen extends StatelessWidget {
 }
 
 /// "Tko je uljez?": pick one player, Glasaj.
-class UljezVoteScreen extends StatelessWidget {
+class UljezVoteScreen extends StatefulWidget {
   const UljezVoteScreen({
     super.key,
     required this.targets,
@@ -50,21 +51,41 @@ class UljezVoteScreen extends StatelessWidget {
   final void Function(int target) onVote;
 
   @override
-  Widget build(BuildContext context) => NightScreen(
-    night: 0,
-    header: Strings.uljezVoteHeader,
-    title: Strings.whoIsImpostor,
-    confirmLabel: Strings.vote,
-    hint: '',
-    showSpecial: false,
-    picked: picked,
-    targets: targets,
-    onConfirm: (t, _, _) => onVote(t),
-  );
+  State<UljezVoteScreen> createState() => _VoteState();
+}
+
+class _VoteState extends State<UljezVoteScreen> {
+  late int? _sent = widget.picked; // a reload restores a sent vote
+
+  @override
+  Widget build(BuildContext context) {
+    final who = widget.targets.where((t) => t.id == _sent).firstOrNull;
+    if (who != null) {
+      return SentHoldScreen(
+        key: const ValueKey('uljez-vote-sent'),
+        title: Strings.uljezVoteHeader,
+        label: Strings.yourVoteCaps,
+        answer: who.label,
+      );
+    }
+    return NightScreen(
+      night: 0,
+      header: Strings.uljezVoteHeader,
+      title: Strings.whoIsImpostor,
+      confirmLabel: Strings.vote,
+      hint: '',
+      showSpecial: false,
+      targets: widget.targets,
+      onConfirm: (t, _, _) {
+        setState(() => _sent = t);
+        widget.onVote(t);
+      },
+    );
+  }
 }
 
 /// The caught impostor's guess: the village's word from the options.
-class UljezGuessScreen extends StatelessWidget {
+class UljezGuessScreen extends StatefulWidget {
   const UljezGuessScreen({
     super.key,
     required this.word,
@@ -76,14 +97,35 @@ class UljezGuessScreen extends StatelessWidget {
   final void Function(int option) onGuess;
 
   @override
-  Widget build(BuildContext context) => NightScreen(
-    night: 0,
-    header: Strings.guessHeader,
-    title: Strings.caught,
-    hint: Strings.caughtHint(word),
-    showSpecial: false,
-    targets: options,
-    onConfirm: (t, _, _) => onGuess(t),
-  );
+  State<UljezGuessScreen> createState() => _GuessState();
+}
+
+class _GuessState extends State<UljezGuessScreen> {
+  int? _sent;
+
+  @override
+  Widget build(BuildContext context) {
+    final w = widget.options.where((o) => o.id == _sent).firstOrNull;
+    if (w != null) {
+      return SentHoldScreen(
+        key: const ValueKey('uljez-guess-sent'),
+        title: Strings.guessHeader,
+        label: Strings.yourAnswerCaps,
+        answer: w.label,
+      );
+    }
+    return NightScreen(
+      night: 0,
+      header: Strings.guessHeader,
+      title: Strings.caught,
+      hint: Strings.caughtHint(widget.word),
+      showSpecial: false,
+      targets: widget.options,
+      onConfirm: (t, _, _) {
+        setState(() => _sent = t);
+        widget.onGuess(t);
+      },
+    );
+  }
 }
 

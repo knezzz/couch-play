@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../strings.dart';
 import '../theme.dart';
 import 'blef_field.dart';
+import 'sent_hold.dart';
 
 /// Writing a fake answer: the question, a clock, the text field. When the TV
 /// has accepted the fake ([sent] is set) the field is gone and only your own
@@ -50,7 +51,16 @@ class _WriteState extends State<BlefWriteScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => widget.sent != null
+      ? SentHoldScreen(
+          key: const ValueKey('blef-sent'),
+          title: Strings.questionOf(widget.number, widget.total),
+          label: Strings.yourAnswerCaps,
+          answer: widget.sent!,
+        )
+      : _form();
+
+  Widget _form() => Scaffold(
     body: SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
@@ -86,40 +96,17 @@ class _WriteState extends State<BlefWriteScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            if (widget.sent != null) ...[
-              Text(
-                Strings.blefSentFake,
-                style: const TextStyle(fontSize: 18, color: muted),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                key: const ValueKey('blef-sent'),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(widget.sent!, style: const TextStyle(fontSize: 26)),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                Strings.waitTv,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, color: muted),
-              ),
-            ] else ...[
-              Text(
-                Strings.blefWriteTitle,
-                style: const TextStyle(fontSize: 18, color: muted),
-              ),
-              const SizedBox(height: 8),
-              BlefField(
-                maxLength: 40,
-                enabled: _left > 0,
-                error: widget.error,
-                onSend: widget.onSend,
-              ),
-            ],
+            Text(
+              Strings.blefWriteTitle,
+              style: const TextStyle(fontSize: 18, color: muted),
+            ),
+            const SizedBox(height: 8),
+            BlefField(
+              maxLength: 40,
+              enabled: _left > 0,
+              error: widget.error,
+              onSend: widget.onSend,
+            ),
           ],
         ),
       ),
@@ -169,7 +156,18 @@ class _ListState extends State<BlefListScreen> {
   bool get _open => _picked == null && _left > 0;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final at = widget.ids.indexOf(_picked ?? -1);
+    if (at < 0) return _form();
+    return SentHoldScreen(
+      key: const ValueKey('blef-picked'),
+      title: Strings.blefPickTitle,
+      label: Strings.yourAnswerCaps,
+      answer: widget.options[at],
+    );
+  }
+
+  Widget _form() => Scaffold(
     body: SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
@@ -238,16 +236,6 @@ class _ListState extends State<BlefListScreen> {
                 ],
               ),
             ),
-            if (_picked != null)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Text(
-                  Strings.blefPicked,
-                  key: ValueKey('blef-picked'),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: muted),
-                ),
-              ),
           ],
         ),
       ),
