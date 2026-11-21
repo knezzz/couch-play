@@ -1225,6 +1225,7 @@ class Session {
     _sim = sim;
     _bots = Bots(sim, [for (final p in parts) if (p.bot) p.colorIndex], _random);
     _curveRound = 1;
+    _roundBase = {};
     _gameHost = hostId;
     _phase = Phase.curve;
     _sendStatuses();
@@ -1672,14 +1673,21 @@ class Session {
       sfx.play(Sound.roundWin);
     }
     if (roundOver) _sendStatuses();
+    if (!matchOver && !roundOver) return;
+    // What each made in this round: the scores now against the scores when it started.
+    final scores = _sim!.scores;
+    final points = {for (final e in scores.entries) e.key: e.value - (_roundBase[e.key] ?? 0)};
+    _roundBase = {...scores};
     if (matchOver) {
-      _startMoment(CurveMoment([matchWinner!], match: true), () => finishGame(_gameScores()));
-    } else if (roundOver) {
+      _startMoment(CurveMoment([matchWinner!], points, match: true), () => finishGame(_gameScores()));
+    } else {
       // Nobody left standing: those who crashed on this last tick tie.
       final tie = survivor == null;
-      _startMoment(CurveMoment(tie ? died : [survivor!], tie: tie), _startRoundBreak);
+      _startMoment(CurveMoment(tie ? died : [survivor!], points, tie: tie), _startRoundBreak);
     }
   }
+
+  var _roundBase = <int, int>{}; // sim id -> score when the round began
 
   // --- the winner moment (Task 52) ---
 
@@ -1833,7 +1841,10 @@ class Session {
 /// What the TV shows over the frozen Curve field after the last crash: [ids] are sim ids (colour
 /// indexes): the round winner, the match winner, or those who crashed together ([tie]).
 class CurveMoment {
-  const CurveMoment(this.ids, {this.match = false, this.tie = false});
+  const CurveMoment(this.ids, this.points, {this.match = false, this.tie = false});
   final List<int> ids;
+
+  /// Sim id -> points made in this round (+N on the winner screen).
+  final Map<int, int> points;
   final bool match, tie;
 }

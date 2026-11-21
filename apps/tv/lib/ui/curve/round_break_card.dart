@@ -20,8 +20,11 @@ class BreakPlayer {
 /// are from the target. Leader first. [remaining] is the time until the next round, read
 /// every quarter second.
 class RoundBreakCard extends StatefulWidget {
-  const RoundBreakCard({required this.round, required this.target, required this.players, required this.remaining, super.key});
+  const RoundBreakCard({required this.round, required this.target, required this.players, required this.remaining, this.tiedAtTop = false, super.key});
   final int round, target;
+
+  /// Two or more passed the target with the same top score: play goes on, and the room is told why.
+  final bool tiedAtTop;
   final List<BreakPlayer> players;
   final Duration Function() remaining;
 
@@ -81,7 +84,9 @@ class _RoundBreakCardState extends State<RoundBreakCard> {
                       child: Text(Strings.curveBreakTitle(widget.round), key: const ValueKey('break-title'), maxLines: 1, style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: tvText)),
                     ),
                   ),
-                  Text(Strings.curveBreakTarget(widget.target), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 36, color: tvMuted)),
+                  Text(Strings.curveBreakTarget(widget.target), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 40, color: tvMuted)),
+                  if (widget.tiedAtTop)
+                    const Text(Strings.curveTopTie, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700, color: tvText)),
                   SizedBox(height: many ? 20 : 32),
                   for (final p in sorted) _row(p, rowH),
                   SizedBox(height: many ? 16 : 28),

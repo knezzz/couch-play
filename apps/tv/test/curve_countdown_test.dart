@@ -10,7 +10,7 @@ import 'package:tv/ui/curve/curve_game.dart';
 /// TvCountdown (docs/design/couchplay-screens/TvCountdown.dc.html): a big faint number in the
 /// middle, each player's name on a dark pill with their face, an arrow from the head, and a
 /// line at the bottom that says what to do.
-const _pill = Color(0xFF1F1F2C), _digit = Color(0xFF2A2A3A), _muted = Color(0xFFA9A9BC), _ink = Color(0xFFF4F4F8);
+const _pill = Color(0xFF1F1F2C), _digit = Color(0xFFC8C8D8), _muted = Color(0xFFA9A9BC), _ink = Color(0xFFF4F4F8);
 
 CurveGame _game({int countdown = 3, Map<int, String> characters = const {0: 'fox', 1: 'owl'}}) {
   final sim = CurveSim([0, 1],

@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 
 /// One player of the match: a name for the strip or the winner banner.
 class StripName {
-  const StripName({required this.name, required this.colorIndex, required this.alive, this.character = ''});
+  const StripName({required this.name, required this.colorIndex, required this.alive, this.character = '', this.points, this.place});
   final String name, character;
   final int colorIndex;
   final bool alive;
+
+  /// The winner screen's rows: points made in the round, and the place (equal points share one).
+  final int? points, place;
 }
 
 /// The names under the Curve field in their line colours (Task 52). Names only, no scores. A

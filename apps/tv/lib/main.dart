@@ -242,7 +242,15 @@ class _TvAppState extends State<TvApp> {
   Widget? _momentOverlay() {
     final sim = _gameSim, m = _session.moment;
     if (sim == null || m == null) return null;
-    return Positioned.fill(child: WinnerBanner(who: _stripNames(sim, m.ids), match: m.match, tie: m.tie));
+    // The rest, best first (stable: ties keep colour order); equal points share a place.
+    final rest = [for (final h in sim.heads) if (!m.ids.contains(h.id)) h.id]
+      ..sort((a, b) => (m.points[b] ?? 0).compareTo(m.points[a] ?? 0));
+    int place(int id) => 1 + m.points.values.where((v) => v > (m.points[id] ?? 0)).length;
+    final others = [
+      for (final n in _stripNames(sim, rest))
+        StripName(name: n.name, colorIndex: n.colorIndex, character: n.character, alive: n.alive, points: m.points[n.colorIndex] ?? 0, place: place(n.colorIndex)),
+    ];
+    return Positioned.fill(child: WinnerBanner(who: _stripNames(sim, m.ids), others: others, match: m.match, tie: m.tie));
   }
 
   void _onCurveEvents(List<CurveEvent> events) {
@@ -268,6 +276,7 @@ class _TvAppState extends State<TvApp> {
       child: RoundBreakCard(
         round: _session.curveRound,
         target: sim.target,
+        tiedAtTop: _tiedAtTop(sim),
         remaining: () => _session.roundBreakRemaining,
         players: [
           for (final h in sim.heads)
@@ -276,6 +285,12 @@ class _TvAppState extends State<TvApp> {
         ],
       ),
     );
+  }
+
+  /// The sim lets play go on when two or more pass the target on the same top score.
+  bool _tiedAtTop(CurveSim sim) {
+    final best = sim.scores.values.fold(0, max);
+    return best >= sim.target && sim.scores.values.where((v) => v == best).length > 1;
   }
 
   /// Over the frozen game while it waits for players to come back.

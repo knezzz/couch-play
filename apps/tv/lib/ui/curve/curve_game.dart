@@ -235,18 +235,23 @@ class CurveGame extends FlameGame {
     final n = countdownSeconds;
     if (n <= 0) return;
     final tp = _digits[n] ??= TextPainter(
-      text: TextSpan(text: '$n', style: const TextStyle(fontSize: 200, fontWeight: FontWeight.w900, color: Color(0xFF2A2A3A))),
+      text: TextSpan(text: '$n', style: const TextStyle(fontSize: 200, fontWeight: FontWeight.w900, color: countdownColor)),
       textDirection: TextDirection.ltr,
     )..layout();
     tp.paint(canvas, Offset((w - tp.width) / 2, h * 0.47 - tp.height / 2));
   }
 
   /// What to do, at the bottom (TvCountdown).
-  static const hintBand = 82.0; // its line, the 36 below it and a little air
+  /// The big number: it was #2A2A3A, near-invisible from the sofa (Task 52 follow-up).
+  static const countdownColor = Color(0xFFC8C8D8);
+
+  /// Arena units: x1.13 on a 1080p screen is 43 px, over the 40 px sofa minimum.
+  static const hintSize = 38.0;
+  static const hintBand = 92.0; // its line, the 36 below it and a little air
   TextPainter? _hint;
   void _drawHint(Canvas canvas, double w, double h) {
     final tp = _hint ??= TextPainter(
-      text: const TextSpan(text: Strings.curveCountdownHint, style: TextStyle(fontSize: 30, color: Color(0xFFA9A9BC))),
+      text: const TextSpan(text: Strings.curveCountdownHint, style: TextStyle(fontSize: hintSize, color: Color(0xFFA9A9BC))),
       textDirection: TextDirection.ltr,
       textAlign: TextAlign.center,
     )..layout(maxWidth: w - 80);

@@ -8,8 +8,11 @@ import 'name_strip.dart';
 /// Over the frozen field for 1.5 s after the last crash (Task 52): who won the round (or the match),
 /// or "Neriješeno" with the colours of those who crashed together. The winner's head is ringed by the game.
 class WinnerBanner extends StatelessWidget {
-  const WinnerBanner({required this.who, this.match = false, this.tie = false, super.key});
+  const WinnerBanner({required this.who, this.others = const [], this.match = false, this.tie = false, super.key});
   final List<StripName> who;
+
+  /// Everyone else, best first, with their points of the round ("+N") and their place.
+  final List<StripName> others;
   final bool match, tie;
 
   @override
@@ -23,7 +26,7 @@ class WinnerBanner extends StatelessWidget {
           width: 1920,
           height: 1080,
           child: Align(
-            alignment: const Alignment(0, -0.55),
+            alignment: const Alignment(0, -0.6),
             child: Container(
               key: const ValueKey('winner-banner'),
               padding: const EdgeInsets.symmetric(horizontal: 72, vertical: 32),
@@ -49,11 +52,29 @@ class WinnerBanner extends StatelessWidget {
                       ],
                     ],
                   ),
+                  if (others.isNotEmpty) const SizedBox(height: 20),
+                  for (final p in others) _row(p),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _row(StripName p) {
+    final color = playerColors[p.colorIndex % playerColors.length];
+    return SizedBox(
+      key: ValueKey('moment-row-${p.colorIndex}'),
+      height: 56,
+      width: 760,
+      child: Row(
+        children: [
+          SizedBox(width: 80, child: Text('${p.place ?? ''}.', style: const TextStyle(fontSize: 40, color: tvMuted))),
+          Expanded(child: Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: color))),
+          Text('+${p.points ?? 0}', style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w900, color: tvText)),
+        ],
       ),
     );
   }

@@ -93,6 +93,7 @@ abstract final class Strings {
   static const curveRoundWinner = 'POBJEDNIK RUNDE';
   static const curveMatchWinner = 'POBJEDNIK IGRE';
   static const curveTie = 'Neriješeno';
+  static const curveTopTie = 'Izjednačeno na vrhu – igra se dalje';
   static const curveCountdownHint = 'Pronađi svoju točku. Strelica pokazuje kamo kreneš.';
 
   static String objasniTeam(int t) => 'Tim ${t + 1}';
