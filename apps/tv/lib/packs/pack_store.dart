@@ -72,6 +72,9 @@ class PackStore {
     'hr-fizika',
     'hr-matematika',
     'hr-hrana-pice',
+    'hr-sport-svijet',
+    'hr-zivotinje',
+    'hr-jezik',
   };
   final _uploadedNow = <String>{};
 
