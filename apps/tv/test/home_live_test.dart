@@ -39,8 +39,15 @@ Future<void> _pump(
       players: players ?? const [PlayerInfo(1, 'Ana', 0, true, 0)],
       settings: settings,
       selected: selected,
-      games: const [GameKind.curve, GameKind.quiz, GameKind.uljez, GameKind.vukodlak],
-      packs: const {GameKind.quiz: (ticked: 15, total: 16), GameKind.uljez: (ticked: 8, total: 9)},
+      games: GameKind.values,
+      packs: const {
+        GameKind.quiz: (ticked: 15, total: 16),
+        GameKind.uljez: (ticked: 8, total: 9),
+        GameKind.objasni: (ticked: 8, total: 9),
+        GameKind.koliko: (ticked: 3, total: 4),
+        GameKind.blef: (ticked: 2, total: 2),
+        GameKind.tkobi: (ticked: 4, total: 4),
+      },
       hostView: hostView,
       changed: changed,
       packGrid: grid,
@@ -135,6 +142,30 @@ void main() {
     await _pump(t, selected: GameKind.curve, hostView: HostView.settings);
     expect(find.text(Strings.legendTitle), findsNothing);
   });
+
+  // Task 48 review: the TV panel lists every setting the phone lists (apps/controller/lib/screens/home_rows.dart),
+  // so a host change of any of them outlines its row.
+  const phoneKeys = {
+    GameKind.quiz: ['quizOffPacks', 'quizQuestions', 'quizSeconds', 'revealSeconds', 'bots'],
+    GameKind.curve: ['curveMode', 'curveCountdown', 'bots'],
+    GameKind.vukodlak: ['wolfRoles', 'wolfHideRoles'],
+    GameKind.uljez: ['uljezOffPacks', 'uljezImpostors'],
+    GameKind.objasni: ['objasniOffPacks', 'objasniSeconds', 'objasniTarget'],
+    GameKind.koliko: ['kolikoOffPacks', 'kolikoSeconds', 'kolikoQuestions'],
+    GameKind.blef: ['blefOffPacks', 'blefQuestions'],
+    GameKind.tkobi: ['tkobiOffPacks', 'tkobiPrompts'],
+  };
+  for (final e in phoneKeys.entries) {
+    testWidgets('${e.key.name}: a host change of each setting (${e.value.join(', ')}) opens the panel with that row marked', (t) async {
+      for (final key in e.value) {
+        await _pump(t, selected: e.key, hostView: HostView.settings, changed: LobbyChange.setting(e.key, key, 0, 1, ChangeBy.phone));
+        expect(find.byKey(const ValueKey('row-changed')), findsOneWidget, reason: '${e.key.name} $key');
+      }
+      // The panel lists as many rows as the phone, one per key.
+      await _pump(t, selected: e.key, hostView: HostView.settings);
+      expect(find.byKey(const ValueKey('game-card')), findsOneWidget);
+    });
+  }
 
   testWidgets('▼ asks the session to open the panel; Natrag asks it to close it', (t) async {
     var opened = 0, closed = 0;

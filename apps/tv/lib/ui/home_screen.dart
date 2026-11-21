@@ -695,6 +695,7 @@ class _SettingsPanel extends StatelessWidget {
       ],
       GameKind.vukodlak => [
           [
+            (Strings.settingRoles, Strings.rolesCount(settings.wolfRoles.length), 'wolfRoles'),
             (Strings.settingHideRoles, settings.wolfHideRoles ? Strings.yes : Strings.no, 'wolfHideRoles'),
           ],
         ],
@@ -703,8 +704,24 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingImpostors, '${settings.uljezImpostors}', 'uljezImpostors'),
           ],
         ],
-      // The other party games have no settings on the TV yet.
-      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String, String)>>[],
+      GameKind.objasni => [
+          [
+            (Strings.settingTurn, '${settings.objasniSeconds} s', 'objasniSeconds'),
+            (Strings.settingTarget, '${settings.objasniTarget}', 'objasniTarget'),
+          ],
+        ],
+      GameKind.koliko => [
+          [
+            (Strings.settingAnswerTime, '${settings.kolikoSeconds} s', 'kolikoSeconds'),
+            (Strings.settingQuestions, '${settings.kolikoQuestions}', 'kolikoQuestions'),
+          ],
+        ],
+      GameKind.blef => [
+          [(Strings.settingQuestions, '${settings.blefQuestions}', 'blefQuestions')],
+        ],
+      GameKind.tkobi => [
+          [(Strings.settingQuestions, '${settings.tkobiPrompts}', 'tkobiPrompts')],
+        ],
       },
     ];
     Widget item((String, String, String) it) {

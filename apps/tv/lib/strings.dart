@@ -70,6 +70,10 @@ abstract final class Strings {
   static String packTileLine(int count, int pictures) => '$count${pictures > 0 ? ' · $pictures sa slikom' : ''}';
   static String packsLine(int ticked, int total) => ticked >= total ? packsAll : '$ticked od $total paketa';
   static const settingBots = 'Roboti';
+  static const settingTurn = 'Vrijeme po potezu';
+  static const settingTarget = 'Bodova do pobjede';
+  static const settingRoles = 'Uloge u igri';
+  static String rolesCount(int n) => '$n ${n % 10 == 1 && n % 100 != 11 ? 'uloga' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'uloge' : 'uloga')}';
   static const settingQuestions = 'Broj pitanja';
   static const settingAnswerTime = 'Vrijeme za odgovor';
   static const settingReveal = 'Pauza između pitanja';

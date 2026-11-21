@@ -174,5 +174,25 @@ void main() {
       await t.pump();
       await shot(t, key, '8-panel-kviz-bots-$tag');
     });
+
+    testWidgets('9 Objasni panel after the host changed the turn time $tag', skip: skip != null, (t) async {
+      final key = GlobalKey();
+      final s = await start(t, size, key);
+      final host = players(s);
+      host.say(const SelectGame(GameKind.objasni));
+      host.say(SetSettings(const GameSettings(objasniSeconds: 90)));
+      await t.pump();
+      await shot(t, key, '9-panel-objasni-turn-$tag');
+    });
+
+    testWidgets('10 Vukodlak panel after the host hid no roles $tag', skip: skip != null, (t) async {
+      final key = GlobalKey();
+      final s = await start(t, size, key);
+      final host = players(s);
+      host.say(const SelectGame(GameKind.vukodlak));
+      host.say(SetSettings(const GameSettings(wolfHideRoles: false)));
+      await t.pump();
+      await shot(t, key, '10-panel-vukodlak-$tag');
+    });
   }
 }
