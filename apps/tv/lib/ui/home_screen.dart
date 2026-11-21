@@ -570,7 +570,7 @@ class _PackGrid extends StatelessWidget {
     final pictures = on.fold<int>(0, (a, t) => a + t.pictures);
     return Container(
       key: const ValueKey('pack-grid'),
-      color: const Color(0xF214141E),
+      color: tvBg, // opaque: the QR and the game edges behind it ghosted through
       padding: const EdgeInsets.fromLTRB(96, 150, 96, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
