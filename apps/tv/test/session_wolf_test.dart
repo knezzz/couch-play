@@ -20,6 +20,38 @@ void main() {
     if (bots > 0) s.setBotCount(bots);
   }
 
+  /// Everyone presses "Spreman": night 1 starts.
+  void allReady() {
+    for (final p in ps) {
+      p.say(const ReadyToPlay());
+    }
+  }
+
+  test('role first: night 1 starts when every phone has said Spreman, a kick moves on, the TV counts', () {
+    setUpSession(5);
+    ps[0].say(const StartGame(GameKind.vukodlak, null));
+    final w = s.wolf!;
+    expect(w.stage, WolfStage.ready);
+    for (final p in ps) {
+      expect(p.sent.whereType<NightPrompt>(), isEmpty);
+      expect(p.last<PlayWait>()!.total, 5);
+    }
+    for (final p in ps.take(3)) {
+      p.say(const ReadyToPlay());
+    }
+    expect(w.readyCount, 3);
+    expect(ps[4].last<PlayWait>()!.count, 3);
+    expect(ps[0].last<PlayWait>()!.ready, isTrue);
+    expect(ps[4].last<PlayWait>()!.ready, isFalse);
+    ps[3].say(const ReadyToPlay());
+    expect(w.stage, WolfStage.ready, reason: 'one is missing');
+    final last = ps[4].sent.whereType<Welcome>().first.playerId;
+    ps[0].say(Kick(last));
+    expect(w.stage, WolfStage.night, reason: 'the kick moves on without them');
+    expect(ps[1].sent.whereType<NightPrompt>(), hasLength(1));
+    s.dispose();
+  });
+
   test('five to eight humans, no bots: otherwise the host is told', () {
     setUpSession(4);
     ps[0].say(const StartGame(GameKind.vukodlak, null));
@@ -84,6 +116,7 @@ void main() {
   test('night picks, votes and shots from a phone are the phone\'s own player', () {
     setUpSession(5);
     ps[0].say(const StartGame(GameKind.vukodlak, null));
+    allReady();
     final w = s.wolf!;
     final id1 = ps[1].sent.whereType<Welcome>().first.playerId;
     ps[1].say(const NightPick(null));
@@ -94,6 +127,7 @@ void main() {
   test('a phone that reconnects gets its own state again', () async {
     setUpSession(5);
     ps[0].say(const StartGame(GameKind.vukodlak, null));
+    allReady();
     final id = ps[2].sent.whereType<Welcome>().first.playerId;
     await ps[2].drop();
     final again = join(s, 'P2', token: 't2');
@@ -116,6 +150,7 @@ void main() {
   testWidgets('a finished game shows the end screen to phones, then returns to the lobby', (t) async {
     setUpSession(5);
     ps[0].say(const StartGame(GameKind.vukodlak, null));
+    allReady();
     final w = s.wolf!;
     // everyone votes out the wolf at once: skip the night by force
     for (final id in w.alive) {
@@ -140,6 +175,7 @@ void main() {
   testWidgets('Idemo glasati counts the sending phone; locked phones still count; a kick moves on; 10 empty minutes give up', (t) async {
     setUpSession(5);
     ps[0].say(const StartGame(GameKind.vukodlak, null));
+    allReady();
     final w = s.wolf!;
     ps[0].say(const ReadyToVote(true));
     expect(w.wishCount, 0, reason: 'night: the toggle does nothing');

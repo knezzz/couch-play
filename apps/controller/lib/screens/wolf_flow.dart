@@ -16,6 +16,9 @@ class WolfInbox {
   Farewell? farewell;
   WolfEnd? end;
 
+  /// "Spreman" before night 1; null once night 1 has started.
+  PlayWait? ready;
+
   /// The day's "Idemo glasati" state; null at night and during a vote.
   VoteWish? wish;
 
@@ -28,6 +31,7 @@ class WolfInbox {
         role = m;
       case NightPrompt():
         night = m;
+        ready = null;
         morning = null; // the day is over
         wish = null;
         screen = 'night';
@@ -38,6 +42,8 @@ class WolfInbox {
         vote = m;
         wish = null;
         screen = 'vote';
+      case PlayWait():
+        ready = m;
       case VoteWish():
         wish = m;
       case Farewell():
@@ -165,7 +171,14 @@ class WolfFlow extends StatelessWidget {
           role: info.$2,
           description: info.$3,
           extra: extra,
-          bottom: _wish(phase.wish),
+          bottom: phase.ready != null
+              ? ReadyBar(
+                  ready: phase.ready!.ready,
+                  count: phase.ready!.count,
+                  total: phase.ready!.total,
+                  onReady: () => conn.send(const ReadyToPlay()),
+                )
+              : _wish(phase.wish),
           onRoles: () => _roles(context, r.possible.toSet()),
         );
     }

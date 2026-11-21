@@ -502,4 +502,24 @@ void main() {
       expect(look(t, {'x'}), before);
     });
   });
+
+  testWidgets(
+    'before night 1: the role card with Spreman and the count; pressing sends ReadyToPlay, the night replaces it',
+    (t) async {
+      final c = await _app(t);
+      await _send(t, c, _role);
+      await _send(t, c, const PlayWait(ready: false, count: 2, total: 6));
+      expect(find.text(Strings.holdHere), findsOneWidget);
+      expect(find.text(Strings.readyCount(2, 6)), findsOneWidget);
+      await t.tap(find.byKey(const ValueKey('play-ready')));
+      await t.pump();
+      expect(c.sent.last, isA<ReadyToPlay>());
+      await _send(t, c, const PlayWait(ready: true, count: 3, total: 6));
+      expect(find.text(Strings.readyDone), findsOneWidget);
+      expect(find.text(Strings.readyCount(3, 6)), findsOneWidget);
+      await _send(t, c, _night(night: 1));
+      expect(find.byKey(const ValueKey('play-ready')), findsNothing);
+      expect(find.byKey(const ValueKey('night-confirm')), findsOneWidget);
+    },
+  );
 }

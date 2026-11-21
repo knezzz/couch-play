@@ -317,6 +317,7 @@ sealed class Message with _JsonEq {
         'hostIs' => HostIs(m['host'] as int),
         'gamePlayers' => GamePlayers([for (final x in m['players'] as List) PlayerInfo.fromJson(x as Map<String, dynamic>)]),
         'readyToVote' => ReadyToVote(m['on'] as bool),
+        'readyToPlay' => const ReadyToPlay(),
         'guess' => Guess(m['index'] as int),
         'number' => NumberAnswer((m['value'] as num).toDouble()),
         'blefFake' => BlefFake(m['text'] as String),
@@ -389,6 +390,7 @@ sealed class Message with _JsonEq {
               int.parse(e.key): WolfRole.values.byName(e.value as String)
           }),
         'uljezWord' => UljezWord(m['word'] as String),
+        'playWait' => PlayWait(ready: m['ready'] as bool, count: m['count'] as int, total: m['total'] as int),
         'voteWish' => VoteWish(
             open: m['open'] as bool, ready: m['ready'] as bool, want: m['want'] as int, needed: m['needed'] as int),
         'uljezTurn' => UljezTurn(
@@ -918,6 +920,30 @@ class VoteWish extends Message {
   String get type => 'voteWish';
   @override
   Map<String, Object?> get fields => {'open': open, 'ready': ready, 'want': want, 'needed': needed};
+}
+
+/// Phone -> TV, Vukodlak before night 1: "Spreman" after looking at the role.
+/// Final (no way back); ignored outside that stage.
+class ReadyToPlay extends Message {
+  const ReadyToPlay();
+  @override
+  String get type => 'readyToPlay';
+  @override
+  Map<String, Object?> get fields => const {};
+}
+
+/// TV -> one phone, Vukodlak before night 1: whether this phone has pressed
+/// Spreman, and how many of the [total] players still in have. Identical in
+/// shape for every phone; sent on every change and on reconnect. Night 1
+/// starts when [count] reaches [total].
+class PlayWait extends Message {
+  final bool ready;
+  final int count, total;
+  const PlayWait({required this.ready, required this.count, required this.total});
+  @override
+  String get type => 'playWait';
+  @override
+  Map<String, Object?> get fields => {'ready': ready, 'count': count, 'total': total};
 }
 
 /// Phone -> TV: the farewell pick of a player who just went out (only a

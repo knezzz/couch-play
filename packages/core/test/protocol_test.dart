@@ -253,6 +253,8 @@ void main() {
         const UljezDone(),
         const HostIs(3),
         const ReadyToVote(true),
+        const ReadyToPlay(),
+        const PlayWait(ready: true, count: 3, total: 6),
         const VoteWish(open: true, ready: false, want: 2, needed: 3),
         const UljezTurn(round: 1, speaker: 3, seconds: 20, stage: 'clues'),
         const UljezTurn(round: 2, speaker: null, seconds: 90, stage: 'discussion'),

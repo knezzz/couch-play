@@ -145,6 +145,16 @@ class _WolfViewState extends State<WolfView> {
       );
     }
 
+    // Before night 1: the roles are on the phones; the TV counts who is ready.
+    if (m.stage == WolfStage.ready) {
+      return VillageScreen(
+        players: people,
+        night: false,
+        kicker: Strings.wolfReadyTitle,
+        story: Strings.wolfReady(m.readyCount, m.readyTotal),
+        clock: '',
+      );
+    }
     final night = m.stage == WolfStage.night || m.stage == WolfStage.dawn;
     final beat = currentBeat(m.story);
     final first = m.story.length - beat.length;

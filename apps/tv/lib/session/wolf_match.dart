@@ -8,7 +8,7 @@ import '../sound/sfx.dart';
 import 'vote_wish.dart';
 import 'wolf_text.dart';
 
-enum WolfStage { night, dawn, farewell, day, vote, over }
+enum WolfStage { ready, night, dawn, farewell, day, vote, over }
 
 /// One game of Vukodlak on the TV: drives the [WolfGame] rules through night,
 /// morning, day and vote, talks to the phones and keeps what the TV may show.
@@ -77,6 +77,14 @@ class WolfMatch {
   /// socket): the players waited for and counted. Only a kick removes one.
   List<int> get present => game.alive;
 
+  /// Before night 1: everyone looks at the role and presses "Spreman"; night 1
+  /// starts when every player still in has (connected or not; only the host's
+  /// kick moves on without someone).
+  final _ready = <int>{};
+  bool get readyOpen => stage == WolfStage.ready;
+  int get readyCount => present.where(_ready.contains).length;
+  int get readyTotal => present.length;
+
   /// "Idemo glasati", by day only: wishes of the living players (connected or not).
   bool get wishOpen => stage == WolfStage.day;
   int get wishCount => wishOpen ? _wish.want(present) : 0;
@@ -139,7 +147,32 @@ class WolfMatch {
     for (final id in ids) {
       _sendRole(id);
     }
-    _beginNight();
+    _setStage(WolfStage.ready, Duration.zero); // no clock: night 1 starts when everyone is ready
+    _sendReady();
+    notify?.call();
+    _checkEmpty();
+  }
+
+  PlayWait _readyMsg(int id) => PlayWait(ready: _ready.contains(id), count: readyCount, total: readyTotal);
+
+  void _sendReady() {
+    for (final id in present) {
+      send(id, _readyMsg(id));
+    }
+  }
+
+  /// A phone's "Spreman": only before night 1, only from a player still in.
+  void onReadyToPlay(int id) {
+    if (!readyOpen || !game.isAlive(id)) return;
+    _ready.add(id);
+    _afterReady();
+  }
+
+  void _afterReady() {
+    if (!readyOpen) return;
+    if (present.every(_ready.contains)) return _beginNight();
+    _sendReady();
+    notify?.call();
   }
 
   void dispose() {
@@ -162,8 +195,7 @@ class WolfMatch {
     _prompts.clear();
     _nightIds = alive;
     for (final id in alive) {
-      _prompts[id] =
-          game.hasNightAction(id) ? _Task.actor() : _Task.sum(random, alive.length, two: game.night == 1);
+      _prompts[id] = game.hasNightAction(id) ? _Task.actor() : _Task.sum(random, alive.length);
     }
     _lightsHeld = true;
     _shown = {};
@@ -197,7 +229,7 @@ class WolfMatch {
     final t = _prompts[id]!;
     if (t.sum != null) {
       final s = t.sum!;
-      return t.sum2 == null ? WolfText.sum(s.a, s.b) : WolfText.sum2(s.a, s.b, t.sum2!.a, t.sum2!.b);
+      return WolfText.sum(s.a, s.b);
     }
     switch (role) {
       case WolfRole.wolf:
@@ -226,14 +258,15 @@ class WolfMatch {
   NightPrompt _prompt(int id) {
     final t = _prompts[id]!;
     final names = [for (final a in _nightIds) nameOf(a)];
-    final two = game.night == 1;
+    // The second pick (night 1, actors only) is all that is left of "two lists".
+    final two = game.night == 1 && t.sum == null;
     List<String> c1, c2;
     List<int> i1, i2;
     if (t.sum != null) {
       c1 = [for (final a in t.sum!.answers) '$a'];
       i1 = [for (var k = 0; k < c1.length; k++) k];
-      c2 = two ? [for (final a in t.sum2!.answers) '$a'] : [];
-      i2 = two ? [for (var k = 0; k < c2.length; k++) k] : [];
+      c2 = [];
+      i2 = [];
     } else {
       c1 = names;
       i1 = _nightIds;
@@ -492,6 +525,8 @@ class WolfMatch {
     }
     if (game.winner != null) return _finish();
     _wish.set(id, false);
+    _ready.remove(id);
+    _afterReady();
     _checkNightDone();
     _checkVoteDone();
     _afterWishChange();
@@ -513,7 +548,7 @@ class WolfMatch {
   void _checkEmpty() {
     _emptyTimer?.cancel();
     _emptyTimer = null;
-    final waiting = stage == WolfStage.night || stage == WolfStage.day || stage == WolfStage.vote;
+    final waiting = stage == WolfStage.ready || stage == WolfStage.night || stage == WolfStage.day || stage == WolfStage.vote;
     if (waiting && game.alive.every(_away.contains)) _emptyTimer = Timer(emptyHold, () => onAbandon?.call());
   }
 
@@ -528,6 +563,8 @@ class WolfMatch {
       send(id, Farewell(seconds: remaining.inSeconds, ids: alive));
     } else if (!game.isAlive(id)) {
       send(id, const Waiting(WolfText.out));
+    } else if (stage == WolfStage.ready) {
+      send(id, _readyMsg(id));
     } else if (stage == WolfStage.night) {
       send(id, _prompt(id));
     } else if (stage == WolfStage.vote) {
@@ -540,14 +577,9 @@ class WolfMatch {
 }
 
 class _Task {
-  _Task.actor()
-      : sum = null,
-        sum2 = null;
-  _Task.sum(Random r, int count, {required bool two})
-      : sum = NightSum.draw(r, count: count),
-        sum2 = two ? NightSum.draw(r, count: count) : null;
+  _Task.actor() : sum = null;
+  _Task.sum(Random r, int count) : sum = NightSum.draw(r, count: count);
   final NightSum? sum;
-  final NightSum? sum2;
   int? first;
   int? second;
   bool special = false;

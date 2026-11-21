@@ -18,7 +18,9 @@ const roles7 = {
 };
 
 class Rig {
-  Rig({Map<int, WolfRole> roles = roles7, bool hide = true, int seed = 1})
+  /// [ready] false stays in the "Spreman" stage before night 1; by default
+  /// everyone is ready at once, so the tests that follow start at night 1.
+  Rig({Map<int, WolfRole> roles = roles7, bool hide = true, int seed = 1, bool ready = true})
       : roles = roles {
     match = WolfMatch(
       ids: roles.keys.toList(),
@@ -30,6 +32,11 @@ class Rig {
       fixedRoles: roles,
       sfx: sounds,
     )..start();
+    if (ready) {
+      for (final id in roles.keys) {
+        match.onReadyToPlay(id);
+      }
+    }
   }
   final Map<int, WolfRole> roles;
   late final WolfMatch match;
@@ -71,8 +78,8 @@ Map<String, Object?> shape(Message m) => {
       'type': m.type,
       'keys': (m.toJson().keys.toList()..sort()),
       'text': m is NightPrompt ? m.text.length : (m is Morning ? m.text.length : 0),
-      'picks': m is NightPrompt ? m.picks : 0,
-      'lists2': m is NightPrompt ? m.choices2.isEmpty : null,
+      // Night 1's second list is not compared: only phones with a night action
+      // have it now (Task 51; step 3 removes the second pick altogether).
     };
 
 void main() {
@@ -101,8 +108,11 @@ void main() {
         final p = r.to(id).whereType<NightPrompt>().first;
         expect(p.choices.length, n, reason: 'player $id (${r.roles[id]}) of $n');
         expect(p.ids.length, n);
-        expect(p.choices2.length, n);
-        expect(p.ids2.length, n);
+        // Night 1: the second list only for a role with a night action; one sum for the rest.
+        final actor = r.match.game.hasNightAction(id);
+        expect(p.choices2.length, actor ? n : 0);
+        expect(p.ids2.length, actor ? n : 0);
+        expect(p.picks, actor ? 2 : 1);
       }
       r.match.dispose();
     }
@@ -124,13 +134,14 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('every night message has the same text length and the same two-pick shape on night 1', (t) async {
+  testWidgets('every night message has the same text length; a role with no night action has one sum, on night 1 too', (t) async {
     final r = Rig();
     for (final id in r.roles.keys) {
       final p = r.to(id).whereType<NightPrompt>().first;
       expect(p.text.length, wolfTextWidth);
-      expect(p.picks, 2, reason: 'night 1 has two picks on every phone');
-      expect(p.choices2.isNotEmpty, isTrue);
+      final actor = r.match.game.hasNightAction(id);
+      expect(p.picks, actor ? 2 : 1, reason: 'player $id (${r.roles[id]})');
+      expect(p.choices2.isNotEmpty, actor);
       expect(p.choices.length, p.ids.length);
     }
     r.match.dispose();
@@ -484,6 +495,9 @@ void main() {
       random: Random(1),
       fixedRoles: roles,
     )..start();
+    for (final id in roles.keys) {
+      m.onReadyToPlay(id);
+    }
     m.onNightPick(2, const NightPick(4));
     m.onNightPick(3, const NightPick(5));
     final text = sent[1]!.whereType<NightPrompt>().last.text;
@@ -711,5 +725,96 @@ void main() {
     expect(keys(1), keys(7));
     expect(q.to(1).whereType<NightPrompt>().last.text.length, q.to(7).whereType<NightPrompt>().last.text.length);
     q.match.dispose();
+  });
+
+  // ---- Task 51: role first, "Spreman" before night 1 ----
+
+  testWidgets('no night until every living player is ready; the TV counts them', (t) async {
+    final r = Rig(ready: false);
+    final m = r.match;
+    expect(m.stage, WolfStage.ready);
+    expect((m.readyCount, m.readyTotal), (0, 7));
+    for (final id in r.roles.keys) {
+      expect(r.to(id).whereType<NightPrompt>(), isEmpty);
+      expect(r.to(id).whereType<RoleMsg>().length, 1, reason: 'the role card is there from the start');
+      expect(r.to(id).whereType<PlayWait>().last.ready, isFalse);
+    }
+    for (var id = 1; id <= 6; id++) {
+      m.onReadyToPlay(id);
+      m.onReadyToPlay(id); // pressing twice changes nothing
+    }
+    expect(m.stage, WolfStage.ready);
+    expect(m.readyCount, 6);
+    for (final id in r.roles.keys) {
+      final w = r.to(id).whereType<PlayWait>().last;
+      expect((w.count, w.total, w.ready), (6, 7, id <= 6), reason: 'player $id');
+      expect(r.to(id).whereType<NightPrompt>(), isEmpty);
+    }
+    m.onReadyToPlay(7);
+    expect(m.stage, WolfStage.night);
+    for (final id in r.roles.keys) {
+      expect(r.to(id).whereType<NightPrompt>().length, 1);
+    }
+    expect(m.story.last.key, 'firstNight');
+    m.onReadyToPlay(1); // late: nothing happens, no new prompt
+    expect(r.to(1).whereType<NightPrompt>().length, 1);
+    m.dispose();
+  });
+
+  testWidgets('the host\'s kick of the one who is not ready starts night 1; a phone coming back gets its own wait state', (t) async {
+    final r = Rig(ready: false);
+    final m = r.match;
+    for (var id = 1; id <= 6; id++) {
+      m.onReadyToPlay(id);
+    }
+    m.rejoin(3);
+    final w = r.to(3).whereType<PlayWait>().last;
+    expect((w.ready, w.count, w.total), (true, 6, 7));
+    m.rejoin(7);
+    expect(r.to(7).whereType<PlayWait>().last.ready, isFalse);
+    m.expel(7);
+    expect(m.stage, WolfStage.night);
+    expect(r.to(1).whereType<NightPrompt>().first.ids, isNot(contains(7)));
+    m.dispose();
+  });
+
+  testWidgets('a kick of someone who was already ready lowers the total, and a sleeping phone is waited for', (t) async {
+    final r = Rig(ready: false);
+    final m = r.match;
+    m.onReadyToPlay(1);
+    m.setAway(6, true); // a locked phone is still waited for
+    for (final id in [2, 3, 4, 5, 7]) {
+      m.onReadyToPlay(id);
+    }
+    expect(m.stage, WolfStage.ready);
+    m.expel(1);
+    expect((m.readyCount, m.readyTotal), (5, 6));
+    expect(m.stage, WolfStage.ready);
+    m.expel(6);
+    expect(m.stage, WolfStage.night);
+    m.dispose();
+  });
+
+  testWidgets('one sum per night for a role with no night action, night 1 included; every phone has the same list length', (t) async {
+    final r = Rig();
+    for (var night = 1; night <= 2; night++) {
+      if (night == 2) {
+        r.pickAll({1: const NightPick(7), 2: const NightPick(7)});
+        await r.wait(t, 4 + 15);
+        r.allReady();
+        for (final id in r.match.alive) {
+          r.match.onVote(id, const Vote(null));
+        }
+        await r.wait(t, 20);
+      }
+      final p = r.to(5).whereType<NightPrompt>().last; // the hunter has no night action
+      expect(p.night, night);
+      expect(p.picks, 1, reason: 'night $night');
+      expect(p.choices2, isEmpty);
+      expect('×'.allMatches(p.text).length, 1, reason: 'one sum: ${p.text}');
+      expect(p.choices.length, r.match.alive.length);
+      expect(p.text.length, wolfTextWidth);
+    }
+    r.match.dispose();
   });
 }

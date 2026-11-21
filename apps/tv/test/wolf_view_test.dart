@@ -34,6 +34,9 @@ class _Game {
       random: Random(1),
       fixedRoles: roles,
     )..start();
+    for (final id in roles.keys) {
+      match.onReadyToPlay(id); // everyone is ready: these tests start at night 1
+    }
     players = [for (final id in roles.keys) PlayerInfo(id, 'P$id', id - 1, true, 0, character: characterIds[id - 1])];
   }
   late final WolfMatch match;

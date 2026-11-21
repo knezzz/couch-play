@@ -878,6 +878,57 @@ class WolfRolesInfoScreen extends StatelessWidget {
   );
 }
 
+/// "Spreman" under the role card before night 1: final once pressed, with the
+/// TV's count. The same for every phone.
+class ReadyBar extends StatelessWidget {
+  const ReadyBar({
+    super.key,
+    required this.ready,
+    required this.count,
+    required this.total,
+    required this.onReady,
+  });
+  final bool ready;
+  final int count, total;
+  final VoidCallback onReady;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: Column(
+      children: [
+        SizedBox(
+          height: 64,
+          width: double.infinity,
+          child: ready
+              ? const FilledButton(
+                  key: ValueKey('play-ready'),
+                  onPressed: null,
+                  child: Text(
+                    Strings.readyDone,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                )
+              : FilledButton(
+                  key: const ValueKey('play-ready'),
+                  onPressed: onReady,
+                  child: const Text(
+                    Strings.readyButton,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          Strings.readyCount(count, total),
+          key: const ValueKey('ready-count'),
+          style: const TextStyle(fontSize: 18, color: _nightMuted),
+        ),
+      ],
+    ),
+  );
+}
+
 /// "Idemo glasati" under the day card: a wish that can be taken back, with the
 /// TV's count. The same for every phone; [onWish] sends the wish itself.
 class VoteWishBar extends StatelessWidget {

@@ -203,6 +203,7 @@ class _AppState extends State<App> {
           _uljez.on(m);
           _screen = _Screen.uljez;
         case RoleMsg() ||
+            PlayWait() ||
             NightPrompt() ||
             Morning() ||
             VotePrompt() ||
@@ -252,7 +253,8 @@ class _AppState extends State<App> {
       _Screen.wait => _uljezOn && _uljez.screen != 'end',
       _Screen.wolf =>
         _wolf.screen == 'vote' ||
-            (_wolf.screen == 'idle' && _wolf.morning != null),
+            (_wolf.screen == 'idle' &&
+                (_wolf.morning != null || _wolf.ready != null)),
       _ => false,
     };
   }

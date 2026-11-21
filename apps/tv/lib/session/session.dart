@@ -322,6 +322,9 @@ class Session {
       case UljezDone():
         final p = _playerOf(peer);
         if (p != null) _uljez?.onDone(p.id);
+      case ReadyToPlay():
+        final p = _playerOf(peer);
+        if (p != null) _wolf?.onReadyToPlay(p.id);
       case ReadyToVote():
         final p = _playerOf(peer);
         if (p == null) break;
