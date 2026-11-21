@@ -6,7 +6,7 @@ item yet). Status per line: open / routed / checking / done.
 Known gaps across all games, from the earlier content seats' own hand-backs: **no native Croatian read** of the new
 wording, and **quiz distractors not page-checked**. The content tests guard format and duplicates only, not facts.
 
-## Kviz (20 bundled packs, 2,442 questions, 1,086 with pictures = 44%; ~55 MB of zips)
+## Kviz (22 bundled packs, 2,632 questions, 1,093 with pictures = 42%; ~55 MB of zips)
 
 Sources in `tool/packs/` (`hr-*.json` or `hr-*/` folder + `hr-*.sources.md`); `tool/pack_zip.sh` copies/zips every
 `hr-*` into `apps/tv/assets/packs/`. The English `film-music`, `general`, `geography`, `science`, `flags`, `shapes`
@@ -34,6 +34,8 @@ are no longer bundled.
 | hr-zivotinje | 99 | 51 | new 2026-11-21 (325f919), fact-checked; NEW tag |
 | hr-sport-svijet | 99 | 39 | new 2026-11-21 (325f919), world sport only; NEW tag |
 | hr-jezik | 86 | 22 | new 2026-11-21 (325f919), two sources per fact, nothing political; Q43 accented e letters untested on the TV font; NEW tag |
+| hr-pop-kultura | 99 | 0 | new 2026-11-21 (65f9172); facts that can change carry a year; person updates it when needed; NEW tag |
+| hr-glazba-2000 | 91 | 7 | new 2026-11-21 (65f9172); same rule; split with pop-kultura (Croatian Eurovision and pre-2000 there); NEW tag |
 
 Fix:
 - [done: kultura-sport 1543f98, memeovi 6eb4f71, film-glazba fcbe960, opće znanje 08a5663] Fact re-check of the
@@ -47,9 +49,10 @@ Fix:
 
 Add:
 - [done 2b90db6] hr-zastave: more flags (aim ~150; harder lookalikes: Chad/Romania, Indonesia/Monaco, etc.).
-- [Hrana i piće done b2c179d; Životinje, Sport u svijetu, Jezik i riječi done 325f919; open] New packs from
-  pub-quiz topic lists (topics only, our own wording; person's yes 2026-11-21). Left: Hrvatska pop-kultura, Glazba
-  2000+ (living people: few free photos; facts age fast).
+- [done: Hrana i piće b2c179d; Životinje, Sport u svijetu, Jezik i riječi 325f919; Hrvatska pop-kultura, Glazba
+  2000+ 65f9172] New packs from pub-quiz topic lists (topics only, our own wording; person's yes 2026-11-21).
+  [open] Keep hr-pop-kultura and hr-glazba-2000 current: re-check their year-tagged facts when the person asks
+  (hosts, festival venues/names, "do 2026." records).
 - [open, optional] Sources lists the pack editor can't renumber on a delete (build-lead, 8ab9510): it needs exactly
   one line per question above the first `## `. hr-geografija (82 of 100), hr-zemljopis-svijeta (91 of 102),
   hr-kultura-sport (partial list 112-119), hr-medimurje (82 of 84; person reviews). Safe as is.
