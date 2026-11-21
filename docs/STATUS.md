@@ -53,6 +53,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 46 | Multi-select packs in every game, all selected by default (person, 2026-11-18) | done (review 2 must-fixes fixed, QA pass all 7 games; 41ff6dd); next TV install | lead |
 | 47 | Remove Kao svi (person, 2026-11-19) | done (review clean, suites green; visual QA skipped by the person: no screen recording); next TV install | lead |
 | 48 | Phone home live with the TV: guests see the host's card and settings, changes marked and listed, TV settings panel (person, 2026-11-21) | done (review clean after 2 must-fixes, QA pass phones, TV from PNGs; remote on the real TV); next TV install | lead |
+| 49 | Uljez impostor never the same person twice in a row (person, 2026-11-21) | routed | lead |
 
 ## Open questions for the person
 
@@ -367,3 +368,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-21: Person: clear caches. PM deleted ~/.gradle/caches (8.6 GB; next Android build re-downloads, slower). Free 15 GB. Xcode ModuleCache (3.8 GB) left: other projects' builds were running. Person's old Flutter versions in ~/fvm (7.2 GB) not touched; asked.
 - 2026-11-21: Person approved the five hr-medimurje fixes ("commit and push", to content-lead): b1e0ca9 (84→83 q), c873e07 docs, pushed. Scan clean. Not on the TV yet.
 - 2026-11-21: Person: in Uljez "always the same person was the uljez" (2026-11-20 play, 4 games). Checked: no bug; each game shuffles with the session's unseeded Random; 1,200 games per player count 3-6 give each player ~1/N, repeats ~1/N; Vukodlak deal uniform too. Guard test 400a238. By chance, one person impostor in 3+ of 4 games: 33% (3 players), 20% (4). Offered the person "never the same impostor twice in a row" (slightly predictable).
+- 2026-11-21: Person: "yes to all. We will update the pop pack if we will need to keep it to be up to date." So: Task 49 (no repeat impostor) and a TV install (not opened) after it, to the lead; Hrvatska pop-kultura and Glazba 2000+ packs and the second picture pass for packs under 40%, to content-lead.

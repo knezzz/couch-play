@@ -234,7 +234,8 @@ A hidden-word party game in the "odd one out" genre, our own name and words. Ref
 (`UljezTv.dc.html`, `UljezPhone.dc.html`).
 
 - 3–8 people, no bots. Everyone gets the same word (e.g. "Spužva Bob"); the impostor gets a similar word ("Pikachu")
-  and does not know they are the impostor. 1 impostor for 3–6 players; for 7–8 the host picks 1 or 2.
+  and does not know they are the impostor. 1 impostor for 3–6 players; for 7–8 the host picks 1 or 2. The impostor
+  is never the same person as in the last Uljez game of the evening (person, 2026-11-21), otherwise random.
 - The word shows on the phone only while a finger is on the screen (as in Vukodlak).
 - Clues: in turn, each player says one clue out loud; the TV shows whose turn it is (players around a table). **No
   timers** (user request, 2026-11-18): the speaker taps **Dao sam trag** on their phone and the turn passes; a speaker

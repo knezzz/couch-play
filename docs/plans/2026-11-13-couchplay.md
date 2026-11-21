@@ -1028,3 +1028,7 @@ Spec: main design spec, "Phone home, live with the TV"; boards in `docs/design/p
 - [x] Guest phone: same card read-only ("Ana gleda …"), settings list with the changed row outlined and the old value struck through, "Zadnje promjene" (last 5, gender-neutral entries), the read-only pack checklist while the host is in it.
 - [x] TV: settings panel opens by itself on a host change (phone or ▼), changed row highlighted; Natrag or a game change closes it; pack grid while the host is in packs.
 - [x] Tests first (one shared selection and settings state to all phones and the TV; change marking and the last-5 list; panel open/close; a guest joining mid-change gets the current state); QA on macOS release with a host and 2+ guests at 360–390 px and the remote; compare per board and say where it differs. Kick strip, Promijeni lik and the game flows unchanged.
+
+### Task 49: Uljez impostor never twice in a row (added 2026-11-21, person request)
+
+- [ ] Each new Uljez game picks the impostor(s) at random but never last game's impostor (with 2 impostors: neither of last game's), when enough players remain; otherwise random. Tests first (extend session_uljez_impostor_test: no repeat across consecutive games, still spread over the others); suites green; review.
