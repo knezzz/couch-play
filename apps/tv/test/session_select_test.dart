@@ -113,13 +113,25 @@ void main() {
       s.dispose();
     });
 
-    test('selectFromTv_with_nobody_in_the_room_selects_nothing_but_still_clicks', () {
-      s = Session(random: Random(1));
+    test('selectFromTv_with_nobody_in_the_room_moves_the_one_game_too_and_clicks', () {
+      // The TV home shows the game it moved to, so the session must hold it:
+      // the first phone to join sees the same game (task 48 must-fix).
+      s = Session(random: Random(1))..uljezTvReady = true;
       final sfx = FakeSfx();
       s.sfx = sfx;
-      s.selectFromTv(GameKind.blef);
-      expect(s.selectedGame, GameKind.quiz, reason: 'no host to move it');
+      s.selectFromTv(GameKind.uljez);
+      expect(s.selectedGame, GameKind.uljez);
+      expect(s.feed, isEmpty, reason: 'nobody was there to have done it');
       expect(sfx.played, [Sound.menuMove]);
+      final first = join(s, 'Ana', token: 'ta');
+      expect(first.last<LobbyState>()!.selected, GameKind.uljez);
+      expect(s.feed, isEmpty);
+      // OK starts the game the TV shows (and the phones show)
+      s.uljezPacks = [UljezPack('p', 'P', [for (var i = 0; i < 8; i++) WordPair('a$i', 'b$i')])];
+      join(s, 'Ben', token: 'tb');
+      join(s, 'Cvita', token: 'tc');
+      expect(s.startFromTv(s.selectedGame!), isNull);
+      expect(s.phase, Phase.uljez);
       s.dispose();
     });
 

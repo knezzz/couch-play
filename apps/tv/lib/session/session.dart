@@ -572,8 +572,7 @@ class Session {
   void selectFromTv(GameKind game) {
     if (_phase != Phase.lobby) return;
     sfx.play(Sound.menuMove); // moving on an empty home clicks too
-    if (hostId == null) return;
-    _moveTo(game, ChangeBy.remote);
+    _moveTo(game, ChangeBy.remote); // with nobody in the room too: the TV and the next phone must agree
   }
 
   /// OK on the TV home: Igraj for the host, with the same checks. Null when the
@@ -760,7 +759,7 @@ class Session {
     _changed = null;
     _panel = false;
     _packs = false;
-    _log(LobbyChange.game(game, by));
+    if (hostId != null) _log(LobbyChange.game(game, by)); // nobody there to have done it
     _broadcastLobby();
     _notify();
   }
