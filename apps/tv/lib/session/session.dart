@@ -1584,6 +1584,11 @@ class Session {
     }
     _stopWait();
     _endRoundBreak();
+    if (sim.matchOver) {
+      // The match was won while the phone was away (the winner moment): no new round, the results.
+      finishGame(_gameScores());
+      return;
+    }
     for (final e in _simIdOf.entries) {
       // A button held through the wait must not turn the new round's head.
       sim.setInput(e.value, left: false, right: false);
@@ -1677,11 +1682,14 @@ class Session {
       // The new score and how the round ended for each phone, in one message.
       for (final p in _players) {
         final sid = _simIdOf[p.id];
-        final end = sid == survivor
-            ? RoundEnd.won
-            : survivor == null && died.contains(sid)
-                ? RoundEnd.tie
-                : RoundEnd.over;
+        // The match is over too: the results follow, so no "next round soon" flag.
+        final end = matchOver
+            ? null
+            : sid == survivor
+                ? RoundEnd.won
+                : survivor == null && died.contains(sid)
+                    ? RoundEnd.tie
+                    : RoundEnd.over;
         final status = _statusFor(p, end: end);
         if (status != null) p.socket?.send(status);
       }

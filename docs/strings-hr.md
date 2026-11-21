@@ -415,7 +415,7 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | UljezText.needPlayers / noBots | Uljez traži 3 do 8 igrača na mobitelima. / Uljez se igra bez botova. Ukloni botove. | Uljez needs 3 to 8 players on phones. / No bots in Uljez. Remove the bots. | error to the host |
 | Uljez guessing (Waiting) | Uljez pogađa riječ sela. | The impostor is guessing the village's word. | Waiting for everyone but the caught impostor |
 | curveBreakTitle(n) / curveBreakTarget(n) / curveBreakNext(s) | Rezultat nakon runde 3 / Pobjeđuje tko prvi dosegne 30 / Sljedeća runda za 4 s | Score after round 3 / First to reach 30 wins / Next round in 4 s | TV, between Curve rounds |
-| curveRoundWinner / curveMatchWinner / curveTie | POBJEDNIK RUNDE / POBJEDNIK IGRE / Neriješeno | ROUND WINNER / MATCH WINNER / Tied | TV, banner over the frozen Curve field for 1.5 s after the last crash. The names strip under the field has the players names only; a crashed one is dimmed with ×. |
+| curveRoundWinner / curveMatchWinner / curveTie | RUNDU OSVAJA / IGRU OSVAJA / Neriješeno | ROUND GOES TO / GAME GOES TO / Tied | TV, banner over the frozen Curve field for 1.5 s after the last crash. The names strip under the field has the players names only; a crashed one is dimmed with ×. |
 | curveTopTie | Izjednačeno na vrhu – igra se dalje | Tied at the top – play goes on | TV, round-break card, when two or more pass the target on the same top score |
 | pauseSub(s) | Igra je zaustavljena. Još 22 s, onda završava. | The game is paused. 22 s more, then it ends. | TV pause card |
 | curveCountdownHint | Pronađi svoju točku. Strelica pokazuje kamo kreneš. | Find your dot. The arrow shows where you go. | TV, Curve countdown |

@@ -90,8 +90,8 @@ abstract final class Strings {
   static String curveBreakTitle(int round) => 'Rezultat nakon runde $round';
   static String curveBreakTarget(int target) => 'Pobjeđuje tko prvi dosegne $target';
   static String curveBreakNext(int seconds) => 'Sljedeća runda za $seconds s';
-  static const curveRoundWinner = 'POBJEDNIK RUNDE';
-  static const curveMatchWinner = 'POBJEDNIK IGRE';
+  static const curveRoundWinner = 'RUNDU OSVAJA';
+  static const curveMatchWinner = 'IGRU OSVAJA';
   static const curveTie = 'Neriješeno';
   static const curveTopTie = 'Izjednačeno na vrhu – igra se dalje';
   static const curveCountdownHint = 'Pronađi svoju točku. Strelica pokazuje kamo kreneš.';

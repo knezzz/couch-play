@@ -184,12 +184,12 @@ void main() {
       await t.pumpWidget(banner(who: const [StripName(name: 'Ana', colorIndex: 2, alive: true, character: 'fox')]));
       expect(find.text('Ana'), findsOneWidget);
       expect(t.widget<Text>(find.text('Ana')).style!.color, playerColors[2]);
-      expect(find.text('POBJEDNIK RUNDE'), findsOneWidget);
+      expect(find.text('RUNDU OSVAJA'), findsOneWidget);
     });
 
     testWidgets('the match winner says so', (t) async {
       await t.pumpWidget(banner(who: const [StripName(name: 'Ana', colorIndex: 2, alive: true)], match: true));
-      expect(find.text('POBJEDNIK IGRE'), findsOneWidget);
+      expect(find.text('IGRU OSVAJA'), findsOneWidget);
     });
 
     testWidgets('a tie says Neriješeno with both names in their colours', (t) async {
