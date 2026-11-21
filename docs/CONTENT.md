@@ -6,7 +6,7 @@ item yet). Status per line: open / routed / checking / done.
 Known gaps across all games, from the earlier content seats' own hand-backs: **no native Croatian read** of the new
 wording, and **quiz distractors not page-checked**. The content tests guard format and duplicates only, not facts.
 
-## Kviz (22 bundled packs, 2,632 questions, 1,093 with pictures = 42%; ~55 MB of zips)
+## Kviz (22 bundled packs, 2,646 questions, 1,132 with pictures = 43%; ~57 MB of zips)
 
 Sources in `tool/packs/` (`hr-*.json` or `hr-*/` folder + `hr-*.sources.md`); `tool/pack_zip.sh` copies/zips every
 `hr-*` into `apps/tv/assets/packs/`. The English `film-music`, `general`, `geography`, `science`, `flags`, `shapes`
@@ -14,8 +14,8 @@ are no longer bundled.
 
 | Pack | Questions | Pictures | Note |
 |---|---|---|---|
-| hr-opce-znanje | 397 | 141 | re-checked (08a5663); pictures 2c81dd5; 7.5 MB |
-| hr-film-glazba | 130 | 41 | re-checked (fcbe960); pictures d86f716, a0d9944 |
+| hr-opce-znanje | 402 | 161 | re-checked (08a5663); pictures 2c81dd5, pass 2 2479fd7; 8.0 MB (cap 8.5) |
+| hr-film-glazba | 135 | 50 | re-checked (fcbe960); pictures d86f716, a0d9944, pass 2 bbc58de |
 | hr-hrana-pice | 99 | 49 | new 2026-11-20 (b2c179d), fact-checked; NEW tag (0fbf2b1) |
 | hr-znanost | 129 | 64 | pictures 46daa7b (Q34 dropped as a ljudsko-tijelo duplicate) |
 | hr-kultura-sport | 119 | 54 | re-checked (1543f98); pictures cc9cfe0 |
@@ -23,8 +23,8 @@ are no longer bundled.
 | hr-memeovi | 110 | 100 | re-checked (6eb4f71); pictures 5059cb5 (person asked ≥ 90%) |
 | hr-matematika | 121 | 22 | pictures + 8 new picture questions 3877367 |
 | hr-psihologija | 118 | 18 | pictures + 6 new picture questions db076ad |
-| hr-povijest | 111 | 43 | pictures 3748e3b |
-| hr-fizika | 107 | 36 | pictures a9ee33c |
+| hr-povijest | 112 | 49 | pictures 3748e3b, pass 2 7c86231 |
+| hr-fizika | 110 | 40 | pictures a9ee33c, pass 2 147bf73 |
 | hr-ljudsko-tijelo | 106 | 48 | pictures e2a6470 (family-safe) |
 | hr-zemljopis-svijeta | 102 | 43 | pictures a59cef2 |
 | hr-geografija | 100 | 50 | Croatia only; pictures 5fba511; 5.5 MB |
@@ -60,8 +60,9 @@ Add:
   where pictures would show the answer stayed lower rather than pad). Free licence only, checked on every Commons
   file page; no picture gives away an answer in any pack (checked both ways). Researcher lists in
   `tool/packs/<pack>.pictures.md`. Pack limit 10 MB since 748ce9c. hr-medimurje not done (person's call).
-  [open, person] Second pass for packs under 40% (opće znanje, fizika, film-glazba, povijest): new picture
-  questions from the unsearched questions listed in each pictures.md.
+  [done 2026-11-21: 2479fd7, 147bf73, bbc58de, 7c86231] Second pass for packs under 40%: +39 pictures, 14 new
+  picture questions, fact-checked. Fizika and film-glazba stay at 36-37%: the rest of their candidates gave
+  answers away or showed brands. Researcher's lists: "## Pass 2" in each pictures.md.
   [open, needs the person's yes] TV check: the TV loads every Kviz pack (~50 MB of zips now) into memory at start;
   check start time and memory on the BRAVIA (build-lead's risk note).
 
