@@ -38,6 +38,11 @@ class HomeScreen extends StatefulWidget {
     required this.onPlay,
     this.selected,
     this.packs = const {},
+    this.hostView = HostView.home,
+    this.changed,
+    this.packGrid,
+    this.onOpenSettings,
+    this.onCloseSettings,
     this.quizPacks = 0,
     this.quizQuestions = 0,
     this.notice,
@@ -59,6 +64,20 @@ class HomeScreen extends StatefulWidget {
     return c == null ? null : Strings.packsLine(c.ticked, c.total);
   }
 
+  /// Where the host is (the session says it): the settings panel opens by itself in
+  /// [HostView.settings], and the pack screen shows [packGrid] in [HostView.packs] (Task 48).
+  final HostView hostView;
+
+  /// The setting change to outline in the panel (cleared by a game change).
+  final LobbyChange? changed;
+
+  /// The shown game's packs, on and off, for the pack screen.
+  final List<PackTile>? packGrid;
+
+  /// ▼ and Natrag, told to the session, which owns the panel. Without them the home
+  /// opens and closes its own panel (no session: tests, previews).
+  final VoidCallback? onOpenSettings, onCloseSettings;
+
   /// How many packs and questions the Kviz has, for its line (0: not known).
   final int quizPacks, quizQuestions;
 
@@ -77,7 +96,26 @@ class _HomeScreenState extends State<HomeScreen> {
     0,
     widget.games.indexOf(widget.selected ?? widget.games.first),
   );
-  var _settingsOpen = false;
+  var _localOpen = false;
+
+  bool get _settingsOpen =>
+      widget.onOpenSettings != null ? widget.hostView == HostView.settings : _localOpen;
+
+  void _openSettings() {
+    if (widget.onOpenSettings != null) {
+      widget.onOpenSettings!();
+    } else {
+      setState(() => _localOpen = true);
+    }
+  }
+
+  void _closeSettings() {
+    if (widget.onCloseSettings != null) {
+      widget.onCloseSettings!();
+    } else {
+      setState(() => _localOpen = false);
+    }
+  }
   // The background is still: drawn once, so an idle home asks for no frames at all (the
   // BRAVIA logged 60 frames a second there). Only the change of game fades.
   bool? _reduced;
@@ -113,13 +151,13 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (k == LogicalKeyboardKey.arrowRight) {
       _move(1);
     } else if (k == LogicalKeyboardKey.arrowDown) {
-      setState(() => _settingsOpen = true);
+      _openSettings();
     } else if (k == LogicalKeyboardKey.arrowUp ||
         k == LogicalKeyboardKey.escape) {
       if (k == LogicalKeyboardKey.escape && !_settingsOpen) {
         return KeyEventResult.ignored;
       }
-      setState(() => _settingsOpen = false);
+      _closeSettings();
     } else if (e is KeyDownEvent &&
         (k == LogicalKeyboardKey.select ||
             k == LogicalKeyboardKey.enter ||
@@ -141,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Back closes the settings first; with them closed the system takes it (exit).
       canPop: !_settingsOpen,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) setState(() => _settingsOpen = false);
+        if (!didPop) _closeSettings();
       },
       child: Focus(
         autofocus: true,
@@ -241,6 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             g,
                             widget.settings,
                             widget._packsLine(g),
+                            changed: widget.changed?.game == g ? widget.changed?.key : null,
                           ),
                         ),
                       )
@@ -250,6 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         right: 0,
                         top: 820,
                         child: Row(
+                          key: const ValueKey('page-dots'),
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             for (var k = 0; k < n; k++)
@@ -276,6 +316,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       top: 40,
                       child: _JoinPanel(widget.joinUrl),
                     ),
+                    if (widget.hostView == HostView.packs && widget.packGrid != null)
+                      Positioned.fill(child: _PackGrid(g, widget.packGrid!)),
                     const Positioned(
                       left: 0,
                       right: 0,
@@ -510,67 +552,163 @@ class _Help extends StatelessWidget {
   }
 }
 
+/// One pack on the pack screen: how many questions (words, prompts), how many with a
+/// picture, and whether the host has it on.
+typedef PackTile = ({String id, String title, int count, int pictures, bool on});
+
+/// The pack screen on the TV while the host is in it on the phone: every pack of the
+/// shown game, the ones that are off dimmed, with the count line (Task 48).
+class _PackGrid extends StatelessWidget {
+  const _PackGrid(this.kind, this.tiles);
+  final GameKind kind;
+  final List<PackTile> tiles;
+
+  @override
+  Widget build(BuildContext context) {
+    final on = tiles.where((t) => t.on).toList();
+    final questions = on.fold<int>(0, (a, t) => a + t.count);
+    final pictures = on.fold<int>(0, (a, t) => a + t.pictures);
+    return Container(
+      key: const ValueKey('pack-grid'),
+      color: const Color(0xF214141E),
+      padding: const EdgeInsets.fromLTRB(96, 150, 96, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(Strings.packGridTitle(kind), style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: tvText)),
+          const SizedBox(height: 8),
+          Text(Strings.packGridSummary(on.length, tiles.length, questions, pictures), style: const TextStyle(fontSize: 40, color: Color(0xFFC9C9D8))),
+          const SizedBox(height: 28),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (_, box) {
+                // As many columns as the packs need to fit the height: 4, or 5 when there are many.
+                final cols = tiles.length > 16 ? 5 : 4;
+                final rows = (tiles.length / cols).ceil().clamp(1, 99);
+                const gap = 16.0;
+                final w = (box.maxWidth - gap * (cols - 1)) / cols;
+                final h = ((box.maxHeight - gap * (rows - 1)) / rows).clamp(0.0, 130.0);
+                return Wrap(
+                  spacing: gap,
+                  runSpacing: gap,
+                  children: [for (final t in tiles) _tile(t, w, h)],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _tile(PackTile t, double w, double h) => Opacity(
+        key: ValueKey(t.on ? 'pack-tile-${t.id}' : 'pack-off-${t.id}'),
+        opacity: t.on ? 1 : 0.4,
+        child: Container(
+          width: w,
+          height: h,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: t.on ? const Color(0xFF2A2A3A) : const Color(0xFF1F1F2C),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: t.on ? tvAccent : const Color(0xFF55556A), width: 3),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(t.title, maxLines: 1, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: tvText)),
+                ),
+              ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(Strings.packTileLine(t.count, t.pictures), maxLines: 1, style: const TextStyle(fontSize: 30, color: Color(0xFFC9C9D8))),
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
 /// How many of a game's packs are ticked, of how many there are.
 typedef PackCount = ({int ticked, int total});
 
 /// The game's current settings (the host sets them on the phone).
 class _SettingsPanel extends StatelessWidget {
-  const _SettingsPanel(this.kind, this.settings, this.packsLine);
+  const _SettingsPanel(this.kind, this.settings, this.packsLine, {this.changed});
   final GameKind kind;
   final GameSettings settings;
   final String? packsLine;
 
+  /// The GameSettings key of the row the host just changed (outlined).
+  final String? changed;
+
   @override
   Widget build(BuildContext context) {
     // Rows of one or two items; the pack name is long, so it gets a row of its own.
-    final rows = <List<(String, String)>>[
-      if (packsLine != null && kind != GameKind.quiz) [(Strings.settingPack, packsLine!)],
+    final rows = <List<(String, String, String)>>[
+      if (packsLine != null && kind != GameKind.quiz) [(Strings.settingPack, packsLine!, '${kind.name}OffPacks')],
       ...switch (kind) {
       GameKind.quiz => [
-        [(Strings.settingPack, packsLine ?? '–')],
+        [(Strings.settingPack, packsLine ?? '–', 'quizOffPacks')],
         [
-          (Strings.settingQuestions, '${settings.quizQuestions}'),
-          (Strings.settingAnswerTime, '${settings.quizSeconds} s'),
+          (Strings.settingQuestions, '${settings.quizQuestions}', 'quizQuestions'),
+          (Strings.settingAnswerTime, '${settings.quizSeconds} s', 'quizSeconds'),
         ],
-        [(Strings.settingReveal, '${settings.revealSeconds} s')],
+        [(Strings.settingReveal, '${settings.revealSeconds} s', 'revealSeconds')],
       ],
       GameKind.curve => [
         [
-          (Strings.settingMode, Strings.curveModeName(settings.curveMode)),
-          (Strings.settingCountdown, '${settings.curveCountdown} s'),
+          (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
+          (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
         ],
       ],
       GameKind.vukodlak => [
           [
-            (Strings.settingHideRoles, settings.wolfHideRoles ? Strings.yes : Strings.no),
+            (Strings.settingHideRoles, settings.wolfHideRoles ? Strings.yes : Strings.no, 'wolfHideRoles'),
           ],
         ],
       GameKind.uljez => [
           [
-            (Strings.settingImpostors, '${settings.uljezImpostors}'),
+            (Strings.settingImpostors, '${settings.uljezImpostors}', 'uljezImpostors'),
           ],
         ],
       // The other party games have no settings on the TV yet.
-      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String)>>[],
+      GameKind.objasni || GameKind.koliko || GameKind.blef || GameKind.tkobi => <List<(String, String, String)>>[],
       },
     ];
-    Widget item((String, String) it) => Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: '${it.$1}: ',
-            style: const TextStyle(color: tvMuted),
-          ),
-          TextSpan(
-            text: it.$2,
-            style: const TextStyle(color: tvText, fontWeight: FontWeight.w700),
-          ),
-        ],
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: const TextStyle(fontSize: 34),
-    );
+    Widget item((String, String, String) it) {
+      final text = Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '${it.$1}: ',
+              style: const TextStyle(color: tvMuted),
+            ),
+            TextSpan(
+              text: it.$2,
+              style: TextStyle(color: it.$3 == changed ? tvAccent : tvText, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 34),
+      );
+      if (it.$3 != changed) return text;
+      // The row the host just changed: outlined in the accent (still, no animation).
+      return Container(
+        key: const ValueKey('row-changed'),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        decoration: BoxDecoration(border: Border.all(color: tvAccent, width: 3), borderRadius: BorderRadius.circular(14)),
+        child: text,
+      );
+    }
     return Container(
       key: const ValueKey('game-card'),
       width: kind == GameKind.curve ? 1640 : 1360,

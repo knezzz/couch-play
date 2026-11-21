@@ -19,6 +19,7 @@ import 'ui/back_guard.dart';
 import 'ui/curve/curve_game.dart';
 import 'ui/curve/round_break_card.dart';
 import 'ui/home_screen.dart';
+import 'ui/pack_tiles.dart';
 import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
@@ -81,9 +82,6 @@ class _TvAppState extends State<TvApp> {
   int _gameRound = -1;
   var _botsSeeded = false;
 
-  // The game the home shows. The session forgets its selection when a game
-  // starts; the home comes back to the same game.
-  GameKind? _homeGame;
   // Why OK did nothing (e.g. nobody has joined), shown a few seconds.
   String? _notice;
   Timer? _noticeTimer;
@@ -142,7 +140,6 @@ class _TvAppState extends State<TvApp> {
 
   void _onSession() {
     if (!mounted) return;
-    _homeGame = _session.selectedGame ?? _homeGame;
     if (!_botsSeeded && _botCount > 0 && _session.players.any((p) => !p.bot)) {
       _botsSeeded = true;
       _session.setBotCount(_botCount); // notifies again; the next pass does the rest
@@ -329,7 +326,12 @@ class _TvAppState extends State<TvApp> {
                   joinUrl: _session.joinUrl,
                   players: _session.playerInfos,
                   settings: _session.settings,
-                  selected: _session.selectedGame ?? _homeGame,
+                  selected: _session.homeGame,
+                  hostView: _session.hostView,
+                  changed: _session.changed,
+                  packGrid: _session.hostView == HostView.packs ? packTiles(_session, _session.homeGame) : null,
+                  onOpenSettings: _session.openSettingsFromTv,
+                  onCloseSettings: _session.closeSettingsFromTv,
                   packs: {
                     for (final k in const [GameKind.quiz, GameKind.uljez, GameKind.objasni, GameKind.koliko, GameKind.blef, GameKind.tkobi])
                       k: _session.packSelection(k),
@@ -337,10 +339,7 @@ class _TvAppState extends State<TvApp> {
                   quizPacks: _session.packStore?.infos.length ?? 0,
                   quizQuestions: _session.packStore?.infos.fold<int>(0, (a, p) => a + p.questionCount) ?? 0,
                   notice: _notice,
-                  onSelect: (k) {
-                    _homeGame = k;
-                    _session.selectFromTv(k);
-                  },
+                  onSelect: _session.selectFromTv,
                   onPlay: _play),
     );
     return _noTickers ? TickerMode(enabled: false, child: app) : app;

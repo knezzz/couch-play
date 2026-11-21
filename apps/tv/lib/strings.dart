@@ -63,6 +63,11 @@ abstract final class Strings {
   static const settingPack = 'Paketi';
   static const packsAll = 'Svi paketi';
   /// Which packs a game draws from: all of them, or how many are ticked.
+  /// The pack screen on the TV: its title, the count line and one pack's line.
+  static String packGridTitle(GameKind k) => '${gameName(k)} · Paketi';
+  static String packGridSummary(int on, int total, int questions, int pictures) =>
+      '$on od $total uključeno · ${questionsWord(questions)}${pictures > 0 ? ' · ${_g(pictures)} sa slikom' : ''}';
+  static String packTileLine(int count, int pictures) => '$count${pictures > 0 ? ' · $pictures sa slikom' : ''}';
   static String packsLine(int ticked, int total) => ticked >= total ? packsAll : '$ticked od $total paketa';
   static const settingQuestions = 'Broj pitanja';
   static const settingAnswerTime = 'Vrijeme za odgovor';

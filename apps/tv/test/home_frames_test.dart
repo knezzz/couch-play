@@ -150,6 +150,7 @@ void main() {
       LogicalKeyboardKey.arrowUp,
     ]) {
       await t.sendKeyEvent(key);
+      await t.pump(); // the session's answer (▼ and Natrag go through it) is drawn
       await t.pump(const Duration(seconds: 1)); // the selection change finishes
     }
     final asked = await framesAsked(t);
@@ -163,6 +164,7 @@ void main() {
   testWidgets('with the settings panel open it is still the idle rate', (t) async {
     final s = await _homeWith8(t);
     await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await t.pump(); // the session opens the panel; this frame draws it
     await t.pump(const Duration(seconds: 1));
     final asked = await framesAsked(t);
     // ignore: avoid_print
