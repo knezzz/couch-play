@@ -169,7 +169,8 @@ Home (one game full screen, QR, players, the "Večeras" strip) → host picks a 
 - **Names always visible (person, 2026-11-21):** during play every player's name stays on screen along the bottom
   edge, each in its line's color (names only, no scores).
 - **Clear round winner (person, 2026-11-21):** when a round ends the TV first says clearly who won it (name, color,
-  character), before the scores, so a close finish is never in doubt.
+  character), before the scores, so a close finish is never in doubt. The winner screen also lists every other player
+  with the points they got this round (person, 2026-11-21). No mark where a line crashed (person, 2026-11-21).
 - **Power-up legend:** ▼ on the Curve card on the home (and the host's Curve details on the phone) lists every power-up
   with its icon and one line on what it does (user choice, 2026-11-17).
 - **Curve modes (user request, 2026-11-16):** the host picks a mode in the lobby settings:
