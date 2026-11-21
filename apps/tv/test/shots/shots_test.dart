@@ -154,5 +154,25 @@ void main() {
       await t.pump();
       await shot(t, key, '6-panel-curve-$tag');
     });
+
+    testWidgets('7 Curve panel after a host change of the pause (no legend) $tag', skip: skip != null, (t) async {
+      final key = GlobalKey();
+      final s = await start(t, size, key);
+      final host = players(s);
+      host.say(const SelectGame(GameKind.curve));
+      host.say(SetSettings(const GameSettings(curveCountdown: 4)));
+      await t.pump();
+      await shot(t, key, '7-panel-curve-host-change-$tag');
+    });
+
+    testWidgets('8 Kviz panel after the host added robots $tag', skip: skip != null, (t) async {
+      final key = GlobalKey();
+      final s = await start(t, size, key);
+      final host = players(s);
+      host.say(const SelectGame(GameKind.quiz));
+      host.say(const SetBots(2));
+      await t.pump();
+      await shot(t, key, '8-panel-kviz-bots-$tag');
+    });
   }
 }

@@ -98,6 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   var _localOpen = false;
 
+  // Curve's power-up legend shows when the remote's ▼ opened the panel, not when the host's change did (it would cover the title).
+  var _legend = false;
+
   bool get _settingsOpen =>
       widget.onOpenSettings != null ? widget.hostView == HostView.settings : _localOpen;
 
@@ -110,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _closeSettings() {
+    _legend = false;
     if (widget.onCloseSettings != null) {
       widget.onCloseSettings!();
     } else {
@@ -131,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didUpdateWidget(HomeScreen old) {
     super.didUpdateWidget(old);
+    if (old.hostView == HostView.settings && widget.hostView != HostView.settings) _legend = false;
     final s = widget.selected;
     final k = s == null ? -1 : widget.games.indexOf(s);
     if (k >= 0 && s != old.selected) _i = k;
@@ -151,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (k == LogicalKeyboardKey.arrowRight) {
       _move(1);
     } else if (k == LogicalKeyboardKey.arrowDown) {
+      setState(() => _legend = true);
       _openSettings();
     } else if (k == LogicalKeyboardKey.arrowUp ||
         k == LogicalKeyboardKey.escape) {
@@ -273,13 +279,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         left: 0,
                         right: 0,
                         // Curve's panel also holds the power-up legend, so it starts higher.
-                        top: g == GameKind.curve ? 272 : 716,
+                        top: g == GameKind.curve && _legend ? 272 : 716,
                         child: Center(
                           child: _SettingsPanel(
                             g,
                             widget.settings,
                             widget._packsLine(g),
                             changed: widget.changed?.game == g ? widget.changed?.key : null,
+                            legend: _legend,
+                            bots: widget.players.where((p) => p.bot).length,
                           ),
                         ),
                       )
@@ -640,7 +648,7 @@ typedef PackCount = ({int ticked, int total});
 
 /// The game's current settings (the host sets them on the phone).
 class _SettingsPanel extends StatelessWidget {
-  const _SettingsPanel(this.kind, this.settings, this.packsLine, {this.changed});
+  const _SettingsPanel(this.kind, this.settings, this.packsLine, {this.changed, this.legend = false, this.bots = 0});
   final GameKind kind;
   final GameSettings settings;
   final String? packsLine;
@@ -648,8 +656,15 @@ class _SettingsPanel extends StatelessWidget {
   /// The GameSettings key of the row the host just changed (outlined).
   final String? changed;
 
+  /// Curve: the power-up legend under the rows (only after ▼).
+  final bool legend;
+
+  /// How many robots are in (Kviz and Curve have a robots setting).
+  final int bots;
+
   @override
   Widget build(BuildContext context) {
+    final wide = kind == GameKind.curve && legend;
     // Rows of one or two items; the pack name is long, so it gets a row of its own.
     final rows = <List<(String, String, String)>>[
       if (packsLine != null && kind != GameKind.quiz) [(Strings.settingPack, packsLine!, '${kind.name}OffPacks')],
@@ -660,12 +675,22 @@ class _SettingsPanel extends StatelessWidget {
           (Strings.settingQuestions, '${settings.quizQuestions}', 'quizQuestions'),
           (Strings.settingAnswerTime, '${settings.quizSeconds} s', 'quizSeconds'),
         ],
-        [(Strings.settingReveal, '${settings.revealSeconds} s', 'revealSeconds')],
+        [(Strings.settingReveal, '${settings.revealSeconds} s', 'revealSeconds'), (Strings.settingBots, '$bots', 'bots')],
       ],
       GameKind.curve => [
-        [
-          (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
-          (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
+        // With the legend the card is wide: all three on one row, to keep it short.
+        if (wide)
+          [
+            (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
+            (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
+            (Strings.settingBots, '$bots', 'bots'),
+          ]
+        else ...[
+          [
+            (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
+            (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
+          ],
+          [(Strings.settingBots, '$bots', 'bots')],
         ],
       ],
       GameKind.vukodlak => [
@@ -711,10 +736,10 @@ class _SettingsPanel extends StatelessWidget {
     }
     return Container(
       key: const ValueKey('game-card'),
-      width: kind == GameKind.curve ? 1640 : 1360,
+      width: wide ? 1640 : 1360,
       padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
       decoration: BoxDecoration(
-        color: kind == GameKind.curve ? const Color(0xFA1F1F2C) : const Color(0xE61F1F2C),
+        color: wide ? const Color(0xFA1F1F2C) : const Color(0xE61F1F2C),
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: tvAccent, width: 3),
       ),
@@ -727,15 +752,14 @@ class _SettingsPanel extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Row(
                 children: [
-                  Expanded(child: item(row[0])),
-                  if (row.length > 1) ...[
-                    const SizedBox(width: 32),
-                    Expanded(child: item(row[1])),
+                  for (var j = 0; j < row.length; j++) ...[
+                    if (j > 0) const SizedBox(width: 32),
+                    Expanded(child: item(row[j])),
                   ],
                 ],
               ),
             ),
-          if (kind == GameKind.curve) ...[
+          if (wide) ...[
             const SizedBox(height: 10),
             const Text(Strings.legendTitle, style: TextStyle(fontSize: 34, fontWeight: FontWeight.w700, color: tvText)),
             const SizedBox(height: 8),

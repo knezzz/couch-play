@@ -69,6 +69,7 @@ abstract final class Strings {
       '$on od $total uključeno · ${questionsWord(questions)}${pictures > 0 ? ' · ${_g(pictures)} sa slikom' : ''}';
   static String packTileLine(int count, int pictures) => '$count${pictures > 0 ? ' · $pictures sa slikom' : ''}';
   static String packsLine(int ticked, int total) => ticked >= total ? packsAll : '$ticked od $total paketa';
+  static const settingBots = 'Roboti';
   static const settingQuestions = 'Broj pitanja';
   static const settingAnswerTime = 'Vrijeme za odgovor';
   static const settingReveal = 'Pauza između pitanja';

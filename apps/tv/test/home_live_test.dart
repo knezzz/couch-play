@@ -26,6 +26,7 @@ Future<void> _pump(
   Size size = const Size(1920, 1080),
   VoidCallback? onOpen,
   VoidCallback? onClose,
+  List<PlayerInfo>? players,
 }) async {
   t.view
     ..physicalSize = size
@@ -35,7 +36,7 @@ Future<void> _pump(
     theme: tvTheme(),
     home: HomeScreen(
       joinUrl: 'http://192.168.1.5:8080/',
-      players: const [PlayerInfo(1, 'Ana', 0, true, 0)],
+      players: players ?? const [PlayerInfo(1, 'Ana', 0, true, 0)],
       settings: settings,
       selected: selected,
       games: const [GameKind.curve, GameKind.quiz, GameKind.uljez, GameKind.vukodlak],
@@ -52,6 +53,7 @@ Future<void> _pump(
   await t.pump();
 }
 
+const _botsChange = LobbyChange.setting(GameKind.quiz, 'bots', 0, 2, ChangeBy.phone);
 const _qChange = LobbyChange.setting(GameKind.quiz, 'quizQuestions', 10, 12, ChangeBy.phone);
 
 void main() {
@@ -100,6 +102,38 @@ void main() {
     final marked = find.byKey(const ValueKey('row-changed'));
     expect(marked, findsOneWidget);
     expect(find.descendant(of: marked, matching: find.textContaining(Strings.settingPack)), findsOneWidget);
+  });
+
+  testWidgets('a bots change outlines the Roboti row (Kviz and Curve), and the row says how many', (t) async {
+    final withBots = [
+      const PlayerInfo(1, 'Ana', 0, true, 0),
+      const PlayerInfo(2, 'Robot 1', 1, true, 0, bot: true),
+      const PlayerInfo(3, 'Robot 2', 2, true, 0, bot: true),
+    ];
+    await _pump(t, hostView: HostView.settings, changed: _botsChange, players: withBots);
+    final marked = find.byKey(const ValueKey('row-changed'));
+    expect(marked, findsOneWidget);
+    expect(find.descendant(of: marked, matching: find.textContaining('Roboti')), findsOneWidget);
+    expect(find.descendant(of: marked, matching: find.textContaining('2')), findsOneWidget);
+    await _pump(t, selected: GameKind.curve, hostView: HostView.settings, changed: const LobbyChange.setting(GameKind.curve, 'bots', 0, 2, ChangeBy.phone), players: withBots);
+    expect(find.descendant(of: find.byKey(const ValueKey('row-changed')), matching: find.textContaining('Roboti')), findsOneWidget);
+    // A game without bots has no such row.
+    await _pump(t, selected: GameKind.uljez, hostView: HostView.settings, players: withBots);
+    expect(find.textContaining('Roboti'), findsNothing);
+  });
+
+  testWidgets('Curve: a host change opens the settings without the power-up legend; ▼ then adds it', (t) async {
+    await _pump(t, selected: GameKind.curve, hostView: HostView.settings, changed: const LobbyChange.setting(GameKind.curve, 'curveCountdown', 3, 2, ChangeBy.phone));
+    expect(find.text(Strings.legendTitle), findsNothing);
+    final r = t.getRect(find.byKey(const ValueKey('game-card')));
+    expect(r.top, greaterThan(600), reason: 'under the title, not over it');
+    await t.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await t.pump();
+    expect(find.text(Strings.legendTitle), findsOneWidget);
+    // Closed and opened by the host again: no legend.
+    await _pump(t, selected: GameKind.curve);
+    await _pump(t, selected: GameKind.curve, hostView: HostView.settings);
+    expect(find.text(Strings.legendTitle), findsNothing);
   });
 
   testWidgets('▼ asks the session to open the panel; Natrag asks it to close it', (t) async {
