@@ -113,6 +113,7 @@ Checked online on 2026-11-14, read-only (page text fetched through the Wikipedia
 109. https://hr.wikipedia.org/wiki/Ru%C4%91er_Bo%C5%A1kovi%C4%87 (states: rudjer boskovic.jpg)
 110. https://hr.wikipedia.org/wiki/Vu%C4%8Dedolska_golubica (states: zgvucdove.jpg, vučedolsk)
 111. https://hr.wikipedia.org/wiki/Ba%C5%A1%C4%87anska_plo%C4%8Da (states: bascanska ploca.jpg)
+112. en.wikipedia Nehaj Fortress: "The fortress was built by Croatian army general Ivan Lenković, a captain of the Uskoks" and "Finished in 1558": https://en.wikipedia.org/wiki/Nehaj_Fortress ; hr.wikipedia Tvrđava Nehaj: "Utvrda je sagrađena na brdu Trbušnjak, često poznatom i kao brdo Nehaj 1558. godine, pod nadzorom kapetana i generala hrvatske Vojne krajine Ivana Lenkovića": https://hr.wikipedia.org/wiki/Tvrđava_Nehaj (picture pass 2, 2026-11-21)
 
 ## Dropped from the input, and why
 
@@ -157,7 +158,9 @@ Each image keeps its own licence (author, licence, file page). Changes: resized 
 39. photos/foto-039.webp: Juan_Vucetich.jpg. José María Cao Luaces, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Juan_Vucetich.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
 40. photos/foto-040.webp: Leopold Ruzicka ETH-Bib Portr 00239.jpg. Fr. Schmelhaus / ETH Zürich (ETH-Bibliothek), {{PermissionTicket|id=2009102110047803}} + {{cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Leopold_Ruzicka_ETH-Bib_Portr_00239.jpg (WebP, longest side 539 px; reworded to ask who is shown, the picture identified by its Commons title and description)
 45. photos/foto-045.webp: Ljubljana,_Illyrian_Column_01.jpg. Ajznponar, {{self|cc-zero}}, https://commons.wikimedia.org/wiki/File:Ljubljana,_Illyrian_Column_01.jpg (WebP, longest side 800 px)
+59. photos/foto-059.webp: Kamenita_vrata_N.jpg. Suradnik13, {{self|cc-by-sa-all}}, https://commons.wikimedia.org/wiki/File:Kamenita_vrata_N.jpg (right edge cropped to remove a street-name sign; WebP, 800 px; the Stone Gate of Gradec; picture pass 2, 2026-11-21)
 60. photos/foto-060.webp: Battle_of_Mohi_1241.PNG. Anonymous illumination, {{PD-Art|PD-old-100-expired}}, https://commons.wikimedia.org/wiki/File:Battle_of_Mohi_1241.PNG (WebP, longest side 800 px)
+62. photos/foto-062.webp: Bakrorez_panorame_Zagreba_iz_1822.jpg. Ferencz Karacz (1822 engraving), {{PD-Art|PD-old-70}}, https://commons.wikimedia.org/wiki/File:Bakrorez_panorame_Zagreba_iz_1822.jpg (cropped to the view, without the frame, legend and dedication box; WebP, 800 px; picture pass 2, 2026-11-21)
 65. photos/foto-065.webp: Battle_of_Mohacs_1526.png. Székely Bertalan, {{PD-Art|PD-old-auto-expired|deathyear=1910}}, https://commons.wikimedia.org/wiki/File:Battle_of_Mohacs_1526.png (WebP, longest side 800 px)
 66. photos/foto-066.webp: Fortress_of_Klis_06.jpg. Bernard Gagnon, {{self|GFDL|cc-by-sa-4.0,3.0,2.5,2.0,1.0}}, https://commons.wikimedia.org/wiki/File:Fortress_of_Klis_06.jpg (WebP, longest side 800 px)
 68. photos/foto-068.webp: 2019_Gubec_linden_HR.jpg. Public institutions archive, {{cc-by-sa-4.0}}, https://commons.wikimedia.org/wiki/File:2019_Gubec_linden_HR.jpg (WebP, longest side 800 px)
@@ -168,8 +171,11 @@ Each image keeps its own licence (author, licence, file page). Changes: resized 
 80. photos/foto-080.webp: Anton_Romako_-_Tegetthoff_in_der_Seeschlacht_bei_Lissa_II_-_2198_-_Österreichische_Galerie_Belvedere.jpg. Anton Romako, {{Licensed-PD-Art|PD-old-auto-1923|cc-by-sa-4.0|deathyear=1889}}, https://commons.wikimedia.org/wiki/File:Anton_Romako_-_Tegetthoff_in_der_Seeschlacht_bei_Lissa_II_-_2198_-_Österreichische_Galerie_Belvedere.jpg (WebP, longest side 800 px)
 81. photos/foto-081.webp: Eduard_Slavoljub_Penkala.jpg. Photo is a scanner of a 19th century daguerreotype, author unknown, {{PD-old}}, https://commons.wikimedia.org/wiki/File:Eduard_Slavoljub_Penkala.jpg (WebP, longest side 800 px; reworded to ask who is shown, the picture identified by its Commons title and description)
 83. photos/foto-083.webp: Croatia-00609_-_Birth_House_of_Tito_(9370093765).jpg. Dennis G. Jarvis, {{cc-by-sa-2.0}}, https://commons.wikimedia.org/wiki/File:Croatia-00609_-_Birth_House_of_Tito_(9370093765).jpg (WebP, longest side 800 px)
+90. photos/foto-090.webp: Crkva-svetog-Križa-Nin-06082016-02-roberta-f.jpg. Roberta F., {{self|cc-by-sa-3.0|author=Roberta F.}}, https://commons.wikimedia.org/wiki/File:Crkva-svetog-Križa-Nin-06082016-02-roberta-f.jpg (left edge cropped; WebP, 800 px; Church of the Holy Cross in Nin; picture pass 2, 2026-11-21)
 92. photos/foto-092.webp: Croatia-02138_-_Walls_of_Ston_(10091668384).jpg. Dennis G. Jarvis, {{cc-by-sa-2.0}}, https://commons.wikimedia.org/wiki/File:Croatia-02138_-_Walls_of_Ston_(10091668384).jpg (WebP, longest side 800 px)
+93. photos/foto-093.webp: Charter_of_Paul_I_Šubić,_1305.jpg. Paul I Šubić of Bribir (issuer), {{PD-Art|PD-old-auto-expired|deathyear=1312}}, https://commons.wikimedia.org/wiki/File:Charter_of_Paul_I_Šubić,_1305.jpg (left margin cropped to remove an archive stamp and number, top two lines cropped because "Paulus Banus" was legible; WebP, 800 px; picture pass 2, 2026-11-21)
 94. photos/foto-094.webp: Siege_of_Zadar.jpg. Andrea Vicentino, {{PD-art|PD-old-100-expired}}, https://commons.wikimedia.org/wiki/File:Siege_of_Zadar.jpg (WebP, longest side 800 px)
+98. photos/foto-098.webp: Old_and_New_Maslenica_Bridges.JPG. Ex13, {{self|cc-by-sa-3.0}}, https://commons.wikimedia.org/wiki/File:Old_and_New_Maslenica_Bridges.JPG (WebP, 800 px; picture pass 2, 2026-11-21)
 101. photos/foto-101.webp: Kőszeg_-_Jurisics_Castle.jpg. Civertan Grafikai Stúdió, CC BY-SA 2.5 ({{civertan license}}, Civertan Grafikai Stúdió), https://commons.wikimedia.org/wiki/File:Kőszeg_-_Jurisics_Castle.jpg (WebP, longest side 800 px)
 
 102. photos/foto-01.webp: Josip Jelačić. Ivan Zasche (1826-1863), Public domain, https://commons.wikimedia.org/wiki/File:Ban-josip-jelacic.jpg (resized, WebP)
@@ -182,3 +188,4 @@ Each image keeps its own licence (author, licence, file page). Changes: resized 
 109. photos/foto-08.webp: Ruđer Bošković. unknown, Public domain, https://commons.wikimedia.org/wiki/File:Rudjer_Boskovic.jpg (resized, WebP)
 110. photos/foto-09.webp: Vučedolska golubica. Crucifixion, Public domain, https://commons.wikimedia.org/wiki/File:ZGvucdove.jpg (resized, WebP)
 111. photos/foto-10.webp: Bašćanska ploča. unknown, Public domain, https://commons.wikimedia.org/wiki/File:Bascanska_ploca.jpg (resized, WebP)
+112. photos/foto-112.webp: Nehaj_Senj_Croatia_01.jpg. K. Korlević (Commons user KorK, the uploader), {{PD-user|KorK}}, https://commons.wikimedia.org/wiki/File:Nehaj_Senj_Croatia_01.jpg (WebP, 800 px; author = uploader: the upload by Kork is signed "K. Korlević" and the template says "released into the public domain by its author, KorK"; picture pass 2, 2026-11-21)

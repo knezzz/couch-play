@@ -403,3 +403,120 @@ Sumnje i preskočeno:
 - 12 i 82: spomenici (Meštrović, poprsje u Osijeku) oslanjaju se na slobodu panorame u RH; Meštrović je u. 1962.
 - Mnogi opisi spomenuti u tablici temelje se samo na metapodacima; sadržaj slika nije vizualno pregledan.
 - Pretraga je povremeno vraćala "too busy"/429; nijedan zahtjev nije izgubljen trajno.
+
+## Pass 2 (2026-11-21)
+
+Queue task qitem-20261121132155-039fdcdf35282b5a. 7 candidates (target about +10; not padded): 6 existing (Q4, Q59, Q62, Q90, Q93, Q98) + 1 NEW (Nehaj, Senj). All opened as thumbnails; licence template read on each file page. Not checked: apps/tv/assets question data; most remaining unpictured numbers got no search. Flags: Q4 shows a replica in Udbina (the real font is in Split); Q62 about 100 KB; Q93 about 74 KB; Q98 about 80 KB; Q59 about 66 KB (47 KB cropped, crop hides a street sign); NEW-1 licence PD-user: fact-checker to confirm author = uploader.
+
+# hr-povijest pass 2
+
+Counts: 7 candidates = 6 existing (Q4, Q59, Q62, Q90, Q93, Q98) + 1 NEW (Nehaj / Ivan Lenković). Weak or flagged: Q90 (small church in frame), Q62 (~100 KB), Q4 (replica in Udbina), NEW-1 (PD-user template). None needs rewording.
+Searched on Commons (viewed every file I propose, 800 px thumbnails in scratchpad p2-povijest/): Maslenica, Nin Holy Cross, Višeslav font, Pragmatic Sanction/Charles VI, Dubrovnik coins/statute, Kamenita vrata, Missal 1483, Diocletian Peristyle, Marco Polo, Zagreb Gradec views, Zagreb 1880 earthquake, Zrinski/Frankopan execution, Military Frontier, Nehaj, Hvar arsenal, Šubić charter, Krk castle, Zadar St Donatus, Zagreb St Catherine.
+Not done: hr Wikipedia fetches failed (error page), so NEW-1 uses en Wikipedia only; no second source. I did not search Q2, Q3, Q6, Q11 (only 610 px scan exists), Q13, Q14, Q16, Q24-Q35 (dates, no fitting object), Q41, Q44, Q51, Q63, Q64, Q89 beyond a search or by reasoning (see Preskočeno).
+
+### Q98 existing: Koje je godine provedena operacija Maslenica?
+- Odgovor: 1993.
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Old_and_New_Maslenica_Bridges.JPG
+- Autor: Ex13
+- Licenca: {{self|cc-by-sa-3.0}} / CC BY-SA 3.0 (source {{own}}, no credit template)
+- Veličina: 3124x2250 px, image/jpeg
+- Vidi se: (viewed) red steel bridge deck (the new Maslenica bridge seen from the old) over the Novsko ždrilo strait, Velebit mountains behind, the new concrete bridge in the far left. No text, no people.
+- Provjera podudaranja: grep of all pack JSON and *.sources.md for Maslenica/Novsko: only hr-povijest Q98 and koliko/povijest sources; no other pack uses the file; Pelješki most / Krčki most questions are different bridges.
+- Preslikavanje/crop: none, as is (landscape).
+- Procjena veličine: ~80 KB as 800 px WebP (measured, q75), FLAG over 60 (sky, rock, railings)
+- Preoblikovati?: ne
+
+### Q4 existing: U kojem se gradu danas čuva krstionica kneza Višeslava?
+- Odgovor: U Splitu
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Unutrašnjost_crkve_hrvatskih_mučenika_u_Udbini_-_replika_krstionice_kneza_Višeslava.jpg
+- Autor: Silverije
+- Licenca: {{self|cc-by-sa-4.0}} / CC BY-SA 4.0 (source {{own}})
+- Veličina: 2592x1944 px, image/jpeg
+- Vidi se: (viewed) hexagonal stone font with relief arcades in a white modern church interior, red rope and brass posts around it, altar behind; the inscription lines on the back wall are far too small to read. No people.
+- Provjera podudaranja: grep of all packs: hr-geografija asks "U kojem se mjestu na Krbavskom polju nalazi Crkva hrvatskih mučenika?" (answer Udbina) with a different photo. This photo shows only the interior and the font, no sign or exterior, so it does not answer that. File not used in any *.sources.md/pictures.md.
+- Preslikavanje/crop: as is, or crop to the centre (font) to remove the back-wall text.
+- Procjena veličine: ~52 KB as 800 px WebP (measured with PIL, q75)
+- Preoblikovati?: ne. DOUBT: it is a REPLICA in Udbina (the original is in Split); picture file title/description says so but the game does not show it. A player may think it hints Udbina. Writer's call; drop if unhappy.
+
+### Q59 existing: Koji je kralj 1242. Zlatnom bulom Gradec učinio slobodnim kraljevskim gradom?
+- Odgovor: Bela IV.
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Kamenita_vrata_N.jpg
+- Autor: Suradnik13
+- Licenca: {{self|cc-by-sa-all}} / CC BY-SA 4.0 (API) (source {{Own}}, no credit template)
+- Veličina: 1600x1200 px, image/jpeg
+- Vidi se: (viewed) the Stone Gate (Kamenita vrata) of old Gradec seen from the north side, a medieval gatehouse with pyramid roof, lamp, cobbles. A small street sign "Kamenita ulica" at lower right (about 60 px wide in 960 px): CROP IT OUT. Pedestrian faintly inside the arch.
+- Provjera podudaranja: grep "kamenit" and "gradec" across all packs: only hr-povijest Q59 and Q62 text; no geography question about the gate. Gate is not named in any answer. File not used elsewhere.
+- Preslikavanje/crop: crop the left ~2/3 (x 0-640 of 960; keeps gate and left houses, removes the right sign), or whole and accept the tiny sign.
+- Procjena veličine: ~66 KB as 800 px WebP (measured, uncropped), FLAG slightly over 60; cropped should be ~45 KB
+- Preoblikovati?: ne
+
+### Q90 existing: Koji se ninski biskup spominje na splitskim crkvenim saborima 925. i 928.?
+- Odgovor: Grgur
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Crkva-svetog-Križa-Nin-06082016-02-roberta-f.jpg
+- Autor: Roberta F.
+- Licenca: {{self|cc-by-sa-3.0|author=Roberta F.}} / CC BY-SA 3.0 (source {{own}})
+- Veličina: 1024x562 px, image/jpeg
+- Vidi se: (viewed) the small white pre-Romanesque Church of the Holy Cross in Nin, right of centre behind grass, stone building with red roof at left. No text, no people.
+- Provjera podudaranja: grep for Nin/ninsk across all packs: hr-kultura-sport has a Nin town gate photo (different file, not answered by this one); hr-umjetnost has Meštrović's Grgur Ninski statue photo (its answer Grgur Ninski relates to this Q90 answer, but picture shows no statue). The Pudelek and Böhringer photos of the same church were rejected (credit templates).
+- Preslikavanje/crop: crop to the church, about x 480-760 of 960 would be only ~290 px wide: NOT enough. So use the whole 1024x562 frame, or drop.
+- Procjena veličine: ~47 KB as 800 px WebP (measured)
+- Preoblikovati?: ne. DOUBT: weak photo (church small in frame, 1024 px). Q90 names Nin in the question; picture only supports the topic. Low priority.
+
+
+### NEW-1 Ova je utvrda iznad Senja dovršena 1558. kao uporište senjskih uskoka. Koji ju je kapetan dao sagraditi?
+- Odgovor: Ivan Lenković
+- Vrsta: NEW
+- Činjenica: Utvrda Nehaj iznad Senja, dovršena 1558., dao ju je izgraditi Ivan Lenković, kapetan uskoka. Izvor: https://en.wikipedia.org/wiki/Nehaj_Fortress Citat: "The fortress was built by Croatian army general [[Ivan Lenković]], a captain of the ''[[Uskoks]]'', on the hill [[Nehaj (hill)|Nehaj]]." and "Finished in 1558, it was built on the remains of ruined churches, monasteries and houses". (hr Wikipedia fetch failed with an error page; not checked.) Pack has no Uskoks/Nehaj question (grep uskok, uskoc, nehaj, lenkovi: nothing).
+- Slika: https://commons.wikimedia.org/wiki/File:Nehaj_Senj_Croatia_01.jpg
+- Autor: K. Korlević (uploader KorK)
+- Licenca: {{PD-user|KorK}} / Public domain. The raw page says "K. Korlević {{PD-user|KorK}}": author and uploader appear to be the same person but the page gives no explicit statement; fact-checker should confirm.
+- Veličina: 1024x769 px, image/jpeg
+- Vidi se: (viewed) a square stone fortress with four corner turrets and red tile caps on a scrubby hillside, grey sky. No people, text or cars.
+- Provjera podudaranja: grep "senj", "nehaj", "uskok": Senj appears only as city answers in geography/other packs (Q about Ličko-senjska županija seat = Gospić); this photo does not answer them. File not used in any pack.
+- Preslikavanje/crop: none (could crop the sky top ~15 %).
+- Procjena veličine: ~45 KB as 800 px WebP (measured)
+- Preoblikovati?: ne (the picture does not name the answer; the question names Senj in text, if the writer prefers to hide it, rewrite the question)
+
+### Q62 existing: Koje su godine Kaptol, Gradec i Vlaška ves ujedinjeni u grad Zagreb?
+- Odgovor: 1850.
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Bakrorez_panorame_Zagreba_iz_1822.jpg
+- Autor: Ferencz Karacz (1822 copper engraving)
+- Licenca: {{PD-Art|PD-old-70}} / Public domain (source line points to a Facebook post of the Zagreb City Museum; the work itself is a 1822 engraving)
+- Veličina: 1982x1487 px, image/jpeg
+- Vidi se: (viewed) black and white copper-engraving panorama of Zagreb from the south: Kaptol with the cathedral towers left, Gradec on the hill right, pond and fields. Latin calligraphic title "Prospectus L.R. Civitatis Zagrabiensis ad meridiem" in the sky, and a numbered Latin legend plus dedication to Bishop Maximilianus Verhovacz in a box below (tiny).
+- Provjera podudaranja: grep "vlaška", "vrhovac", "kaptol", "gradec" in all packs: Q27 has "Maksimilijan Vrhovac" only as a wrong option; the dedication box would name him but is illegible at TV size and I would crop it. No other pack asks about this view; no pack uses the file.
+- Preslikavanje/crop: crop x 20-900, y 70-560 of the 960 px thumbnail (removes the legend box and border); the title stays in the sky (no year on the image).
+- Procjena veličine: ~100 KB as 800 px WebP greyscale (measured), FLAG well over 60; line engraving compresses badly. Probably not worth it.
+- Preoblikovati?: ne
+
+### Q93 existing: Koji je bribirski knez od 1274. do 1312. bio ban Hrvatske i Dalmacije?
+- Odgovor: Pavao I. Šubić
+- Vrsta: existing
+- Slika: https://commons.wikimedia.org/wiki/File:Charter_of_Paul_I_Šubić,_1305.jpg
+- Autor: Paul I Šubić of Bribir (issuer; d. 1312), scan from a journal article
+- Licenca: {{PD-Art|PD-old-auto-expired|deathyear=1312}} / Public domain
+- Veličina: 2145x1847 px, image/jpeg
+- Vidi se: (viewed) a medieval Latin parchment charter in cursive (not legible at TV size) with two red-ribbon wax seals hanging below, dark background. A purple archive stamp and the number "99882" in the top-left margin, small: CROP or accept. No readable name of the ban.
+- Provjera podudaranja: grep "šubić", "skradin" in all packs: only Q93 and Q91 (his name is a wrong option there), Nikola Šubić Zrinski (different person). Not used in any pack.
+- Preslikavanje/crop: crop off the left ~70 px of the thumbnail margin (stamp and number) if the writer wants; the stamp overlaps the first text lines, so maybe leave.
+- Procjena veličine: ~74 KB as 800 px WebP (measured), FLAG over 60
+- Preoblikovati?: ne. Doubt: the file description (not shown in game) says "Charter issued by Croatian Ban Paul I Šubić ... Skradin 1305".
+
+## Preskočeno / sumnje
+
+- Q69 (Pragmatic Sanction): only a Charles VI portrait (Auerbach, 1335x2048, PD) exists; viewed, but it is 143 KB WebP and Charles VI is a wrong option in Q63. Dropped.
+- Q23 (Zrinski and Frankopan): the painted memorial "Execution of Péter Zrínyi, Ferenc Nádasdy and Ferenc Fragepán.jpg" has "1671" painted on it (gives the answer). The engraving "Zrínyi és Frangepán lefejezése.jpg" shows names SERIN/FRANGIPAN and execution scenes, 135 KB. Both dropped.
+- Q11 (Misal 1483): only the 610 px scan and 400-500 px images; none usable (same as pass 1).
+- Q67 (Military Frontier): the only map "Karta Hrvatska i Slavonija oko 1820" is a scan from a 1958 book labelled PD-old by the uploader; copyright of the book source not clear. Dropped.
+- Q91 (Frankopan, Krk castle) and Q42-adjacent: Krk town photos would give away Q42 (answer Krk). Dropped.
+- Q41, Q44, Q63, Q54, Q50, Q23 etc.: pass 1 pictures were removed (gave answer or portrait); I did not find an alternative that does not name the answer.
+- Diocletian's Palace (possible NEW, "Koji je rimski car..."): all Peristyle photos are crowded with identifiable people and signs (LUXOR); the quiet ones are tall and 90+ KB. Dropped. The topic itself is not in any pack question.
+- Zagreb 1880 earthquake (possible NEW, photo "Zagreb Cathedral interior 1880.jpg", Ivan Standl, PD-old-100, 82 KB): hr-kultura-sport Q72 text says "potresa 1880.", so a question with answer 1880 is given away; also Q37 uses "Zagrebački 1880." as a distractor. Dropped.
+- Marco Polo / Korčula: contested birthplace, house photos show signs; not pursued.
+- Q4 Udbina replica, Q90 weak photo, Q62 size, NEW-1 PD-user: see their blocks.
+- Not checked: Croatian wording of the quotes (hr Wikipedia returned an error page for Nehaj_(utvrda)); exact original photographer identity of Nehaj_Senj_Croatia_01.jpg; no Koliko/Blef/Objasni data under apps/tv/assets was grepped (only tool/packs).
