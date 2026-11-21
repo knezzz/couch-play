@@ -246,10 +246,6 @@ A hidden-word party game in the "odd one out" genre, our own name and words. Ref
   and does not know they are the impostor. 1 impostor for 3–6 players; for 7–8 the host picks 1 or 2. The impostor
   is never the same person as in the last Uljez game of the evening (person, 2026-11-21), otherwise random.
 - The word shows on the phone only while a finger is on the screen (as in Vukodlak).
-
-**Hidden answers on phones (person, 2026-11-21):** in every game, once a player has sent an answer or typed text
-(Koliko? number, Blef fake answer, Quiz pick, votes and the like), the phone hides it behind the hold-to-see card used
-in Vukodlak, so a neighbour can't read it.
 - Clues: in turn, each player says one clue out loud; the TV shows whose turn it is (players around a table). **No
   timers** (user request, 2026-11-18): the speaker taps **Dao sam trag** on their phone and the turn passes; a speaker
   who has left is skipped only after the host kicks them. Clue rounds repeat. From the end of round 1, every phone has an **Idemo glasati** toggle
@@ -259,6 +255,11 @@ in Vukodlak, so a neighbour can't read it.
 - A caught impostor guesses the village's word from 4 options on their phone, with no timer; a right guess still wins.
 - Village wins by catching the impostor; the impostor by surviving the vote or guessing. Placement points as usual.
 - Word pairs in packs by theme (cartoons, food, animals, places, famous people…); the host picks the packs (multi-select, all by default). Croatian.
+
+### Hidden answers on phones (person, 2026-11-21)
+
+In every game, once a player has sent an answer or typed text (Koliko? number, Blef fake answer, Quiz pick, votes and
+the like), the phone hides it behind the hold-to-see card used in Vukodlak, so a neighbour can't read it.
 
 ### Sound (user request, 2026-11-16)
 
