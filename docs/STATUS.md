@@ -54,6 +54,8 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 47 | Remove Kao svi (person, 2026-11-19) | done (review clean, suites green; visual QA skipped by the person: no screen recording); next TV install | lead |
 | 48 | Phone home live with the TV: guests see the host's card and settings, changes marked and listed, TV settings panel (person, 2026-11-21) | done (review clean after 2 must-fixes, QA pass phones, TV from PNGs; remote on the real TV); next TV install | lead |
 | 49 | Uljez impostor never the same person twice in a row (person, 2026-11-21) | done (a889bd1, review clean); on the TV since a889bd1 | lead |
+| 50 | Hide sent answers and typed text on phones behind the hold card, all games (person, 2026-11-21) | routed (task50-51-20261121) | lead |
+| 51 | Vukodlak: role card + Spreman before night 1; one sum per night; night-1 second list reworked after UX review + field test (person, 2026-11-21) | routed (task50-51-20261121) | lead |
 
 ## Open questions for the person
 
@@ -374,3 +376,5 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-21: content-lead: 65f9172 new Kviz packs hr-pop-kultura (99 q, no pictures) and hr-glazba-2000 (91 q, 7 pictures); changeable facts carry their year; fact-checked; TV 761, core 426, pack editor 50 green. Kviz now 22 packs, 2,632 q, ~55 MB. Not on the TV (after a889bd1). Picture pass 2 still running.
 - 2026-11-21: content-lead: picture pass 2, pack 1 of 4: 2479fd7 hr-opce-znanje 397 -> 402 q, 141 -> 161 pictures (40%), zip 8.0 MB (under the 8.5 MB cap); fact-check 18/20, 2 wording fixes applied; TV 761, core 426, pack editor 50 green. Kviz ~57 MB. Not on the TV. Fizika, film-glazba, povijest with the fact-checker.
 - 2026-11-21: content-lead: picture pass 2 done. 147bf73 hr-fizika 107 -> 110 q, 36 -> 40 pictures (1.5 MB); bbc58de hr-film-glazba 130 -> 135 q, 41 -> 50 (3.4 MB); 7c86231 hr-povijest 111 -> 112 q, 43 -> 49 (3.4 MB); docs 9a86f2a. Fact-check fixes applied (charter crop showed the answer, Musikverein wording, Hubble picture dropped as a name hint). Whole pass +39 pictures, 14 new picture questions. Kviz 2,646 q, 43% pictures, ~57 MB. TV 761, core 426, pack editor 50 green. Not on the TV. content-pop-pictures-20261121 closed.
+- 2026-11-21: Windows app: the person couldn't download the GitHub artifact (not signed in); PM zipped run 44913959186's CouchPlay-windows and shared it by a 72 h Litterbox link (person asked for a file link). Still not checked on a real PC.
+- 2026-11-21: Person feedback after playing: hide sent answers behind the hold card in every game (Task 50); Vukodlak role first with Spreman, one sum per night, rework the confusing night-1 second list after a UX review and field test (Task 51). Spec and plan updated; routed as task50-51-20261121.

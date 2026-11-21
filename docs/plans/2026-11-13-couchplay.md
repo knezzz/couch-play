@@ -1032,3 +1032,15 @@ Spec: main design spec, "Phone home, live with the TV"; boards in `docs/design/p
 ### Task 49: Uljez impostor never twice in a row (added 2026-11-21, person request)
 
 - [x] Each new Uljez game picks the impostor(s) at random but never last game's impostor (with 2 impostors: neither of last game's), when enough players remain; otherwise random. Tests first (extend session_uljez_impostor_test: no repeat across consecutive games, still spread over the others); suites green; review.
+
+### Task 50: Hide sent answers on phones (added 2026-11-21, person request)
+
+Spec: main design spec, "Hidden answers on phones".
+- [ ] List every phone screen where a sent answer or typed text stays visible (Koliko?, Blef, Quiz, Objasni, Tko bi?, Uljez, Vukodlak votes and the like) and put it behind the Vukodlak hold-to-see card after sending. Tests first; QA on macOS release at 360–390 px per game; say which screens changed and which you left and why.
+
+### Task 51: Vukodlak role first, night 1, one sum (added 2026-11-21, person request)
+
+Spec: main design spec, Vukodlak, "Role first" and "One task per night".
+- [ ] Role card with Spreman before night 1; TV shows the ready count; night 1 starts when all living players are ready.
+- [ ] Roles with no night action get one sum per night, night 1 included.
+- [ ] Night 1 without the confusing second list: a UX review (current screens, 2 options, a recommendation) before building, every phone still alike at night; then a field test (QA, 5–8 phones, a full game) that a first-time player understands night 1. Tests first; review.
