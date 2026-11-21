@@ -1036,7 +1036,7 @@ Spec: main design spec, "Phone home, live with the TV"; boards in `docs/design/p
 ### Task 50: Hide sent answers on phones (added 2026-11-21, person request)
 
 Spec: main design spec, "Hidden answers on phones".
-- [ ] List every phone screen where a sent answer or typed text stays visible (Koliko?, Blef, Quiz, Objasni, Tko bi?, Uljez, Vukodlak votes and the like) and put it behind the Vukodlak hold-to-see card after sending. Tests first; QA on macOS release at 360–390 px per game; say which screens changed and which you left and why.
+- [x] List every phone screen where a sent answer or typed text stays visible (Koliko?, Blef, Quiz, Objasni, Tko bi?, Uljez, Vukodlak votes and the like) and put it behind the Vukodlak hold-to-see card after sending. Tests first; QA on macOS release at 360–390 px per game; say which screens changed and which you left and why.
 
 ### Task 51: Vukodlak role first, night 1, one sum (added 2026-11-21, person request)
 
