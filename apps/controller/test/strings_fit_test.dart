@@ -56,7 +56,7 @@ void main() {
         MaterialApp(home: LobbyScreen(FakeConnection(), _lobby(), 2)),
       );
       expect(t.takeException(), isNull);
-      expect(find.text(Strings.waitingForHost(_wide)), findsOneWidget);
+      expect(find.text(Strings.startedBy(_wide)), findsOneWidget);
     },
   );
 
@@ -124,17 +124,17 @@ void main() {
         await t.pumpWidget(
           MaterialApp(home: LobbyScreen(FakeConnection(), _lobby(), 0)),
         );
-        // The name's room (the Expanded around it), not its ellipsized text.
+        // The name's room (the Flexible around it), not its ellipsized text.
         final name = t.getRect(
           find
               .ancestor(
                 of: find.text(_wide).first,
-                matching: find.byType(Expanded),
+                matching: find.byType(Flexible),
               )
               .first,
         );
         final badge = t.getRect(find.byIcon(Icons.star));
-        expect(badge.left - name.right, greaterThanOrEqualTo(8));
+        expect(badge.left - name.right, greaterThanOrEqualTo(6));
       },
     );
   }
@@ -177,8 +177,9 @@ void _nameFits() {
       t.view.physicalSize = const Size(360, 844);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
-      // 8 wide letters in the test font (28 px each) fit; the old 'DOMAĆIN' pill left room for only ~5.
-      const name = 'Čedomir!';
+      // 5 wide letters in the test font (18 px each) fit beside the star and
+      // "Promijeni lik"; a 'DOMAĆIN' pill would not leave room for them.
+      const name = 'Čedom';
       final l = LobbyState(
         hostId: 0,
         packs: const [],

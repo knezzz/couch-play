@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../strings.dart';
 import '../theme.dart';
-import 'settings_widgets.dart';
 
 /// A player on the vote or the result.
 class TkobiPlayer {
@@ -301,42 +300,3 @@ class TkobiResultScreen extends StatelessWidget {
   }
 }
 
-/// The host's settings for Tko bi?: the number of prompts and the pack.
-class TkobiSettingsView extends StatelessWidget {
-  const TkobiSettingsView({
-    super.key,
-    required this.prompts,
-    required this.packs,
-    required this.ticked,
-    required this.onPrompts,
-    required this.onTogglePack,
-  });
-  final int prompts;
-  final List<PackInfo> packs;
-  final Set<String> ticked;
-  final void Function(int) onPrompts;
-  final void Function(String id) onTogglePack;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      ChoiceRow(
-        label: Strings.quizQuestions,
-        keyPrefix: 'tkobi-prompts',
-        values: const [5, 10, 15],
-        value: prompts,
-        text: (n) => '$n',
-        onPick: onPrompts,
-      ),
-      const SizedBox(height: 8),
-      PackChecklist(
-        key: const ValueKey('tkobi-packs'),
-        title: Strings.packsTitle,
-        packs: packs,
-        ticked: ticked,
-        onToggle: onTogglePack,
-      ),
-    ],
-  );
-}

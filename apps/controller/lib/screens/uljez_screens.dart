@@ -1,8 +1,6 @@
-import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 import '../strings.dart';
-import 'settings_widgets.dart';
 import 'wolf_screens.dart';
 
 // Uljez on the phone. Built from the Vukodlak pieces: the word is the hold
@@ -89,48 +87,3 @@ class UljezGuessScreen extends StatelessWidget {
   );
 }
 
-/// Host: the word pack and (7-8 players) 1 or 2 impostors.
-class UljezSettingsView extends StatelessWidget {
-  const UljezSettingsView({
-    super.key,
-    required this.players,
-    required this.packs,
-    required this.ticked,
-    required this.impostors,
-    required this.onTogglePack,
-    required this.onImpostors,
-  });
-  final int players, impostors;
-
-  /// (id, title) of the word packs.
-  final List<PackInfo> packs;
-  final Set<String> ticked;
-  final void Function(String id) onTogglePack;
-  final void Function(int count) onImpostors;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      PackChecklist(
-        key: const ValueKey('uljez-packs'),
-        title: Strings.packsTitle,
-        packs: packs,
-        ticked: ticked,
-        onToggle: onTogglePack,
-      ),
-      const SizedBox(height: 8),
-      if (players >= 7) ...[
-        const SizedBox(height: 8),
-        ChoiceRow(
-          label: Strings.impostorCount,
-          keyPrefix: 'impostors',
-          values: const [1, 2],
-          value: impostors,
-          text: Strings.impostors,
-          onPick: onImpostors,
-        ),
-      ],
-    ],
-  );
-}

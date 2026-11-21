@@ -418,22 +418,12 @@ void main() {
       expect(find.text(Strings.teamsTitle), findsOneWidget);
     });
 
-    testWidgets('host settings: card line, three rows, whole settings sent', (
+    testWidgets('host settings: banner line, rows, the whole settings sent', (
       t,
     ) async {
-      final c = await app(
-        t,
+      final c = await app(t,
         0,
-        lobby(0, s: const GameSettings(quizSeconds: 25, curveCountdown: 60)),
-      );
-      for (var i = 0; i < 4; i++) {
-        await t.drag(find.byType(PageView), const Offset(-320, 0));
-        await t.pumpAndSettle();
-      }
-      expect(
-        t.widget<Text>(find.byKey(const ValueKey('line-objasni'))).data,
-        'Svi paketi · 60 s · 30 bodova',
-      );
+        lobby(0, s: const GameSettings(quizSeconds: 25, curveCountdown: 60)));
       await send(
         t,
         c,
@@ -443,17 +433,27 @@ void main() {
           s: const GameSettings(quizSeconds: 25, curveCountdown: 60),
         ),
       );
-      await t.tap(find.byKey(const ValueKey('objasni-seconds-90')));
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        '4–8 igrača · Svi paketi · 60 s · 30 · bez robota',
+      );
+      await t.tap(find.byKey(const ValueKey('inc-objasniSeconds')));
       var s = (c.sent.last as SetSettings).settings;
       expect((s.objasniSeconds, s.quizSeconds, s.curveCountdown), (90, 25, 60));
-      await t.tap(find.byKey(const ValueKey('objasni-target-50')));
+      await t.tap(find.byKey(const ValueKey('inc-objasniTarget')));
       s = (c.sent.last as SetSettings).settings;
       expect(s.objasniTarget, 50);
+      await t.tap(find.byKey(const ValueKey('open-objasniOffPacks')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(true));
       await t.tap(find.byKey(const ValueKey('pack-b')));
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.objasniOffPacks, {'b'});
-      await t.tap(find.text(Strings.play));
+      await t.tap(find.byKey(const ValueKey('packs-back')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(false));
+      await t.tap(find.byKey(const ValueKey('play')));
       expect(c.sent.last, const StartGame(GameKind.objasni, null));
     });
   });

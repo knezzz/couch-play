@@ -1,4 +1,3 @@
-import 'package:core/core.dart';
 import 'package:controller/screens/uljez_screens.dart';
 import 'package:controller/screens/wolf_screens.dart';
 import 'package:controller/strings.dart';
@@ -129,58 +128,6 @@ void main() {
         t.getSize(find.byKey(const ValueKey('night-1'))).height,
         greaterThanOrEqualTo(56),
       );
-    });
-  });
-
-  group('host settings', () {
-    Widget view({
-      int players = 5,
-      int impostors = 1,
-      void Function(String)? onPack,
-      void Function(int)? onImpostors,
-    }) => Scaffold(
-      body: SingleChildScrollView(
-        child: UljezSettingsView(
-          players: players,
-          packs: const [
-            PackInfo('a', 'Crtići', 40),
-            PackInfo('b', 'Hrana', 30),
-          ],
-          ticked: const {'a', 'b'},
-          impostors: impostors,
-          onTogglePack: onPack ?? (_) {},
-          onImpostors: onImpostors ?? (_) {},
-        ),
-      ),
-    );
-
-    testWidgets('a pack tick goes out and there is no discussion time', (
-      t,
-    ) async {
-      final packs = <String>[];
-      await _show(t, view(onPack: packs.add));
-      await t.tap(find.byKey(const ValueKey('pack-b')));
-      await t.pumpAndSettle();
-      expect(packs, ['b']);
-      expect(find.byKey(const ValueKey('discuss-more')), findsNothing);
-    });
-
-    testWidgets('1 or 2 impostors only from 7 players', (t) async {
-      final sent = <int>[];
-      await _show(t, view(players: 6));
-      expect(find.byKey(const ValueKey('impostors-2')), findsNothing);
-      await _show(t, view(players: 7, onImpostors: sent.add));
-      await t.tap(find.byKey(const ValueKey('impostors-2')));
-      expect(sent, [2]);
-      expect(
-        t.getSize(find.byKey(const ValueKey('impostors-2'))).height,
-        greaterThanOrEqualTo(48),
-      );
-    });
-
-    testWidgets('fits 360 px', (t) async {
-      await _show(t, view(players: 8), width: 360);
-      expect(t.takeException(), isNull);
     });
   });
 }

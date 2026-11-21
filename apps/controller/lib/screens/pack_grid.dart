@@ -13,14 +13,21 @@ class PackGridScreen extends StatefulWidget {
     super.key,
     required this.packs,
     required this.ticked,
-    required this.onToggle,
-    required this.onBack,
+    this.onToggle,
+    this.onBack,
     this.addPack,
+    this.title = Strings.quizPacks,
+    this.pill,
   });
   final List<PackInfo> packs;
   final Set<String> ticked;
-  final void Function(String id) onToggle;
-  final VoidCallback onBack;
+
+  /// Null together with [onBack]: the read-only view a guest gets while the
+  /// host is in the pack screen, with [pill] ("Ana bira pakete") on top.
+  final void Function(String id)? onToggle;
+  final VoidCallback? onBack;
+  final String title;
+  final String? pill;
 
   /// Browser-only upload; null in tests and where it is unavailable.
   final Future<String?> Function()? addPack;
@@ -46,18 +53,41 @@ class _PackGridState extends State<PackGridScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextButton(
-              key: const ValueKey('packs-back'),
-              onPressed: widget.onBack,
-              style: TextButton.styleFrom(minimumSize: const Size(56, 56)),
-              child: const Text(
-                '‹ ${Strings.back}',
-                style: TextStyle(fontSize: 18),
+            if (widget.onBack != null)
+              TextButton(
+                key: const ValueKey('packs-back'),
+                onPressed: widget.onBack,
+                style: TextButton.styleFrom(minimumSize: const Size(56, 56)),
+                child: const Text(
+                  '‹ ${Strings.back}',
+                  style: TextStyle(fontSize: 18),
+                ),
+              )
+            else if (widget.pill != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Container(
+                  key: const ValueKey('packs-pill'),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    widget.pill!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const Text(
-              Strings.quizPack,
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
+            Text(
+              widget.title,
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 10),
             Expanded(
@@ -78,13 +108,15 @@ class _PackGridState extends State<PackGridScreen> {
                               last:
                                   widget.ticked.length == 1 &&
                                   widget.ticked.contains(p.id),
-                              onTap: () {
-                                final last =
-                                    widget.ticked.length == 1 &&
-                                    widget.ticked.contains(p.id);
-                                setState(() => _refused = last);
-                                if (!last) widget.onToggle(p.id);
-                              },
+                              onTap: widget.onToggle == null
+                                  ? null
+                                  : () {
+                                      final last =
+                                          widget.ticked.length == 1 &&
+                                          widget.ticked.contains(p.id);
+                                      setState(() => _refused = last);
+                                      if (!last) widget.onToggle!(p.id);
+                                    },
                             ),
                           ),
                       ],
@@ -143,7 +175,7 @@ class _PackTile extends StatelessWidget {
   });
   final PackInfo p;
   final bool on, last;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => Semantics(

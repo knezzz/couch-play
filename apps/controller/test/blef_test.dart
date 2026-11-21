@@ -364,18 +364,10 @@ void main() {
       expect(find.byKey(const ValueKey('blef-picked')), findsOneWidget);
     });
 
-    testWidgets('host settings: card line, rows, the whole settings sent', (
+    testWidgets('host settings: banner line, rows, the whole settings sent', (
       t,
     ) async {
       final c = await app(t);
-      for (var i = 0; i < 6; i++) {
-        await t.drag(find.byType(PageView), const Offset(-320, 0));
-        await t.pumpAndSettle();
-      }
-      expect(
-        t.widget<Text>(find.byKey(const ValueKey('line-blef'))).data,
-        'Svi paketi · 7 pitanja',
-      );
       await send(
         t,
         c,
@@ -384,14 +376,24 @@ void main() {
           s: const GameSettings(quizSeconds: 25, kolikoSeconds: 45),
         ),
       );
-      await t.tap(find.byKey(const ValueKey('blef-questions-10')));
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        '3–8 igrača · Svi paketi · 7 · bez robota',
+      );
+      await t.tap(find.byKey(const ValueKey('inc-blefQuestions')));
       var s = (c.sent.last as SetSettings).settings;
       expect((s.blefQuestions, s.quizSeconds, s.kolikoSeconds), (10, 25, 45));
+      await t.tap(find.byKey(const ValueKey('open-blefOffPacks')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(true));
       await t.tap(find.byKey(const ValueKey('pack-c')));
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.blefOffPacks, {'c'});
-      await t.tap(find.text(Strings.play));
+      await t.tap(find.byKey(const ValueKey('packs-back')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(false));
+      await t.tap(find.byKey(const ValueKey('play')));
       expect(c.sent.last, const StartGame(GameKind.blef, null));
     });
   });

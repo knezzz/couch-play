@@ -233,18 +233,10 @@ void main() {
       await t.pump(const Duration(seconds: 4));
     });
 
-    testWidgets('host settings: card line, rows, whole settings sent', (
+    testWidgets('host settings: banner line, rows, the whole settings sent', (
       t,
     ) async {
       final c = await app(t);
-      for (var i = 0; i < 7; i++) {
-        await t.drag(find.byType(PageView), const Offset(-320, 0));
-        await t.pumpAndSettle();
-      }
-      expect(
-        t.widget<Text>(find.byKey(const ValueKey('line-tkobi'))).data,
-        'Svi paketi · 10 pitanja',
-      );
       await send(
         t,
         c,
@@ -253,14 +245,24 @@ void main() {
           s: const GameSettings(quizSeconds: 25, blefQuestions: 10),
         ),
       );
-      await t.tap(find.byKey(const ValueKey('tkobi-prompts-15')));
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        '3–8 igrača · Svi paketi · 10 · bez robota',
+      );
+      await t.tap(find.byKey(const ValueKey('inc-tkobiPrompts')));
       var s = (c.sent.last as SetSettings).settings;
       expect((s.tkobiPrompts, s.quizSeconds, s.blefQuestions), (15, 25, 10));
+      await t.tap(find.byKey(const ValueKey('open-tkobiOffPacks')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(true));
       await t.tap(find.byKey(const ValueKey('pack-l')));
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.tkobiOffPacks, {'l'});
-      await t.tap(find.text(Strings.play));
+      await t.tap(find.byKey(const ValueKey('packs-back')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(false));
+      await t.tap(find.byKey(const ValueKey('play')));
       expect(c.sent.last, const StartGame(GameKind.tkobi, null));
     });
   });

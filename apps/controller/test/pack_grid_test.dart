@@ -47,30 +47,22 @@ Future<FakeConnection> _open(
 }
 
 void main() {
-  testWidgets('by default every pack is ticked: "Svi paketi" and the sum', (
+  testWidgets('by default every pack is ticked: the row says "Svi paketi"', (
     t,
   ) async {
     await _open(t);
-    final row = find.byKey(const ValueKey('open-packs'));
+    final row = find.byKey(const ValueKey('open-quizOffPacks'));
     expect(
-      find.descendant(of: row, matching: find.text(Strings.allPacks)),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: row, matching: find.text('518 pitanja')),
+      find.descendant(of: row, matching: find.text('${Strings.allPacks} ›')),
       findsOneWidget,
     );
   });
 
   testWidgets('some switched off: the row says how many are ticked', (t) async {
     await _open(t, off: {'b', 'c'});
-    final row = find.byKey(const ValueKey('open-packs'));
+    final row = find.byKey(const ValueKey('open-quizOffPacks'));
     expect(
-      find.descendant(of: row, matching: find.text('2 paketa')),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: row, matching: find.text('423 pitanja')),
+      find.descendant(of: row, matching: find.text('2 paketa ›')),
       findsOneWidget,
     );
   });
@@ -79,7 +71,7 @@ void main() {
     t,
   ) async {
     await _open(t);
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     for (final p in _packs) {
       expect(find.text(p.title), findsOneWidget);
@@ -121,7 +113,7 @@ void main() {
     t,
   ) async {
     final c = await _open(t);
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     await t.tap(find.byKey(const ValueKey('pack-b')));
     await t.pumpAndSettle();
@@ -133,7 +125,7 @@ void main() {
 
   testWidgets('a switched-off pack is switched on again by a tap', (t) async {
     final c = await _open(t, off: {'b', 'c'});
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     await t.tap(find.byKey(const ValueKey('pack-b')));
     expect((c.sent.last as SetSettings).settings.quizOffPacks, {'c'});
@@ -142,7 +134,7 @@ void main() {
   testWidgets('a pack the TV has not seen before is ticked', (t) async {
     // 'z' is not in any off list, and 'a' was switched off earlier.
     await _open(t, off: {'a'});
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     bool on(String id) =>
         t
@@ -161,18 +153,18 @@ void main() {
     t,
   ) async {
     final c = await _open(t, off: {'a', 'b', 'c'});
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     expect(find.textContaining(Strings.packMustStay), findsOneWidget);
     await t.tap(find.byKey(const ValueKey('pack-d')));
     await t.pump();
-    expect(c.sent, isEmpty);
+    expect(c.sent.whereType<SetSettings>(), isEmpty);
     expect(find.text(Strings.lastPackStays), findsOneWidget);
   });
 
   testWidgets('the ticked tiles are the ones the TV says', (t) async {
     await _open(t, off: {'b'});
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     Color? fill(String id) => t
         .widget<Material>(
@@ -191,23 +183,24 @@ void main() {
 
   testWidgets('a guest has no pack row and cannot send a pack', (t) async {
     final c = await _open(t, me: 1);
-    expect(find.byKey(const ValueKey('open-packs')), findsNothing);
+    expect(find.byKey(const ValueKey('open-quizOffPacks')), findsNothing);
     expect(c.sent.whereType<SetSettings>(), isEmpty);
   });
 
   testWidgets('Natrag in the grid goes back without sending', (t) async {
     final c = await _open(t);
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     await t.tap(find.byKey(const ValueKey('packs-back')));
     await t.pumpAndSettle();
-    expect(c.sent, isEmpty);
-    expect(find.text(Strings.play), findsOneWidget);
+    // Only the TV is told about the screen opening and closing.
+    expect(c.sent, [const PackScreen(true), const PackScreen(false)]);
+    expect(find.byKey(const ValueKey('play')), findsOneWidget);
   });
 
   testWidgets('the grid fits 360 px', (t) async {
     await _open(t, width: 360);
-    await t.tap(find.byKey(const ValueKey('open-packs')));
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
     await t.pumpAndSettle();
     expect(t.takeException(), isNull);
   });
@@ -237,7 +230,7 @@ void main() {
       t,
     ) async {
       final c = await app(t);
-      await t.tap(find.byKey(const ValueKey('open-packs')));
+      await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
       await t.pumpAndSettle();
       expect(find.byKey(const ValueKey('pack-a')), findsOneWidget);
       await send(
@@ -264,15 +257,17 @@ void main() {
           players: _lobby().players,
         ),
       );
-      await t.tap(find.byKey(const ValueKey('open-roles-info')));
+      await t.tap(find.byKey(const ValueKey('open-wolfRoles')));
       await t.pumpAndSettle();
-      expect(find.text(Strings.rolesInThisGame), findsWidgets);
+      expect(find.byKey(const ValueKey('switch-mayor')), findsOneWidget);
       await send(t, c, const CurveStatus(alive: true, score: 0, target: 30));
-      expect(find.text(Strings.rolesInThisGame), findsNothing);
+      expect(find.byKey(const ValueKey('switch-mayor')), findsNothing);
     });
   });
 
-  testWidgets('with no packs the details row asks to pick one', (t) async {
+  testWidgets('with no packs the row still opens the grid (Dodaj paket)', (
+    t,
+  ) async {
     t.view.physicalSize = const Size(390, 1600);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
@@ -288,11 +283,9 @@ void main() {
         home: LobbyScreen(FakeConnection(), l, 0, addPack: (_) async => null),
       ),
     );
-    final row = find.byKey(const ValueKey('open-packs'));
-    expect(
-      find.descendant(of: row, matching: find.text(Strings.pickPack)),
-      findsOneWidget,
-    );
+    await t.tap(find.byKey(const ValueKey('open-quizOffPacks')));
+    await t.pumpAndSettle();
+    expect(find.byKey(const ValueKey('add-pack')), findsOneWidget);
   });
 
   testWidgets('the Curve round from the TV reaches the phone header', (

@@ -6,63 +6,15 @@ import '../connection.dart';
 import '../theme.dart';
 import '../strings.dart';
 import 'game_cards.dart';
-import 'blef_screens.dart';
+import 'home_rows.dart';
+import 'home_widgets.dart';
 import 'kick.dart';
-import 'koliko_screens.dart';
-import 'objasni_screens.dart';
 import 'pack_grid.dart';
-import 'tkobi_screens.dart';
 import 'power_up_legend.dart';
-import 'uljez_screens.dart';
+import 'settings_copy.dart';
 import 'wolf_screens.dart';
 
-const _seats = 8;
-
-/// The settings with some fields changed, every other field kept. All the
-/// game settings live in one object the TV owns, so every change must send
-/// the whole of it; a hand-written constructor call drops new fields.
-GameSettings copySettings(
-  GameSettings s, {
-  int? quizSeconds,
-  int? quizQuestions,
-  int? revealSeconds,
-  int? curveCountdown,
-  CurveMode? curveMode,
-  Set<WolfRole>? wolfRoles,
-  bool? wolfHideRoles,
-  int? uljezImpostors,
-  int? objasniSeconds,
-  int? objasniTarget,
-  int? kolikoSeconds,
-  int? kolikoQuestions,
-  int? blefQuestions,
-  int? tkobiPrompts,
-  // Replace one game's switched-off packs. The old single pack ids are never
-  // sent (null): the TV would turn one into 'only that pack'.
-  GameKind? offFor,
-  Set<String>? off,
-}) => GameSettings(
-  quizSeconds: quizSeconds ?? s.quizSeconds,
-  quizQuestions: quizQuestions ?? s.quizQuestions,
-  revealSeconds: revealSeconds ?? s.revealSeconds,
-  curveCountdown: curveCountdown ?? s.curveCountdown,
-  curveMode: curveMode ?? s.curveMode,
-  wolfRoles: wolfRoles ?? s.wolfRoles,
-  wolfHideRoles: wolfHideRoles ?? s.wolfHideRoles,
-  uljezImpostors: uljezImpostors ?? s.uljezImpostors,
-  objasniSeconds: objasniSeconds ?? s.objasniSeconds,
-  objasniTarget: objasniTarget ?? s.objasniTarget,
-  kolikoSeconds: kolikoSeconds ?? s.kolikoSeconds,
-  kolikoQuestions: kolikoQuestions ?? s.kolikoQuestions,
-  blefQuestions: blefQuestions ?? s.blefQuestions,
-  tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
-  quizOffPacks: offFor == GameKind.quiz ? off! : s.quizOffPacks,
-  uljezOffPacks: offFor == GameKind.uljez ? off! : s.uljezOffPacks,
-  objasniOffPacks: offFor == GameKind.objasni ? off! : s.objasniOffPacks,
-  kolikoOffPacks: offFor == GameKind.koliko ? off! : s.kolikoOffPacks,
-  blefOffPacks: offFor == GameKind.blef ? off! : s.blefOffPacks,
-  tkobiOffPacks: offFor == GameKind.tkobi ? off! : s.tkobiOffPacks,
-);
+export 'settings_copy.dart';
 
 class LobbyScreen extends StatefulWidget {
   const LobbyScreen(
@@ -153,8 +105,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
       copySettings(s, wolfRoles: roles, wolfHideRoles: hide);
 
   /// Pushes a screen that follows the TV's latest LobbyState.
-  void _pushLive(Widget Function(LobbyState l) build) {
-    Navigator.of(context).push(
+  Future<void> _pushLive(Widget Function(LobbyState l) build) {
+    return Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => StreamBuilder<LobbyState>(
           initialData: widget.lobby,
@@ -186,244 +138,6 @@ class _LobbyScreenState extends State<LobbyScreen> {
       onBack: () => Navigator.of(context).pop(),
     ),
   );
-
-  Widget _tkobiSettings(LobbyState l, void Function(GameSettings) change) {
-    final s = l.settings;
-    return TkobiSettingsView(
-      prompts: s.tkobiPrompts,
-      packs: l.tkobiPacks,
-      ticked: _ticked(GameKind.tkobi, l.tkobiPacks, s),
-      onPrompts: (v) => change(copySettings(s, tkobiPrompts: v)),
-      onTogglePack: (id) => change(_toggle(s, GameKind.tkobi, id)),
-    );
-  }
-
-  Widget _blefSettings(LobbyState l, void Function(GameSettings) change) {
-    final s = l.settings;
-    return BlefSettingsView(
-      questions: s.blefQuestions,
-      packs: l.blefPacks,
-      ticked: _ticked(GameKind.blef, l.blefPacks, s),
-      onQuestions: (v) => change(copySettings(s, blefQuestions: v)),
-      onTogglePack: (id) => change(_toggle(s, GameKind.blef, id)),
-    );
-  }
-
-  Widget _kolikoSettings(LobbyState l, void Function(GameSettings) change) {
-    final s = l.settings;
-    return KolikoSettingsView(
-      seconds: s.kolikoSeconds,
-      questions: s.kolikoQuestions,
-      packs: l.kolikoPacks,
-      ticked: _ticked(GameKind.koliko, l.kolikoPacks, s),
-      onSeconds: (v) => change(copySettings(s, kolikoSeconds: v)),
-      onQuestions: (v) => change(copySettings(s, kolikoQuestions: v)),
-      onTogglePack: (id) => change(_toggle(s, GameKind.koliko, id)),
-    );
-  }
-
-  Widget _objasniSettings(LobbyState l, void Function(GameSettings) change) {
-    final s = l.settings;
-    return ObjasniSettingsView(
-      seconds: s.objasniSeconds,
-      target: s.objasniTarget,
-      packs: l.objasniPacks,
-      ticked: _ticked(GameKind.objasni, l.objasniPacks, s),
-      onSeconds: (v) => change(copySettings(s, objasniSeconds: v)),
-      onTarget: (v) => change(copySettings(s, objasniTarget: v)),
-      onTogglePack: (id) => change(_toggle(s, GameKind.objasni, id)),
-    );
-  }
-
-  Widget _uljezSettings(LobbyState l, void Function(GameSettings) change) {
-    final s = l.settings;
-    return UljezSettingsView(
-      players: l.players.length,
-      packs: l.uljezPacks,
-      ticked: _ticked(GameKind.uljez, l.uljezPacks, s),
-      impostors: s.uljezImpostors,
-      onTogglePack: (id) => change(_toggle(s, GameKind.uljez, id)),
-      onImpostors: (n) => change(copySettings(s, uljezImpostors: n)),
-    );
-  }
-
-  Widget _wolfSettings(LobbyState l, void Function(GameSettings) change) {
-    final s = l.settings;
-    return WolfSettingsView(
-      players: l.players.length,
-      enabled: {for (final r in s.wolfRoles) r.name},
-      hidden: s.wolfHideRoles,
-      onHidden: (v) => change(_wolf(s, hide: v)),
-      onPickRoles: _pickRoles,
-      onShowRoles: _showRoles,
-    );
-  }
-
-  /// The ticked packs in a line ("Svi paketi" or "3 paketa"); opens the grid.
-  Widget _packRow(LobbyState l) {
-    final ticked = _ticked(GameKind.quiz, l.packs, l.settings);
-    final questions = l.packs
-        .where((p) => ticked.contains(p.id))
-        .fold(0, (n, p) => n + p.questionCount);
-    return Material(
-      color: surface,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        key: const ValueKey('open-packs'),
-        borderRadius: BorderRadius.circular(16),
-        onTap: _openPacks,
-        child: Container(
-          height: 64,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l.packs.isEmpty
-                      ? Strings.pickPack
-                      : Strings.packCount(ticked.length, l.packs.length),
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              if (l.packs.isNotEmpty)
-                Text(
-                  Strings.questions(questions),
-                  style: const TextStyle(fontSize: 18, color: muted),
-                ),
-              const SizedBox(width: 12),
-              const Text('›', style: TextStyle(fontSize: 22, color: accent)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _openPacks() => _pushLive(
-    (l) => PackGridScreen(
-      packs: l.packs,
-      ticked: _ticked(GameKind.quiz, l.packs, l.settings),
-      addPack: widget.addPack == null
-          ? null
-          : () => widget.addPack!(widget.conn.token),
-      onToggle: (id) =>
-          widget.conn.send(SetSettings(_toggle(l.settings, GameKind.quiz, id))),
-      onBack: () => Navigator.of(context).pop(),
-    ),
-  );
-
-  Widget _details(GameKind kind, LobbyState l) {
-    final s = l.settings;
-    void change(GameSettings n) => widget.conn.send(SetSettings(n));
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(0, 56),
-                        foregroundColor: accent,
-                        textStyle: const TextStyle(fontSize: 20),
-                      ),
-                      onPressed: () => _select(null),
-                      icon: const Icon(Icons.arrow_back, size: 28),
-                      label: const Text(Strings.back),
-                    ),
-                  ),
-                  if (kind == GameKind.quiz || kind == GameKind.curve)
-                    GameHeaderCard(kind)
-                  else
-                    Text(
-                      Strings.gameName(kind),
-                      key: const ValueKey('game-title'),
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  if (kind == GameKind.vukodlak)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Text(
-                        Strings.playerCount(l.players.length),
-                        key: const ValueKey('wolf-players'),
-                        style: const TextStyle(fontSize: 18, color: muted),
-                      ),
-                    ),
-                  const SizedBox(height: 16),
-                  if (kind == GameKind.quiz &&
-                      (l.packs.isNotEmpty || widget.addPack != null)) ...[
-                    const Text(
-                      Strings.quizPack,
-                      style: TextStyle(fontSize: 18, color: muted),
-                    ),
-                    const SizedBox(height: 8),
-                    _packRow(l),
-                    const SizedBox(height: 12),
-                  ],
-                  if (kind == GameKind.vukodlak)
-                    _wolfSettings(l, change)
-                  else if (kind == GameKind.uljez)
-                    _uljezSettings(l, change)
-                  else if (kind == GameKind.objasni)
-                    _objasniSettings(l, change)
-                  else if (kind == GameKind.koliko)
-                    _kolikoSettings(l, change)
-                  else if (kind == GameKind.blef)
-                    _blefSettings(l, change)
-                  else if (kind == GameKind.tkobi)
-                    _tkobiSettings(l, change)
-                  else if (kind == GameKind.quiz || kind == GameKind.curve)
-                    _GameSettings(kind, s, onChange: change),
-                  if (kind == GameKind.curve) ...[
-                    const SizedBox(height: 4),
-                    const PowerUpLegend(),
-                  ],
-                  if (kind == GameKind.quiz || kind == GameKind.curve) ...[
-                    const SizedBox(height: 14),
-                    const Text(
-                      Strings.settingsNote,
-                      style: TextStyle(fontSize: 18, color: muted, height: 1.4),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
-              child: SizedBox(
-                height: 72,
-                width: double.infinity,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    textStyle: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                  ),
-                  onPressed: () => widget.conn.send(StartGame(kind, null)),
-                  child: const Text(Strings.play),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   /// A player in the list: face, name, a tag (host, robot) and, for the
   /// host, Ukloni.
@@ -489,503 +203,399 @@ class _LobbyScreenState extends State<LobbyScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l = widget.lobby;
-    final players = l.players;
-    final me = players.where((p) => p.id == widget.myId).firstOrNull;
-    final isHost = l.hostId == widget.myId;
-    final bots = players.where((p) => p.bot).length;
-    final host = players.where((p) => p.id == l.hostId).firstOrNull;
+  /// Opens the pack screen of [k] for the host: the TV is told, and told again
+  /// when it closes, however it closes.
+  void _openPacks(GameKind k) {
+    widget.conn.send(const PackScreen(true));
+    _pushLive(
+      (l) => PackGridScreen(
+        packs: packsOf(k, l),
+        ticked: _ticked(k, packsOf(k, l), l.settings),
+        title: _packsTitle(k),
+        addPack: k == GameKind.quiz && widget.addPack != null
+            ? () => widget.addPack!(widget.conn.token)
+            : null,
+        onToggle: (id) =>
+            widget.conn.send(SetSettings(_toggle(l.settings, k, id))),
+        onBack: () => Navigator.of(context).pop(),
+      ),
+    ).then((_) => widget.conn.send(const PackScreen(false)));
+  }
 
+  String _packsTitle(GameKind k) => k == GameKind.uljez || k == GameKind.objasni
+      ? Strings.wordPacks
+      : Strings.quizPacks;
+
+  GameKind _step(GameKind k, int by) =>
+      supportedGames[(supportedGames.indexOf(k) + by + supportedGames.length) %
+          supportedGames.length];
+
+  /// The players below the settings: the host's list has Ukloni.
+  Widget _players(LobbyState l, {required bool isHost}) {
     final others = [
-      for (final p in players)
+      for (final p in l.players)
         if (p.id != widget.myId) p,
     ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          isHost
+              ? Strings.others(others.length)
+              : Strings.players(l.players.length),
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: muted,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (final p in isHost ? others : l.players)
+          _playerRow(p, isHost: isHost, hostId: l.hostId),
+      ],
+    );
+  }
 
-    final kind = l.selected;
-    if (isHost && kind != null) {
-      return _details(kind, l);
-    }
-
+  Widget _hostHome(LobbyState l, GameKind kind, PlayerInfo? me) {
+    final rows = homeRows(kind, l);
+    final prev = _step(kind, -1), next = _step(kind, 1);
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        child: Column(
           children: [
-            if (me != null) ...[
-              _MyChip(
-                me,
-                host: isHost,
-                onChange: isHost ? null : () => _pickCharacter(me, players),
-              ),
-              if (isHost)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      minimumSize: const Size(0, 56),
-                      foregroundColor: accent,
-                      textStyle: const TextStyle(fontSize: 18),
-                    ),
-                    onPressed: () => _pickCharacter(me, players),
-                    child: const Text(Strings.changeCharacter),
+            _HomeHeader(
+              me,
+              l.players,
+              host: true,
+              onChange: me == null ? null : () => _pickCharacter(me, l.players),
+            ),
+            Expanded(
+              child: ListView(
+                children: [
+                  GameBanner(
+                    kind: kind,
+                    prev: prev,
+                    next: next,
+                    meta: homeMeta(kind, l),
+                    onPrev: () => _select(prev),
+                    onNext: () => _select(next),
                   ),
-                ),
-            ],
-            if (!isHost) ...[
-              const SizedBox(height: 16),
-              if (l.selected == null)
-                Text(
-                  Strings.waitingForHost(host?.name),
-                  style: const TextStyle(fontSize: 20, color: muted),
-                )
-              else
-                _WatchingCard(
-                  host: host?.name,
-                  kind: l.selected!,
-                  line: Strings.settingsLine(
-                    l.selected!,
-                    l.settings,
-                    l.packs,
-                    l.uljezPacks,
-                    l.objasniPacks,
-                    l.kolikoPacks,
-                    l.blefPacks,
-                    l.tkobiPacks,
-                  ),
-                ),
-              if (l.selected == GameKind.vukodlak)
-                TextButton(
-                  key: const ValueKey('guest-roles'),
-                  onPressed: _showRoles,
-                  style: TextButton.styleFrom(minimumSize: const Size(56, 56)),
-                  child: const Text(
-                    Strings.rolesInThisGame,
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-            ],
-            if (isHost) ...[
-              const SizedBox(height: 24),
-              const Text(
-                Strings.pickGame,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: muted,
-                ),
-              ),
-              const SizedBox(height: 16),
-              GameCarousel(lobby: l, onPick: _select),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        Strings.bots,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
+                  HomeDots(selected: kind),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            Strings.settingsForAll,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: muted,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    _Stepper(
-                      tooltip: Strings.fewerBots,
-                      icon: Icons.remove,
-                      onPressed: bots > 0
-                          ? () => widget.conn.send(SetBots(bots - 1))
-                          : null,
-                    ),
-                    SizedBox(
-                      width: 48,
-                      child: Text(
-                        '$bots',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
+                        HostSettingsList(
+                          rows: rows,
+                          changed: changedKey(l),
+                          onSend: widget.conn.send,
+                          onOpen: (what) => what == HomeOpens.packs
+                              ? _openPacks(kind)
+                              : _pickRoles(),
                         ),
-                      ),
+                        if (kind == GameKind.curve) const PowerUpLegend(),
+                        const SizedBox(height: 12),
+                        _players(l, isHost: true),
+                      ],
                     ),
-                    _Stepper(
-                      tooltip: Strings.moreBots,
-                      icon: Icons.add,
-                      onPressed: players.length < _seats
-                          ? () => widget.conn.send(SetBots(bots + 1))
-                          : null,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            const SizedBox(height: 20),
-            Text(
-              isHost
-                  ? Strings.others(others.length)
-                  : Strings.players(players.length),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: muted,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            for (final p in isHost ? others : players)
-              _playerRow(p, isHost: isHost, hostId: l.hostId),
-            if (!isHost) ...[
-              const SizedBox(height: 24),
-              Text(
-                Strings.startsWhen(host?.name),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, color: muted),
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              decoration: const BoxDecoration(
+                color: bg,
+                border: Border(top: BorderSide(color: surface)),
               ),
-            ],
+              child: SizedBox(
+                height: 64,
+                width: double.infinity,
+                child: FilledButton(
+                  key: const ValueKey('play'),
+                  style: FilledButton.styleFrom(
+                    textStyle: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  onPressed: () => widget.conn.send(StartGame(kind, null)),
+                  child: Text(Strings.playGame(Strings.gameName(kind))),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-/// One game's settings, always shown. The host's tap only sends; the next
-/// LobbyState changes the number.
-class _GameSettings extends StatelessWidget {
-  const _GameSettings(this.kind, this.s, {required this.onChange});
-  final GameKind kind;
-  final GameSettings s;
-  final void Function(GameSettings) onChange;
-
-  GameSettings _with({int? sec, int? qs, int? rev, int? cd, CurveMode? mode}) =>
-      copySettings(
-        s,
-        quizSeconds: sec,
-        quizQuestions: qs,
-        revealSeconds: rev,
-        curveCountdown: cd,
-        curveMode: mode,
-      );
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      if (kind == GameKind.quiz) ...[
-        _row(
-          Strings.quizSeconds,
-          s.quizSeconds,
-          10,
-          60,
-          5,
-          (v) => _with(sec: v),
-        ),
-        _row(
-          Strings.quizQuestions,
-          s.quizQuestions,
-          5,
-          30,
-          5,
-          (v) => _with(qs: v),
-          unit: false,
-        ),
-        _row(
-          Strings.revealSeconds,
-          s.revealSeconds,
-          2,
-          15,
-          1,
-          (v) => _with(rev: v),
-        ),
-      ] else ...[
-        _modes(),
-        _row(
-          Strings.curveCountdown,
-          s.curveCountdown,
-          1,
-          10,
-          1,
-          (v) => _with(cd: v),
-        ),
-      ],
-    ],
-  );
-
-  /// The four modes as 2 x 2 cards with a line about each.
-  Widget _modes() => Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text(
-          Strings.curveModeLabel,
-          style: TextStyle(fontSize: 18, color: muted),
-        ),
-        const SizedBox(height: 8),
-        LayoutBuilder(
-          builder: (_, c) {
-            final w = (c.maxWidth - 10) / 2;
-            return Wrap(
-              spacing: 10,
-              runSpacing: 10,
+  Widget _guestHome(LobbyState l, GameKind kind, PlayerInfo? me, String host) {
+    final rows = homeRows(kind, l);
+    final c = l.changed;
+    final key = changedKey(l);
+    final pill =
+        Strings.watches(host) +
+        switch (l.hostView) {
+          HostView.settings => Strings.watchesSettings,
+          HostView.packs => Strings.watchesPacks,
+          HostView.home => '',
+        };
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
               children: [
-                for (final m in CurveMode.values)
-                  SizedBox(
-                    width: w,
-                    child: Material(
-                      color: m == s.curveMode ? accent : surface,
-                      borderRadius: BorderRadius.circular(16),
-                      child: InkWell(
-                        key: ValueKey('mode-${m.name}'),
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () => onChange(_with(mode: m)),
-                        child: Container(
-                          constraints: const BoxConstraints(minHeight: 96),
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            border: m == s.curveMode
-                                ? null
-                                : Border.all(color: raised, width: 2),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                Strings.curveMode(m),
+                _HomeHeader(
+                  me,
+                  l.players,
+                  host: false,
+                  onChange: me == null
+                      ? null
+                      : () => _pickCharacter(me, l.players),
+                ),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      GameBanner(
+                        kind: kind,
+                        prev: _step(kind, -1),
+                        next: _step(kind, 1),
+                        meta: homeMeta(kind, l),
+                        pill: pill,
+                        compact: true,
+                      ),
+                      HomeDots(selected: kind),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                Strings.settingsTitle,
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w900,
-                                  color: m == s.curveMode ? ink : textColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: muted,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                Strings.curveModeBlurb[m]!,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  height: 1.25,
-                                  color: m == s.curveMode ? ink : muted,
+                            ),
+                            GuestSettingsList(
+                              rows: rows,
+                              changed: key,
+                              old: key == null || c == null
+                                  ? null
+                                  : changeValue(c, c.old, l),
+                            ),
+                            if (kind == GameKind.vukodlak)
+                              TextButton(
+                                key: const ValueKey('guest-roles'),
+                                onPressed: _showRoles,
+                                style: TextButton.styleFrom(
+                                  minimumSize: const Size(56, 56),
+                                ),
+                                child: const Text(
+                                  Strings.rolesInThisGame,
+                                  style: TextStyle(fontSize: 18),
                                 ),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                        child: ChangeFeed(lobby: l, host: host),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+                        child: _players(l, isHost: false),
+                      ),
+                    ],
                   ),
+                ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
+                  decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: surface)),
+                  ),
+                  child: Text(
+                    Strings.startedBy(host),
+                    key: const ValueKey('started-by'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 15, color: muted),
+                  ),
+                ),
               ],
-            );
-          },
-        ),
-      ],
-    ),
-  );
-
-  /// One setting in its own card: the name, then - value +.
-  Widget _row(
-    String label,
-    int value,
-    int min,
-    int max,
-    int step,
-    GameSettings Function(int) make, {
-    bool unit = true,
-  }) => Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 18))),
-          _Stepper(
-            tooltip: Strings.lessOf(label),
-            icon: Icons.remove,
-            onPressed: value - step >= min
-                ? () => onChange(make(value - step))
-                : null,
-          ),
-          SizedBox(
-            width: 64,
-            child: Text(
-              unit ? Strings.seconds(value) : '$value',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
             ),
-          ),
-          _Stepper(
-            tooltip: Strings.moreOf(label),
-            icon: Icons.add,
-            onPressed: value + step <= max
-                ? () => onChange(make(value + step))
-                : null,
-          ),
-        ],
+            if (l.hostView == HostView.packs)
+              Positioned.fill(
+                top: 60,
+                child: ColoredBox(
+                  color: bg,
+                  child: PackGridScreen(
+                    packs: packsOf(kind, l),
+                    ticked: _ticked(kind, packsOf(kind, l), l.settings),
+                    title: _packsTitle(kind),
+                    pill: Strings.picksPacks(host),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
-class _Stepper extends StatelessWidget {
-  const _Stepper({
-    required this.tooltip,
-    required this.icon,
-    required this.onPressed,
-  });
-  final String tooltip;
-  final IconData icon;
-  final VoidCallback? onPressed;
+    );
+  }
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 56,
-    height: 56,
-    child: IconButton(
-      tooltip: tooltip,
-      style: IconButton.styleFrom(
-        backgroundColor: raised,
-        foregroundColor: textColor,
-        disabledForegroundColor: muted.withValues(alpha: 0.4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      icon: Icon(icon, size: 28),
-      onPressed: onPressed,
-    ),
-  );
+  Widget build(BuildContext context) {
+    final l = widget.lobby;
+    final me = l.players.where((p) => p.id == widget.myId).firstOrNull;
+    final host = l.players.where((p) => p.id == l.hostId).firstOrNull;
+    final kind = l.selected ?? GameKind.quiz;
+    return l.hostId == widget.myId
+        ? _hostHome(l, kind, me)
+        : _guestHome(l, kind, me, host?.name ?? 'Domaćin');
+  }
 }
 
-class _MyChip extends StatelessWidget {
-  const _MyChip(this.p, {required this.host, this.onChange});
-  final PlayerInfo p;
+/// The top bar: my face and name (a star when I host), "Promijeni lik", and one
+/// dot per player.
+class _HomeHeader extends StatelessWidget {
+  const _HomeHeader(
+    this.me,
+    this.players, {
+    required this.host,
+    required this.onChange,
+  });
+  final PlayerInfo? me;
+  final List<PlayerInfo> players;
   final bool host;
-
-  /// "Promijeni lik" inside the chip (guests; the host has it below).
   final VoidCallback? onChange;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-    decoration: BoxDecoration(
-      color: playerColors[p.colorIndex % playerColors.length],
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Row(
-      children: [
-        if (p.character.isNotEmpty) ...[
-          KeyedSubtree(
-            key: ValueKey('my-character-${p.character}'),
-            // A dark disc behind the face: the face is drawn in the player's own
-            // color, which would vanish on a chip of that same color.
-            child: Container(
-              width: 48,
-              height: 48,
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: ink,
-                shape: BoxShape.circle,
-              ),
-              child: CharacterFace(
-                p.character,
-                40,
-                playerColors[p.colorIndex % playerColors.length],
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-        ],
-        Expanded(
-          child: Text(
-            p.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-              color: ink,
-            ),
-          ),
-        ),
-        // The star alone marks the host: no word, so long names keep their room
-        // (the board's "★ Domaćin" pill left room for ~5 letters at 360 px).
-        if (host) ...[
-          const SizedBox(width: 8),
-          const Icon(Icons.star, size: 28, color: ink),
-        ],
-        if (onChange != null)
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 150),
-            child: TextButton(
-              key: const ValueKey('change-character'),
-              onPressed: onChange,
-              style: TextButton.styleFrom(
-                minimumSize: const Size(0, 56),
-                foregroundColor: ink,
-                backgroundColor: Colors.black12,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+  Widget build(BuildContext context) {
+    final p = me;
+    final color = p == null
+        ? muted
+        : playerColors[p.colorIndex % playerColors.length];
+    return SizedBox(
+      height: 60,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          children: [
+            if (p != null && p.character.isNotEmpty)
+              KeyedSubtree(
+                key: ValueKey('my-character-${p.character}'),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: ink, shape: BoxShape.circle),
+                  child: CharacterFace(p.character, 34, color),
                 ),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
+              )
+            else
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
-              child: const FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(Strings.changeCharacter),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      p?.name ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  if (host) ...[
+                    const SizedBox(width: 6),
+                    const Icon(Icons.star, size: 18, color: Color(0xFFFFB020)),
+                  ],
+                  if (onChange != null) ...[
+                    const SizedBox(width: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 120),
+                      child: TextButton(
+                        key: const ValueKey('change-character'),
+                        onPressed: onChange,
+                        style: TextButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                          backgroundColor: surface,
+                          foregroundColor: accent,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        child: const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(Strings.changeCharacter),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
-          ),
-      ],
-    ),
-  );
-}
-
-/// What the host has open, for the others: "Luka gleda:", the game, its
-/// settings.
-class _WatchingCard extends StatelessWidget {
-  const _WatchingCard({
-    required this.host,
-    required this.kind,
-    required this.line,
-  });
-  final String? host, line;
-  final GameKind kind;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    key: const ValueKey('watching-card'),
-    width: double.infinity,
-    padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-    decoration: BoxDecoration(
-      color: surface,
-      borderRadius: BorderRadius.circular(24),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          Strings.watchingLabel(host),
-          style: const TextStyle(fontSize: 18, color: muted),
+            // Overlapping dots, 12 px apart: eight players take 100 px.
+            SizedBox(
+              width: 6.0 + 12 * players.length,
+              height: 22,
+              child: Stack(
+                children: [
+                  for (var i = 0; i < players.length; i++)
+                    Positioned(
+                      left: i * 12.0,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              playerColors[players[i].colorIndex %
+                                  playerColors.length],
+                          border: Border.all(color: bg, width: 2),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
-        Text(
-          Strings.gameName(kind),
-          style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w900),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          line ?? '',
-          style: const TextStyle(fontSize: 18, color: muted, height: 1.35),
-        ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }

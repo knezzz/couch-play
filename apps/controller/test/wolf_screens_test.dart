@@ -443,38 +443,6 @@ void main() {
   });
 
   group('host settings and roles', () {
-    Widget settings({
-      Set<String> enabled = const {'seer', 'doc'},
-      bool hidden = true,
-      void Function(bool)? onHidden,
-    }) => Scaffold(
-      body: SingleChildScrollView(
-        child: WolfSettingsView(
-          players: 7,
-          enabled: enabled,
-          hidden: hidden,
-          onHidden: onHidden ?? (_) {},
-          onPickRoles: () {},
-          onShowRoles: () {},
-        ),
-      ),
-    );
-
-    testWidgets('shows the count with the always-on roles included', (t) async {
-      await _show(t, settings());
-      expect(find.text(Strings.possibleRolesCount(4)), findsOneWidget);
-      expect(find.byKey(const ValueKey('discuss-more')), findsNothing);
-    });
-
-    testWidgets('Skrivene uloge sends the opposite of what is shown', (
-      t,
-    ) async {
-      final sent = <bool>[];
-      await _show(t, settings(hidden: true, onHidden: sent.add));
-      await t.tap(find.byKey(const ValueKey('hidden-roles')));
-      expect(sent, [false]);
-    });
-
     testWidgets('the pick screen toggles a role, never Vukodlak or Seljanin', (
       t,
     ) async {
@@ -628,8 +596,6 @@ void main() {
         ),
         width: 360,
       );
-      expect(t.takeException(), isNull);
-      await _show(t, settings(), width: 360);
       expect(t.takeException(), isNull);
       await _show(
         t,

@@ -376,8 +376,7 @@ void main() {
         t,
         const GameSettings(quizSeconds: 25, curveCountdown: 90),
       );
-      await t.ensureVisible(find.byKey(const ValueKey('hidden-roles')));
-      await t.tap(find.byKey(const ValueKey('hidden-roles')));
+      await t.tap(find.byKey(const ValueKey('inc-wolfHideRoles')));
       final s = (c.sent.last as SetSettings).settings;
       expect(s.wolfHideRoles, isFalse);
       expect((s.quizSeconds, s.curveCountdown), (25, 90));
@@ -387,8 +386,7 @@ void main() {
       t,
     ) async {
       final c = await host(t, const GameSettings());
-      await t.ensureVisible(find.byKey(const ValueKey('open-roles-pick')));
-      await t.tap(find.byKey(const ValueKey('open-roles-pick')));
+      await t.tap(find.byKey(const ValueKey('open-wolfRoles')));
       await t.pumpAndSettle();
       await t.ensureVisible(find.byKey(const ValueKey('role-mayor')));
       await t.tap(find.byKey(const ValueKey('role-mayor')));
@@ -412,8 +410,7 @@ void main() {
 
     testWidgets('Igraj starts Vukodlak', (t) async {
       final c = await host(t, const GameSettings());
-      await t.ensureVisible(find.text(Strings.play));
-      await t.tap(find.text(Strings.play));
+      await t.tap(find.byKey(const ValueKey('play')));
       expect(c.sent.last, const StartGame(GameKind.vukodlak, null));
     });
 

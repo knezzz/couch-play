@@ -33,19 +33,11 @@ Choices that were put to the person:
 | gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | TV lobby, game card (same words as the phone) |
 | gameBlurb(curve) | Vozi svoju krivulju i ne udari u druge. | Steer your curve and do not hit the others. | TV lobby, game card (same words as the phone) |
 | watching(host, game) | {host} gleda: {game} | {host} is looking at: {game} | TV lobby, bottom right, replaces "waiting for host" while a game card is shown (same words as the phone) |
-| watchingLabel(host) | {host} gleda: | {host} is watching: | watching card, others' lobby |
-| startsWhen(host) | Igra počinje kad {host} pritisne Igraj. | The game starts when {host} presses Play. | others' lobby, bottom |
 | hostTag | ★ DOMAĆIN | ★ HOST | others' lobby list |
 | youSuffix | (ti) | (you) | your own name in the others' list |
 | players(n) | Igrači · {n} | Players · {n} | others' lobby list heading |
-| playerCount(n) | {n} igrača | {n} players | Vukodlak details under the title |
-| settingsLine | Opće znanje · 10 pitanja · 20 s / Način igre: Kaos · Pauza prije runde: 2 s / … | one line with the game's current settings | carousel card, watching card |
-| curveModeBlurb | Kaos: Puno pojačanja, sve odjednom · Uravnoteženo: Kao do sada · Mirno: Bez pojačanja · Samo za tebe: Samo zelena: usporavanje i duh | one line about each Curve mode | Curve details, mode cards |
-| settingsNote | Postavke se vide na TV-u i vrijede od sljedeće igre. TV ih pamti. | Settings show on the TV and apply from the next game. The TV remembers them. | Kviz and Curve details |
 | questions(n) | {n} pitanje / pitanja | {n} question(s) | pack row, pack grid, settings line |
 | packMeta tags | slike, novo | pictures, new | pack grid tile, after the count |
-| pickPack | Odaberi paket | Pick a pack | Kviz details row when no pack is known |
-| packsTitle | Paketi | Packs | host details, label over the pack checklist (every game with packs) |
 | allPacks | Svi paketi | All packs | Kviz details row; the settings line on every card |
 | packCount | {n} paket / {n} paketa | {n} pack(s) | the same places when some are switched off (1 paket, 21 paket, 2 paketa) |
 | packMustStay | mora ostati | has to stay | under the last ticked pack in the checklist and the grid |
@@ -140,14 +132,10 @@ Informal "ti". `{x}` is filled in by the app.
 | removed | Više nisi u ovoj igri. | You are no longer in this game. | screen after the host or the TV removes you (neutral: no gendered verb, true for both) |
 | ok | U redu | OK | closes a red error bar |
 | waitingForHost | Čekaš da {host} pokrene igru. (fallback: domaćin) | You are waiting for {host} to start the game. | lobby, for non-hosts |
-| pickGame | Odaberi igru | Pick a game | lobby, host only |
 | quiz | Kviz | Quiz | lobby button |
 | curve | Curve | Curve (game name, not translated) | lobby button |
-| quizPack | Paket pitanja | Quiz pack | lobby, label of the pack list |
 | addPack | Dodaj svoj paket… | Add quiz pack… | lobby button, host only |
 | bots | Roboti | Bots | lobby, stepper label |
-| fewerBots | Manje robota | Fewer bots | accessibility label of the − button |
-| moreBots | Više robota | More bots | accessibility label of the + button |
 | pickCharacter | Odaberi svoj lik | Pick your character | join screen label above the character grid; title of the change sheet |
 | animals (16) | Lisica, Sova, Žaba, Medvjed, Mačka, Pas, Zec, Pingvin, Lav, Panda, Svinja, Koala, Miš, Tigar, Patka, Majmun | Fox, Owl, Frog, Bear, Cat, Dog, Rabbit, Penguin, Lion, Panda, Pig, Koala, Mouse, Tiger, Duck, Monkey | character preview on the join screen; each grid cell's screen-reader label |
 | taken | (zauzet) | (taken) | screen-reader label of a character another player has |
@@ -156,7 +144,6 @@ Informal "ti". `{x}` is filled in by the app.
 | play | Igraj | Play | game details, big button that starts the game |
 | gameBlurb(quiz) | Pitanja s četiri odgovora. Odgovaraš na svom mobitelu. | Questions with four answers. You answer on your phone. | game card and details, one-line description |
 | gameBlurb(curve) | Vozi svoju krivulju i ne udari u druge. | Steer your curve and do not hit the others. | game card and details, one-line description |
-| watching(host, game) | host gleda: game | host is looking at: game | guest lobby, while the host has a game's details open |
 | quizSeconds | Vrijeme za odgovor | Time to answer | game details, label of the stepper (10-60 s) |
 | quizQuestions | Broj pitanja | Number of questions | game details, label of the stepper (5-30) |
 | revealSeconds | Pauza između pitanja | Pause between questions | game details, label of the stepper (2-15 s) |
@@ -213,17 +200,40 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | vote | Glasaj | Vote | day vote button |
 | you | ti | you | day vote, your own row |
 | possibleRoles | Moguće uloge | Possible roles | host: role switches |
-| possibleRolesCount(n) | Moguće uloge · {n} uključeno | Possible roles · {n} on | host: Vukodlak settings |
 | drawnByGame | Igra izvlači koje će biti. | The game draws which will be in play. | host: Vukodlak settings |
 | howPlayersSeeIt | Kako to vide igrači | How the players see it | host: Vukodlak settings |
 | rolesPickIntro | Za {n} igrača, vukodlaka: {a} · posebnih uloga: {b} · seljana: {c}. Svaka igra izvuče drugačije. | For {n} players, werewolves: {a} · special roles: {b} · villagers: {c}. Every game draws differently. | host: role switches |
 | rolesInThisGame | Uloge u ovoj igri | Roles in this game | everyone's roles list |
 | rolesLocked | (uvijek u igri) | (always in the game) | host: Vukodlak and Seljanin rows |
 | hiddenRoles | Skrivene uloge | Hidden roles | host: Vukodlak settings |
-| hiddenRolesHint | Kad netko ispadne, uloga se ne otkriva. Sve uloge se vide tek na kraju igre. | When someone is out, their role is not revealed. All roles show only at the end. | host: Vukodlak settings |
 | save | Spremi | Save | host: role switches |
 | rulesHeader | Pravila | Rules | host: Vukodlak settings |
 | groupWolves / groupVillage / groupSolo | VUKODLACI / SELO / SAMI ZA SEBE | WEREWOLVES / VILLAGE / ALONE | roles list headings |
+
+### Phone home, live with the TV (Task 48)
+
+| key | Croatian | English | where it shows |
+|---|---|---|---|
+| settingsForAll | Postavke · svi ih vide | Settings · everybody sees them | host home, over the settings |
+| settingsTitle | Postavke | Settings | guest home, over the settings |
+| playGame(game) | Igraj Kviz | Play Quiz | host home, the pinned button |
+| prevGame / nextGame (game) | Prethodna igra: Kviz / Sljedeća igra: Kviz | Previous game / Next game | screen reader label of the ‹ › edges |
+| quizPacks / wordPacks | Paketi pitanja / Paketi riječi | Question packs / Word packs | the packs row and the pack screen |
+| rolesInGame | Uloge u igri | Roles in the game | Vukodlak row |
+| rolesCount(n) | 6 uloga | 6 roles | Vukodlak row value |
+| targetPoints | Bodova do pobjede | Points to win | Objasni row |
+| yes / no | Da / Ne | Yes / No | Skrivene uloge |
+| watches(host) | Ana gleda | Ana is watching | guest pill on the card |
+| watchesSettings / watchesPacks | " postavke" / " pakete" | " the settings" / " the packs" | appended to the pill while the host is in them |
+| picksPacks(host) | Ana bira pakete | Ana is choosing packs | guest, read-only pack screen |
+| startedBy(host) | Igru pokreće Ana | Ana starts the game | guest footer |
+| changesTitle | Zadnje promjene | Latest changes | guest list (the board says "Što je Ana promijenila": a gendered past form, so this is the neutral title) |
+| changesEmpty(host) | Još ništa. Promjene se pojave ovdje čim ih Ana napravi. | Nothing yet. Changes show up here as soon as Ana makes them. | guest list when empty |
+| byPhone / byRemote | mobitelom / daljinskim | by phone / by remote | end of each change line |
+| changedGame(game) | Odabrana igra: Kviz | Game chosen: Quiz | change line (neutral, the board's "Otvorila" is gendered) |
+| changedSettings(game) | Otvorene postavke: Kviz | Settings opened: Quiz | change line |
+| changedPacks(game) | Otvoreni paketi: Kviz | Packs opened: Quiz | change line |
+| changedSetting(game, label, old, new) | Kviz · Vrijeme za odgovor: 20 s → 30 s | Quiz · Time to answer: 20 s → 30 s | change line |
 
 ### Tko bi? (phone)
 
@@ -311,7 +321,6 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | caughtHint(w) | Tvoja riječ je bila {w}. Pogodi riječ sela i ipak pobjeđuješ. | Your word was {w}. Guess the village's word and you still win. | the guess |
 | uljezWinner | Selo je uhvatilo uljeza. / Uljez je pobijedio. | The village caught the impostor. / The impostor won. | end |
 | villageWord / impostorWord / impostorsAre | Riječ sela / Riječ uljeza / Uljez | Village word / Impostor word / Impostor | end |
-| wordPack | Paket riječi | Word pack | host settings |
 | impostorCount | Broj uljeza | Number of impostors | host settings, 7-8 players |
 | impostors(n) | 1 uljez / 2 uljeza | 1 impostor / 2 impostors | host settings |
 | sent | Poslano | Sent | night screen button after Potvrdi (same for every role) |

@@ -39,10 +39,8 @@ abstract final class Strings {
   // Lobby
   static String waitingForHost(String? host) =>
       'Čekaš da ${host ?? 'domaćin'} pokrene igru.';
-  static const pickGame = 'Odaberi igru';
   static const quiz = 'Kviz';
   static const curve = 'Curve';
-  static const quizPack = 'Paket pitanja';
   static String packMeta(PackInfo p) => [
     questions(p.questionCount),
     if (p.pictures) 'slike',
@@ -71,8 +69,6 @@ abstract final class Strings {
   static const watchTitle = 'Pazi na pravila';
   static const turnOver = 'Kraj poteza';
   static const turnSeconds = 'Vrijeme po potezu';
-  static const targetScore = 'Cilj';
-  static const wordPackShort = 'Paket riječi';
   static String scoreText(int n) => '$n ${points(n)}';
 
   // Koliko?
@@ -109,8 +105,6 @@ abstract final class Strings {
   static const blefSpikeTitle = 'Blef: probno tipkanje';
   static const blefSpikeTry =
       'Upiši riječi sa č ć š ž đ (npr. „Čačkalica, ćevapi, šljiva, žaba, đak”), pa Pošalji. Ispod se vidi što je stiglo i kodovi znakova.';
-  static const pickPack = 'Odaberi paket';
-  static const packsTitle = 'Paketi';
   static const allPacks = 'Svi paketi';
   static const packMustStay = 'mora ostati';
   static const lastPackStays = 'Barem jedan paket mora ostati uključen.';
@@ -122,11 +116,7 @@ abstract final class Strings {
   /// 1 pitanje, 21 pitanje, 2 pitanja, 94 pitanja, 401 pitanje.
   static String questions(int n) =>
       '$n ${n % 10 == 1 && n % 100 != 11 ? 'pitanje' : 'pitanja'}';
-  static const settingsNote =
-      'Postavke se vide na TV-u i vrijede od sljedeće igre. TV ih pamti.';
   static const bots = 'Roboti';
-  static const fewerBots = 'Manje robota';
-  static const moreBots = 'Više robota';
   static String others(int n) => 'Ostali · $n';
   static const away = ' (nije tu)';
   static const botTag = 'ROBOT';
@@ -163,57 +153,40 @@ abstract final class Strings {
     GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
     GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
   };
-  static String watchingLabel(String? host) => '${host ?? 'Domaćin'} gleda:';
-  static String startsWhen(String? host) =>
-      'Igra počinje kad ${host ?? 'domaćin'} pritisne Igraj.';
   static const hostTag = '★ DOMAĆIN';
+
+  // Phone home, live with the TV (Task 48)
+  static const quizPacks = 'Paketi pitanja';
+  static const wordPacks = 'Paketi riječi';
+  static const yes = 'Da';
+  static const no = 'Ne';
+  static const rolesInGame = 'Uloge u igri';
+  static String rolesCount(int n) =>
+      '$n ${n % 10 == 1 && n % 100 != 11 ? 'uloga' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'uloge' : 'uloga')}';
+  static const targetPoints = 'Bodova do pobjede';
+  static const settingsForAll = 'Postavke · svi ih vide';
+  static const settingsTitle = 'Postavke';
+  static String playGame(String game) => 'Igraj $game';
+  static String prevGame(String game) => 'Prethodna igra: $game';
+  static String nextGame(String game) => 'Sljedeća igra: $game';
+  static String watches(String host) => '$host gleda';
+  static const watchesSettings = ' postavke';
+  static const watchesPacks = ' pakete';
+  static String picksPacks(String host) => '$host bira pakete';
+  static String startedBy(String host) => 'Igru pokreće $host';
+  static const changesTitle = 'Zadnje promjene';
+  static String changesEmpty(String host) =>
+      'Još ništa. Promjene se pojave ovdje čim ih $host napravi.';
+  static const byPhone = 'mobitelom';
+  static const byRemote = 'daljinskim';
+  static String changedGame(String game) => 'Odabrana igra: $game';
+  static String changedSettings(String game) => 'Otvorene postavke: $game';
+  static String changedPacks(String game) => 'Otvoreni paketi: $game';
+  static String changedSetting(String game, String label, String old, String now) =>
+      '$game · $label: $old → $now';
   static const youSuffix = ' (ti)';
   static String players(int n) => 'Igrači · $n';
-  static String playerCount(int n) => '$n igrača';
-  static const curveModeBlurb = {
-    CurveMode.chaos: 'Puno pojačanja, sve odjednom',
-    CurveMode.balanced: 'Kao do sada',
-    CurveMode.peaceful: 'Bez pojačanja',
-    CurveMode.onlyYou: 'Samo zelena: usporavanje i duh',
-  };
 
-  /// The settings of [k] in one line, as on the carousel card.
-  static String settingsLine(
-    GameKind k,
-    GameSettings s,
-    List<PackInfo> packs,
-    List<PackInfo> uljezPacks, [
-    List<PackInfo> objasniPacks = const [],
-    List<PackInfo> kolikoPacks = const [],
-    List<PackInfo> blefPacks = const [],
-    List<PackInfo> tkobiPacks = const [],
-  ]) {
-    // "Svi paketi" or the number ticked, the same as the TV.
-    String pack(List<PackInfo> l, GameKind g) => packCount(
-      l.where((p) => !s.offPacks(g).contains(p.id)).length,
-      l.length,
-    );
-    return switch (k) {
-      GameKind.quiz =>
-        '${pack(packs, GameKind.quiz)} · ${questions(s.quizQuestions)} · ${seconds(s.quizSeconds)}',
-      GameKind.curve =>
-        '$curveModeLabel: ${curveMode(s.curveMode)} · $curveCountdown: ${seconds(s.curveCountdown)}',
-      GameKind.vukodlak => '$possibleRoles: ${s.wolfRoles.length}',
-      GameKind.uljez =>
-        '${pack(uljezPacks, GameKind.uljez)} · ${impostors(s.uljezImpostors)}',
-      GameKind.tkobi =>
-        '${pack(tkobiPacks, GameKind.tkobi)} · ${questions(s.tkobiPrompts)}',
-      GameKind.blef =>
-        '${pack(blefPacks, GameKind.blef)} · ${questions(s.blefQuestions)}',
-      GameKind.koliko =>
-        '${pack(kolikoPacks, GameKind.koliko)} · ${questions(s.kolikoQuestions)} · ${seconds(s.kolikoSeconds)}',
-      GameKind.objasni =>
-        '${pack(objasniPacks, GameKind.objasni)} · ${seconds(s.objasniSeconds)} · ${s.objasniTarget} bodova',
-    };
-  }
-
-  static String watching(String? host, String game) =>
-      '${host ?? 'Domaćin'} gleda: $game';
 
   // Settings (inside a game's details)
   static const quizSeconds = 'Vrijeme za odgovor';
@@ -257,12 +230,9 @@ abstract final class Strings {
   static const vote = 'Glasaj';
   static const you = 'ti';
   static const possibleRoles = 'Moguće uloge';
-  static String possibleRolesCount(int n) => 'Moguće uloge · $n uključeno';
   static const rolesInThisGame = 'Uloge u ovoj igri';
   static const rolesLocked = ' (uvijek u igri)';
   static const hiddenRoles = 'Skrivene uloge';
-  static const hiddenRolesHint =
-      'Kad netko ispadne, uloga se ne otkriva. Sve uloge se vide tek na kraju igre.';
   static const save = 'Spremi';
   static const rulesHeader = 'Pravila';
   static String minutes(int s) =>
@@ -421,7 +391,6 @@ abstract final class Strings {
   static const villageWord = 'Riječ sela';
   static const impostorWord = 'Riječ uljeza';
   static const impostorsAre = 'Uljez';
-  static const wordPack = 'Paket riječi';
   static const impostorCount = 'Broj uljeza';
   static String impostors(int n) => n == 1 ? '1 uljez' : '$n uljeza';
 

@@ -396,18 +396,10 @@ void main() {
       expect(find.byKey(const ValueKey('koliko-send')), findsNothing);
     });
 
-    testWidgets('host settings: card line, rows, whole settings sent', (
+    testWidgets('host settings: banner line, rows, the whole settings sent', (
       t,
     ) async {
       final c = await app(t);
-      for (var i = 0; i < 5; i++) {
-        await t.drag(find.byType(PageView), const Offset(-320, 0));
-        await t.pumpAndSettle();
-      }
-      expect(
-        t.widget<Text>(find.byKey(const ValueKey('line-koliko'))).data,
-        'Svi paketi · 10 pitanja · 30 s',
-      );
       await send(
         t,
         c,
@@ -416,16 +408,26 @@ void main() {
           s: const GameSettings(quizSeconds: 25, objasniTarget: 50),
         ),
       );
-      await t.tap(find.byKey(const ValueKey('koliko-seconds-45')));
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        '2–8 igrača · Svi paketi · 30 s · 10 · bez robota',
+      );
+      await t.tap(find.byKey(const ValueKey('inc-kolikoSeconds')));
       var s = (c.sent.last as SetSettings).settings;
       expect((s.kolikoSeconds, s.quizSeconds, s.objasniTarget), (45, 25, 50));
-      await t.tap(find.byKey(const ValueKey('koliko-questions-15')));
+      await t.tap(find.byKey(const ValueKey('inc-kolikoQuestions')));
       expect((c.sent.last as SetSettings).settings.kolikoQuestions, 15);
+      await t.tap(find.byKey(const ValueKey('open-kolikoOffPacks')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(true));
       await t.tap(find.byKey(const ValueKey('pack-l')));
       await t.pumpAndSettle();
       s = (c.sent.last as SetSettings).settings;
       expect(s.kolikoOffPacks, {'l'});
-      await t.tap(find.text(Strings.play));
+      await t.tap(find.byKey(const ValueKey('packs-back')));
+      await t.pumpAndSettle();
+      expect(c.sent.last, const PackScreen(false));
+      await t.tap(find.byKey(const ValueKey('play')));
       expect(c.sent.last, const StartGame(GameKind.koliko, null));
     });
   });

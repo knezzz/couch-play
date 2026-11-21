@@ -53,45 +53,16 @@ Future<FakeConnection> _show(
   return c;
 }
 
-/// Smallest distance between two sampled paths.
-double _gap(Path a, Path b) {
-  List<Offset> pts(Path p) => [
-    for (final m in p.computeMetrics())
-      for (var d = 0.0; d <= m.length; d += 1)
-        m.getTangentForOffset(d)!.position,
-  ];
-  final pa = pts(a), pb = pts(b);
-  var best = double.infinity;
-  for (final x in pa) {
-    for (final y in pb) {
-      final d = (x - y).distance;
-      if (d < best) best = d;
-    }
-  }
-  return best;
-}
-
 void main() {
-  group('the carousel', () {
-    testWidgets('each game has its own card with its settings line', (t) async {
+  group('the game card and dots', () {
+    testWidgets('the banner line follows the TV: players, then each setting', (
+      t,
+    ) async {
       await _show(t, _lobby(), 0);
-      final quiz = t.widget<Text>(find.byKey(const ValueKey('line-quiz')));
-      expect(quiz.data, 'Svi paketi · 10 pitanja · 20 s');
-      for (final k in [GameKind.quiz, GameKind.curve]) {
-        expect(find.byKey(ValueKey('card-${k.name}')), findsOneWidget);
-      }
       expect(
-        Strings.settingsLine(
-          GameKind.curve,
-          const GameSettings(),
-          const [],
-          const [],
-        ),
-        'Način igre: Uravnoteženo · Pauza prije runde: 2 s',
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        '1–8 igrača · Svi paketi · 10 · 20 s · 4 s · 1 rob.',
       );
-    });
-
-    testWidgets('the settings line follows the TV', (t) async {
       await _show(
         t,
         _lobby(
@@ -104,12 +75,23 @@ void main() {
         0,
       );
       expect(
-        t.widget<Text>(find.byKey(const ValueKey('line-quiz'))).data,
-        '1 paket · 15 pitanja · 30 s',
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        '1–8 igrača · 1 paket · 15 · 30 s · 4 s · 1 rob.',
+      );
+      await _show(t, _lobby(selected: GameKind.vukodlak), 0);
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        '5–8 igrača · Da · bez robota',
       );
     });
 
-    testWidgets('page dots: one wide dot, it moves when the page does', (
+    testWidgets('the edges name the neighbours, wrapping round', (t) async {
+      await _show(t, _lobby(selected: GameKind.quiz), 0);
+      expect(find.text('‹\n${Strings.gameName(GameKind.tkobi)}'), findsOneWidget);
+      expect(find.text('›\n${Strings.curve}'), findsOneWidget);
+    });
+
+    testWidgets('page dots: one wide dot, it follows the selected game', (
       t,
     ) async {
       await _show(t, _lobby(), 0);
@@ -118,60 +100,14 @@ void main() {
         matching: find.byType(AnimatedContainer),
       );
       expect(dots, findsNWidgets(supportedGames.length));
-      expect(supportedGames, contains(GameKind.objasni));
-      expect(supportedGames, contains(GameKind.blef));
-      expect(supportedGames, contains(GameKind.tkobi));
       expect(supportedGames.length, GameKind.values.length);
       double w(int i) => t.getSize(dots.at(i)).width;
-      expect(w(0), 32); // 24 + the 4 px margins
-      expect(w(1), 16);
-      await t.drag(find.byType(PageView), const Offset(-300, 0));
-      await t.pumpAndSettle();
-      expect(w(0), 16);
-      expect(w(1), 32);
-    });
-
-    testWidgets(
-      'the cards draw their art: Curve the ribbons, Kviz four tiles',
-      (t) async {
-        await _show(t, _lobby(), 0);
-        final curve = find.byKey(const ValueKey('card-curve'));
-        await t.drag(find.byType(PageView), const Offset(-300, 0));
-        await t.pumpAndSettle();
-        final paints = find.descendant(
-          of: curve,
-          matching: find.byType(CustomPaint),
-        );
-        expect(
-          paints.evaluate().where(
-            (e) => (e.widget as CustomPaint).painter != null,
-          ),
-          isNotEmpty,
-          reason: 'the ribbons',
-        );
-        await t.drag(find.byType(PageView), const Offset(300, 0));
-        await t.pumpAndSettle();
-        final quiz = find.byKey(const ValueKey('card-quiz'));
-        expect(
-          find.descendant(of: quiz, matching: find.byType(Icon)),
-          findsNWidgets(4),
-        );
-      },
-    );
-
-    test('the Curve card art never crosses or touches: gap > stroke width', () {
-      final r = curveRibbons();
-      expect(_gap(r.red, r.green), greaterThan(8 + 8));
-    });
-
-    test('the check can fail: a crossing pair is caught', () {
-      final a = Path()
-        ..moveTo(0, 0)
-        ..lineTo(100, 100);
-      final b = Path()
-        ..moveTo(0, 100)
-        ..lineTo(100, 0);
-      expect(_gap(a, b), lessThan(1));
+      expect(w(0), 24 + 6); // 24 + the 3 px margins
+      expect(w(1), 8 + 6);
+      await _show(t, _lobby(selected: GameKind.curve), 0);
+      await t.pumpAndSettle(); // the dots slide
+      expect(w(0), 8 + 6);
+      expect(w(1), 24 + 6);
     });
   });
 
@@ -195,31 +131,28 @@ void main() {
       expect(find.text('Ana${Strings.youSuffix}'), findsOneWidget);
       expect(find.text(Strings.hostTag), findsOneWidget);
       expect(find.text(Strings.botTag), findsOneWidget);
-      expect(find.text(Strings.startsWhen('Luka')), findsOneWidget);
+      expect(find.text(Strings.startedBy('Luka')), findsOneWidget);
       expect(find.byType(CharacterFace), findsNWidgets(5));
     });
 
-    testWidgets('the guest changes the character from inside the chip', (
-      t,
-    ) async {
+    testWidgets('the guest changes the character from the header', (t) async {
       await _show(t, _lobby(), 1);
       final chip = find.byKey(const ValueKey('change-character'));
       expect(chip, findsOneWidget);
-      expect(t.getSize(chip).height, greaterThanOrEqualTo(56));
+      expect(t.getSize(chip).height, greaterThanOrEqualTo(44));
       await t.tap(chip);
       await t.pumpAndSettle();
       expect(find.byKey(const ValueKey('char-fox')), findsOneWidget);
     });
 
-    testWidgets('the host keeps Promijeni lik below the chip', (t) async {
+    testWidgets('the host has Promijeni lik in the header too', (t) async {
       await _show(t, _lobby(), 0);
-      expect(find.byKey(const ValueKey('change-character')), findsNothing);
-      expect(find.text(Strings.changeCharacter), findsOneWidget);
+      expect(find.byKey(const ValueKey('change-character')), findsOneWidget);
     });
   });
 
   group('what a guest sees of the open game', () {
-    testWidgets('the watching card shows the game and its settings', (t) async {
+    testWidgets('the card, its pill and settings as the TV says', (t) async {
       await _show(
         t,
         _lobby(
@@ -228,22 +161,20 @@ void main() {
         ),
         1,
       );
-      final card = find.byKey(const ValueKey('watching-card'));
-      for (final s in [
-        Strings.watchingLabel('Luka'),
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('banner-title'))).data,
         Strings.curve,
-        'Način igre: Kaos · Pauza prije runde: 2 s',
-      ]) {
-        expect(
-          find.descendant(of: card, matching: find.text(s)),
-          findsOneWidget,
-          reason: s,
-        );
-      }
+      );
+      expect(find.text(Strings.watches('Luka')), findsOneWidget);
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('val-curveMode'))).data,
+        Strings.curveMode(CurveMode.chaos),
+      );
+      expect(find.byKey(const ValueKey('inc-curveMode')), findsNothing);
     });
   });
 
-  group('the host details', () {
+  group('the host home', () {
     Future<FakeConnection> open(
       WidgetTester t,
       GameKind k, {
@@ -257,95 +188,37 @@ void main() {
       height: height,
     );
 
-    testWidgets('a coloured header card with the name and blurb', (t) async {
+    testWidgets('the card has the name and the blurb', (t) async {
       await open(t, GameKind.quiz);
-      final h = find.byKey(const ValueKey('game-header'));
       expect(
-        find.descendant(of: h, matching: find.text(Strings.quiz)),
-        findsOneWidget,
+        t.widget<Text>(find.byKey(const ValueKey('banner-title'))).data,
+        Strings.quiz,
       );
-      expect(
-        find.descendant(
-          of: h,
-          matching: find.text(Strings.gameBlurb(GameKind.quiz)),
-        ),
-        findsOneWidget,
-      );
+      expect(find.text(Strings.gameBlurb(GameKind.quiz)), findsOneWidget);
     });
 
-    testWidgets('Vukodlak and Uljez have a plain title, no header card', (
-      t,
-    ) async {
-      await open(t, GameKind.vukodlak);
-      expect(find.byKey(const ValueKey('game-header')), findsNothing);
-      expect(find.byKey(const ValueKey('game-title')), findsOneWidget);
-      await t.pumpWidget(const SizedBox());
-      await open(t, GameKind.uljez);
-      expect(find.byKey(const ValueKey('game-header')), findsNothing);
-      expect(find.byKey(const ValueKey('game-title')), findsOneWidget);
-    });
-
-    testWidgets('Vukodlak shows the player count under the title', (t) async {
-      await open(t, GameKind.vukodlak);
-      expect(find.text(Strings.playerCount(4)), findsOneWidget);
-    });
-
-    testWidgets('Igraj is pinned and 72 px, in view without scrolling', (
+    testWidgets('Igraj is pinned, 64 px, named for the game, in view', (
       t,
     ) async {
       await open(t, GameKind.curve, width: 360, height: 640);
-      final b = find.widgetWithText(FilledButton, Strings.play);
-      expect(t.getSize(b).height, 72);
+      final b = find.byKey(const ValueKey('play'));
+      expect(t.getSize(b).height, 64);
       expect(t.getBottomLeft(b).dy, lessThanOrEqualTo(640));
+      expect(find.text(Strings.playGame(Strings.curve)), findsOneWidget);
       expect(t.takeException(), isNull);
     });
 
-    testWidgets('Curve: four mode cards, 2 x 2, above the pause, with blurbs', (
-      t,
-    ) async {
+    testWidgets('Curve: ‹ › on the mode sends the whole settings', (t) async {
       final c = await open(t, GameKind.curve);
-      final tl = {
-        for (final m in CurveMode.values)
-          m: t.getTopLeft(find.byKey(ValueKey('mode-${m.name}'))),
-      };
-      expect(tl[CurveMode.chaos]!.dy, tl[CurveMode.balanced]!.dy);
-      expect(tl[CurveMode.peaceful]!.dy, greaterThan(tl[CurveMode.chaos]!.dy));
-      expect(tl[CurveMode.peaceful]!.dx, tl[CurveMode.chaos]!.dx);
-      final pause = t.getTopLeft(find.text(Strings.curveCountdown));
-      expect(pause.dy, greaterThan(tl[CurveMode.peaceful]!.dy));
-      for (final m in CurveMode.values) {
-        expect(find.text(Strings.curveModeBlurb[m]!), findsOneWidget);
-      }
-      await t.tap(find.byKey(const ValueKey('mode-chaos')));
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('val-curveMode'))).data,
+        Strings.curveMode(CurveMode.balanced),
+      );
+      await t.tap(find.byKey(const ValueKey('dec-curveMode')));
       expect((c.sent.last as SetSettings).settings.curveMode, CurveMode.chaos);
     });
 
-    testWidgets('the chosen mode is the filled card, as the TV says', (
-      t,
-    ) async {
-      await _show(
-        t,
-        _lobby(
-          selected: GameKind.curve,
-          settings: const GameSettings(curveMode: CurveMode.peaceful),
-        ),
-        0,
-      );
-      Color? fill(CurveMode m) => t
-          .widget<Material>(
-            find
-                .ancestor(
-                  of: find.byKey(ValueKey('mode-${m.name}')),
-                  matching: find.byType(Material),
-                )
-                .first,
-          )
-          .color;
-      expect(fill(CurveMode.peaceful), accent);
-      expect(fill(CurveMode.chaos), surface);
-    });
-
-    testWidgets('each setting is its own card with the name beside - and +', (
+    testWidgets('each setting is its own row with the name beside - and +', (
       t,
     ) async {
       await open(t, GameKind.quiz);
@@ -356,6 +229,7 @@ void main() {
       expect((label.dy - less.dy).abs(), lessThan(20));
     });
   });
+
   group('the power-up legend in the Curve details', () {
     Future<void> openLegend(WidgetTester t, {double width = 390}) async {
       await _show(

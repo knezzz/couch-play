@@ -262,6 +262,11 @@ void main() {
       return c;
     }
 
+    Future<void> openPacks(WidgetTester t) async {
+      await t.tap(find.byKey(const ValueKey('open-uljezOffPacks')));
+      await t.pumpAndSettle();
+    }
+
     testWidgets('a pack pick sends the whole settings', (t) async {
       final c = await host(
         t,
@@ -271,7 +276,8 @@ void main() {
           kolikoSeconds: 120,
         ),
       );
-      await t.ensureVisible(find.byKey(const ValueKey('pack-b')));
+      await openPacks(t);
+      expect(c.sent.last, const PackScreen(true));
       await t.tap(find.byKey(const ValueKey('pack-b')));
       await t.pumpAndSettle();
       final s = (c.sent.last as SetSettings).settings;
@@ -290,10 +296,13 @@ void main() {
             .icon ==
         Icons.check_box;
 
-    testWidgets('every pack starts ticked, the line says Svi paketi', (
-      t,
-    ) async {
+    testWidgets('every pack starts ticked, the row says Svi paketi', (t) async {
       await host(t, const GameSettings());
+      expect(
+        t.widget<Text>(find.byKey(const ValueKey('banner-meta'))).data,
+        contains(Strings.allPacks),
+      );
+      await openPacks(t);
       expect([ticked(t, 'a'), ticked(t, 'b')], [true, true]);
     });
 
@@ -302,6 +311,7 @@ void main() {
     ) async {
       // 'a' was switched off; the lobby also has 'b', which the TV added later.
       await host(t, const GameSettings(uljezOffPacks: {'a'}));
+      await openPacks(t);
       expect([ticked(t, 'a'), ticked(t, 'b')], [false, true]);
     });
 
@@ -309,8 +319,8 @@ void main() {
       t,
     ) async {
       final c = await host(t, const GameSettings(uljezOffPacks: {'a'}));
+      await openPacks(t);
       final before = c.sent.length;
-      await t.ensureVisible(find.byKey(const ValueKey('pack-b')));
       await t.tap(find.byKey(const ValueKey('pack-b')));
       await t.pump();
       expect(c.sent.length, before);
@@ -324,15 +334,25 @@ void main() {
     ) async {
       final c = await host(t, const GameSettings(), players: 7);
       expect(find.byKey(const ValueKey('discuss-more')), findsNothing);
-      await t.ensureVisible(find.byKey(const ValueKey('impostors-2')));
-      await t.tap(find.byKey(const ValueKey('impostors-2')));
+      await t.tap(find.byKey(const ValueKey('inc-uljezImpostors')));
       expect((c.sent.last as SetSettings).settings.uljezImpostors, 2);
+    });
+
+    testWidgets('with 6 players there is no second impostor to step to', (
+      t,
+    ) async {
+      await host(t, const GameSettings(), players: 6);
+      expect(
+        t
+            .widget<IconButton>(find.byKey(const ValueKey('inc-uljezImpostors')))
+            .onPressed,
+        isNull,
+      );
     });
 
     testWidgets('Igraj starts Uljez', (t) async {
       final c = await host(t, const GameSettings());
-      await t.ensureVisible(find.text(Strings.play));
-      await t.tap(find.text(Strings.play));
+      await t.tap(find.byKey(const ValueKey('play')));
       expect(c.sent.last, const StartGame(GameKind.uljez, null));
     });
 
@@ -346,13 +366,12 @@ void main() {
         );
         final c = await _app(t, me: 0);
         await _send(t, c, _lobby(selected: GameKind.quiz, settings: s));
-        await t.tap(find.byTooltip(Strings.moreOf(Strings.quizSeconds)));
+        await t.tap(find.byKey(const ValueKey('inc-quizSeconds')));
         var n = (c.sent.last as SetSettings).settings;
         expect((n.kolikoSeconds, n.uljezImpostors), (150, 2));
         expect(n.uljezOffPacks, {'b'});
         await _send(t, c, _lobby(selected: GameKind.vukodlak, settings: s));
-        await t.ensureVisible(find.byKey(const ValueKey('hidden-roles')));
-        await t.tap(find.byKey(const ValueKey('hidden-roles')));
+        await t.tap(find.byKey(const ValueKey('inc-wolfHideRoles')));
         n = (c.sent.last as SetSettings).settings;
         expect((n.kolikoSeconds, n.uljezImpostors), (150, 2));
         expect(n.uljezOffPacks, {'b'});

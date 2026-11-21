@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../strings.dart';
 import '../theme.dart';
-import 'settings_widgets.dart';
 
 /// Team colours: one source in core, shared with the TV.
 final teamColors = objasniTeamColors;
@@ -407,53 +406,3 @@ class _TurnState extends State<ObjasniTurnScreen> {
   );
 }
 
-/// The host's settings for Objasni in its details: time, target, pack.
-class ObjasniSettingsView extends StatelessWidget {
-  const ObjasniSettingsView({
-    super.key,
-    required this.seconds,
-    required this.target,
-    required this.packs,
-    required this.ticked,
-    required this.onSeconds,
-    required this.onTarget,
-    required this.onTogglePack,
-  });
-  final int seconds, target;
-  final List<PackInfo> packs;
-  final Set<String> ticked;
-  final void Function(int) onSeconds, onTarget;
-  final void Function(String id) onTogglePack;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      ChoiceRow(
-        label: Strings.turnSeconds,
-        keyPrefix: 'objasni-seconds',
-        values: const [45, 60, 90],
-        value: seconds,
-        text: Strings.seconds,
-        onPick: onSeconds,
-      ),
-      const SizedBox(height: 8),
-      ChoiceRow(
-        label: Strings.targetScore,
-        keyPrefix: 'objasni-target',
-        values: const [20, 30, 50],
-        value: target,
-        text: (n) => '$n',
-        onPick: onTarget,
-      ),
-      const SizedBox(height: 8),
-      PackChecklist(
-        key: const ValueKey('objasni-packs'),
-        title: Strings.packsTitle,
-        packs: packs,
-        ticked: ticked,
-        onToggle: onTogglePack,
-      ),
-    ],
-  );
-}

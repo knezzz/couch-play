@@ -1,4 +1,3 @@
-import 'package:core/core.dart';
 
 import 'dart:async';
 
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import '../strings.dart';
 import '../theme.dart';
 import 'blef_field.dart';
-import 'settings_widgets.dart';
 
 /// Writing a fake answer: the question, a clock, the text field. When the TV
 /// has accepted the fake ([sent] is set) the field is gone and only your own
@@ -313,42 +311,3 @@ class BlefResultScreen extends StatelessWidget {
   );
 }
 
-/// The host's settings for Blef: the number of questions and the pack.
-class BlefSettingsView extends StatelessWidget {
-  const BlefSettingsView({
-    super.key,
-    required this.questions,
-    required this.packs,
-    required this.ticked,
-    required this.onQuestions,
-    required this.onTogglePack,
-  });
-  final int questions;
-  final List<PackInfo> packs;
-  final Set<String> ticked;
-  final void Function(int) onQuestions;
-  final void Function(String id) onTogglePack;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      ChoiceRow(
-        label: Strings.quizQuestions,
-        keyPrefix: 'blef-questions',
-        values: const [5, 7, 10],
-        value: questions,
-        text: (n) => '$n',
-        onPick: onQuestions,
-      ),
-      const SizedBox(height: 8),
-      PackChecklist(
-        key: const ValueKey('blef-packs'),
-        title: Strings.packsTitle,
-        packs: packs,
-        ticked: ticked,
-        onToggle: onTogglePack,
-      ),
-    ],
-  );
-}
