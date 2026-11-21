@@ -123,14 +123,32 @@ String _compact(Object? v) => switch (v) {
       _ => jsonEncode(v),
     };
 
+/// The item lines of [text] (one item per line at 4 spaces), keyed by their compact form.
+Map<String, String> _itemLines(String text) {
+  final out = <String, String>{};
+  for (final l in text.split('\n')) {
+    if (!l.startsWith('    ')) continue;
+    final s = l.trim().replaceFirst(RegExp(r',$'), '');
+    try {
+      out[_compact(jsonDecode(s))] = s;
+    } on FormatException {
+      // not a whole item on this line
+    }
+  }
+  return out;
+}
+
 /// The files' own layout: top-level keys at 2 spaces, the list's items one per line at 4,
-/// each item compact, so an edit changes only the lines it touches.
-String encodePack(Game game, Map<String, dynamic> json, {bool trailingNewline = true}) {
+/// each item compact, so an edit changes only the lines it touches. An item that equals one in
+/// [original] keeps that line as written (hand-made files don't always space it our way).
+String encodePack(Game game, Map<String, dynamic> json, {bool trailingNewline = true, String? original}) {
   final key = _listKey(game);
+  final keep = original == null ? const <String, String>{} : _itemLines(original);
+  String item(Object? i) => keep[_compact(i)] ?? _compact(i);
   final lines = [
     for (final e in json.entries)
       if (e.key == key && e.value is List && (e.value as List).isNotEmpty)
-        '  ${jsonEncode(e.key)}: [\n${(e.value as List).map((i) => '    ${_compact(i)}').join(',\n')}\n  ]'
+        '  ${jsonEncode(e.key)}: [\n${(e.value as List).map((i) => '    ${item(i)}').join(',\n')}\n  ]'
       else
         '  ${jsonEncode(e.key)}: ${_compact(e.value)}',
   ];
@@ -277,7 +295,7 @@ SaveResult savePack(String repoRoot, Game game, String id, Map<String, dynamic> 
   if (json['id'] != id) return const SaveError('Oznaka paketa se ne smije mijenjati.');
 
   final original = file.readAsStringSync();
-  final text = encodePack(game, json, trailingNewline: original.endsWith('\n'));
+  final text = encodePack(game, json, trailingNewline: original.endsWith('\n'), original: original);
   final folder = path.endsWith('/$id/$id.json');
   final tmp = Directory.systemTemp.createTempSync('pack_editor');
   try {
@@ -313,8 +331,8 @@ SaveResult savePack(String repoRoot, Game game, String id, Map<String, dynamic> 
       final originalCount = ((jsonDecode(original) as Map)['questions'] as List).length;
       if (src.existsSync() && (deleted.isNotEmpty || added > 0)) {
         final s = src.readAsStringSync();
-        // Only when the numbered lines still match the pack one to one.
-        if (RegExp(r'^\d+\. ', multiLine: true).allMatches(s).length == originalCount) {
+        // Only when the per-question list still matches the pack one to one.
+        if (RegExp(r'^\d+\. ', multiLine: true).allMatches(_perQuestion(s)).length == originalCount) {
           _atomicWrite(src.path, utf8.encode(renumberSources(s, deleted, added)));
         } else {
           note = sourcesNote;
@@ -327,15 +345,22 @@ SaveResult savePack(String repoRoot, Game game, String id, Map<String, dynamic> 
   }
 }
 
+/// The per-question list ends at the first "## " section (photo credits, notes), whose numbers
+/// are not one line per question.
+final _section = RegExp(r'^## ', multiLine: true);
+String _perQuestion(String text) => text.substring(0, _section.firstMatch(text)?.start ?? text.length);
+
 /// Drops the numbered lines of the deleted questions (1-based, by position among the numbered
 /// lines), renumbers the rest and appends [added] placeholder lines after the last numbered line.
-/// Everything else (header, blank lines, notes) stays as it is.
+/// Only the per-question list is touched; everything else (header, notes, "## " sections) stays.
 String renumberSources(String text, List<int> deleted, int added) {
   final numbered = RegExp(r'^\d+\. (.*)$');
   final out = <String>[];
+  final section = _section.firstMatch(text);
+  final headLines = section == null ? 1 << 30 : '\n'.allMatches(text.substring(0, section.start)).length;
   var pos = 0, kept = 0, lastNumbered = -1;
-  for (final line in text.split('\n')) {
-    final m = numbered.firstMatch(line);
+  for (final (i, line) in text.split('\n').indexed) {
+    final m = i < headLines ? numbered.firstMatch(line) : null;
     if (m == null) {
       out.add(line);
       continue;

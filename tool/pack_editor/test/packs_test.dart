@@ -83,7 +83,7 @@ void main() {
   test('sources_skip_is_reported', () {
     final p = loadPack(root, Game.kviz, 'hr-fizika');
     final f = File('$root/tool/packs/hr-fizika.sources.md');
-    f.writeAsStringSync('${f.readAsStringSync()}\n999. extra\n');
+    f.writeAsStringSync(f.readAsStringSync().replaceFirst('\n1. ', '\n999. extra\n1. ')); // one line too many
     (p.json['questions'] as List).removeAt(0);
     final r = savePack(root, Game.kviz, 'hr-fizika', p.json, p.stamp, deleted: [1]);
     expect((r as SaveOk).note, sourcesNote);
@@ -155,8 +155,8 @@ void main() {
     return j.first is Map ? j.first['q'] as String : j.first as String;
   }
 
-  refused('koliko_29', Game.koliko, 'hr-koliko-opcenito', (j) => qs(j).removeLast(), 'Koliko? treba barem 30 pitanja (sada 29)');
-  refused('blef_29', Game.blef, 'hr-blef-priroda', (j) => qs(j).removeLast(), 'Blef treba barem 30 pitanja (sada 29)');
+  refused('koliko_29', Game.koliko, 'hr-koliko-opcenito', (j) => qs(j).removeRange(29, qs(j).length), 'Koliko? treba barem 30 pitanja (sada 29)');
+  refused('blef_29', Game.blef, 'hr-blef-priroda', (j) => qs(j).removeRange(29, qs(j).length), 'Blef treba barem 30 pitanja (sada 29)');
   refused('blef_source_not_http', Game.blef, 'hr-blef-priroda', (j) => qs(j)[0]['source'] = 'knjiga', 'počinjati s http (sada „knjiga“)');
   refused('blef_answer_over_40', Game.blef, 'hr-blef-priroda', (j) => qs(j)[0]['answer'] = 'x' * 41, 'najviše 40 znakova (sada 41)');
   refused('koliko_repeat_in_another_pack', Game.koliko, 'hr-koliko-opcenito', (j) {
@@ -213,6 +213,12 @@ void main() {
   });
 
   test('text_pack_is_copied', () {
+    // Every bundled quiz pack is a folder now; make hr-opce-znanje a plain .json pack (no pictures) to cover that path.
+    final j = loadPack(root, Game.kviz, 'hr-opce-znanje').json;
+    (j['questions'] as List).removeWhere((q) => q['image'] != null);
+    Directory('$root/tool/packs/hr-opce-znanje').deleteSync(recursive: true);
+    File('$root/apps/tv/assets/packs/hr-opce-znanje.zip').deleteSync();
+    File('$root/tool/packs/hr-opce-znanje.json').writeAsStringSync(encodePack(Game.kviz, j));
     final p = loadPack(root, Game.kviz, 'hr-opce-znanje');
     (p.json['questions'] as List)[0]['q'] = 'Izmijenjeno?';
     expect(savePack(root, Game.kviz, 'hr-opce-znanje', p.json, p.stamp), isA<SaveOk>());
@@ -220,18 +226,36 @@ void main() {
   });
 
   test('sources_follow_a_delete', () {
+    // hr-fizika's sources end with a "## Photos" section numbered by question, not one line per question.
+    String photos(String s) => s.substring(s.indexOf('\n## '));
+    final before = read('tool/packs/hr-fizika.sources.md');
+    expect(photos(before), contains('\n## Photos'));
     final p = loadPack(root, Game.kviz, 'hr-fizika');
     final qs = p.json['questions'] as List;
     qs.removeAt(1);
-    expect(savePack(root, Game.kviz, 'hr-fizika', p.json, p.stamp, deleted: [2]), isA<SaveOk>());
-    final lines = read('tool/packs/hr-fizika.sources.md').split('\n');
-    expect(lines.where((l) => RegExp(r'^\d+\. ').hasMatch(l)), hasLength(qs.length));
-    expect(lines.any((l) => l.startsWith('2. standard gravity')), isTrue);
+    final r = savePack(root, Game.kviz, 'hr-fizika', p.json, p.stamp, deleted: [2]);
+    expect((r as SaveOk).note, isNull);
+    final after = read('tool/packs/hr-fizika.sources.md');
+    final head = after.substring(0, after.indexOf('\n## ')).split('\n');
+    expect(head.where((l) => RegExp(r'^\d+\. ').hasMatch(l)), hasLength(qs.length));
+    expect(head.any((l) => l.startsWith('2. standard gravity')), isTrue);
+    expect(photos(after), photos(before));
   });
 
   test('renumber_sources', () {
     const text = '# x: sources\n\nSome header text.\n- a bullet\n\n1. a\n2. b\n3. c\n4. d\n\nend note\n';
     expect(renumberSources(text, [2], 1),
         '# x: sources\n\nSome header text.\n- a bullet\n\n1. a\n2. c\n3. d\n4. (added in the editor, no source yet)\n\nend note\n');
+    expect(renumberSources('1. a\n2. b', [1], 0), '1. b'); // no section, no final newline
+    expect(renumberSources('1. a\n2. b\n\n## Photos\n\n2. photo of b\n', [1], 0), '1. b\n\n## Photos\n\n2. photo of b\n');
+  });
+
+  test('hand_spaced_line_kept_unless_edited', () {
+    const original = '{\n  "id": "x",\n  "words": [\n    "a","b",\n    ["c","d"]\n  ]\n}\n';
+    // a whole item per line: "a","b" is two items on one line, so it is not kept
+    expect(encodePack(Game.objasni, {'id': 'x', 'words': ['a', ['c', 'd']]}, original: original),
+        '{\n  "id": "x",\n  "words": [\n    "a",\n    ["c","d"]\n  ]\n}\n');
+    expect(encodePack(Game.objasni, {'id': 'x', 'words': ['a', ['c', 'e']]}, original: original),
+        '{\n  "id": "x",\n  "words": [\n    "a",\n    ["c", "e"]\n  ]\n}\n');
   });
 }
