@@ -91,9 +91,21 @@ class _UljezScreenState extends State<UljezScreen> with SingleTickerProviderStat
       _pulse.stop();
       _pulse.value = 0;
     } else {
-      _pulse.repeat(reverse: true);
+      _pulseTurn();
     }
   }
+
+  // The speaker's ring pulses a few times when the turn moves, then holds still: an endless
+  // ticker kept the TV drawing 60 frames a second all game (heat, power).
+  void _pulseTurn() => _pulse.repeat(reverse: true, count: 6);
+
+  @override
+  void didUpdateWidget(UljezScreen old) {
+    super.didUpdateWidget(old);
+    if (_reduced == false && _turnId(widget) != _turnId(old)) _pulseTurn();
+  }
+
+  static int? _turnId(UljezScreen w) => w.seats.where((s) => s.turn).firstOrNull?.id;
 
   @override
   void dispose() {
