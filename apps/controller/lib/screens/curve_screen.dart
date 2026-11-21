@@ -18,6 +18,7 @@ class CurveScreen extends StatefulWidget {
     this.colorIndex = 0,
     this.score = 0,
     this.round,
+    this.end,
     super.key,
   });
   final Connection conn;
@@ -31,6 +32,9 @@ class CurveScreen extends StatefulWidget {
 
   /// False after a crash: steering is inert until the next round.
   final bool alive;
+
+  /// Set when the round is over: the buttons are inert and a card says how it ended.
+  final RoundEnd? end;
 
   @override
   State<CurveScreen> createState() => _CurveScreenState();
@@ -57,7 +61,7 @@ class _CurveScreenState extends State<CurveScreen> {
   @override
   void didUpdateWidget(CurveScreen old) {
     super.didUpdateWidget(old);
-    if (old.alive && !widget.alive) {
+    if ((old.alive && !widget.alive) || (old.end == null && widget.end != null)) {
       // Ignored pointers never send their release, so release for them or the
       // TV keeps turning this player.
       final held = _left || _right;
@@ -159,7 +163,7 @@ class _CurveScreenState extends State<CurveScreen> {
                 child: Stack(
                   children: [
                     IgnorePointer(
-                      ignoring: !widget.alive,
+                      ignoring: !widget.alive || widget.end != null,
                       child: Row(
                         children: [
                           _half(0, true, (v) => _set(left: v), color),
@@ -168,23 +172,41 @@ class _CurveScreenState extends State<CurveScreen> {
                         ],
                       ),
                     ),
-                    if (!widget.alive)
+                    if (!widget.alive || widget.end != null)
                       Center(
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: const Color(0xF2000000),
                             borderRadius: BorderRadius.circular(24),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(24),
-                            child: Text(
-                              Strings.crashed,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  switch (widget.end) {
+                                    RoundEnd.won => Strings.roundWon,
+                                    RoundEnd.tie => Strings.roundTie,
+                                    RoundEnd.over => Strings.roundOver,
+                                    null => Strings.crashed,
+                                  },
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                if (widget.end != null) ...[
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    Strings.nextRoundSoon,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 20, color: muted),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         ),

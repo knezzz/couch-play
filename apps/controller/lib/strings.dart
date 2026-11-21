@@ -415,6 +415,10 @@ abstract final class Strings {
 
   // Curve
   static const crashed = 'Sudar! Pričekaj sljedeću rundu.';
+  static const roundWon = 'Runda je tvoja!';
+  static const roundTie = 'Neriješeno';
+  static const roundOver = 'Runda gotova';
+  static const nextRoundSoon = 'Sljedeća runda uskoro';
 
   static const steerLeft = 'Lijevo';
   static const steerRight = 'Desno';

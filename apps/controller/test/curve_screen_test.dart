@@ -128,6 +128,60 @@ void main() {
     await t.pumpWidget(const SizedBox());
   });
 
+  group('the round ends', () {
+    Future<void> show(WidgetTester t, _Fake c, {RoundEnd? end, bool alive = true}) =>
+        t.pumpWidget(MaterialApp(home: CurveScreen(c, alive: alive, end: end)));
+
+    final cases = {
+      RoundEnd.won: Strings.roundWon,
+      RoundEnd.tie: Strings.roundTie,
+      RoundEnd.over: Strings.roundOver,
+    };
+    for (final e in cases.entries) {
+      testWidgets('${e.key.name}: "${e.value}" and the next round is near', (t) async {
+        await show(t, _Fake(), end: e.key, alive: e.key == RoundEnd.won);
+        expect(find.text(e.value), findsOneWidget);
+        expect(find.text(Strings.nextRoundSoon), findsOneWidget);
+        for (final other in cases.values.where((v) => v != e.value)) {
+          expect(find.text(other), findsNothing);
+        }
+        expect(find.text(Strings.crashed), findsNothing);
+        await t.pumpWidget(const SizedBox());
+      });
+    }
+
+    testWidgets('while the round runs there is no message', (t) async {
+      await show(t, _Fake());
+      for (final s in [...cases.values, Strings.nextRoundSoon, Strings.crashed]) {
+        expect(find.text(s), findsNothing);
+      }
+      await show(t, _Fake(), alive: false);
+      expect(find.text(Strings.crashed), findsOneWidget, reason: 'a crash before the end');
+      await t.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('the winner (still alive) cannot steer once the round is over', (t) async {
+      final c = _Fake();
+      await show(t, c, end: RoundEnd.won);
+      c.sent.clear();
+      final g = await t.startGesture(const Offset(50, 300));
+      expect(c.sent.whereType<Steer>(), isEmpty);
+      await g.up();
+      await t.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('a thumb still down at the end is released', (t) async {
+      final c = _Fake();
+      await show(t, c);
+      final g = await t.startGesture(const Offset(50, 300));
+      expect(c.sent.last, const Steer(left: true, right: false));
+      await show(t, c, end: RoundEnd.won);
+      expect(c.sent.last, const Steer(left: false, right: false));
+      await g.up();
+      await t.pumpWidget(const SizedBox());
+    });
+  });
+
   testWidgets('a button still works after release during a crash', (t) async {
     final c = _Fake();
     await t.pumpWidget(MaterialApp(home: CurveScreen(c)));

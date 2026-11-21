@@ -399,6 +399,25 @@ void main() {
     },
   );
 
+  testWidgets('the round-end message comes with the status and goes with the next round', (
+    t,
+  ) async {
+    final c = FakeConnection();
+    await t.pumpWidget(App(c));
+    await _send(t, c, const Welcome(0, 0, 'tok'));
+    await _send(
+      t,
+      c,
+      const CurveStatus(alive: true, score: 2, target: 20, round: 3, end: RoundEnd.won),
+    );
+    expect(find.text(Strings.roundWon), findsOneWidget);
+    expect(find.text(Strings.nextRoundSoon), findsOneWidget);
+    await _send(t, c, const CurveStatus(alive: true, score: 2, target: 20, round: 4));
+    expect(find.text(Strings.roundWon), findsNothing);
+    expect(find.text(Strings.nextRoundSoon), findsNothing);
+    await t.pumpWidget(const SizedBox());
+  });
+
   testWidgets('the crashed message has a solid backing panel', (t) async {
     final c = FakeConnection();
     await t.pumpWidget(App(c));

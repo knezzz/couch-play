@@ -1238,7 +1238,7 @@ class Session {
     _sim?.setInput(sid, left: left, right: right);
   }
 
-  CurveStatus? _statusFor(Player p) {
+  CurveStatus? _statusFor(Player p, {RoundEnd? end}) {
     final sim = _sim;
     final sid = _simIdOf[p.id];
     if (sim == null || sid == null) return null;
@@ -1247,7 +1247,8 @@ class Session {
         alive: (head?.alive ?? false) && !_gone.contains(p.id),
         score: sim.scores[sid] ?? 0,
         target: sim.target,
-        round: _curveRound);
+        round: _curveRound,
+        end: end);
   }
 
   void _sendStatuses() {
@@ -1672,7 +1673,19 @@ class Session {
     } else if (roundOver) {
       sfx.play(Sound.roundWin);
     }
-    if (roundOver) _sendStatuses();
+    if (roundOver) {
+      // The new score and how the round ended for each phone, in one message.
+      for (final p in _players) {
+        final sid = _simIdOf[p.id];
+        final end = sid == survivor
+            ? RoundEnd.won
+            : survivor == null && died.contains(sid)
+                ? RoundEnd.tie
+                : RoundEnd.over;
+        final status = _statusFor(p, end: end);
+        if (status != null) p.socket?.send(status);
+      }
+    }
     if (!matchOver && !roundOver) return;
     // What each made in this round: the scores now against the scores when it started.
     final scores = _sim!.scores;

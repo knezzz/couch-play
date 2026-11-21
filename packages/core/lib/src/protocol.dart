@@ -357,7 +357,8 @@ sealed class Message with _JsonEq {
             alive: m['alive'] as bool,
             score: m['score'] as int,
             target: m['target'] as int,
-            round: m['round'] as int?),
+            round: m['round'] as int?,
+            end: m['end'] == null ? null : RoundEnd.values.byName(m['end'] as String)),
         'results' => Results(list('placements', Placement.fromJson)),
         'effect' => Effect(m['name'] as String),
         'role' => RoleMsg(WolfRole.values.byName(m['role'] as String),
@@ -753,19 +754,36 @@ class QuizReveal extends Message {
       };
 }
 
+/// How a Curve round ended for one phone: it won it, it tied (crashed on the
+/// last tick with the others), or someone else won / it crashed earlier.
+enum RoundEnd { won, tie, over }
+
 class CurveStatus extends Message {
   final bool alive;
   final int score, target;
 
   /// The current round of the match, 1-based; null from an older TV.
   final int? round;
+
+  /// Set once the round is over (the same message that carries the new score);
+  /// null while it runs and from an older TV.
+  final RoundEnd? end;
   const CurveStatus(
-      {required this.alive, required this.score, required this.target, this.round});
+      {required this.alive,
+      required this.score,
+      required this.target,
+      this.round,
+      this.end});
   @override
   String get type => 'curve';
   @override
-  Map<String, Object?> get fields =>
-      {'alive': alive, 'score': score, 'target': target, 'round': round};
+  Map<String, Object?> get fields => {
+        'alive': alive,
+        'score': score,
+        'target': target,
+        'round': round,
+        'end': end?.name,
+      };
 }
 
 class Results extends Message {

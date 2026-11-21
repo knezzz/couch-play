@@ -404,6 +404,18 @@ void main() {
     expect(Message.decode('{"type":"curve","alive":true,"score":3,"target":10,"round":"2"}'), isNull);
   });
 
+  test('a curve status carries how the round ended for this phone', () {
+    for (final e in RoundEnd.values) {
+      final m = CurveStatus(alive: true, score: 1, target: 10, round: 2, end: e);
+      expect((Message.decode(m.encode()) as CurveStatus).end, e);
+    }
+    const running = CurveStatus(alive: true, score: 1, target: 10);
+    expect((Message.decode(running.encode()) as CurveStatus).end, isNull);
+    // An older TV sends no end; an unknown one is refused.
+    expect((Message.decode('{"type":"curve","alive":true,"score":3,"target":10}') as CurveStatus).end, isNull);
+    expect(Message.decode('{"type":"curve","alive":true,"score":3,"target":10,"end":"x"}'), isNull);
+  });
+
   group('party games: blef', () {
     test('messages round trip', () {
       final ms = <Message>[
