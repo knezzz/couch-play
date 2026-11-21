@@ -262,7 +262,7 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 |---|---|---|---|
 | questionOf(n, total) | Pitanje {n} od {total} | Question {n} of {total} | the pad, top left |
 | sentHint | Poslano. Gledaj TV.<br>Odgovor se vidi samo dok držiš. | Sent. Watch the TV.<br>The answer shows only while you hold. | hold card after any sent answer (Koliko, Blef, Tko bi?, Uljez vote and guess); same card as the Vukodlak role |
-| yourNumberCaps / yourAnswerCaps / yourVoteCaps | TVOJ BROJ / TVOJ ODGOVOR / TVOJ GLAS | YOUR NUMBER / YOUR ANSWER / YOUR VOTE | small label over the held answer |
+| yourNumberCaps / yourAnswerCaps / yourVoteCaps / yourPickCaps | TVOJ BROJ / TVOJ ODGOVOR / TVOJ GLAS / TVOJ ODABIR | YOUR NUMBER / YOUR ANSWER / YOUR VOTE / YOUR PICK | small label over the held answer |
 | waitTv | Gledaj TV. | Watch the TV. | under the held answer |
 | send | Pošalji | Send | Koliko? and Blef |
 | del | Obriši | Delete | the ⌫ key (screen reader) |

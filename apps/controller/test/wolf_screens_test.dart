@@ -4,12 +4,15 @@ import 'package:controller/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'hold.dart';
 import 'look.dart';
 
 Future<void> _show(WidgetTester t, Widget w, {double width = 390}) async {
   t.view.physicalSize = Size(width, 1600);
   t.view.devicePixelRatio = 1;
   addTearDown(t.view.reset);
+  // A fresh tree, so a screen's sent state never carries into the next one.
+  await t.pumpWidget(const SizedBox());
   await t.pumpWidget(MaterialApp(theme: theme, home: w));
 }
 
@@ -194,6 +197,60 @@ void main() {
       }
     });
 
+    testWidgets('the sent card looks the same for a sum and a player, held too', (
+      t,
+    ) async {
+      Future<String> held(String hint, List<NightItem> items) async {
+        await _show(
+          t,
+          NightScreen(
+            night: 2,
+            hint: hint,
+            targets: items,
+            onConfirm: (_, _, _) {},
+          ),
+        );
+        await t.tap(find.byKey(const ValueKey('night-2')));
+        await t.pump();
+        await t.tap(find.byKey(const ValueKey('night-confirm')));
+        await t.pump();
+        final g = await holdCard(t);
+        final l = look(t, {items[1].label});
+        await g.up();
+        await t.pump();
+        return l;
+      }
+
+      await held('x', _night);
+      expect(
+        await held('Koliko je 7 × 8?', _sum),
+        await held('Koga posjećujete?', _night),
+      );
+    });
+
+    testWidgets('two sent picks both hide behind the card', (t) async {
+      await _show(
+        t,
+        NightScreen(
+          night: 1,
+          hint: 'h',
+          targets: _night,
+          targets2: _sum,
+          onConfirm: (_, _, _) {},
+        ),
+      );
+      await t.tap(find.byKey(const ValueKey('night-1')));
+      await t.tap(find.byKey(const ValueKey('night2-3')));
+      await t.pump();
+      await t.tap(find.byKey(const ValueKey('night-confirm')));
+      await t.pump();
+      expect(find.text('Ana'), findsNothing);
+      expect(find.text('58'), findsNothing);
+      final g = await holdCard(t);
+      expect(find.text('Ana\n58'), findsOneWidget);
+      await g.up();
+    });
+
     testWidgets('night 1 with two picks looks the same for a wolf and a sum', (
       t,
     ) async {
@@ -261,10 +318,11 @@ void main() {
       await t.pump();
       await t.tap(find.byKey(const ValueKey('night-confirm')));
       await t.pump();
-      expect(find.text(Strings.sent), findsOneWidget);
-      await t.tap(find.byKey(const ValueKey('night-3')));
-      await t.tap(find.byKey(const ValueKey('night-confirm')));
+      expect(find.byKey(const ValueKey('night-3')), findsNothing);
+      expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+      expect(find.text(Strings.sentHint), findsOneWidget);
       expect(sent, [2]);
+      await expectHiddenUntilHeld(t, '56');
     });
 
     bool marked(WidgetTester t, String key) {
@@ -306,12 +364,12 @@ void main() {
         );
         await t.tap(find.byKey(const ValueKey('night-2')));
         await t.pump();
+        expect(marked(t, 'night-2'), isTrue);
         await t.tap(find.byKey(const ValueKey('night-confirm')));
         await t.pump();
-        await t.tap(find.byKey(const ValueKey('night-3')));
-        await t.pump();
-        expect(marked(t, 'night-2'), isTrue);
-        expect(marked(t, 'night-3'), isFalse);
+        // Sent: no list is left on screen to read or change.
+        expect(find.byKey(const ValueKey('night-2')), findsNothing);
+        expect(find.byKey(const ValueKey('night-3')), findsNothing);
       },
     );
 
@@ -333,14 +391,8 @@ void main() {
       await t.pump();
       await t.tap(find.byKey(const ValueKey('night-confirm')));
       await t.pump();
-      await t.tap(find.byKey(const ValueKey('night-special')));
+      expect(find.byKey(const ValueKey('night-special')), findsNothing);
       expect(sent, [(3, true)]);
-      expect(
-        t
-            .widget<SwitchListTile>(find.byKey(const ValueKey('night-special')))
-            .value,
-        isTrue,
-      );
     });
 
     testWidgets('Potvrdi sends the picked player; nothing without a pick', (

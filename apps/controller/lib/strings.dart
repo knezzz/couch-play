@@ -78,6 +78,7 @@ abstract final class Strings {
   static const yourAnswerCaps = 'TVOJ ODGOVOR';
   static const yourNumberCaps = 'TVOJ BROJ';
   static const yourVoteCaps = 'TVOJ GLAS';
+  static const yourPickCaps = 'TVOJ ODABIR';
   static const correctAnswer = 'Točan odgovor';
   static const yourNumber = 'Tvoj broj';
   static const noNumber = 'Bez odgovora';

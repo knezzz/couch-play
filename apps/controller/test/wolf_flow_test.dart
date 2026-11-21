@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_connection.dart';
+import 'hold.dart';
 import 'look.dart';
 
 LobbyState _lobby({
@@ -164,27 +165,11 @@ void main() {
           done: true,
         ),
       );
-      expect(find.text(Strings.sent), findsOneWidget);
-      expect(find.text('●'), findsOneWidget);
-      expect(
-        t
-            .widget<SwitchListTile>(find.byKey(const ValueKey('night-special')))
-            .value,
-        isTrue,
-      );
-      c.sent.clear();
-      await t.tap(find.byKey(const ValueKey('night-3')));
-      await t.pump();
-      await t.tap(find.byKey(const ValueKey('night-confirm')));
-      await t.tap(find.byKey(const ValueKey('night-special')));
-      await t.pump();
+      expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+      expect(find.text('●'), findsNothing);
+      expect(find.byKey(const ValueKey('night-3')), findsNothing);
       expect(c.sent, isEmpty, reason: 'the first confirm is final');
-      expect(
-        t
-            .widget<SwitchListTile>(find.byKey(const ValueKey('night-special')))
-            .value,
-        isTrue,
-      );
+      await expectHiddenUntilHeld(t, 'P2');
     },
   );
 
@@ -210,10 +195,9 @@ void main() {
           done: true,
         ),
       );
-      expect(find.text(Strings.sent), findsOneWidget);
-      c.sent.clear();
-      await t.tap(find.byKey(const ValueKey('night-confirm')));
-      expect(c.sent, isEmpty);
+      expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+      expect(find.text(Strings.sentHint), findsOneWidget);
+      await expectHiddenUntilHeld(t, 'P2');
     },
   );
 
@@ -236,8 +220,8 @@ void main() {
         done: true,
       ),
     );
-    expect(find.text(Strings.sent), findsOneWidget);
-    expect(find.text('●'), findsOneWidget);
+    expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+    await expectHiddenUntilHeld(t, 'P3');
   });
 
   testWidgets('a done wolf phone and a done sum phone look the same', (
@@ -276,9 +260,22 @@ void main() {
     await t.tap(find.byKey(const ValueKey('vote-2')));
     await t.pump();
     await t.tap(find.byKey(const ValueKey('vote-go')));
+    await t.pump();
     expect(c.sent.last, const Vote(2));
+    expect(find.byKey(const ValueKey('vote-skip')), findsNothing);
+    expect(find.byKey(const ValueKey('vote-3')), findsNothing);
+    await expectHiddenUntilHeld(t, 'P2');
+  });
+
+  testWidgets('skipping sends null and hides behind the card too', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, const VotePrompt(day: 1, seconds: 60, ids: [0, 1, 2, 3]));
     await t.tap(find.byKey(const ValueKey('vote-skip')));
+    await t.pump();
     expect(c.sent.last, const Vote(null));
+    expect(find.byKey(const ValueKey('vote-go')), findsNothing);
+    expect(find.text(Strings.sentHint), findsOneWidget);
   });
 
   testWidgets('after a reload the vote shows the pick the TV already has', (
@@ -291,8 +288,9 @@ void main() {
       c,
       const VotePrompt(day: 1, seconds: 40, ids: [0, 2, 3], picked: 3),
     );
-    await t.tap(find.byKey(const ValueKey('vote-go')));
-    expect(c.sent.last, const Vote(3));
+    expect(find.byKey(const ValueKey('vote-go')), findsNothing);
+    expect(c.sent.whereType<Vote>(), isEmpty);
+    await expectHiddenUntilHeld(t, 'P3');
   });
 
   testWidgets('a spared fool cannot vote', (t) async {

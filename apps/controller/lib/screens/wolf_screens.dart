@@ -321,8 +321,28 @@ class _NightState extends State<NightScreen> {
     ],
   );
 
+  String _label(List<NightItem> items, int? id) =>
+      items.where((t) => t.id == id).firstOrNull?.label ?? '';
+
   @override
   Widget build(BuildContext context) {
+    // Sent: the pick is on screen only while a finger is down, the same card
+    // for a sum, a player and a role (night phones stay alike).
+    if (_sent && _p1 != null) {
+      return RoleHoldScreen(
+        key: const ValueKey('night-sent'),
+        name: widget.title,
+        night: widget.night,
+        header: widget.header,
+        heading: Strings.yourPickCaps,
+        hiddenHint: Strings.sentHint,
+        role: [
+          _label(widget.targets, _p1),
+          if (_p2 != null) _label(widget.targets2, _p2),
+        ].join('\n'),
+        description: Strings.waitTv,
+      );
+    }
     return Scaffold(
       backgroundColor: _nightBg,
       body: SafeArea(
@@ -498,8 +518,24 @@ class VoteScreen extends StatefulWidget {
 
 class _VoteState extends State<VoteScreen> {
   late int? _pick = widget.picked;
+  late bool _sent = widget.picked != null; // a reload restores a sent vote
+  String? _skipped;
+
   @override
   Widget build(BuildContext context) {
+    final who = widget.targets.where((t) => t.id == _pick).firstOrNull;
+    if (_skipped != null || (_sent && who != null)) {
+      return RoleHoldScreen(
+        key: const ValueKey('vote-sent'),
+        name: Strings.voteHeader(widget.day),
+        night: 0,
+        header: '',
+        heading: Strings.yourVoteCaps,
+        hiddenHint: Strings.sentHint,
+        role: _skipped ?? who!.name,
+        description: Strings.waitTv,
+      );
+    }
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -570,7 +606,12 @@ class _VoteState extends State<VoteScreen> {
                   width: double.infinity,
                   child: OutlinedButton(
                     key: const ValueKey('vote-skip'),
-                    onPressed: widget.canVote ? widget.onSkip : null,
+                    onPressed: widget.canVote
+                        ? () {
+                            setState(() => _skipped = Strings.skipVote);
+                            widget.onSkip();
+                          }
+                        : null,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: muted,
                       side: const BorderSide(color: raised, width: 2),
@@ -599,7 +640,10 @@ class _VoteState extends State<VoteScreen> {
                     ),
                     onPressed: _pick == null || !widget.canVote
                         ? null
-                        : () => widget.onVote(_pick!),
+                        : () {
+                            setState(() => _sent = true);
+                            widget.onVote(_pick!);
+                          },
                     child: const Text(Strings.vote),
                   ),
                 ),
