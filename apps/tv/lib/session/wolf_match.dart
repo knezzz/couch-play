@@ -290,6 +290,7 @@ class WolfMatch {
       out: t.sum != null
           ? [for (var k = 0; k < _nightIds.length; k++) if (!game.isAlive(_nightIds[k])) k]
           : [for (final a in i1) if (!game.isAlive(a)) a],
+      power: game.hasPower(id),
       done: game.hasPicked(id),
     );
   }

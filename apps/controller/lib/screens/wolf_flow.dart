@@ -104,7 +104,6 @@ class WolfFlow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final me = lobby.players.where((p) => p.id == myId).firstOrNull;
     switch (phase.screen) {
       case 'night':
         final n = phase.night!;
@@ -112,7 +111,7 @@ class WolfFlow extends StatelessWidget {
             !n.done &&
             phase.role?.role == WolfRole.cupid &&
             n.ids.contains(myId);
-        return NightScreen(
+        final list = NightScreen(
           // A new prompt is a new screen: nothing carries over between nights.
           key: ValueKey(
             'night-${n.night}-${n.ids.join(',')}-${n.out.join(',')}-${n.done}',
@@ -120,6 +119,9 @@ class WolfFlow extends StatelessWidget {
           night: n.night,
           hint: n.text,
           special: n.special,
+          showSpecial: n.power,
+          sentCard: (pick) =>
+              _card(context, pickLine: Strings.yourPickLine(pick)),
           picked: n.picked,
           picked2: n.picked2,
           done: n.done,
@@ -136,10 +138,27 @@ class WolfFlow extends StatelessWidget {
           ],
           onConfirm: (t, special) => conn.send(NightPick(t, special: special)),
         );
+        // Night 1 already came through the card (Spreman); later nights show
+        // it first, with "Dalje". A reload that is done goes to the card.
+        return _Gate(
+          key: ValueKey('night-gate-${n.night}'),
+          startOpen: n.night == 1 || n.done,
+          closed: (go) => _card(
+            context,
+            bottom: _GateButton(
+              const ValueKey('night-next'),
+              Strings.nextStep,
+              go,
+            ),
+          ),
+          open: list,
+        );
       case 'vote':
         final v = phase.vote!;
-        return VoteScreen(
+        final vote = VoteScreen(
           key: ValueKey('vote-${v.day}'),
+          sentCard: (pick) =>
+              _card(context, pickLine: Strings.yourVoteLine(pick)),
           day: v.day,
           selfId: myId,
           canVote: v.canVote,
@@ -157,6 +176,16 @@ class WolfFlow extends StatelessWidget {
           onVote: (t) => conn.send(Vote(t)),
           onSkip: () => conn.send(const Vote(null)),
         );
+        // The day card first, "Glasaj" opens the list.
+        return _Gate(
+          key: ValueKey('vote-gate-${v.day}'),
+          startOpen: v.picked != null,
+          closed: (go) => _card(
+            context,
+            bottom: _GateButton(const ValueKey('vote-open'), Strings.vote, go),
+          ),
+          open: vote,
+        );
       case 'farewell':
         final f = phase.farewell!;
         return NightScreen(
@@ -170,27 +199,8 @@ class WolfFlow extends StatelessWidget {
       case 'end':
         return _End(phase.end!, lobby, _name);
       default:
-        final r = phase.role;
-        if (r == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        final info = Strings.wolfRoles.firstWhere((e) => e.$1 == r.role.name);
-        final mates = r.mates.map(_name).join(', ');
-        final extra = [
-          if (mates.isNotEmpty) Strings.wolfMates(mates),
-          if (phase.morning != null) phase.morning!.text.trim(),
-        ].join('\n');
-        return RoleHoldScreen(
-          name: me?.name ?? '',
-          night: phase.night?.night ?? 1,
-          header: phase.morning == null
-              ? null
-              : Strings.day(phase.morning!.day),
-          role: info.$2,
-          description: info.$3,
-          extra: extra,
+        return _card(
+          context,
           bottom: phase.ready != null
               ? ReadyBar(
                   ready: phase.ready!.ready,
@@ -199,10 +209,84 @@ class WolfFlow extends StatelessWidget {
                   onReady: () => conn.send(const ReadyToPlay()),
                 )
               : _wish(phase.wish),
-          onRoles: () => _roles(context, r.possible.toSet()),
         );
     }
   }
+
+  /// The role card, the same everywhere (day, before night 1, before a list,
+  /// after sending). [pickLine] shows only while it is held.
+  Widget _card(BuildContext context, {Widget? bottom, String? pickLine}) {
+    final r = phase.role;
+    if (r == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    final me = lobby.players.where((p) => p.id == myId).firstOrNull;
+    final info = Strings.wolfRoles.firstWhere((e) => e.$1 == r.role.name);
+    final mates = r.mates.map(_name).join(', ');
+    final extra = [
+      if (mates.isNotEmpty) Strings.wolfMates(mates),
+      if (phase.morning != null) phase.morning!.text.trim(),
+    ].join('\n');
+    return RoleHoldScreen(
+      name: me?.name ?? '',
+      night: phase.night?.night ?? 1,
+      header: phase.morning == null ? null : Strings.day(phase.morning!.day),
+      role: info.$2,
+      description: info.$3,
+      extra: extra,
+      pickLine: pickLine,
+      bottom: bottom,
+      onRoles: () => _roles(context, r.possible.toSet()),
+    );
+  }
+}
+
+/// Shows [closed] until its button calls `go`, then [open]. Local phone state:
+/// a prompt sent again for the same night or day keeps the step.
+class _Gate extends StatefulWidget {
+  const _Gate({
+    super.key,
+    required this.startOpen,
+    required this.closed,
+    required this.open,
+  });
+  final bool startOpen;
+  final Widget Function(VoidCallback go) closed;
+  final Widget open;
+  @override
+  State<_Gate> createState() => _GateState();
+}
+
+class _GateState extends State<_Gate> {
+  late bool _open = widget.startOpen;
+
+  @override
+  Widget build(BuildContext context) =>
+      _open ? widget.open : widget.closed(() => setState(() => _open = true));
+}
+
+class _GateButton extends StatelessWidget {
+  const _GateButton(this.buttonKey, this.label, this.onTap);
+  final Key buttonKey;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: SizedBox(
+      height: 64,
+      width: double.infinity,
+      child: FilledButton(
+        key: buttonKey,
+        onPressed: onTap,
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+        ),
+      ),
+    ),
+  );
 }
 
 class _End extends StatelessWidget {

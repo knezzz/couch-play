@@ -48,11 +48,16 @@ class RoleHoldScreen extends StatefulWidget {
     required this.role,
     required this.description,
     this.extra = '',
+    this.pickLine,
     this.onRoles,
     this.bottom,
   });
   final String name;
   final int night;
+
+  /// "Tvoj odabir: …" after a pick or vote: one more line, shown only while the
+  /// card is held (the hidden card is the same on every phone).
+  final String? pickLine;
 
   /// Day buttons (Idemo glasati, Dao sam trag) under the card.
   final Widget? bottom;
@@ -209,6 +214,15 @@ class _RoleHoldState extends State<RoleHoldScreen> {
           style: const TextStyle(fontSize: 18, color: Color(0xFFB8B8C2)),
         ),
       ],
+      if (widget.pickLine != null) ...[
+        const SizedBox(height: 16),
+        Text(
+          widget.pickLine!,
+          key: const ValueKey('pick-line'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+        ),
+      ],
     ],
   );
 }
@@ -231,8 +245,13 @@ class NightScreen extends StatefulWidget {
     this.done = false,
     this.showSpecial = true,
     this.more = false,
+    this.sentCard,
   });
   final int night;
+
+  /// After Potvrdi: the card to show, given the pick's text (the Vukodlak role
+  /// card with a pick line). Null: the "TVOJ ODABIR" hold card.
+  final Widget Function(String pick)? sentCard;
 
   /// Replaces "NOĆ n", the title and the button text (Uljez's vote and guess
   /// use this same screen).
@@ -333,6 +352,14 @@ class _NightState extends State<NightScreen> {
     // Sent: the pick is on screen only while a finger is down, the same card
     // for a sum, a player and a role (night phones stay alike).
     if (_sent && _p1 != null) {
+      if (widget.sentCard != null) {
+        return widget.sentCard!(
+          [
+            _label(widget.targets, _p1),
+            if (widget.picked2 != null) _label(widget.targets, widget.picked2),
+          ].join(', '),
+        );
+      }
       return RoleHoldScreen(
         key: const ValueKey('night-sent'),
         name: widget.title,
@@ -523,7 +550,11 @@ class VoteScreen extends StatefulWidget {
     required this.onSkip,
     this.canVote = true,
     this.picked,
+    this.sentCard,
   });
+
+  /// After a vote or skip: the card to show, given its text (see NightScreen).
+  final Widget Function(String pick)? sentCard;
 
   /// False for a fool the village spared: he may not vote.
   final bool canVote;
@@ -547,6 +578,9 @@ class _VoteState extends State<VoteScreen> {
   Widget build(BuildContext context) {
     final who = widget.targets.where((t) => t.id == _pick).firstOrNull;
     if (_skipped != null || (_sent && who != null)) {
+      if (widget.sentCard != null) {
+        return widget.sentCard!(_skipped ?? who!.name);
+      }
       return RoleHoldScreen(
         key: const ValueKey('vote-sent'),
         name: Strings.voteHeader(widget.day),

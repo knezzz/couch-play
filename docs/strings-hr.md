@@ -328,7 +328,10 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | impostorCount | Broj uljeza | Number of impostors | host settings, 7-8 players |
 | impostors(n) | 1 uljez / 2 uljeza | 1 impostor / 2 impostors | host settings |
 | sent | Poslano | Sent | night screen button after Potvrdi (same for every role) |
-| nightSpecial | Iskoristi posebnu moć (ako je imaš) | Use your special power (if you have one) | night screen switch; the same on every phone, used by few roles |
+| nightSpecial | Iskoristi posebnu moć (ako je imaš) | Use your special power (if you have one) | night screen switch; shown only to the Travarica (on = poison instead of cure) and the Vođa čopora (on = convert instead of kill), while that power is left; never on sum phones (text unchanged) |
+| nextStep | Dalje | Next | Vukodlak nights 2+: under the role card, opens the night list |
+| yourPickLine / yourVoteLine | Tvoj odabir: {x} / Tvoj glas: {x} | Your pick: {x} / Your vote: {x} | one line on the held Vukodlak role card after a night pick / day vote ({x} is the name, the answer, or "Preskoči glasanje"); hidden until held |
+| vote (button on the day card) | Glasaj | Vote | Vukodlak day: under the role card when the vote opens; opens the vote list |
 | farewellHint | Više nisi u igri. Ako imaš još jedan potez, izaberi koga povlačiš sa sobom. | You are no longer in the game. If you have one more move, pick whom you take with you. | farewell screen, same for every player who is out |
 | wolfMates(names) | Drugi vukodlaci: {names} | Other werewolves: {names} | role card, werewolves only |
 | wolfWinner | Selo je pobijedilo. / Vukodlaci su pobijedili. / Vuk samotnjak je pobijedio. / Lutalica je pobijedila. / Nitko nije pobijedio. | The village won. / The werewolves won. / The lone wolf won. / The tramp won. / Nobody won. | end screen |

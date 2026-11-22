@@ -782,6 +782,18 @@ void main() {
       expect(g.hasNightAction(2), isFalse);
     });
 
+    test('the power switch is read only by the herbalist (poison left) and the alpha (conversion left)', () {
+      final g = game([w, WolfRole.alpha, WolfRole.seer, WolfRole.doc, WolfRole.guard, WolfRole.herb, WolfRole.cupid, v, WolfRole.hunter, WolfRole.elder]);
+      expect([for (var i = 0; i < 10; i++) g.hasPower(i)], [false, true, false, false, false, true, false, false, false, false]);
+      night(g, {5: 7}, special: {5}); // the poison goes out
+      g.startVote();
+      g.resolveVote();
+      g.startNight();
+      expect(g.hasPower(5), isFalse, reason: 'poison spent; only the cure is left');
+      expect(g.hasNightAction(5), isTrue);
+      expect(g.hasPower(1), isTrue);
+    });
+
     test('a sum has five distinct answers, one right, and is seeded', () {
       for (var seed = 0; seed < 50; seed++) {
         final s = NightSum.draw(Random(seed));

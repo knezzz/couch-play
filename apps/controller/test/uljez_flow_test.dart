@@ -251,6 +251,8 @@ void main() {
       ], hide: true),
     );
     await _send(t, c, const VotePrompt(day: 1, seconds: 60, ids: [0, 2]));
+    await t.tap(find.byKey(const ValueKey('vote-open'))); // the day card first
+    await t.pump();
     expect(find.text(Strings.voteTitle), findsOneWidget);
   });
 

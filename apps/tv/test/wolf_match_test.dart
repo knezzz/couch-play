@@ -99,6 +99,13 @@ void main() {
     r.match.dispose();
   });
 
+  testWidgets('only the herbalist (poison left) and the alpha (conversion left) are told to show the power switch', (t) async {
+    NightPrompt last(Rig r, int id) => r.to(id).whereType<NightPrompt>().last;
+    final r = Rig(roles: {...roles7, 7: WolfRole.alpha, 8: WolfRole.villager});
+    expect({for (final id in r.roles.keys) id: last(r, id).power}, {1: false, 2: false, 3: false, 4: false, 5: false, 6: true, 7: true, 8: false});
+    r.match.dispose();
+  });
+
   testWidgets('every phone gets the same number of choices with 5, 7 and 8 alive', (t) async {
     final eight = {
       for (var i = 1; i <= 8; i++)

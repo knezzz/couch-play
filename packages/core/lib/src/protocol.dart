@@ -373,6 +373,7 @@ sealed class Message with _JsonEq {
             picked2: m['picked2'] as int?,
             special: m['special'] as bool,
             out: [for (final e in (m['out'] as List?) ?? const []) e as int],
+            power: (m['power'] as bool?) ?? false,
             done: (m['done'] as bool?) ?? false),
         'morning' => Morning(m['day'] as int, m['text'] as String),
         'votePrompt' => VotePrompt(
@@ -1011,6 +1012,11 @@ class NightPrompt extends Message {
   /// carries the field.
   final List<int> out;
 
+  /// Show the power switch: only the herbalist (poison instead of cure) and the
+  /// alpha (convert instead of kill) get true, while that power is left. A sum
+  /// phone never does. False from an older TV.
+  final bool power;
+
   /// This phone already confirmed its night answer (the same for every role,
   /// a sum included): show 'Poslano'. False from an older TV.
   final bool done;
@@ -1023,6 +1029,7 @@ class NightPrompt extends Message {
       this.picked2,
       this.special = false,
       this.out = const [],
+      this.power = false,
       this.done = false});
   @override
   String get type => 'night';
@@ -1036,6 +1043,7 @@ class NightPrompt extends Message {
         'picked2': picked2,
         'special': special,
         'out': out,
+        'power': power,
         'done': done,
       };
 }

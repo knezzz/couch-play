@@ -259,6 +259,15 @@ class WolfGame {
     };
   }
 
+  /// True if [id] reads the night power switch and it still does something:
+  /// the herbalist while the poison is left (on = poison, not cure), the alpha
+  /// while the conversion is left (on = convert, not kill). Nobody else does.
+  bool hasPower(int id) => switch (_roles[id]) {
+    WolfRole.herb => !_poisonUsed,
+    WolfRole.alpha => !_alphaUsed,
+    _ => false,
+  };
+
   bool get nightComplete => alive.every(_picks.containsKey);
 
   void startNight() {

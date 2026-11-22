@@ -79,6 +79,13 @@ abstract final class Strings {
   static const yourNumberCaps = 'TVOJ BROJ';
   static const yourVoteCaps = 'TVOJ GLAS';
   static const yourPickCaps = 'TVOJ ODABIR';
+
+  /// One line on the held role card after a night pick or a day vote.
+  static String yourPickLine(String pick) => 'Tvoj odabir: $pick';
+  static String yourVoteLine(String pick) => 'Tvoj glas: $pick';
+
+  /// Under the role card, before the night list (nights 2+).
+  static const nextStep = 'Dalje';
   static const correctAnswer = 'Točan odgovor';
   static const yourNumber = 'Tvoj broj';
   static const noNumber = 'Bez odgovora';

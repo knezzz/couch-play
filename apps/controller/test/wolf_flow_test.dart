@@ -49,12 +49,25 @@ const _role = RoleMsg(WolfRole.seer, [], [
 
 String _pad(String s) => s.padRight(wolfTextWidth);
 
-NightPrompt _night({int night = 2}) => NightPrompt(
+NightPrompt _night({int night = 2, bool power = false}) => NightPrompt(
   night: night,
   text: _pad('Čiju ulogu želiš vidjeti?'),
   choices: const ['P0', 'P2', 'P3'],
   ids: const [0, 2, 3],
+  power: power,
 );
+
+/// Nights 2+ open on the role card; "Dalje" shows the list.
+Future<void> _next(WidgetTester t) async {
+  await t.tap(find.byKey(const ValueKey('night-next')));
+  await t.pump();
+}
+
+/// Opens the day vote list from the day card.
+Future<void> _glasaj(WidgetTester t) async {
+  await t.tap(find.byKey(const ValueKey('vote-open')));
+  await t.pump();
+}
 
 void main() {
   testWidgets('RoleMsg shows the hold screen; the role is not on it', (
@@ -75,7 +88,8 @@ void main() {
   testWidgets('a night pick goes out as NightPick with the switch', (t) async {
     final c = await _app(t);
     await _send(t, c, _role);
-    await _send(t, c, _night());
+    await _send(t, c, _night(power: true));
+    await _next(t);
     await t.tap(find.byKey(const ValueKey('night-2')));
     await t.tap(find.byKey(const ValueKey('night-special')));
     await t.pump();
@@ -83,6 +97,63 @@ void main() {
     expect(c.sent.last, isA<NightPick>());
     final p = c.sent.last as NightPick;
     expect((p.target, p.special), (2, true));
+  });
+
+  testWidgets('the power switch shows only when the TV says power', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, _night(night: 1));
+    expect(find.byKey(const ValueKey('night-special')), findsNothing);
+    await _send(t, c, _night(night: 1, power: true));
+    expect(find.byKey(const ValueKey('night-special')), findsOneWidget);
+    expect(find.text(Strings.nightSpecial), findsOneWidget);
+  });
+
+  testWidgets('nights 2+: the role card with Dalje first, then the list, then the card with the pick', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, _night());
+    expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+    expect(find.text(Strings.holdHere), findsOneWidget);
+    expect(find.text(Strings.nextStep), findsOneWidget);
+    expect(c.sent, isEmpty, reason: 'no wire traffic for the step');
+    await _next(t);
+    expect(find.byKey(const ValueKey('night-2')), findsOneWidget);
+    await t.tap(find.byKey(const ValueKey('night-2')));
+    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    await t.pump();
+    expect((c.sent.last as NightPick).target, 2);
+    expect(find.byKey(const ValueKey('night-sent')), findsNothing);
+    expect(find.byKey(const ValueKey('night-next')), findsNothing);
+    expect(find.byKey(const ValueKey('role-card')), findsOneWidget);
+    await expectHiddenUntilHeld(t, Strings.yourPickLine('P2'));
+    final g = await t.startGesture(t.getCenter(find.byKey(const ValueKey('role-card'))));
+    await t.pump();
+    expect(find.text('Vidovnjakinja'), findsOneWidget, reason: 'the role is on the card');
+    await g.up();
+  });
+
+  testWidgets('a prompt sent again the same night (a kick) keeps the list open', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, _night());
+    await _next(t);
+    await _send(t, c, const NightPrompt(night: 2, text: '', choices: ['P0', 'P2', 'P3'], ids: [0, 2, 3], out: [3]));
+    expect(find.byKey(const ValueKey('night-0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('night-next')), findsNothing);
+  });
+
+  testWidgets('a reload that is already done goes to the role card with the pick, no Dalje', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(
+      t,
+      c,
+      const NightPrompt(night: 3, text: '', choices: ['P0', 'P2'], ids: [0, 2], picked: 2, done: true),
+    );
+    expect(find.byKey(const ValueKey('night-next')), findsNothing);
+    expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+    await expectHiddenUntilHeld(t, Strings.yourPickLine('P2'));
   });
 
   const cupid = RoleMsg(WolfRole.cupid, [], [
@@ -110,7 +181,9 @@ void main() {
     await t.pump();
     expect(find.byKey(const ValueKey('night2-0')), findsNothing);
     expect((c.sent.last as NightPick).target, 0);
-    expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
+    expect(find.byKey(const ValueKey('night-sent')), findsNothing);
+    expect(find.byKey(const ValueKey('night-next')), findsNothing, reason: 'night 1 came through Spreman');
+    await expectHiddenUntilHeld(t, Strings.yourPickLine('P0'));
   });
 
   testWidgets('the Provodadžija: the first Potvrdi goes straight to the second list, no sent card; the second gives the card', (t) async {
@@ -140,7 +213,8 @@ void main() {
     await t.pump();
     expect((c.sent.last as NightPick).target, 3);
     expect(c.sent.whereType<NightPick>().length, 2);
-    expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
+    expect(find.byKey(const ValueKey('night-sent')), findsNothing);
+    await expectHiddenUntilHeld(t, Strings.yourPickLine('P3'));
   });
 
   testWidgets('8 rows at 360x640: the list ends above the strip, the last row is reachable and a scrollbar shows there is more; 5 rows need none', (t) async {
@@ -149,7 +223,8 @@ void main() {
       t.view.physicalSize = const Size(360, 640);
       await _send(t, c, _role);
       await _send(t, c, step([for (var i = 0; i < n; i++) i]));
-      final strip = t.getRect(find.byKey(const ValueKey('night-special'))).top;
+      // No switch strip on most phones now: the list ends above Potvrdi.
+      final strip = t.getRect(find.byKey(const ValueKey('night-confirm'))).top;
       final list = t.state<ScrollableState>(find.byType(Scrollable).first);
       expect(t.getRect(find.byType(ListView)).bottom, lessThanOrEqualTo(strip));
       if (n == 8) {
@@ -198,11 +273,8 @@ void main() {
     c = await _app(t);
     await _send(t, c, cupid);
     await _send(t, c, step([0, 1, 2, 3], picked: 2, picked2: 3, done: true));
-    expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
-    final g = await t.startGesture(t.getCenter(find.byKey(const ValueKey('night-sent'))));
-    await t.pump();
-    expect(find.text('P2\nP3'), findsOneWidget);
-    await g.up();
+    expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
+    await expectHiddenUntilHeld(t, Strings.yourPickLine('P2, P3'));
   });
 
   testWidgets(
@@ -212,6 +284,7 @@ void main() {
         final c = await _app(t);
         await _send(t, c, _role);
         await _send(t, c, p);
+        await _next(t);
         return look(t, {p.text.trim(), ...p.choices});
       }
 
@@ -266,7 +339,7 @@ void main() {
       expect(find.text('●'), findsNothing);
       expect(find.byKey(const ValueKey('night-3')), findsNothing);
       expect(c.sent, isEmpty, reason: 'the first confirm is final');
-      await expectHiddenUntilHeld(t, 'P2');
+      await expectHiddenUntilHeld(t, Strings.yourPickLine('P2'));
     },
   );
 
@@ -276,6 +349,7 @@ void main() {
       final c = await _app(t);
       await _send(t, c, _role);
       await _send(t, c, _night());
+      await _next(t);
       await t.tap(find.byKey(const ValueKey('night-2')));
       await t.pump();
       await t.tap(find.byKey(const ValueKey('night-confirm')));
@@ -293,8 +367,8 @@ void main() {
         ),
       );
       expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
-      expect(find.text(Strings.sentHint), findsOneWidget);
-      await expectHiddenUntilHeld(t, 'P2');
+      expect(find.text(Strings.holdHere), findsOneWidget);
+      await expectHiddenUntilHeld(t, Strings.yourPickLine('P2'));
     },
   );
 
@@ -304,6 +378,7 @@ void main() {
     final c = await _app(t);
     await _send(t, c, _role);
     await _send(t, c, _night());
+    await _next(t);
     expect(find.text(Strings.confirm), findsOneWidget);
     await _send(
       t,
@@ -318,7 +393,7 @@ void main() {
       ),
     );
     expect(find.byKey(const ValueKey('night-confirm')), findsNothing);
-    await expectHiddenUntilHeld(t, 'P3');
+    await expectHiddenUntilHeld(t, Strings.yourPickLine('P3'));
   });
 
   testWidgets('a done wolf phone and a done sum phone look the same', (
@@ -354,6 +429,9 @@ void main() {
     final c = await _app(t);
     await _send(t, c, _role);
     await _send(t, c, const VotePrompt(day: 1, seconds: 60, ids: [0, 1, 2, 3]));
+    expect(find.byKey(const ValueKey('vote-go')), findsNothing, reason: 'the day card comes first');
+    expect(find.text(Strings.holdHere), findsOneWidget);
+    await _glasaj(t);
     await t.tap(find.byKey(const ValueKey('vote-2')));
     await t.pump();
     await t.tap(find.byKey(const ValueKey('vote-go')));
@@ -361,18 +439,22 @@ void main() {
     expect(c.sent.last, const Vote(2));
     expect(find.byKey(const ValueKey('vote-skip')), findsNothing);
     expect(find.byKey(const ValueKey('vote-3')), findsNothing);
-    await expectHiddenUntilHeld(t, 'P2');
+    expect(find.byKey(const ValueKey('vote-sent')), findsNothing);
+    expect(find.byKey(const ValueKey('vote-open')), findsNothing);
+    await expectHiddenUntilHeld(t, Strings.yourVoteLine('P2'));
   });
 
   testWidgets('skipping sends null and hides behind the card too', (t) async {
     final c = await _app(t);
     await _send(t, c, _role);
     await _send(t, c, const VotePrompt(day: 1, seconds: 60, ids: [0, 1, 2, 3]));
+    await _glasaj(t);
     await t.tap(find.byKey(const ValueKey('vote-skip')));
     await t.pump();
     expect(c.sent.last, const Vote(null));
     expect(find.byKey(const ValueKey('vote-go')), findsNothing);
-    expect(find.text(Strings.sentHint), findsOneWidget);
+    expect(find.text(Strings.holdHere), findsOneWidget);
+    await expectHiddenUntilHeld(t, Strings.yourVoteLine(Strings.skipVote));
   });
 
   testWidgets('after a reload the vote shows the pick the TV already has', (
@@ -387,7 +469,7 @@ void main() {
     );
     expect(find.byKey(const ValueKey('vote-go')), findsNothing);
     expect(c.sent.whereType<Vote>(), isEmpty);
-    await expectHiddenUntilHeld(t, 'P3');
+    await expectHiddenUntilHeld(t, Strings.yourVoteLine('P3'));
   });
 
   testWidgets('a spared fool cannot vote', (t) async {
@@ -398,6 +480,7 @@ void main() {
       c,
       const VotePrompt(day: 1, seconds: 60, ids: [0, 2], canVote: false),
     );
+    await _glasaj(t);
     await t.tap(find.byKey(const ValueKey('vote-2')));
     await t.pump();
     await t.tap(find.byKey(const ValueKey('vote-go')), warnIfMissed: false);

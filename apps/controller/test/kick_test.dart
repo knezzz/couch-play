@@ -210,8 +210,8 @@ void main() {
       await t.tap(find.byKey(const ValueKey('night-1')));
       await t.tap(find.byKey(const ValueKey('night-confirm')));
       await t.pump();
-      expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
-      expect(find.byKey(_bar), findsOneWidget, reason: 'on the sent card too');
+      expect(find.byKey(const ValueKey('night-sent')), findsNothing);
+      expect(find.byKey(_bar), findsOneWidget, reason: 'on the role card after sending too');
       final g = await _app(t, 1);
       await _send(t, g, _role);
       await _send(t, g, _night());
