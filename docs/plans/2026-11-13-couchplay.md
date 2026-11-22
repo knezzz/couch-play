@@ -1057,4 +1057,4 @@ Spec: main design spec, Vukodlak, "Phone flow around actions".
 
 ### Task 54: Vukodlak lists fit a small phone (added 2026-11-22, person request)
 
-- [ ] All 8 names (and the sum answers) fit at 360x640 without scrolling, night and day vote; every phone alike at night; names not cut. Tests first; review; QA at 360x640 and 390x844 with 8 phones.
+- [x] All 8 names (and the sum answers) fit at 360x640 without scrolling, night and day vote; every phone alike at night; names not cut. Tests first; review; QA at 360x640 and 390x844 with 8 phones.
