@@ -218,7 +218,9 @@ the phones. Folk-game roles in our own words; no names or roles from Town of Sal
 - **Role first (person, 2026-11-21):** before the first night every phone shows the role card (hold to see it) with
   **Spreman**; the TV shows how many are ready, and night 1 starts when every living player is ready.
 - **Phone flow around actions (person, 2026-11-22):** the role card comes first, then the action (list or sum,
-  Potvrdi), and after sending the phone goes back to the role card (hold to see).
+  Potvrdi), and after sending the phone goes back to the role card (hold to see). The "Iskoristi posebnu moć"
+  switch shows only on the phones of roles that have a special move (person, 2026-11-22; replaces showing it on every
+  phone).
 - **One task per night for roles with no night action (person, 2026-11-21):** one sum, even on night 1. The night-1
   "second list" (the Provodadžija's second pick shown on every phone) confused players. Instead (person's choice,
   2026-11-21, of three options): night 1 is one list on every phone like any other night; only the Provodadžija's
