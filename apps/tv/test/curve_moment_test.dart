@@ -37,7 +37,7 @@ void main() {
 
     testWidgets('a crashed player keeps place and colour, dimmed to 35% with an x before the name', (t) async {
       await t.pumpWidget(strip(names));
-      double opacity(int i) => t.widget<Opacity>(find.descendant(of: find.byKey(ValueKey('strip-$i')), matching: find.byType(Opacity))).opacity;
+      double opacity(int i) => t.widget<Opacity>(find.byKey(ValueKey('strip-$i'))).opacity;
       expect(opacity(0), 1);
       expect(opacity(3), closeTo(0.35, 0.001));
       final dead = t.widget<Text>(find.descendant(of: find.byKey(const ValueKey('strip-3')), matching: find.byType(Text)));
@@ -69,6 +69,12 @@ void main() {
       ]));
       expect(t.takeException(), isNull);
       expect(t.getSize(find.byType(NameStrip)).width, 1920);
+      final line = t.getRect(find.byType(Row).first);
+      expect(line.left, greaterThanOrEqualTo(0));
+      expect(line.right, lessThanOrEqualTo(1920));
+      for (final w in t.widgetList<Text>(find.textContaining('Dugačkoime'))) {
+        expect(w.overflow, isNot(TextOverflow.ellipsis), reason: 'whole names, never cut');
+      }
     });
 
     testWidgets('the arena leaves the band free under it', (t) async {

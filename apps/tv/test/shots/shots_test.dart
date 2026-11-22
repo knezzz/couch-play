@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/main.dart';
 import 'package:tv/packs/pack_store.dart';
 import 'package:tv/session/session.dart';
+import 'package:tv/ui/curve/curve_game.dart';
 
 import '../session_test.dart' show FakePeer, join;
 
@@ -26,7 +27,7 @@ String _assets(String sub) => Directory('assets/$sub').existsSync() ? 'assets/$s
 Future<void> _fonts() async {
   final root = Platform.environment['FLUTTER_ROOT'] ?? '/Users/llama/fvm/versions/3.47.7';
   Future<ByteData> read(String f) async => ByteData.view(File('$root/bin/cache/artifacts/material_fonts/$f').readAsBytesSync().buffer);
-  for (final name in ['Roboto', 'FlutterTest', 'sans-serif', 'Arial', 'Helvetica', 'system-ui', '.SF Pro Text', 'Noto Sans']) {
+  for (final name in ['Roboto', 'FlutterTest', 'sans-serif', 'Ahem', '.AppleSystemUIFont', '.SF Pro Display', '.SF UI Text', '.SF UI Display', 'Arial', 'Helvetica', 'system-ui', '.SF Pro Text', 'Noto Sans']) {
     final l = FontLoader(name);
     for (final f in ['Regular', 'Medium', 'Bold', 'Black']) {
       l.addFont(read('Roboto-$f.ttf'));
@@ -48,6 +49,7 @@ void main() {
     if (_dir != null) {
       Directory(_dir!).createSync(recursive: true);
       await _fonts();
+      CurveGame.fontFamily = 'Roboto'; // canvas text would be boxes (Ahem) in the test host
     }
   });
 
@@ -222,4 +224,102 @@ void main() {
       s.dispose(); // its moment timer
     });
   }
+
+  // --- Task 52 follow-up: the states a live run rarely shows, at 1920x1080 (the real TV) ---
+  const full = Size(1920, 1080);
+  const longNames = ['Marija-Luisa', 'Ivan-Krešimir', 'Tomislava', 'Dragutin-Josip', 'Ana-Marija', 'Bartol', 'Zvonimirka', 'Krunoslav'];
+  final skipFull = _dir == null ? 'set SHOTS_DIR to write the TV shots' : null;
+
+  /// A real Curve match of [n] players on a real Session. Nobody steers; [fates] puts each head
+  /// in line with a wall: a distance in px to the wall it runs into (smaller dies first; equal
+  /// distances on opposite walls die on the same tick), or null to run the long way (lives).
+  Future<Session> curve(WidgetTester t, GlobalKey key, int n, List<double?> fates, {Map<int, int> scores = const {}}) async {
+    final s = await start(t, full, key);
+    final host = join(s, longNames[0], token: 't0');
+    for (var i = 1; i < n; i++) {
+      join(s, longNames[i], token: 'p$i');
+    }
+    host.say(const StartGame(GameKind.curve, null));
+    await t.pump();
+    final w = s.sim!.config.arenaW.toDouble(), h = s.sim!.config.arenaH.toDouble();
+    for (var i = 0; i < n; i++) {
+      final y = 100 + i * (h - 200) / (n - 1);
+      final d = fates[i];
+      if (d == null) {
+        s.sim!.place(i, 100, y, 0);
+      } else if (i > 0 && fates[i - 1] == d) {
+        s.sim!.place(i, d, y, pi); // the pair of the previous head: the opposite wall
+      } else {
+        s.sim!.place(i, w - d, y, 0);
+      }
+    }
+    scores.forEach((id, v) => s.sim!.scores[id] = v);
+    return s;
+  }
+
+  Future<void> until(WidgetTester t, Session s, bool Function() stop) async {
+    for (var i = 0; i < 1200 && !stop(); i++) {
+      await t.pump(const Duration(milliseconds: 50));
+    }
+    expect(stop(), isTrue, reason: 'the scene got there');
+  }
+
+  Future<void> finish(WidgetTester t, Session s) async {
+    await t.pumpWidget(const SizedBox());
+    s.dispose();
+  }
+
+  testWidgets('13 Curve mid-play, 8 players with long names, 2 crashed 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await curve(t, key, 8, [null, 20, 20, null, null, null, null, null]);
+    await until(t, s, () => s.sim!.heads.where((h) => !h.alive).length == 2 && !s.sim!.countingDown);
+    await t.pump(const Duration(milliseconds: 800));
+    await shot(t, key, '13-curve-8-names-strip-1920x1080', settle: Duration.zero);
+    await finish(t, s);
+  });
+
+  testWidgets('14 Curve countdown: the number, the names and the hint 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await curve(t, key, 8, [null, null, null, null, null, null, null, null]);
+    await t.pump(const Duration(milliseconds: 600));
+    expect(s.sim!.countingDown, isTrue);
+    await shot(t, key, '14-curve-countdown-1920x1080', settle: Duration.zero);
+    await finish(t, s);
+  });
+
+  testWidgets('15 Curve tie: two crash on the same tick 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await curve(t, key, 4, [10, 40, 90, 90]);
+    await until(t, s, () => s.moment != null);
+    expect(s.moment!.tie, isTrue);
+    await shot(t, key, '15-curve-tie-1920x1080', settle: const Duration(milliseconds: 300));
+    await finish(t, s);
+  });
+
+  testWidgets('16 Curve match won: the game goes to the last one standing 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await curve(t, key, 4, [null, 10, 40, 90], scores: {0: 29});
+    await until(t, s, () => s.moment != null);
+    expect(s.moment!.match, isTrue);
+    await shot(t, key, '16-curve-match-won-1920x1080', settle: const Duration(milliseconds: 300));
+    await finish(t, s);
+  });
+
+  testWidgets('17 Curve break card: tied at the top, play goes on 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    // 3 players, target 20: Ana 21 already, Ivan 19 + 2 for winning the round = 21 as well.
+    final s = await curve(t, key, 3, [10, null, 60], scores: {0: 21, 1: 19});
+    await until(t, s, () => s.roundBreak);
+    expect(s.moment, isNull);
+    await shot(t, key, '17-curve-tied-at-top-1920x1080', settle: const Duration(milliseconds: 300));
+    await finish(t, s);
+  });
+
+  testWidgets('18 Curve round banner, 8 players: equal points share a place 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await curve(t, key, 8, [null, 10, 10, 40, 40, 90, 90, 150]);
+    await until(t, s, () => s.moment != null);
+    await shot(t, key, '18-curve-round-8-places-1920x1080', settle: const Duration(milliseconds: 300));
+    await finish(t, s);
+  });
 }

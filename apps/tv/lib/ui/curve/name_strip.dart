@@ -24,32 +24,31 @@ class NameStrip extends StatelessWidget {
     // Material so the text never falls back to the yellow-underlined default.
     return Material(
       type: MaterialType.transparency,
-      child: LayoutBuilder(
-        builder: (_, box) => FittedBox(
-          // Scales down only if the names cannot fit one line even ellipsised.
+      // 44 px and whole names while they fit; 8 long names scale the whole line down a little
+      // instead of cutting names (a cut name is not the player's name any more).
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Center(
+        child: FittedBox(
           fit: BoxFit.scaleDown,
-          child: SizedBox(
-            width: box.maxWidth,
-            height: 64,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                for (final n in names)
-                  Flexible(
-                    key: ValueKey('strip-${n.colorIndex}'),
-                    child: Opacity(
-                      opacity: n.alive ? 1 : 0.35,
-                      child: Text(
-                        n.alive ? n.name : '× ${n.name}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: playerColors[n.colorIndex % playerColors.length]),
-                      ),
-                    ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final (i, n) in names.indexed) ...[
+                if (i > 0) const SizedBox(width: 28),
+                Opacity(
+                  key: ValueKey('strip-${n.colorIndex}'),
+                  opacity: n.alive ? 1 : 0.35,
+                  child: Text(
+                    n.alive ? n.name : '× ${n.name}',
+                    maxLines: 1,
+                    style: TextStyle(fontSize: 44, fontWeight: FontWeight.w700, color: playerColors[n.colorIndex % playerColors.length]),
                   ),
+                ),
               ],
-            ),
+            ],
           ),
+        ),
         ),
       ),
     );
