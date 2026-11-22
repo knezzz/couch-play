@@ -285,7 +285,11 @@ class WolfMatch {
       picked: second ? null : t.first,
       picked2: t.second,
       special: t.special,
-      out: t.sum != null ? const [] : [for (final a in i1) if (!game.isAlive(a)) a],
+      // The same row positions grey on every phone: a sum's ids are the
+      // positions in _nightIds, so a kicked player's position is its id.
+      out: t.sum != null
+          ? [for (var k = 0; k < _nightIds.length; k++) if (!game.isAlive(_nightIds[k])) k]
+          : [for (final a in i1) if (!game.isAlive(a)) a],
       done: game.hasPicked(id),
     );
   }

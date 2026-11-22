@@ -176,6 +176,18 @@ void main() {
     expect(t.widget<InkWell>(find.byKey(const ValueKey('night-0'))).onTap, isNotNull);
   });
 
+  testWidgets('a sum phone greys the same row position after a kick (answers 0..2, row 1 out)', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(
+      t,
+      c,
+      const NightPrompt(night: 1, text: '', choices: ['54', '56', '58'], ids: [0, 1, 2], out: [1]),
+    );
+    expect(t.widget<InkWell>(find.byKey(const ValueKey('night-1'))).onTap, isNull);
+    expect(t.widget<InkWell>(find.byKey(const ValueKey('night-0'))).onTap, isNotNull);
+  });
+
   testWidgets('the Provodadžija reloads on each step', (t) async {
     var c = await _app(t);
     await _send(t, c, cupid);

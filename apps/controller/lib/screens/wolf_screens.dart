@@ -391,7 +391,7 @@ class _NightState extends State<NightScreen> {
                   ),
                 ),
               // Rows shrink (down to 40) so that up to 8 fit above the strip
-              // at 360x640; a sum has 5 and keeps the same rows.
+              // at 360x640; a sum has one answer per player and the same rows.
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, box) {

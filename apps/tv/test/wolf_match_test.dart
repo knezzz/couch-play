@@ -943,7 +943,7 @@ void main() {
       r.match.dispose();
     });
 
-    testWidgets('a player kicked tonight keeps the row and the name on every phone, marked out; a sum phone has none', (t) async {
+    testWidgets('a player kicked tonight keeps the row and the name on every phone, marked out, at the same row positions on a sum phone', (t) async {
       var gone = false;
       final r = Rig(roles: cupidRoles, names: (id) => gone && id == 6 ? '' : 'P$id');
       gone = true; // the lobby no longer knows P6
@@ -954,9 +954,18 @@ void main() {
         expect(p.choices[p.ids.indexOf(6)], 'P6', reason: 'the name from the start of the night');
         expect(p.out, [6], reason: 'player $id');
       }
+      // The same positions grey on a seer, a doctor, the Provodadžija and a sum.
+      List<int> greyed(int id) {
+        final p = r.to(id).whereType<NightPrompt>().last;
+        return [for (var i = 0; i < p.ids.length; i++) if (p.out.contains(p.ids[i])) i];
+      }
       final sum = r.to(5).whereType<NightPrompt>().last;
-      expect(sum.out, isEmpty);
       expect(sum.choices.length, 7);
+      expect(greyed(5), greyed(4));
+      expect(greyed(5), [5], reason: 'P6 is the sixth row');
+      for (final id in [1, 2, 3, 4, 7]) {
+        expect(greyed(id), greyed(5), reason: 'player $id (${cupidRoles[id]})');
+      }
       r.match.dispose();
     });
   });

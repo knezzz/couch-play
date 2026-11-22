@@ -1006,7 +1006,8 @@ class NightPrompt extends Message {
   final bool special;
 
   /// Ids in [ids] of players kicked tonight: the row stays, with the name, but
-  /// cannot be picked. Empty for a sum (its ids are answers). Every phone
+  /// cannot be picked. For a sum the ids are answers, so [out] holds the answer positions that match
+  /// the kicked players' rows: the same rows grey on every phone. Every phone
   /// carries the field.
   final List<int> out;
 
