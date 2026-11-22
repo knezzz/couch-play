@@ -1048,4 +1048,4 @@ Spec: main design spec, Vukodlak, "Role first" and "One task per night".
 ### Task 52: Curve names on screen, clear round winner (added 2026-11-21, person request)
 
 Spec: main design spec, Curve, "Names always visible" and "Clear round winner".
-- [ ] Names along the bottom in each line's color during play; a clear round-winner moment before the scores. A UX pass on the whole Curve round (start, play, close finishes, end) first, and name anything else that leaves the room unsure. Tests first; QA on macOS release with 8 lines (bots) at 1080p, including a near-simultaneous crash; review.
+- [x] Names along the bottom in each line's color during play; a clear round-winner moment before the scores. A UX pass on the whole Curve round (start, play, close finishes, end) first, and name anything else that leaves the room unsure. Tests first; QA on macOS release with 8 lines (bots) at 1080p, including a near-simultaneous crash; review.

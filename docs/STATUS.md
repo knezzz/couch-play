@@ -56,7 +56,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 49 | Uljez impostor never the same person twice in a row (person, 2026-11-21) | done (a889bd1, review clean); on the TV since a889bd1 | lead |
 | 50 | Hide sent answers and typed text on phones behind the hold card, all games (person, 2026-11-21) | done (3ccc3a5 + c34c2b7, review clean x2, QA pass macOS release 360 px; Kviz already shows only "Odgovor je zaključan", Uljez guess ends the round); not on the TV | lead |
 | 51 | Vukodlak: role card + Spreman before night 1; one sum per night; night-1 second list reworked after UX review + field test (person, 2026-11-21) | routed (task50-51-20261121) | lead |
-| 52 | Curve: names along the bottom in line colors during play; clear round-winner moment; UX pass on a whole round (person, 2026-11-21) | routed (task52-20261121) | lead |
+| 52 | Curve: names along the bottom in line colors during play; clear round-winner moment; UX pass on a whole round (person, 2026-11-21) | done (483f782, f36538a, f615c3b, 4328237, 5ac2510, 4890ca7; review clean after 1 must-fix; QA phones pass; TV from 1080p renders); not on the TV, frame rate with 8 trails unchecked | lead |
 
 ## Open questions for the person
 
