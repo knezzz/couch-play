@@ -1049,3 +1049,8 @@ Spec: main design spec, Vukodlak, "Role first" and "One task per night".
 
 Spec: main design spec, Curve, "Names always visible" and "Clear round winner".
 - [x] Names along the bottom in each line's color during play; a clear round-winner moment before the scores. A UX pass on the whole Curve round (start, play, close finishes, end) first, and name anything else that leaves the room unsure. Tests first; QA on macOS release with 8 lines (bots) at 1080p, including a near-simultaneous crash; review.
+
+### Task 53: Vukodlak role card around actions (added 2026-11-22, person request)
+
+Spec: main design spec, Vukodlak, "Phone flow around actions".
+- [ ] Role card first, then the action, then back to the role card after sending; every phone alike at night. Tests first; review; QA with 5-8 phones, a full game.
