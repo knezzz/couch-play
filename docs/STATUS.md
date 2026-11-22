@@ -55,7 +55,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 48 | Phone home live with the TV: guests see the host's card and settings, changes marked and listed, TV settings panel (person, 2026-11-21) | done (review clean after 2 must-fixes, QA pass phones, TV from PNGs; remote on the real TV); next TV install | lead |
 | 49 | Uljez impostor never the same person twice in a row (person, 2026-11-21) | done (a889bd1, review clean); on the TV since a889bd1 | lead |
 | 50 | Hide sent answers and typed text on phones behind the hold card, all games (person, 2026-11-21) | done (3ccc3a5 + c34c2b7, review clean x2, QA pass macOS release 360 px; Kviz already shows only "Odgovor je zaključan", Uljez guess ends the round); not on the TV | lead |
-| 51 | Vukodlak: role card + Spreman before night 1; one sum per night; night-1 second list reworked after UX review + field test (person, 2026-11-21) | routed (task50-51-20261121) | lead |
+| 51 | Vukodlak: role card + Spreman before night 1; one sum per night; night-1 second list reworked after UX review + field test (person, 2026-11-21) | done (480cd32, f33de4e, 68b8311, 2e927a0, 715d501, bc22ba6; review clean after 4 must-fix rounds; QA field test 8 phones pass; person chose the Provodadžija-only second pick); open: power-switch wording (person), 8 rows scroll at 360x640 (later); not on the TV | lead |
 | 52 | Curve: names along the bottom in line colors during play; clear round-winner moment; UX pass on a whole round (person, 2026-11-21) | done (483f782, f36538a, f615c3b, 4328237, 5ac2510, 4890ca7; review clean after 1 must-fix; QA phones pass; TV from 1080p renders); not on the TV, frame rate with 8 trails unchecked | lead |
 
 ## Open questions for the person

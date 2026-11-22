@@ -1041,9 +1041,9 @@ Spec: main design spec, "Hidden answers on phones".
 ### Task 51: Vukodlak role first, night 1, one sum (added 2026-11-21, person request)
 
 Spec: main design spec, Vukodlak, "Role first" and "One task per night".
-- [ ] Role card with Spreman before night 1; TV shows the ready count; night 1 starts when all living players are ready.
-- [ ] Roles with no night action get one sum per night, night 1 included.
-- [ ] Night 1 without the confusing second list: a UX review (current screens, 2 options, a recommendation) before building, every phone still alike at night; then a field test (QA, 5–8 phones, a full game) that a first-time player understands night 1. Tests first; review.
+- [x] Role card with Spreman before night 1; TV shows the ready count; night 1 starts when all living players are ready.
+- [x] Roles with no night action get one sum per night, night 1 included.
+- [x] Night 1 without the confusing second list: a UX review (current screens, 2 options, a recommendation) before building, every phone still alike at night; then a field test (QA, 5–8 phones, a full game) that a first-time player understands night 1. Tests first; review.
 
 ### Task 52: Curve names on screen, clear round winner (added 2026-11-21, person request)
 
