@@ -191,6 +191,10 @@ class WolfFlow extends StatelessWidget {
         return NightScreen(
           key: ValueKey('farewell-${f.ids.join(',')}'),
           night: phase.night?.night ?? 1,
+          // Farewells come at dawn or after the vote, both after the Morning.
+          header: phase.morning == null
+              ? null
+              : Strings.day(phase.morning!.day),
           hint: Strings.farewellHint,
           showSpecial: false,
           targets: [for (final id in f.ids) NightItem(id, _name(id))],

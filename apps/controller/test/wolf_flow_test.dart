@@ -514,6 +514,20 @@ void main() {
     expect(c.sent.last, const Shoot(2));
   });
 
+  testWidgets('Farewell after the day vote is headed DAN n, not NOĆ', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, Morning(2, _pad('Mirna noć.')));
+    await _send(
+      t,
+      c,
+      const VotePrompt(day: 2, seconds: 60, ids: [0, 2]),
+    );
+    await _send(t, c, const Farewell(seconds: 15, ids: [0, 2]));
+    expect(find.text(Strings.day(2)), findsOneWidget);
+    expect(find.textContaining('NOĆ'), findsNothing);
+  });
+
   testWidgets('Morning text is behind the hold, with the role', (t) async {
     final c = await _app(t);
     await _send(t, c, _role);
