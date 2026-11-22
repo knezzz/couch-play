@@ -230,7 +230,12 @@ class WolfFlow extends StatelessWidget {
     return RoleHoldScreen(
       name: me?.name ?? '',
       night: phase.night?.night ?? 1,
-      header: phase.morning == null ? null : Strings.day(phase.morning!.day),
+      // A rejoin during the vote sends no Morning: the vote still knows the day.
+      header: phase.morning != null
+          ? Strings.day(phase.morning!.day)
+          : phase.screen == 'vote' && phase.vote != null
+          ? Strings.day(phase.vote!.day)
+          : null,
       role: info.$2,
       description: info.$3,
       extra: extra,

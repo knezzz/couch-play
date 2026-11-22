@@ -442,6 +442,35 @@ void main() {
     r.match.dispose();
   });
 
+  testWidgets('the hint names the power switch only while the power is left (herbalist and alpha)', (t) async {
+    final r = Rig(roles: {
+      1: WolfRole.wolf,
+      2: WolfRole.alpha,
+      3: WolfRole.herb,
+      for (var i = 4; i <= 8; i++) i: WolfRole.villager,
+    });
+    String hint(int id) => r.to(id).whereType<NightPrompt>().last.text.trim();
+    expect(hint(3), contains('prekidač'));
+    expect(hint(2), contains('Prekidač'));
+    r.pickAll({1: const NightPick(4), 2: const NightPick(4, special: true), 3: const NightPick(5, special: true)});
+    await r.wait(t, 20);
+    expect(r.match.stage, WolfStage.day);
+    r.allReady();
+    expect(r.match.stage, WolfStage.vote);
+    for (final id in r.match.alive.toList()) {
+      r.match.onVote(id, const Vote(null));
+    }
+    await r.wait(t, 16);
+    expect(r.match.stage, WolfStage.night);
+    expect(r.match.night, 2);
+    expect(hint(3), 'Koga liječiš?', reason: 'the poison is spent');
+    expect(hint(2).toLowerCase(), isNot(contains('prekidač')), reason: 'the conversion is spent');
+    expect(r.to(3).whereType<NightPrompt>().last.power, isFalse);
+    expect(r.to(2).whereType<NightPrompt>().last.power, isFalse);
+    expect(r.to(3).whereType<NightPrompt>().last.text.length, wolfTextWidth, reason: 'still padded to the same length');
+    r.match.dispose();
+  });
+
   testWidgets('a wrong or foreign pick, vote or shoot at the wrong time does nothing', (t) async {
     final r = Rig();
     r.match.onVote(3, const Vote(1)); // not the vote phase

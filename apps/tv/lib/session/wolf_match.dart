@@ -244,7 +244,7 @@ class WolfMatch {
           for (final m in game.mates(id))
             if (game.pickOf(m) != null) '${nameOf(m)} → ${nameOf(game.pickOf(m)!)}'
         ];
-        return '${WolfText.hintWolves}${seen.isEmpty ? '' : ' ${seen.join(', ')}'}${role == WolfRole.alpha ? WolfText.hintAlpha : ''}';
+        return '${WolfText.hintWolves}${seen.isEmpty ? '' : ' ${seen.join(', ')}'}${role == WolfRole.alpha && game.hasPower(id) ? WolfText.hintAlpha : ''}';
       case WolfRole.seer:
         return WolfText.hintSeer;
       case WolfRole.doc:
@@ -252,7 +252,7 @@ class WolfMatch {
       case WolfRole.guard:
         return WolfText.hintGuard;
       case WolfRole.herb:
-        return WolfText.hintHerb;
+        return game.hasPower(id) ? WolfText.hintHerb : WolfText.hintHerbCure;
       case WolfRole.cupid:
         return _cupidSecond(id) ? WolfText.hintCupid2 : WolfText.hintCupid;
       default:

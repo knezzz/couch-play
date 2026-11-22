@@ -444,6 +444,21 @@ void main() {
     await expectHiddenUntilHeld(t, Strings.yourVoteLine('P2'));
   });
 
+  testWidgets('a reload during the vote (no Morning sent) still says DAN n on the card, before and after voting', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(t, c, const VotePrompt(day: 2, seconds: 60, ids: [0, 2, 3]));
+    expect(find.text(Strings.day(2)), findsOneWidget);
+    expect(find.textContaining('NOĆ'), findsNothing);
+    await _glasaj(t);
+    await t.tap(find.byKey(const ValueKey('vote-3')));
+    await t.pump();
+    await t.tap(find.byKey(const ValueKey('vote-go')));
+    await t.pump();
+    expect(c.sent.last, const Vote(3));
+    expect(find.text(Strings.day(2)), findsOneWidget);
+  });
+
   testWidgets('skipping sends null and hides behind the card too', (t) async {
     final c = await _app(t);
     await _send(t, c, _role);
