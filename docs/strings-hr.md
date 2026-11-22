@@ -175,7 +175,7 @@ Informal "ti". `{x}` is filled in by the app.
 | correct | Točno | Correct | quiz result, green |
 | notThisTime | Ovaj put ne | Not this time | quiz result, red |
 | yourTotal | Tvoj ukupni rezultat | Your total | quiz result |
-| crashed | Sudar! Pričekaj sljedeću rundu. | Crash! Wait for the next round. | Curve, after you crash |
+| crashed | Sudar! Gledaj TV. | Crash! Watch the TV. | Curve, after you crash (also true at match end, when no next round comes) |
 | roundWon | Runda je tvoja! | The round is yours! | Curve, round over, this phone won (neutral wording) |
 | roundTie | Neriješeno | Tied | Curve, round over, this phone tied on the last crash |
 | roundOver | Runda gotova | Round over | Curve, round over, someone else won or this phone crashed earlier |

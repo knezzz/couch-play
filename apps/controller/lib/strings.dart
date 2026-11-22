@@ -414,7 +414,7 @@ abstract final class Strings {
   static const yourTotal = 'Tvoj ukupni rezultat';
 
   // Curve
-  static const crashed = 'Sudar! Pričekaj sljedeću rundu.';
+  static const crashed = 'Sudar! Gledaj TV.';
   static const roundWon = 'Runda je tvoja!';
   static const roundTie = 'Neriješeno';
   static const roundOver = 'Runda gotova';
