@@ -853,7 +853,7 @@ void main() {
       final r = Rig(roles: cupidRoles);
       r.match.onNightPick(3, const NightPick(3));
       expect(r.match.game.hasPicked(3), isFalse);
-      expect(r.to(3).whereType<NightPrompt>().length, 1, reason: 'still on the first step');
+      expect(r.to(3).whereType<NightPrompt>().last.ids.length, 7, reason: 'still the first list');
       r.match.onNightPick(3, const NightPick(5));
       r.match.onNightPick(3, const NightPick(5));
       r.match.onNightPick(3, const NightPick(3));
@@ -893,6 +893,53 @@ void main() {
       r.match.rejoin(3);
       p = r.to(3).whereType<NightPrompt>().last;
       expect([p.done, p.picked, p.picked2, p.ids.length], [true, 5, 6, 7], reason: 'sent');
+      r.match.dispose();
+    });
+
+    testWidgets('the first lover is kicked between the two picks: the Provodadžija starts over on the full list and night 1 ends', (t) async {
+      final r = Rig(roles: cupidRoles);
+      r.match.onNightPick(3, const NightPick(5));
+      r.match.expel(5);
+      var p = r.to(3).whereType<NightPrompt>().last;
+      expect([p.ids.length, p.picked, p.done], [7, null, false], reason: 'first list again');
+      expect(p.text.trimRight(), WolfText.hintCupid);
+      r.match.onNightPick(3, const NightPick(6));
+      p = r.to(3).whereType<NightPrompt>().last;
+      expect(p.ids, [1, 2, 4, 7], reason: 'second list: not self, not the kicked, not the first');
+      r.match.onNightPick(3, const NightPick(7));
+      for (final id in [1, 2, 4, 6, 7]) {
+        r.match.onNightPick(id, const NightPick(null));
+      }
+      await r.wait(t, 4);
+      expect(r.match.stage, isNot(WolfStage.night));
+      expect(r.match.game.lovers, {6, 7});
+      r.match.dispose();
+    });
+
+    testWidgets('a second lover kicked earlier tonight is not on the second list, and a refused pick gets the list back', (t) async {
+      final r = Rig(roles: cupidRoles);
+      r.match.expel(6);
+      r.match.onNightPick(3, const NightPick(5));
+      var p = r.to(3).whereType<NightPrompt>().last;
+      expect(p.ids, [1, 2, 4, 7]);
+      final n = r.to(3).length;
+      r.match.onNightPick(3, const NightPick(6)); // an old phone still showing 6
+      expect(r.to(3).length, n + 1, reason: 'answered, so no false sent card');
+      p = r.to(3).whereType<NightPrompt>().last;
+      expect(p.done, isFalse);
+      expect(p.ids, [1, 2, 4, 7]);
+      r.match.onNightPick(3, const NightPick(7));
+      expect(r.match.game.done, contains(3));
+      r.match.dispose();
+    });
+
+    testWidgets('no role\'s night-1 list is different: same ids, same labels', (t) async {
+      final r = Rig(roles: cupidRoles);
+      final lists = {for (final id in [1, 2, 3, 4]) id: r.to(id).whereType<NightPrompt>().first};
+      for (final id in lists.keys) {
+        expect(lists[id]!.ids, lists[1]!.ids, reason: 'player $id');
+        expect(lists[id]!.choices, lists[1]!.choices);
+      }
       r.match.dispose();
     });
   });

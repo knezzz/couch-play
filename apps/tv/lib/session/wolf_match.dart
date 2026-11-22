@@ -265,7 +265,7 @@ class WolfMatch {
       i1 = [for (var k = 0; k < c1.length; k++) k];
     } else if (_cupidSecond(id)) {
       // Only this phone ever gets this list: not self, not the first lover.
-      i1 = [for (final a in _nightIds) if (a != id && a != t.first) a];
+      i1 = [for (final a in _nightIds) if (a != id && a != t.first && game.isAlive(a)) a];
       c1 = [for (final a in i1) nameOf(a)];
     } else {
       c1 = names;
@@ -305,7 +305,9 @@ class WolfMatch {
     if (game.night == 1 && game.roleOf(id) == WolfRole.cupid) {
       final first = t.first;
       final target = m.target;
-      if (target == null || target == id || !game.isAlive(target)) return;
+      // A refused pick gets the current list back, so the phone never sits on a
+      // card for a pick that did not count.
+      if (target == null || target == id || !game.isAlive(target) || target == first) return send(id, _prompt(id));
       if (first == null) {
         // The first lover: quiet. Only this phone gets the next list; nobody
         // else hears anything, the TV does not change, the light stays on.
@@ -313,8 +315,7 @@ class WolfMatch {
         send(id, _prompt(id));
         return;
       }
-      if (target == first) return;
-      if (!game.pick(id, first, special: m.special, second: target)) return;
+      if (!game.pick(id, first, special: m.special, second: target)) return send(id, _prompt(id));
       t.second = target;
       t.special = m.special;
       _refreshShown();
@@ -548,6 +549,16 @@ class WolfMatch {
     if (game.winner != null) return _finish();
     _wish.set(id, false);
     _ready.remove(id);
+    // A first lover who was just kicked: that phone starts over on the first list.
+    if (stage == WolfStage.night) {
+      for (final c in alive) {
+        final t = _prompts[c];
+        if (t != null && t.first == id && game.roleOf(c) == WolfRole.cupid && !game.hasPicked(c)) {
+          t.first = null;
+          send(c, _prompt(c));
+        }
+      }
+    }
     _afterReady();
     _checkNightDone();
     _checkVoteDone();

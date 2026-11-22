@@ -118,9 +118,14 @@ void main() {
     await _send(t, c, cupid);
     await _send(t, c, step([0, 1, 2, 3], hint: 'Odaberi prvog zaljubljenog.'));
     expect(
+      t.widgetList<Opacity>(find.byType(Opacity)).where((o) => o.opacity < 1),
+      isEmpty,
+      reason: 'no row is greyed, own row included',
+    );
+    expect(
       t.widget<InkWell>(find.byKey(const ValueKey('night-1'))).onTap,
-      isNull,
-      reason: 'not yourself',
+      isNotNull,
+      reason: 'the own row looks and taps like any other; the TV refuses quietly',
     );
     await t.tap(find.byKey(const ValueKey('night-0')));
     await t.tap(find.byKey(const ValueKey('night-confirm')));

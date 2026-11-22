@@ -123,12 +123,10 @@ class WolfFlow extends StatelessWidget {
           picked: n.picked,
           picked2: n.picked2,
           done: n.done,
-          // The Provodadžija's first list still has their own name (everyone's
-          // list is alike); the second does not. Own row greyed in the first.
           more: more,
           targets: [
             for (var i = 0; i < n.ids.length; i++)
-              NightItem(n.ids[i], n.choices[i], enabled: !(more && n.ids[i] == myId)),
+              NightItem(n.ids[i], n.choices[i]),
           ],
           onConfirm: (t, special) => conn.send(NightPick(t, special: special)),
         );
