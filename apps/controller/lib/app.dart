@@ -246,8 +246,9 @@ class _AppState extends State<App> {
   /// Who hosts now: HostIs (sent mid-game) until the next LobbyState.
   int? get _hostId => _host ?? _lobby?.hostId;
 
-  /// The host's way to remove a player who has gone away, during Uljez and by
-  /// day in Vukodlak. Never at night: the night phones must all look alike.
+  /// The host's way to remove a player who has gone away, during Uljez and in
+  /// Vukodlak (night too: a night waits for every phone). Everyone knows who
+  /// the host is, and the bar is the same for every role.
   bool get _kickBar {
     if (_hostId != _myId) return false;
     return switch (_screen) {
@@ -256,6 +257,7 @@ class _AppState extends State<App> {
       _Screen.wait => _uljezOn && _uljez.screen != 'end',
       _Screen.wolf =>
         _wolf.screen == 'vote' ||
+            _wolf.screen == 'night' ||
             (_wolf.screen == 'idle' &&
                 (_wolf.morning != null || _wolf.ready != null)),
       _ => false,

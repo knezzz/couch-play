@@ -372,6 +372,7 @@ sealed class Message with _JsonEq {
             picked: m['picked'] as int?,
             picked2: m['picked2'] as int?,
             special: m['special'] as bool,
+            out: [for (final e in (m['out'] as List?) ?? const []) e as int],
             done: (m['done'] as bool?) ?? false),
         'morning' => Morning(m['day'] as int, m['text'] as String),
         'votePrompt' => VotePrompt(
@@ -1004,6 +1005,11 @@ class NightPrompt extends Message {
   final int? picked2;
   final bool special;
 
+  /// Ids in [ids] of players kicked tonight: the row stays, with the name, but
+  /// cannot be picked. Empty for a sum (its ids are answers). Every phone
+  /// carries the field.
+  final List<int> out;
+
   /// This phone already confirmed its night answer (the same for every role,
   /// a sum included): show 'Poslano'. False from an older TV.
   final bool done;
@@ -1015,6 +1021,7 @@ class NightPrompt extends Message {
       this.picked,
       this.picked2,
       this.special = false,
+      this.out = const [],
       this.done = false});
   @override
   String get type => 'night';
@@ -1027,6 +1034,7 @@ class NightPrompt extends Message {
         'picked': picked,
         'picked2': picked2,
         'special': special,
+        'out': out,
         'done': done,
       };
 }

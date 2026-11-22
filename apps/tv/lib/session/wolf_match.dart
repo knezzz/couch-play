@@ -104,6 +104,10 @@ class WolfMatch {
   /// in between must not change any phone's list (it would show who has an
   /// action and who a sum).
   List<int> _nightIds = [];
+
+  /// Names as they were when the night began: a player kicked tonight keeps
+  /// the row and the name, whether or not still connected.
+  var _nightNames = <int, String>{};
   List<int> _voteIds = [];
   final _morning = <int, String>{};
   final _shots = <int, int?>{};
@@ -194,6 +198,7 @@ class WolfMatch {
     _setStage(WolfStage.night, Duration.zero); // no clock: it ends when every task is done
     _prompts.clear();
     _nightIds = alive;
+    _nightNames = {for (final a in _nightIds) a: nameOf(a)};
     for (final id in alive) {
       _prompts[id] = game.hasNightAction(id) ? _Task.actor() : _Task.sum(random, alive.length);
     }
@@ -257,7 +262,7 @@ class WolfMatch {
 
   NightPrompt _prompt(int id) {
     final t = _prompts[id]!;
-    final names = [for (final a in _nightIds) nameOf(a)];
+    final names = [for (final a in _nightIds) _nightNames[a] ?? nameOf(a)];
     List<String> c1;
     List<int> i1;
     if (t.sum != null) {
@@ -266,7 +271,7 @@ class WolfMatch {
     } else if (_cupidSecond(id)) {
       // Only this phone ever gets this list: not self, not the first lover.
       i1 = [for (final a in _nightIds) if (a != id && a != t.first && game.isAlive(a)) a];
-      c1 = [for (final a in i1) nameOf(a)];
+      c1 = [for (final a in i1) _nightNames[a] ?? nameOf(a)];
     } else {
       c1 = names;
       i1 = _nightIds;
@@ -280,6 +285,7 @@ class WolfMatch {
       picked: second ? null : t.first,
       picked2: t.second,
       special: t.special,
+      out: t.sum != null ? const [] : [for (final a in i1) if (!game.isAlive(a)) a],
       done: game.hasPicked(id),
     );
   }
@@ -559,6 +565,7 @@ class WolfMatch {
         }
       }
     }
+    if (stage == WolfStage.night) _sendPrompts(); // the row stays, greyed
     _afterReady();
     _checkNightDone();
     _checkVoteDone();

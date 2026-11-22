@@ -143,6 +143,39 @@ void main() {
     expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
   });
 
+  testWidgets('8 rows at 360x640: the list ends above the strip, the last row is reachable and a scrollbar shows there is more; 5 rows need none', (t) async {
+    for (final n in [8, 5]) {
+      final c = await _app(t);
+      t.view.physicalSize = const Size(360, 640);
+      await _send(t, c, _role);
+      await _send(t, c, step([for (var i = 0; i < n; i++) i]));
+      final strip = t.getRect(find.byKey(const ValueKey('night-special'))).top;
+      final list = t.state<ScrollableState>(find.byType(Scrollable).first);
+      expect(t.getRect(find.byType(ListView)).bottom, lessThanOrEqualTo(strip));
+      if (n == 8) {
+        expect(list.position.maxScrollExtent, greaterThan(0));
+        expect(find.byType(Scrollbar), findsOneWidget);
+        list.position.jumpTo(list.position.maxScrollExtent);
+        await t.pump();
+      }
+      expect(t.getRect(find.byKey(ValueKey('night-${n - 1}'))).bottom, lessThanOrEqualTo(strip), reason: 'row $n is not under the strip');
+    }
+  });
+
+  testWidgets('a player kicked tonight keeps the row with the name, greyed and not tappable, the same on every phone', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _role);
+    await _send(
+      t,
+      c,
+      const NightPrompt(night: 1, text: '', choices: ['P0', 'P2', 'P3'], ids: [0, 2, 3], out: [2]),
+    );
+    expect(find.text('P2'), findsOneWidget);
+    expect(t.widget<Opacity>(find.ancestor(of: find.byKey(const ValueKey('night-2')), matching: find.byType(Opacity))).opacity, 0.5);
+    expect(t.widget<InkWell>(find.byKey(const ValueKey('night-2'))).onTap, isNull);
+    expect(t.widget<InkWell>(find.byKey(const ValueKey('night-0'))).onTap, isNotNull);
+  });
+
   testWidgets('the Provodadžija reloads on each step', (t) async {
     var c = await _app(t);
     await _send(t, c, cupid);

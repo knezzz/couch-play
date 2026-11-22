@@ -267,6 +267,7 @@ class _NightState extends State<NightScreen> {
   late bool _special = widget.special;
   late int _left = widget.seconds ?? 0;
   Timer? _tick;
+  final _scroll = ScrollController();
   late bool _sent = widget.done; // the same "done" look for every role
 
   @override
@@ -282,6 +283,7 @@ class _NightState extends State<NightScreen> {
   @override
   void dispose() {
     _tick?.cancel();
+    _scroll.dispose();
     super.dispose();
   }
 
@@ -289,8 +291,9 @@ class _NightState extends State<NightScreen> {
     List<NightItem> items,
     int? picked,
     String prefix,
-    void Function(int) pick,
-  ) => Column(
+    void Function(int) pick, {
+    double rowH = 64,
+  }) => Column(
     children: [
       for (final t in items)
         Opacity(
@@ -299,11 +302,12 @@ class _NightState extends State<NightScreen> {
             key: ValueKey('$prefix-${t.id}'),
             name: t.label,
             on: picked == t.id,
-            face: const SizedBox(
-              key: ValueKey('face'),
-              width: 44,
-              height: 44,
-              child: DecoratedBox(
+            height: rowH,
+            face: SizedBox(
+              key: const ValueKey('face'),
+              width: rowH - 20,
+              height: rowH - 20,
+              child: const DecoratedBox(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color(0xFF9A9AA6),
@@ -386,21 +390,44 @@ class _NightState extends State<NightScreen> {
                     ),
                   ),
                 ),
+              // Rows shrink (down to 40) so that up to 8 fit above the strip
+              // at 360x640; a sum has 5 and keeps the same rows.
               Expanded(
-                child: ListView(
-                  children: [
-                    _list(widget.targets, _p1, 'night', (id) => _p1 = id),
-                  ],
+                child: LayoutBuilder(
+                  builder: (context, box) {
+                    final n = widget.targets.length;
+                    final rowH = n == 0
+                        ? 64.0
+                        : (box.maxHeight / n - 8).clamp(40.0, 64.0);
+                    return Scrollbar(
+                      controller: _scroll,
+                      thumbVisibility: true,
+                      child: ListView(
+                        controller: _scroll,
+                        children: [
+                          _list(
+                            widget.targets,
+                            _p1,
+                            'night',
+                            (id) => _p1 = id,
+                            rowH: rowH,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
               if (widget.showSpecial)
                 SwitchListTile(
                   key: const ValueKey('night-special'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
                   value: _special,
                   onChanged: _sent ? null : (v) => setState(() => _special = v),
                   title: const Text(
                     Strings.nightSpecial,
-                    style: TextStyle(fontSize: 18, color: _nightMuted),
+                    style: TextStyle(fontSize: 16, color: _nightMuted),
                   ),
                 ),
               const SizedBox(height: 8),

@@ -21,11 +21,11 @@ const roles7 = {
 class Rig {
   /// [ready] false stays in the "Spreman" stage before night 1; by default
   /// everyone is ready at once, so the tests that follow start at night 1.
-  Rig({Map<int, WolfRole> roles = roles7, bool hide = true, int seed = 1, bool ready = true, this.notify})
+  Rig({Map<int, WolfRole> roles = roles7, bool hide = true, int seed = 1, bool ready = true, this.notify, String Function(int)? names})
       : roles = roles {
     match = WolfMatch(
       ids: roles.keys.toList(),
-      nameOf: (id) => 'P$id',
+      nameOf: names ?? (id) => 'P$id',
       settings: GameSettings(wolfHideRoles: hide),
       send: (id, m) => (sent[id] ??= []).add((at, m)),
       clock: () => at,
@@ -940,6 +940,23 @@ void main() {
         expect(lists[id]!.ids, lists[1]!.ids, reason: 'player $id');
         expect(lists[id]!.choices, lists[1]!.choices);
       }
+      r.match.dispose();
+    });
+
+    testWidgets('a player kicked tonight keeps the row and the name on every phone, marked out; a sum phone has none', (t) async {
+      var gone = false;
+      final r = Rig(roles: cupidRoles, names: (id) => gone && id == 6 ? '' : 'P$id');
+      gone = true; // the lobby no longer knows P6
+      r.match.expel(6);
+      for (final id in [1, 2, 3, 4]) {
+        final p = r.to(id).whereType<NightPrompt>().last;
+        expect(p.choices.length, 7, reason: 'player $id');
+        expect(p.choices[p.ids.indexOf(6)], 'P6', reason: 'the name from the start of the night');
+        expect(p.out, [6], reason: 'player $id');
+      }
+      final sum = r.to(5).whereType<NightPrompt>().last;
+      expect(sum.out, isEmpty);
+      expect(sum.choices.length, 7);
       r.match.dispose();
     });
   });

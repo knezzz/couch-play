@@ -115,7 +115,7 @@ class WolfFlow extends StatelessWidget {
         return NightScreen(
           // A new prompt is a new screen: nothing carries over between nights.
           key: ValueKey(
-            'night-${n.night}-${n.ids.join(',')}-${n.done}',
+            'night-${n.night}-${n.ids.join(',')}-${n.out.join(',')}-${n.done}',
           ),
           night: n.night,
           hint: n.text,
@@ -126,7 +126,13 @@ class WolfFlow extends StatelessWidget {
           more: more,
           targets: [
             for (var i = 0; i < n.ids.length; i++)
-              NightItem(n.ids[i], n.choices[i]),
+              NightItem(
+                n.ids[i],
+                n.choices[i],
+                // A player kicked tonight keeps the row, with the name, greyed
+                // on every phone alike.
+                enabled: !n.out.contains(n.ids[i]),
+              ),
           ],
           onConfirm: (t, special) => conn.send(NightPick(t, special: special)),
         );

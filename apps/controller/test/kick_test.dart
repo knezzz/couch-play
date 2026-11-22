@@ -173,20 +173,20 @@ void main() {
   });
 
   group('Vukodlak', () {
-    testWidgets('by day and at the vote, not at night, not before it', (
+    testWidgets('by day, at night and at the vote; not at the farewell', (
       t,
     ) async {
       final c = await _app(t, 0);
       await _send(t, c, _role);
       expect(find.byKey(_bar), findsNothing, reason: 'game start');
       await _send(t, c, _night());
-      expect(find.byKey(_bar), findsNothing, reason: 'night');
+      expect(find.byKey(_bar), findsOneWidget, reason: 'night');
       await _send(t, c, const Morning(1, 'Nitko nije umro.'));
       expect(find.byKey(_bar), findsOneWidget, reason: 'day');
       await _send(t, c, const VotePrompt(day: 1, seconds: 0, ids: [1, 2, 3]));
       expect(find.byKey(_bar), findsOneWidget, reason: 'vote');
       await _send(t, c, _night());
-      expect(find.byKey(_bar), findsNothing, reason: 'next night');
+      expect(find.byKey(_bar), findsOneWidget, reason: 'next night');
       await _send(t, c, const Farewell(seconds: 0, ids: [1, 2]));
       expect(find.byKey(_bar), findsNothing, reason: 'farewell');
     });
@@ -200,17 +200,22 @@ void main() {
       expect(find.byKey(_bar), findsNothing);
     });
 
-    testWidgets('the night screen of the host looks like a guest\'s', (
+    testWidgets('at night the host has the kick bar (a night waits for every phone), a guest not', (
       t,
     ) async {
       final h = await _app(t, 0);
       await _send(t, h, _role);
       await _send(t, h, _night());
-      final host = look(t, {'x'});
+      expect(find.byKey(_bar), findsOneWidget);
+      await t.tap(find.byKey(const ValueKey('night-1')));
+      await t.tap(find.byKey(const ValueKey('night-confirm')));
+      await t.pump();
+      expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
+      expect(find.byKey(_bar), findsOneWidget, reason: 'on the sent card too');
       final g = await _app(t, 1);
       await _send(t, g, _role);
       await _send(t, g, _night());
-      expect(look(t, {'x'}), host);
+      expect(find.byKey(_bar), findsNothing);
     });
 
     testWidgets('the day card says DAN, the night card NOĆ', (t) async {
@@ -261,7 +266,7 @@ void main() {
         GamePlayers([PlayerInfo(0, 'P0', 0, true, 0), PlayerInfo(1, 'P1', 1, false, 0)]),
       );
       expect(look(t, {}), before);
-      expect(find.byKey(_bar), findsNothing);
+      expect(find.byKey(_bar), findsOneWidget);
     });
 
     testWidgets('night closes an open kick list and an open confirm', (
