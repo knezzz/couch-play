@@ -1053,4 +1053,4 @@ Spec: main design spec, Curve, "Names always visible" and "Clear round winner".
 ### Task 53: Vukodlak role card around actions (added 2026-11-22, person request)
 
 Spec: main design spec, Vukodlak, "Phone flow around actions".
-- [ ] Role card first, then the action, then back to the role card after sending; every phone alike at night. Tests first; review; QA with 5-8 phones, a full game.
+- [x] Role card first, then the action, then back to the role card after sending; every phone alike at night. Tests first; review; QA with 5-8 phones, a full game.

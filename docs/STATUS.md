@@ -57,7 +57,7 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 50 | Hide sent answers and typed text on phones behind the hold card, all games (person, 2026-11-21) | done (3ccc3a5 + c34c2b7, review clean x2, QA pass macOS release 360 px; Kviz already shows only "Odgovor je zaključan", Uljez guess ends the round); not on the TV | lead |
 | 51 | Vukodlak: role card + Spreman before night 1; one sum per night; night-1 second list reworked after UX review + field test (person, 2026-11-21) | done (480cd32, f33de4e, 68b8311, 2e927a0, 715d501, bc22ba6; review clean after 4 must-fix rounds; QA field test 8 phones pass; person chose the Provodadžija-only second pick); open: power-switch wording (person), 8 rows scroll at 360x640 (later); not on the TV | lead |
 | 52 | Curve: names along the bottom in line colors during play; clear round-winner moment; UX pass on a whole round (person, 2026-11-21) | done (483f782, f36538a, f615c3b, 4328237, 5ac2510, 4890ca7; review clean after 1 must-fix; QA phones pass; TV from 1080p renders); not on the TV, frame rate with 8 trails unchecked | lead |
-| 53 | Vukodlak phone: role card first, then the action, back to the role card after sending (person, 2026-11-22) | routed (task53-20261122) | lead |
+| 53 | Vukodlak phone: role card first, then the action, back to the role card after sending (person, 2026-11-22) | done (24296d6 + 9ba8421, review clean after 1 must-fix, QA 8 phones 3 days pass; switch only Travarica and Vođa čopora while the power is left); not on the TV | lead |
 
 ## Open questions for the person
 
