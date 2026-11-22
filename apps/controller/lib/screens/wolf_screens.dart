@@ -378,29 +378,45 @@ class _NightState extends State<NightScreen> {
       backgroundColor: _nightBg,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                (widget.header ?? Strings.night(widget.night)) +
-                    (widget.seconds == null
-                        ? ''
-                        : ' · ${Strings.minutes(_left)}'),
-                key: const ValueKey('night-header'),
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: _nightMuted,
-                  letterSpacing: 3,
-                  fontWeight: FontWeight.w700,
-                ),
+              // Header and title share a line: 8 rows must fit at 360x640.
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    (widget.header ?? Strings.night(widget.night)) +
+                        (widget.seconds == null
+                            ? ''
+                            : ' · ${Strings.minutes(_left)}'),
+                    key: const ValueKey('night-header'),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: _nightMuted,
+                      letterSpacing: 3,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 14),
-              Text(
-                widget.title,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
-              ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 8),
               // Fixed height so a longer hint never moves anything below it.
               if (widget.hint.isNotEmpty)
                 SizedBox(
@@ -417,15 +433,15 @@ class _NightState extends State<NightScreen> {
                     ),
                   ),
                 ),
-              // Rows shrink (down to 40) so that up to 8 fit above the strip
+              // Rows shrink (down to 48) so that up to 8 fit above the strip
               // at 360x640; a sum has one answer per player and the same rows.
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, box) {
-                    final n = widget.targets.length;
-                    final rowH = n == 0
-                        ? 64.0
-                        : (box.maxHeight / n - 8).clamp(40.0, 64.0);
+                    final rowH = _rowHeight(
+                      box.maxHeight,
+                      widget.targets.length,
+                    );
                     return Scrollbar(
                       controller: _scroll,
                       thumbVisibility: true,
@@ -445,41 +461,51 @@ class _NightState extends State<NightScreen> {
                   },
                 ),
               ),
-              if (widget.showSpecial)
-                SwitchListTile(
-                  key: const ValueKey('night-special'),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  value: _special,
-                  onChanged: _sent ? null : (v) => setState(() => _special = v),
-                  title: const Text(
-                    Strings.nightSpecial,
-                    style: TextStyle(fontSize: 16, color: _nightMuted),
-                  ),
-                ),
               const SizedBox(height: 8),
-              SizedBox(
-                height: 60,
-                width: double.infinity,
-                child: FilledButton(
-                  key: const ValueKey('night-confirm'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF26262E),
-                    foregroundColor: textColor,
-                    disabledBackgroundColor: const Color(0xFF26262E),
-                    disabledForegroundColor: textColor,
+              // The switch sits left of Potvrdi, so no row ever moves for it.
+              Row(
+                children: [
+                  if (widget.showSpecial) ...[
+                    Semantics(
+                      label: Strings.nightSpecial,
+                      child: Switch(
+                        key: const ValueKey('night-special'),
+                        value: _special,
+                        onChanged: _sent
+                            ? null
+                            : (v) => setState(() => _special = v),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: SizedBox(
+                      height: 56,
+                      child: FilledButton(
+                        key: const ValueKey('night-confirm'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFF26262E),
+                          foregroundColor: textColor,
+                          disabledBackgroundColor: const Color(0xFF26262E),
+                          disabledForegroundColor: textColor,
+                        ),
+                        // Always looks the same; with no pick it simply does nothing.
+                        onPressed: () {
+                          if (_p1 == null || _sent) return;
+                          if (!widget.more) setState(() => _sent = true);
+                          widget.onConfirm(_p1!, _special);
+                        },
+                        child: Text(
+                          _sent ? Strings.sent : widget.confirmLabel,
+                          style: TextStyle(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  // Always looks the same; with no pick it simply does nothing.
-                  onPressed: () {
-                    if (_p1 == null || _sent) return;
-                    if (!widget.more) setState(() => _sent = true);
-                    widget.onConfirm(_p1!, _special);
-                  },
-                  child: Text(
-                    _sent ? Strings.sent : widget.confirmLabel,
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
-                  ),
-                ),
+                ],
               ),
             ],
           ),
@@ -488,6 +514,10 @@ class _NightState extends State<NightScreen> {
     );
   }
 }
+
+/// Row height so that [n] rows fit [avail] with a 4 px gap: 48 to 64.
+double _rowHeight(double avail, int n) =>
+    n == 0 ? 64 : (avail / n - 4).clamp(48.0, 64.0);
 
 Widget _row({
   required Key key,
@@ -500,7 +530,7 @@ Widget _row({
   String note = '',
   double height = 64,
 }) => Padding(
-  padding: const EdgeInsets.only(bottom: 8),
+  padding: const EdgeInsets.only(bottom: 4),
   child: Semantics(
     inMutuallyExclusiveGroup: true,
     checked: on,
@@ -603,57 +633,77 @@ class _VoteState extends State<VoteScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Header and title share a line: 8 rows must fit at 360x640.
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Expanded(
-                      child: Text(
-                        Strings.voteHeader(widget.day),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: _amber,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.w700,
+                    Text(
+                      Strings.day(widget.day),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: _amber,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          Strings.voteTitle,
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                const Text(
-                  Strings.voteTitle,
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
-                ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      for (final t in widget.targets)
-                        Opacity(
-                          opacity: t.id == widget.selfId ? 0.5 : 1,
-                          child: _row(
-                            key: ValueKey('vote-${t.id}'),
-                            name: t.name,
-                            on: _pick == t.id,
-                            face: CharacterFace(
-                              t.character,
-                              48,
-                              playerColors[t.colorIndex % playerColors.length],
+                  child: LayoutBuilder(
+                    builder: (context, box) {
+                      final rowH = _rowHeight(
+                        box.maxHeight,
+                        widget.targets.length,
+                      );
+                      return ListView(
+                        children: [
+                          for (final t in widget.targets)
+                            Opacity(
+                              opacity: t.id == widget.selfId ? 0.5 : 1,
+                              child: _row(
+                                key: ValueKey('vote-${t.id}'),
+                                name: t.name,
+                                on: _pick == t.id,
+                                height: rowH,
+                                face: CharacterFace(
+                                  t.character,
+                                  rowH - 8,
+                                  playerColors[t.colorIndex %
+                                      playerColors.length],
+                                ),
+                                border: _amber,
+                                fill: _pick == t.id
+                                    ? _amber.withValues(alpha: 0.2)
+                                    : Colors.white.withValues(alpha: 0.05),
+                                note: t.id == widget.selfId ? Strings.you : '',
+                                onTap: t.id == widget.selfId || !widget.canVote
+                                    ? null
+                                    : () => setState(() => _pick = t.id),
+                              ),
                             ),
-                            border: _amber,
-                            fill: _pick == t.id
-                                ? _amber.withValues(alpha: 0.2)
-                                : Colors.white.withValues(alpha: 0.05),
-                            note: t.id == widget.selfId ? Strings.you : '',
-                            onTap: t.id == widget.selfId || !widget.canVote
-                                ? null
-                                : () => setState(() => _pick = t.id),
-                          ),
-                        ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -684,7 +734,7 @@ class _VoteState extends State<VoteScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 SizedBox(
                   height: 64,
                   width: double.infinity,

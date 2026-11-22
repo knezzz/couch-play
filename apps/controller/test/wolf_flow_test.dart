@@ -106,7 +106,7 @@ void main() {
     expect(find.byKey(const ValueKey('night-special')), findsNothing);
     await _send(t, c, _night(night: 1, power: true));
     expect(find.byKey(const ValueKey('night-special')), findsOneWidget);
-    expect(find.text(Strings.nightSpecial), findsOneWidget);
+    expect(find.bySemanticsLabel(Strings.nightSpecial), findsOneWidget);
   });
 
   testWidgets('nights 2+: the role card with Dalje first, then the list, then the card with the pick', (t) async {
@@ -217,7 +217,7 @@ void main() {
     await expectHiddenUntilHeld(t, Strings.yourPickLine('P3'));
   });
 
-  testWidgets('8 rows at 360x640: the list ends above the strip, the last row is reachable and a scrollbar shows there is more; 5 rows need none', (t) async {
+  testWidgets('8 rows at 360x640 fit with no scroll above the strip, 5 rows too (more in wolf_fit_test)', (t) async {
     for (final n in [8, 5]) {
       final c = await _app(t);
       t.view.physicalSize = const Size(360, 640);
@@ -227,12 +227,7 @@ void main() {
       final strip = t.getRect(find.byKey(const ValueKey('night-confirm'))).top;
       final list = t.state<ScrollableState>(find.byType(Scrollable).first);
       expect(t.getRect(find.byType(ListView)).bottom, lessThanOrEqualTo(strip));
-      if (n == 8) {
-        expect(list.position.maxScrollExtent, greaterThan(0));
-        expect(find.byType(Scrollbar), findsOneWidget);
-        list.position.jumpTo(list.position.maxScrollExtent);
-        await t.pump();
-      }
+      expect(list.position.maxScrollExtent, 0);
       expect(t.getRect(find.byKey(ValueKey('night-${n - 1}'))).bottom, lessThanOrEqualTo(strip), reason: 'row $n is not under the strip');
     }
   });

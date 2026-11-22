@@ -199,7 +199,7 @@ The role texts are the ones in the design (`WolfRoles.dc.html`); the 14 role nam
 | night(n) | NOĆ {n} | NIGHT {n} | role card, night screen |
 | nightTitle | Noćna odluka | Night decision | night screen (same for every role) |
 | confirm | Potvrdi | Confirm | night screen button |
-| voteHeader(n) | DAN {n} · GLASANJE | DAY {n} · VOTE | day vote |
+| voteHeader(n) | DAN {n} · GLASANJE | DAY {n} · VOTE | day vote's sent card (the vote list's own header is just DAN {n}, on one line with the title, so 8 rows fit at 360x640) |
 | voteTitle | Koga izbacujete? | Whom do you throw out? | day vote |
 | skipVote | Preskoči glasanje | Skip the vote | day vote |
 | vote | Glasaj | Vote | day vote button |
