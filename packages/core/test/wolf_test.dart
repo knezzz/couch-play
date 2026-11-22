@@ -329,6 +329,14 @@ void main() {
       }
     });
 
+    test('pick refuses a second that is the first or the picker, and stores nothing', () {
+      final g = game([w, WolfRole.cupid, v, v, v]);
+      expect(g.pick(1, 3, second: 3), isFalse);
+      expect(g.pick(1, 3, second: 1), isFalse);
+      expect(g.hasPicked(1), isFalse);
+      expect(g.pick(1, 3, second: 4), isTrue);
+    });
+
     test('everyone else may carry a second pick and it does nothing', () {
       final g = game([WolfRole.wolf, WolfRole.seer, WolfRole.doc, v, v]);
       final r = night(g, {0: 3, 1: 0, 2: 3}, second: {0: 4, 1: 4, 2: 4, 3: 1, 4: 2});

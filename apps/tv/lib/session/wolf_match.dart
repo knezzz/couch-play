@@ -249,7 +249,7 @@ class WolfMatch {
       case WolfRole.herb:
         return WolfText.hintHerb;
       case WolfRole.cupid:
-        return WolfText.hintCupid;
+        return _cupidSecond(id) ? WolfText.hintCupid2 : WolfText.hintCupid;
       default:
         return '';
     }
@@ -258,34 +258,36 @@ class WolfMatch {
   NightPrompt _prompt(int id) {
     final t = _prompts[id]!;
     final names = [for (final a in _nightIds) nameOf(a)];
-    // The second pick (night 1, actors only) is all that is left of "two lists".
-    final two = game.night == 1 && t.sum == null;
-    List<String> c1, c2;
-    List<int> i1, i2;
+    List<String> c1;
+    List<int> i1;
     if (t.sum != null) {
       c1 = [for (final a in t.sum!.answers) '$a'];
       i1 = [for (var k = 0; k < c1.length; k++) k];
-      c2 = [];
-      i2 = [];
+    } else if (_cupidSecond(id)) {
+      // Only this phone ever gets this list: not self, not the first lover.
+      i1 = [for (final a in _nightIds) if (a != id && a != t.first) a];
+      c1 = [for (final a in i1) nameOf(a)];
     } else {
       c1 = names;
       i1 = _nightIds;
-      c2 = two ? names : [];
-      i2 = two ? _nightIds : [];
     }
+    final second = _cupidSecond(id);
     return NightPrompt(
       night: game.night,
       text: WolfText.pad(_hint(id)),
       choices: c1,
       ids: i1,
-      choices2: c2,
-      ids2: i2,
-      picks: two ? 2 : 1,
-      picked: t.first,
+      picked: second ? null : t.first,
       picked2: t.second,
       special: t.special,
       done: game.hasPicked(id),
     );
+  }
+
+  /// The Provodadžija's first lover is in and the second is not (night 1).
+  bool _cupidSecond(int id) {
+    final t = _prompts[id];
+    return game.night == 1 && game.roleOf(id) == WolfRole.cupid && t?.first != null && !game.hasPicked(id);
   }
 
   void _sendPrompts() {
@@ -300,15 +302,35 @@ class WolfMatch {
     // from a phone that missed the 'Poslano', changes nothing).
     if (game.hasPicked(id)) return;
     final t = _prompts[id]!;
+    if (game.night == 1 && game.roleOf(id) == WolfRole.cupid) {
+      final first = t.first;
+      final target = m.target;
+      if (target == null || target == id || !game.isAlive(target)) return;
+      if (first == null) {
+        // The first lover: quiet. Only this phone gets the next list; nobody
+        // else hears anything, the TV does not change, the light stays on.
+        t.first = target;
+        send(id, _prompt(id));
+        return;
+      }
+      if (target == first) return;
+      if (!game.pick(id, first, special: m.special, second: target)) return;
+      t.second = target;
+      t.special = m.special;
+      _refreshShown();
+      _sendPrompts();
+      notify?.call();
+      _checkNightDone();
+      return;
+    }
     if (game.hasNightAction(id)) {
-      final ok = game.pick(id, m.target, special: m.special, second: game.night == 1 ? m.second : null);
+      final ok = game.pick(id, m.target, special: m.special);
       if (!ok) game.pick(id, null);
     } else {
       game.pick(id, null); // a sum: any answer is done, none does anything
     }
     // The phone's own choice is echoed back on reconnect for EVERY role alike.
     t.first = m.target;
-    t.second = game.night == 1 ? m.second : null;
     t.special = m.special;
     _refreshShown();
     _sendPrompts();

@@ -49,14 +49,11 @@ const _role = RoleMsg(WolfRole.seer, [], [
 
 String _pad(String s) => s.padRight(wolfTextWidth);
 
-NightPrompt _night({int night = 2, bool two = false}) => NightPrompt(
+NightPrompt _night({int night = 2}) => NightPrompt(
   night: night,
   text: _pad('Čiju ulogu želiš vidjeti?'),
   choices: const ['P0', 'P2', 'P3'],
   ids: const [0, 2, 3],
-  choices2: two ? const ['P0', 'P2', 'P3'] : const [],
-  ids2: two ? const [0, 2, 3] : const [],
-  picks: two ? 2 : 1,
 );
 
 void main() {
@@ -85,27 +82,77 @@ void main() {
     await t.tap(find.byKey(const ValueKey('night-confirm')));
     expect(c.sent.last, isA<NightPick>());
     final p = c.sent.last as NightPick;
-    expect((p.target, p.second, p.special), (2, null, true));
+    expect((p.target, p.special), (2, true));
   });
 
-  testWidgets('night 1 asks for two picks on every phone and sends both', (
-    t,
-  ) async {
+  const cupid = RoleMsg(WolfRole.cupid, [], [
+    WolfRole.wolf,
+    WolfRole.villager,
+    WolfRole.cupid,
+  ], hide: true);
+
+  NightPrompt step(List<int> ids, {String hint = 'x', int? picked, int? picked2, bool done = false}) => NightPrompt(
+    night: 1,
+    text: _pad(hint),
+    choices: [for (final i in ids) 'P$i'],
+    ids: ids,
+    picked: picked,
+    picked2: picked2,
+    done: done,
+  );
+
+  testWidgets('night 1: one list and one Potvrdi for every phone, a villager too', (t) async {
     final c = await _app(t);
     await _send(t, c, _role);
-    await _send(t, c, _night(night: 1, two: true));
+    await _send(t, c, _night(night: 1));
     await t.tap(find.byKey(const ValueKey('night-0')));
     await t.tap(find.byKey(const ValueKey('night-confirm')));
-    expect(
-      c.sent.whereType<NightPick>(),
-      isEmpty,
-      reason: 'one pick is not enough',
-    );
-    await t.tap(find.byKey(const ValueKey('night2-3')));
     await t.pump();
+    expect(find.byKey(const ValueKey('night2-0')), findsNothing);
+    expect((c.sent.last as NightPick).target, 0);
+    expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
+  });
+
+  testWidgets('the Provodadžija: the first Potvrdi goes straight to the second list, no sent card; the second gives the card', (t) async {
+    final c = await _app(t);
+    await _send(t, c, cupid);
+    await _send(t, c, step([0, 1, 2, 3], hint: 'Odaberi prvog zaljubljenog.'));
+    expect(
+      t.widget<InkWell>(find.byKey(const ValueKey('night-1'))).onTap,
+      isNull,
+      reason: 'not yourself',
+    );
+    await t.tap(find.byKey(const ValueKey('night-0')));
     await t.tap(find.byKey(const ValueKey('night-confirm')));
-    final p = c.sent.last as NightPick;
-    expect((p.target, p.second), (0, 3));
+    await t.pump();
+    expect((c.sent.last as NightPick).target, 0);
+    expect(find.byKey(const ValueKey('night-sent')), findsNothing, reason: 'no card in between');
+    await _send(t, c, step([2, 3], hint: 'Odaberi drugog zaljubljenog.'));
+    expect(find.byKey(const ValueKey('night-0')), findsNothing, reason: 'not the first pick');
+    expect(find.byKey(const ValueKey('night-1')), findsNothing, reason: 'not yourself');
+    await t.tap(find.byKey(const ValueKey('night-3')));
+    await t.tap(find.byKey(const ValueKey('night-confirm')));
+    await t.pump();
+    expect((c.sent.last as NightPick).target, 3);
+    expect(c.sent.whereType<NightPick>().length, 2);
+    expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
+  });
+
+  testWidgets('the Provodadžija reloads on each step', (t) async {
+    var c = await _app(t);
+    await _send(t, c, cupid);
+    await _send(t, c, step([2, 3], hint: 'Odaberi drugog zaljubljenog.'));
+    expect(find.byKey(const ValueKey('night-confirm')), findsOneWidget);
+    expect(find.byKey(const ValueKey('night-sent')), findsNothing);
+    expect(find.byKey(const ValueKey('night-0')), findsNothing, reason: 'second step');
+    c = await _app(t);
+    await _send(t, c, cupid);
+    await _send(t, c, step([0, 1, 2, 3], picked: 2, picked2: 3, done: true));
+    expect(find.byKey(const ValueKey('night-sent')), findsOneWidget);
+    final g = await t.startGesture(t.getCenter(find.byKey(const ValueKey('night-sent'))));
+    await t.pump();
+    expect(find.text('P2\nP3'), findsOneWidget);
+    await g.up();
   });
 
   testWidgets(

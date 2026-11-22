@@ -108,10 +108,14 @@ class WolfFlow extends StatelessWidget {
     switch (phase.screen) {
       case 'night':
         final n = phase.night!;
+        final more = n.night == 1 &&
+            !n.done &&
+            phase.role?.role == WolfRole.cupid &&
+            n.ids.contains(myId);
         return NightScreen(
           // A new prompt is a new screen: nothing carries over between nights.
           key: ValueKey(
-            'night-${n.night}-${n.ids.join(',')}-${n.ids2.join(',')}-${n.done}',
+            'night-${n.night}-${n.ids.join(',')}-${n.done}',
           ),
           night: n.night,
           hint: n.text,
@@ -119,16 +123,14 @@ class WolfFlow extends StatelessWidget {
           picked: n.picked,
           picked2: n.picked2,
           done: n.done,
+          // The Provodadžija's first list still has their own name (everyone's
+          // list is alike); the second does not. Own row greyed in the first.
+          more: more,
           targets: [
             for (var i = 0; i < n.ids.length; i++)
-              NightItem(n.ids[i], n.choices[i]),
+              NightItem(n.ids[i], n.choices[i], enabled: !(more && n.ids[i] == myId)),
           ],
-          targets2: [
-            for (var i = 0; i < n.ids2.length; i++)
-              NightItem(n.ids2[i], n.choices2[i]),
-          ],
-          onConfirm: (t, second, special) =>
-              conn.send(NightPick(t, second: second, special: special)),
+          onConfirm: (t, special) => conn.send(NightPick(t, special: special)),
         );
       case 'vote':
         final v = phase.vote!;
@@ -159,7 +161,7 @@ class WolfFlow extends StatelessWidget {
           hint: Strings.farewellHint,
           showSpecial: false,
           targets: [for (final id in f.ids) NightItem(id, _name(id))],
-          onConfirm: (t, _, _) => conn.send(Shoot(t)),
+          onConfirm: (t, _) => conn.send(Shoot(t)),
         );
       case 'end':
         return _End(phase.end!, lobby, _name);

@@ -23,8 +23,6 @@ const _night = [
   NightItem(4, 'Luka'),
 ];
 
-const _fiveWolf = [..._night, NightItem(5, 'Maja')];
-
 /// A sum, like 7 x 8: five answers, no faces.
 const _sum = [
   NightItem(1, '54'),
@@ -109,7 +107,7 @@ void main() {
             night: 2,
             hint: h,
             targets: _night,
-            onConfirm: (_, _, _) {},
+            onConfirm: (_, _) {},
           ),
         );
         final got = look(t, {h});
@@ -128,7 +126,7 @@ void main() {
           night: 2,
           hint: 'a',
           targets: _night,
-          onConfirm: (_, _, _) {},
+          onConfirm: (_, _) {},
         ),
       );
       final plain = look(t, {'a'});
@@ -141,7 +139,7 @@ void main() {
               night: 2,
               hint: 'a',
               targets: _night,
-              onConfirm: (_, _, _) {},
+              onConfirm: (_, _) {},
             ),
           ),
         ),
@@ -161,7 +159,7 @@ void main() {
           night: 2,
           hint: hint,
           targets: items,
-          onConfirm: (_, _, _) {},
+          onConfirm: (_, _) {},
         ),
       );
       if (answered) {
@@ -207,7 +205,7 @@ void main() {
             night: 2,
             hint: hint,
             targets: items,
-            onConfirm: (_, _, _) {},
+            onConfirm: (_, _) {},
           ),
         );
         await t.tap(find.byKey(const ValueKey('night-2')));
@@ -228,58 +226,6 @@ void main() {
       );
     });
 
-    testWidgets('two sent picks both hide behind the card', (t) async {
-      await _show(
-        t,
-        NightScreen(
-          night: 1,
-          hint: 'h',
-          targets: _night,
-          targets2: _sum,
-          onConfirm: (_, _, _) {},
-        ),
-      );
-      await t.tap(find.byKey(const ValueKey('night-1')));
-      await t.tap(find.byKey(const ValueKey('night2-3')));
-      await t.pump();
-      await t.tap(find.byKey(const ValueKey('night-confirm')));
-      await t.pump();
-      expect(find.text('Ana'), findsNothing);
-      expect(find.text('58'), findsNothing);
-      final g = await holdCard(t);
-      expect(find.text('Ana\n58'), findsOneWidget);
-      await g.up();
-    });
-
-    testWidgets('night 1 with two picks looks the same for a wolf and a sum', (
-      t,
-    ) async {
-      Future<String> two(String hint, List<NightItem> items) async {
-        await _show(
-          t,
-          NightScreen(
-            night: 1,
-            hint: hint,
-            targets: items,
-            targets2: items,
-            onConfirm: (_, _, _) {},
-          ),
-        );
-        await t.tap(find.byKey(const ValueKey('night-1')));
-        await t.tap(find.byKey(const ValueKey('night2-3')));
-        await t.pump();
-        final before = look(t, {hint, ...items.map((i) => i.label)});
-        await t.tap(find.byKey(const ValueKey('night-confirm')));
-        await t.pump();
-        return before + look(t, {hint, ...items.map((i) => i.label)});
-      }
-
-      await two('x', _night); // leaves the test pointer in a known place
-      final wolf = await two('Koga posjećujete?', _fiveWolf);
-      final sum = await two('Koliko je 7 × 8?', _sum);
-      expect(sum, wolf);
-    });
-
     testWidgets('a 5-row list and a 7-row list are told apart by the check', (
       t,
     ) async {
@@ -290,7 +236,7 @@ void main() {
             night: 2,
             hint: 'h',
             targets: items,
-            onConfirm: (_, _, _) {},
+            onConfirm: (_, _) {},
           ),
         );
         return look(t, {'h', ...items.map((i) => i.label)});
@@ -311,7 +257,7 @@ void main() {
           night: 1,
           hint: 'h',
           targets: _sum,
-          onConfirm: (t, _, _) => sent.add(t),
+          onConfirm: (t, _) => sent.add(t),
         ),
       );
       await t.tap(find.byKey(const ValueKey('night-2')));
@@ -347,7 +293,7 @@ void main() {
             night: 1,
             hint: 'h',
             targets: _sum,
-            onConfirm: (_, _, _) {},
+            onConfirm: (_, _) {},
           ),
         );
         final disc = t.widget<DecoratedBox>(
@@ -383,7 +329,7 @@ void main() {
           night: 1,
           hint: 'h',
           targets: _night,
-          onConfirm: (t, _, s) => sent.add((t, s)),
+          onConfirm: (t, s) => sent.add((t, s)),
         ),
       );
       await t.tap(find.byKey(const ValueKey('night-3')));
@@ -405,7 +351,7 @@ void main() {
           night: 1,
           hint: 'h',
           targets: _night,
-          onConfirm: (t, _, _) => sent.add(t),
+          onConfirm: (t, _) => sent.add(t),
         ),
       );
       await t.tap(find.byKey(const ValueKey('night-confirm')));
@@ -423,7 +369,7 @@ void main() {
           night: 1,
           hint: 'h',
           targets: _night,
-          onConfirm: (_, _, _) {},
+          onConfirm: (_, _) {},
         ),
       );
       for (final k in ['night-1', 'night-confirm']) {
@@ -655,7 +601,7 @@ void main() {
           night: 2,
           hint: 'Koga posjećujete? Luka je odabrao Ivanu.',
           targets: _night,
-          onConfirm: (_, _, _) {},
+          onConfirm: (_, _) {},
         ),
         width: 360,
       );

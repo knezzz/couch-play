@@ -26,7 +26,8 @@ class WolfText {
   static const hintDoc = 'Koga štitiš noćas?';
   static const hintGuard = 'Koga čuvaš noćas?';
   static const hintHerb = 'Koga liječiš? Uključi prekidač za otrov.';
-  static const hintCupid = 'Odaberi dvoje zaljubljenih.';
+  static const hintCupid = 'Odaberi prvog zaljubljenog.';
+  static const hintCupid2 = 'Odaberi drugog zaljubljenog.';
   static String sum(int a, int b) => 'Koliko je $a × $b?';
 
   static const quiet = 'Noć je prošla mirno.';

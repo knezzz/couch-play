@@ -57,9 +57,6 @@ NightPrompt _night() => NightPrompt(
   text: ''.padRight(wolfTextWidth),
   choices: const ['P1', 'P2', 'P3'],
   ids: const [1, 2, 3],
-  choices2: const [],
-  ids2: const [],
-  picks: 1,
 );
 
 void main() {

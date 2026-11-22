@@ -226,11 +226,11 @@ class NightScreen extends StatefulWidget {
     required this.targets,
     required this.onConfirm,
     this.special = false,
-    this.targets2 = const [],
     this.picked,
     this.picked2,
     this.done = false,
     this.showSpecial = true,
+    this.more = false,
   });
   final int night;
 
@@ -247,23 +247,23 @@ class NightScreen extends StatefulWidget {
   /// The switch every phone carries; the TV gives the restored value.
   final bool special;
 
-  /// Night 1: a second list, a second pick on every phone; both go out
-  /// together.
-  final List<NightItem> targets2;
-
   /// Restored picks after a reload.
   final int? picked, picked2;
 
   /// The TV already has this phone's confirm (a reload): shown as sent.
   final bool done;
   final bool showSpecial;
-  final void Function(int target, int? second, bool special) onConfirm;
+  final void Function(int target, bool special) onConfirm;
+
+  /// The first of two picks (the Provodadžija's first lover): Potvrdi sends it
+  /// but does not turn the screen into the sent card; the TV's next list does.
+  final bool more;
   @override
   State<NightScreen> createState() => _NightState();
 }
 
 class _NightState extends State<NightScreen> {
-  late int? _p1 = widget.picked, _p2 = widget.picked2;
+  late int? _p1 = widget.picked;
   late bool _special = widget.special;
   late int _left = widget.seconds ?? 0;
   Timer? _tick;
@@ -338,7 +338,7 @@ class _NightState extends State<NightScreen> {
         hiddenHint: Strings.sentHint,
         role: [
           _label(widget.targets, _p1),
-          if (_p2 != null) _label(widget.targets2, _p2),
+          if (widget.picked2 != null) _label(widget.targets, widget.picked2),
         ].join('\n'),
         description: Strings.waitTv,
       );
@@ -390,10 +390,6 @@ class _NightState extends State<NightScreen> {
                 child: ListView(
                   children: [
                     _list(widget.targets, _p1, 'night', (id) => _p1 = id),
-                    if (widget.targets2.isNotEmpty) ...[
-                      const SizedBox(height: 16),
-                      _list(widget.targets2, _p2, 'night2', (id) => _p2 = id),
-                    ],
                   ],
                 ),
               ),
@@ -421,10 +417,9 @@ class _NightState extends State<NightScreen> {
                   ),
                   // Always looks the same; with no pick it simply does nothing.
                   onPressed: () {
-                    final two = widget.targets2.isNotEmpty;
-                    if (_p1 == null || (two && _p2 == null) || _sent) return;
-                    setState(() => _sent = true);
-                    widget.onConfirm(_p1!, two ? _p2 : null, _special);
+                    if (_p1 == null || _sent) return;
+                    if (!widget.more) setState(() => _sent = true);
+                    widget.onConfirm(_p1!, _special);
                   },
                   child: Text(
                     _sent ? Strings.sent : widget.confirmLabel,

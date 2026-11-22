@@ -24,7 +24,7 @@ import 'dart:math';
 ///    Vukodlak instead of dying.
 ///  * Elder: the first wolf attack that reaches him fails, once.
 ///  * Cupid (night 1 only): picks two OTHER players, who become lovers. Night 1
-///    has two picks on every phone (the second is ignored for everyone else).
+///    is one pick on every phone; the cupid alone gets a second step.
 ///    If one lover leaves, so does the other.
 ///  * Seer: learns the exact role of the picked player (as of the start of
 ///    that night).
@@ -276,7 +276,7 @@ class WolfGame {
   bool pick(int who, int? target, {bool special = false, int? second}) {
     if (_phase != WolfPhase.night || !isAlive(who)) return false;
     if (target != null && !isAlive(target)) return false;
-    if (second != null && !isAlive(second)) return false;
+    if (second != null && (!isAlive(second) || second == target || second == who)) return false;
     _picks[who] = (target: target, second: second, special: special);
     return true;
   }

@@ -76,7 +76,7 @@ class _VoteState extends State<UljezVoteScreen> {
       hint: '',
       showSpecial: false,
       targets: widget.targets,
-      onConfirm: (t, _, _) {
+      onConfirm: (t, _) {
         setState(() => _sent = t);
         widget.onVote(t);
       },
@@ -121,7 +121,7 @@ class _GuessState extends State<UljezGuessScreen> {
       hint: Strings.caughtHint(widget.word),
       showSpecial: false,
       targets: widget.options,
-      onConfirm: (t, _, _) {
+      onConfirm: (t, _) {
         setState(() => _sent = t);
         widget.onGuess(t);
       },

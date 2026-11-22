@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:tv/session/wolf_match.dart';
+import 'package:tv/session/wolf_text.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/sound/sfx.dart';
 
@@ -20,7 +21,7 @@ const roles7 = {
 class Rig {
   /// [ready] false stays in the "Spreman" stage before night 1; by default
   /// everyone is ready at once, so the tests that follow start at night 1.
-  Rig({Map<int, WolfRole> roles = roles7, bool hide = true, int seed = 1, bool ready = true})
+  Rig({Map<int, WolfRole> roles = roles7, bool hide = true, int seed = 1, bool ready = true, this.notify})
       : roles = roles {
     match = WolfMatch(
       ids: roles.keys.toList(),
@@ -31,6 +32,7 @@ class Rig {
       random: Random(seed),
       fixedRoles: roles,
       sfx: sounds,
+      notify: () => notify?.call(),
     )..start();
     if (ready) {
       for (final id in roles.keys) {
@@ -39,6 +41,7 @@ class Rig {
     }
   }
   final Map<int, WolfRole> roles;
+  void Function()? notify;
   late final WolfMatch match;
   final sent = <int, List<(Duration, Message)>>{};
   final played = <Sound>[];
@@ -78,11 +81,9 @@ Map<String, Object?> shape(Message m) => {
       'type': m.type,
       'keys': (m.toJson().keys.toList()..sort()),
       'text': m is NightPrompt ? m.text.length : (m is Morning ? m.text.length : 0),
-      // Night 1's second list is not compared: only phones with a night action
-      // have it now (Task 51; step 3 removes the second pick altogether).
-      // From night 2 every phone has the same picks and lists.
-      'picks': m is NightPrompt && m.night > 1 ? m.picks : 0,
-      'lists2': m is NightPrompt && m.night > 1 ? m.choices2.isEmpty : null,
+      // One list on every phone, every night (night 1 too).
+      'choices': m is NightPrompt ? m.choices.length : null,
+      'ids': m is NightPrompt ? m.ids.length : null,
     };
 
 void main() {
@@ -98,7 +99,7 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('every phone gets the same number of choices, in both lists, with 5, 7 and 8 alive', (t) async {
+  testWidgets('every phone gets the same number of choices with 5, 7 and 8 alive', (t) async {
     final eight = {
       for (var i = 1; i <= 8; i++)
         i: const [
@@ -111,11 +112,6 @@ void main() {
         final p = r.to(id).whereType<NightPrompt>().first;
         expect(p.choices.length, n, reason: 'player $id (${r.roles[id]}) of $n');
         expect(p.ids.length, n);
-        // Night 1: the second list only for a role with a night action; one sum for the rest.
-        final actor = r.match.game.hasNightAction(id);
-        expect(p.choices2.length, actor ? n : 0);
-        expect(p.ids2.length, actor ? n : 0);
-        expect(p.picks, actor ? 2 : 1);
       }
       r.match.dispose();
     }
@@ -142,9 +138,7 @@ void main() {
     for (final id in r.roles.keys) {
       final p = r.to(id).whereType<NightPrompt>().first;
       expect(p.text.length, wolfTextWidth);
-      final actor = r.match.game.hasNightAction(id);
-      expect(p.picks, actor ? 2 : 1, reason: 'player $id (${r.roles[id]})');
-      expect(p.choices2.isNotEmpty, actor);
+      expect('×'.allMatches(p.text).length, r.match.game.hasNightAction(id) ? 0 : 1, reason: 'player $id (${r.roles[id]})');
       expect(p.choices.length, p.ids.length);
     }
     r.match.dispose();
@@ -406,11 +400,11 @@ void main() {
 
   testWidgets('reconnect during the night restores the phone\'s own picks', (t) async {
     final r = Rig();
-    r.match.onNightPick(4, const NightPick(3, second: 5, special: true));
+    r.match.onNightPick(4, const NightPick(3, special: true));
     r.match.rejoin(4);
     final p = r.to(4).whereType<NightPrompt>().last;
     expect(p.picked, 3);
-    expect(p.picked2, 5);
+    expect(p.picked2, isNull);
     expect(p.special, isTrue);
     r.match.dispose();
   });
@@ -462,12 +456,12 @@ void main() {
 
   testWidgets('a reload shows picks the same way for an actor and a sum phone', (t) async {
     final r = Rig();
-    r.match.onNightPick(4, const NightPick(3, second: 5, special: true)); // the doctor
-    r.match.onNightPick(7, const NightPick(2, second: 4, special: true)); // a villager with a sum
+    r.match.onNightPick(4, const NightPick(3, special: true)); // the doctor
+    r.match.onNightPick(7, const NightPick(2, special: true)); // a villager with a sum
     for (final id in [4, 7]) {
       r.match.rejoin(id);
       final p = r.to(id).whereType<NightPrompt>().last;
-      expect([p.picked != null, p.picked2 != null, p.special], [true, true, true], reason: 'player $id');
+      expect([p.picked != null, p.picked2 != null, p.special], [true, false, true], reason: 'player $id');
     }
     r.match.dispose();
   });
@@ -577,8 +571,6 @@ void main() {
       final now = r.to(id).whereType<NightPrompt>().last;
       expect(now.choices.length, before[id]!.choices.length, reason: 'player $id (${r.roles[id]})');
       expect(now.ids, before[id]!.ids, reason: 'player $id');
-      expect(now.choices2.length, before[id]!.choices2.length);
-      expect(now.ids2, before[id]!.ids2);
     }
     // a reconnect shows the same list too
     r.match.rejoin(3);
@@ -812,12 +804,96 @@ void main() {
       }
       final p = r.to(5).whereType<NightPrompt>().last; // the hunter has no night action
       expect(p.night, night);
-      expect(p.picks, 1, reason: 'night $night');
-      expect(p.choices2, isEmpty);
       expect('×'.allMatches(p.text).length, 1, reason: 'one sum: ${p.text}');
       expect(p.choices.length, r.match.alive.length);
       expect(p.text.length, wolfTextWidth);
     }
     r.match.dispose();
+  });
+
+  group('the Provodadžija\'s second lover (night 1)', () {
+    const cupidRoles = {
+      1: WolfRole.wolf, 2: WolfRole.wolf, 3: WolfRole.cupid, 4: WolfRole.seer,
+      5: WolfRole.villager, 6: WolfRole.villager, 7: WolfRole.villager,
+    };
+
+    testWidgets('every night-1 prompt has the same shape for every role, the Provodadžija included', (t) async {
+      final r = Rig(roles: cupidRoles);
+      final first = [for (final m in r.to(1).whereType<NightPrompt>()) shape(m)];
+      for (final id in cupidRoles.keys) {
+        final p = r.to(id).whereType<NightPrompt>().single;
+        expect(shape(p), first.single, reason: 'player $id (${cupidRoles[id]})');
+        expect(p.choices.length, 7);
+      }
+      r.match.dispose();
+    });
+
+    testWidgets('the first lover: only the Provodadžija hears back, with a list without self and the first; nothing else moves', (t) async {
+      final r = Rig(roles: cupidRoles);
+      await r.wait(t, 16);
+      final before = {for (final id in cupidRoles.keys) id: r.to(id).length};
+      var notified = 0;
+      r.notify = () => notified++;
+      r.match.onNightPick(3, const NightPick(5));
+      for (final id in cupidRoles.keys) {
+        expect(r.to(id).length, before[id]! + (id == 3 ? 1 : 0), reason: 'player $id');
+      }
+      expect(notified, 0, reason: 'no TV change');
+      final p = r.to(3).whereType<NightPrompt>().last;
+      expect(p.ids, [1, 2, 4, 6, 7]);
+      expect(p.choices, ['P1', 'P2', 'P4', 'P6', 'P7']);
+      expect(p.done, isFalse);
+      expect(p.picked, isNull);
+      expect(p.text.length, wolfTextWidth);
+      expect(p.text.trimRight(), WolfText.hintCupid2);
+      r.match.dispose();
+    });
+
+    testWidgets('self and the same player twice are refused, not silently no lovers', (t) async {
+      final r = Rig(roles: cupidRoles);
+      r.match.onNightPick(3, const NightPick(3));
+      expect(r.match.game.hasPicked(3), isFalse);
+      expect(r.to(3).whereType<NightPrompt>().length, 1, reason: 'still on the first step');
+      r.match.onNightPick(3, const NightPick(5));
+      r.match.onNightPick(3, const NightPick(5));
+      r.match.onNightPick(3, const NightPick(3));
+      expect(r.match.game.hasPicked(3), isFalse);
+      r.match.dispose();
+    });
+
+    testWidgets('the light stays on until the second pick, then lovers are made', (t) async {
+      final r = Rig(roles: cupidRoles);
+      await r.wait(t, 16);
+      for (final id in [1, 2, 4, 5, 6, 7]) {
+        r.match.onNightPick(id, const NightPick(null));
+      }
+      expect(r.match.lit, {3});
+      r.match.onNightPick(3, const NightPick(5));
+      expect(r.match.lit, {3});
+      expect(r.match.stage, WolfStage.night);
+      r.match.onNightPick(3, const NightPick(6));
+      expect(r.match.lit, isEmpty);
+      expect(r.match.game.done, contains(3));
+      await r.wait(t, 4);
+      expect(r.match.game.lovers, {5, 6});
+      r.match.dispose();
+    });
+
+    testWidgets('a reload on each step: the same step, the sent card once both are in', (t) async {
+      final r = Rig(roles: cupidRoles);
+      r.match.rejoin(3);
+      var p = r.to(3).whereType<NightPrompt>().last;
+      expect([p.ids.length, p.done, p.picked], [7, false, null], reason: 'first step');
+      r.match.onNightPick(3, const NightPick(5));
+      r.match.rejoin(3);
+      p = r.to(3).whereType<NightPrompt>().last;
+      expect(p.ids, [1, 2, 4, 6, 7], reason: 'second step');
+      expect(p.done, isFalse);
+      r.match.onNightPick(3, const NightPick(6));
+      r.match.rejoin(3);
+      p = r.to(3).whereType<NightPrompt>().last;
+      expect([p.done, p.picked, p.picked2, p.ids.length], [true, 5, 6, 7], reason: 'sent');
+      r.match.dispose();
+    });
   });
 }

@@ -196,7 +196,7 @@ void main() {
           NightItem(4, 'Luka'),
           NightItem(5, 'Maja'),
         ],
-        onConfirm: (_, _, _) {},
+        onConfirm: (_, _) {},
       ),
     );
     await _shot(
