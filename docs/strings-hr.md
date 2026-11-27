@@ -453,10 +453,11 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | round header | Runda 2 od 3 · okret 4 | Round 2 of 3 · turn 4 | TV top left, phone aim header |
 | wind (TV pill, phone tile) | Vjetar → 6 (arrow and number); Bez vjetra | Wind; no wind | TV and every phone, coming turn |
 | ready | ✓ Spremno 5 / 8 | Ready 5 / 8 | TV top right while aiming (a count only; ticks over the tanks) |
-| volley | Pucaju svi! | Everyone fires! | TV while the shells fly |
+| volley | Paljba! | Fire! | TV while the shells fly |
 | phone aim | Kut / Snaga / Projektil; Granata ∞, Teška bomba 1, Kasetna 1 (0 when used); Prošli put 45°, 70; Pucaj | Angle / Power / Projectile; Grenade, Heavy bomb, Cluster; Last time; Fire | phone aim screen |
 | TVOJ HITAC + Kut 52° · Snaga 70 | the shell name, then the angle and power | Your shot | phone hold card after Pucaj; visible only while held |
 | Pucaj je poslan / Čekamo ostale / Još ciljaju · 3 | Pucaj je poslan / Čekamo ostale / Još ciljaju · 3 (names) | Fire sent / Waiting for the others / Still aiming | under the hold card; public (the TV shows the same) |
+| Ovaj ekran je siv i isti za sve, da nitko ne vidi tuđe ciljanje. | Ovaj ekran je siv i isti za sve, da nitko ne vidi tuđe ciljanje. | This screen is grey and the same for everyone, so nobody sees another player's aim. | under the hold card, always; the same on every phone |
 | Pucaju svi / Gledaj TV | Pucaju svi / Gledaj TV | Everyone fires / Watch the TV | under the hold card during the volley |
 | privacyNote | Tvoj hitac se ne vidi na TV-u dok svi ne pucaju. | Your shot is not shown on the TV until everyone has fired. | phone aim screen footer (not at 360x640) |
 | out | Tvoj tenk je izvan igre u ovoj rundi. Gledaj TV. | Your tank is out of the game this round. Watch the TV. | phone, tank at 0 HP |
