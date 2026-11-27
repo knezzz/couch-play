@@ -420,7 +420,7 @@ class Session {
     if (old != null && old != peer) old.close();
     peer.send(Welcome(p.id, p.colorIndex, p.token, character: p.character));
     // The (public) lobby too: a reloaded phone needs the names and colours.
-    if (_phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi || _phase == Phase.tenkovi) peer.send(_lobbyMsg());
+    if (_phase == Phase.curve || _phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi || _phase == Phase.tenkovi) peer.send(_lobbyMsg());
     final host = hostId;
     if (_phase != Phase.lobby && host != null) peer.send(HostIs(host)); // after the lobby state
     final gp = _gamePlayers();
@@ -1337,7 +1337,7 @@ class Session {
     _gone.clear();
     _sim = SumoSim([for (final p in parts) p.colorIndex],
         config: SumoConfig.forSettings(_settings.sumoMap,
-            powerUps: _settings.sumoPowerUps, countdown: _settings.curveCountdown.toDouble()),
+            powerUps: _settings.sumoPowerUps),
         random: _random, names: {for (final p in parts) p.colorIndex: p.name});
     _bots = null;
     _curveRound = 1;

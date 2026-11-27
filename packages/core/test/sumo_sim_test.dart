@@ -253,6 +253,26 @@ void main() {
       expect(s.tick().whereType<Dashed>().single.id, 0);
     });
 
+    test('the countdown is Sumo\'s own 3 s; a dash pressed at its start is ready again at the go, like the phone\'s ring', () {
+      final s = SumoSim([0, 1], config: const SumoConfig(powerUps: false), random: Random(1));
+      expect(s.config.countdown, 3);
+      expect(SumoConfig.forSettings(SumoMap.classic, powerUps: true).countdown, 3);
+      s.place(0, 0, 0);
+      s.place(1, 300, 300);
+      s.setMove(0, 0, 0);
+      s.tick();
+      s.dash(0); // the phone's 2 s ring now runs, and ends 1 s before the go
+      for (var i = 0; i < 179; i++) {
+        s.tick();
+      }
+      expect(s.countingDown, isFalse);
+      expect(s.tick().whereType<Dashed>().single.id, 0, reason: 'fires at the go');
+      expect(s.dashLeft(0), 0, reason: 'more than 2 s have passed since the press: ready at once');
+      s.setVelocity(0, 0, 0);
+      s.dash(0);
+      expect(s.tick().whereType<Dashed>().single.id, 0, reason: 'and the next press works at once');
+    });
+
     test('a dash that arrives a few ticks before the recharge ends is kept and fires when it does', () {
       final s = make([0, 1]);
       s.place(1, 300, 300);
@@ -313,6 +333,34 @@ void main() {
 
     test('ice has much less friction than Klasični: a wrestler slides on', () {
       expect(slid(SumoMap.ice), greaterThan(slid(SumoMap.classic) * 10));
+    });
+
+    /// How far one Dash from the centre with no stick input carries a wrestler, and whether it stays in.
+    ({double far, bool inside}) dashed(SumoMap map) {
+      final s = make([0, 1], config: SumoConfig(map: map, countdown: 0, powerUps: false, shrinkStart: 1000));
+      s.place(0, 0, 0);
+      s.place(1, 0, -300);
+      s.setMove(0, 0, 0); // to the right
+      s.dash(0);
+      var far = 0.0;
+      var inside = true;
+      for (var i = 0; i < 600; i++) {
+        s.tick();
+        s.place(1, 0, -300); // the other one stays out of the way
+        s.setVelocity(1, 0, 0);
+        final h = s.heads.first;
+        far = max(far, sqrt(h.x * h.x + h.y * h.y));
+        if (!h.alive) inside = false;
+      }
+      return (far: far, inside: inside);
+    }
+
+    test('one Dash on Led from the middle stops inside the ring, and slides clearly further than on Klasični', () {
+      final classic = dashed(SumoMap.classic), ice = dashed(SumoMap.ice);
+      expect(classic.inside, isTrue);
+      expect(ice.inside, isTrue, reason: 'a single dash must not carry you out');
+      expect(ice.far, lessThan(R - 52), reason: 'with the whole wrestler still on the ring (${ice.far})');
+      expect(ice.far, greaterThan(classic.far * 1.4), reason: 'ice ${ice.far} against ${classic.far}');
     });
 
     test('Nasumično picks Klasični or Led each round, from the seed', () {

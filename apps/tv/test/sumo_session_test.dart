@@ -66,12 +66,12 @@ void main() {
   });
 
   test('the host settings reach the sim: the map and the power-ups', () {
-    final ps = lobby(2, settings: const GameSettings(sumoMap: SumoMap.ice, sumoPowerUps: false, curveCountdown: 3));
+    final ps = lobby(2, settings: const GameSettings(sumoMap: SumoMap.ice, sumoPowerUps: false, curveCountdown: 7));
     ps.first.say(const StartGame(GameKind.sumo, null));
     final sim = s.sumo!;
     expect(sim.ice, isTrue);
     expect(sim.config.powerUps, isFalse);
-    expect(sim.config.countdown, 3);
+    expect(sim.config.countdown, 3, reason: 'Sumo has its own 3 s, whatever the Curve pause is set to');
     s.dispose();
     final qs = lobby(2);
     qs.first.say(const StartGame(GameKind.sumo, null));
@@ -163,6 +163,22 @@ void main() {
     expect(s.phase, Phase.results);
     expect(s.lastGameLabel, 'Sumo');
     expect(s.placements.first.playerId, s.playerInfos.first.id);
+    s.dispose();
+  });
+
+  testWidgets('a phone that reloads mid-round gets the lobby (names and faces) back with its status', (t) async {
+    final ps = lobby(3);
+    ps.first.say(const StartGame(GameKind.sumo, null));
+    ps[1].close();
+    await t.pump();
+    final back = join(s, 'P1', token: 't1');
+    await t.pump();
+    final lobbyMsg = back.last<LobbyState>();
+    expect(lobbyMsg, isNotNull, reason: 'the header needs the name and the face');
+    expect(lobbyMsg!.players.map((p) => p.name), containsAll(['P0', 'P1', 'P2']));
+    expect(back.last<CurveStatus>()!.sumo, isTrue);
+    final order = back.sent.indexWhere((m) => m is LobbyState) < back.sent.indexWhere((m) => m is CurveStatus);
+    expect(order, isTrue, reason: 'the lobby first, then the screen');
     s.dispose();
   });
 

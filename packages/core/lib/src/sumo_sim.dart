@@ -12,11 +12,12 @@ class SumoConfig {
     this.arenaRadius = 440,
     this.wrestlerRadius = 52,
     this.tickHz = 60,
-    this.countdown = 2.0,
+    this.countdown = 3.0,
     this.powerUps = true,
     this.shrinkStart = 20,
     this.shrinkSeconds = 45,
     this.dashSpeed = 800,
+    this.dashSpeedIce = 300,
     this.dashCooldown = 2.0,
     this.powerUpEveryMin = 4,
     this.powerUpEveryMax = 8,
@@ -24,9 +25,8 @@ class SumoConfig {
     this.effectSeconds = 5,
   });
 
-  /// The host's settings: the map and whether power-ups appear.
-  factory SumoConfig.forSettings(SumoMap map, {required bool powerUps, double countdown = 2.0}) =>
-      SumoConfig(map: map, powerUps: powerUps, countdown: countdown);
+  /// The host's settings: the map and whether power-ups appear. The countdown is Sumo's own 3 s (no setting).
+  factory SumoConfig.forSettings(SumoMap map, {required bool powerUps}) => SumoConfig(map: map, powerUps: powerUps);
 
   final SumoMap map;
   final double arenaRadius, wrestlerRadius;
@@ -38,8 +38,10 @@ class SumoConfig {
   /// nothing (so a round where nobody moves ends in a tie at about 65 s).
   final double shrinkStart, shrinkSeconds;
 
-  /// Dash: the speed added in the joystick direction, and the seconds before the next one.
-  final double dashSpeed, dashCooldown;
+  /// Dash: the speed added in the joystick direction (smaller on ice, where it slides on: 300 at damping 0.8
+  /// carries about 375 from the middle, well short of the 440 edge, and 1.6 times Klasični's 229), and the
+  /// seconds before the next one.
+  final double dashSpeed, dashSpeedIce, dashCooldown;
   final double powerUpEveryMin, powerUpEveryMax, effectSeconds;
   final int powerUpMax;
 }
@@ -75,7 +77,7 @@ class _W {
 const _levels = [0.0, 0.45, 0.75, 1.0];
 // Grip: how fast a wrestler speeds up, the speed the push alone can reach, and how fast it slows.
 const _accelClassic = 1400.0, _capClassic = 420.0, _dampClassic = 3.5;
-const _accelIce = 500.0, _capIce = 560.0, _dampIce = 0.45;
+const _accelIce = 500.0, _capIce = 560.0, _dampIce = 0.8;
 const _restitution = 0.85;
 const _dashGrace = 12; // ticks (0.2 s) before the recharge ends within which a press is kept
 const _heavyMass = 3.0, _bigMass = 1.6, _bigRadius = 1.5, _fastFactor = 1.5, _heavyAccel = 0.85;
@@ -315,8 +317,9 @@ class SumoSim implements RoundSim {
       if (w.dashCd > 0) w.dashCd--;
       final a = w.dir * pi / 8, ux = cos(a), uy = -sin(a);
       if (w.wantDash && w.dashCd == 0) {
-        w.vx += ux * config.dashSpeed;
-        w.vy += uy * config.dashSpeed;
+        final push = _ice ? config.dashSpeedIce : config.dashSpeed;
+        w.vx += ux * push;
+        w.vy += uy * push;
         // The phone's ring started at the press; the ticks the press waited for the go count as recharged.
         w.dashCd = max(0, (config.dashCooldown * config.tickHz).round() - w.waited);
         w.waited = 0;

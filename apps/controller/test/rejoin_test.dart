@@ -22,6 +22,22 @@ Future<void> _send(WidgetTester t, FakeConnection c, Message m) async {
 }
 
 void main() {
+  testWidgets('a phone that reloads in the middle of Sumo gets its header (name and face) back', (t) async {
+    t.view.physicalSize = const Size(390, 844);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    final c = FakeConnection();
+    await t.pumpWidget(App(c, saved: SavedJoin('Petra', characterIds[3]), onSave: (_) {}));
+    // What the TV sends a phone that comes back mid-round: Welcome, the lobby, then the status.
+    await _send(t, c, Welcome(0, 0, 'test', character: characterIds[3]));
+    await _send(t, c, _lobby());
+    await _send(t, c, const CurveStatus(alive: true, score: 26, target: 70, round: 12, sumo: true));
+    expect(find.text('Petra'), findsOneWidget);
+    expect(find.byType(CharacterFace), findsOneWidget);
+    expect(find.text(Strings.curveRoundScore(12, 26)), findsOneWidget);
+    await t.pumpWidget(const SizedBox()); // the ping timer
+  });
+
   testWidgets('with a stored name, Join goes out at once and no join screen', (
     t,
   ) async {
