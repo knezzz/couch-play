@@ -128,6 +128,19 @@ void main() {
     expect(g.debugFaces, 4, reason: 'Velik scales the same picture');
   });
 
+  testWidgets('the recorded pictures are released when the game leaves the screen', (t) async {
+    final g = make(sim(n: 3));
+    _frame(g);
+    expect(g.debugFaces, 3);
+    expect(g.debugBar, isNotNull);
+    g.onRemove();
+    expect(g.debugFaces, 0);
+    expect(g.debugBar, isNull);
+    g.onRemove(); // twice is harmless
+    _frame(g); // and drawing again just records again
+    expect(g.debugFaces, 3);
+  });
+
   testWidgets('the bar is laid out once: not again frame after frame, redone only on a resize', (t) async {
     final g = make(sim());
     void frame() {

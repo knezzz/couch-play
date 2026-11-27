@@ -66,6 +66,7 @@ class _W {
   double x = 0, y = 0, vx = 0, vy = 0;
   bool alive = true, wantDash = false;
   int dir = 0, force = 0, dashCd = 0;
+  int waited = 0; // ticks a countdown press has waited for the go
   final Int32List fx = Int32List(SumoPower.values.length);
   bool has(SumoPower k) => fx[k.index] > 0;
 }
@@ -191,7 +192,13 @@ class SumoSim implements RoundSim {
   void dash(int id) {
     final w = _wOrNull(id);
     if (w == null || !w.alive) return;
-    if (countingDown || w.dashCd <= _dashGrace) w.wantDash = true;
+    if (countingDown) {
+      if (!w.wantDash) w.waited = 0;
+      w.wantDash = true;
+    } else if (w.dashCd <= _dashGrace) {
+      w.waited = 0;
+      w.wantDash = true;
+    }
   }
 
   @override
@@ -266,6 +273,7 @@ class SumoSim implements RoundSim {
         ..alive = !_gone.contains(w.id)
         ..force = 0
         ..wantDash = false
+        ..waited = 0
         ..dashCd = 0
         ..dir = ((atan2(w.y, -w.x) / (pi / 8)).round()) & 15;
       w.fx.fillRange(0, w.fx.length, 0);
@@ -284,6 +292,9 @@ class SumoSim implements RoundSim {
     if (roundOver) return const [];
     if (_countdownLeft > 0) {
       _countdownLeft--;
+      for (final w in _ws) {
+        if (w.wantDash) w.waited++;
+      }
     } else {
       _step();
     }
@@ -306,7 +317,9 @@ class SumoSim implements RoundSim {
       if (w.wantDash && w.dashCd == 0) {
         w.vx += ux * config.dashSpeed;
         w.vy += uy * config.dashSpeed;
-        w.dashCd = (config.dashCooldown * config.tickHz).round();
+        // The phone's ring started at the press; the ticks the press waited for the go count as recharged.
+        w.dashCd = max(0, (config.dashCooldown * config.tickHz).round() - w.waited);
+        w.waited = 0;
         w.wantDash = false;
         _emit(Dashed(w.id));
       }

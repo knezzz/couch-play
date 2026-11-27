@@ -229,6 +229,30 @@ void main() {
       expect(s.velocityOf(0).$1, greaterThan(600));
     });
 
+    test('a countdown press recharges from the press, like the phone\'s ring: ready 2 s after it, not 2 s after the go', () {
+      final s = make([0, 1], config: const SumoConfig(countdown: 2, powerUps: false));
+      s.place(0, 0, 0);
+      s.place(1, 300, 300);
+      s.setMove(0, 0, 0);
+      for (var i = 0; i < 30; i++) {
+        s.tick(); // half a second of the countdown
+      }
+      s.dash(0); // pressed 90 ticks before the go
+      for (var i = 0; i < 90; i++) {
+        s.tick();
+      }
+      expect(s.countingDown, isFalse);
+      expect(s.tick().whereType<Dashed>().single.id, 0, reason: 'fires at the go');
+      expect(s.dashLeft(0), closeTo(30 / 120, 0.02), reason: '2 s after the press = 30 ticks after the go');
+      for (var i = 0; i < 31; i++) {
+        s.tick();
+      }
+      expect(s.dashLeft(0), 0, reason: 'ready 2 s after the press');
+      s.setVelocity(0, 0, 0);
+      s.dash(0);
+      expect(s.tick().whereType<Dashed>().single.id, 0);
+    });
+
     test('a dash that arrives a few ticks before the recharge ends is kept and fires when it does', () {
       final s = make([0, 1]);
       s.place(1, 300, 300);

@@ -149,7 +149,8 @@ class SumoGame extends FlameGame {
   }
 
   // The old edge: a dashed circle at the full radius, recorded once (72 arcs are not worth redrawing at 60 Hz).
-  late final Picture _oldEdge = () {
+  Picture? _oldEdgePic;
+  Picture get _oldEdge => _oldEdgePic ??= () {
     final rec = PictureRecorder();
     final c = Canvas(rec);
     final path = Path();
@@ -161,6 +162,20 @@ class SumoGame extends FlameGame {
     c.drawPath(path, Paint()..style = PaintingStyle.stroke..strokeWidth = 4..color = const Color(0x38FFFFFF));
     return rec.endRecording();
   }();
+
+  /// The recorded pictures (the old edge, the top bar, the faces) are released when the game leaves the screen.
+  @override
+  void onRemove() {
+    _oldEdgePic?.dispose();
+    _oldEdgePic = null;
+    _bar?.dispose();
+    _bar = null;
+    for (final f in _faces.values) {
+      f.dispose();
+    }
+    _faces.clear();
+    super.onRemove();
+  }
 
   void _drawFloor(Canvas canvas, double r0) {
     final r = sim.radius;
