@@ -83,6 +83,7 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   int _terrainVersion = -1;
   ui.Picture? _ground;
   final _names = <int, TextPainter>{};
+  final _faces = <int, ui.Picture>{}; // each commander's face, recorded once per round
   final _trails = <TenkoviShot, _Trail>{};
   List<Offset> _oldDots = const []; // the faint dots of the last volley
   final _blasts = <_Blast>[];
@@ -90,13 +91,22 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _ticker = createTicker(_onTick)..start();
+    _ticker = createTicker(_onTick); // started only while something moves
+  }
+
+  void _wake() {
+    if (_ticker.isActive) return;
+    _last = Duration.zero;
+    _ticker.start();
   }
 
   @override
   void dispose() {
     _ticker.dispose();
     _ground?.dispose();
+    for (final f in _faces.values) {
+      f.dispose();
+    }
     super.dispose();
   }
 
@@ -116,7 +126,10 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       b.age += dt;
     }
     _blasts.removeWhere((b) => b.age > 0.6);
-    if (busy || _blasts.isNotEmpty) _repaint.value++;
+    _repaint.value++;
+    // Nothing in the air and no blast left: stop asking for frames (the aim can
+    // last minutes; the TV must be idle then).
+    if (!busy && _blasts.isEmpty) _ticker.stop();
   }
 
   void _sampleTrails(TenkoviRound r) {
@@ -167,8 +180,22 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       _oldDots = const [];
       _blasts.clear();
       _names.clear();
+      for (final f in _faces.values) {
+        f.dispose();
+      }
+      _faces.clear();
       for (final t in r.tanks) {
         final p = widget.players.where((p) => p.id == t.id).firstOrNull;
+        if (p != null && p.character.isNotEmpty) {
+          final rec = ui.PictureRecorder();
+          CharacterFace.paintOn(
+            Canvas(rec),
+            const Size(70, 70),
+            p.character,
+            playerColors[p.colorIndex % playerColors.length],
+          );
+          _faces[t.id] = rec.endRecording();
+        }
         _names[t.id] = TextPainter(
           text: TextSpan(
             text: p?.name ?? '',
@@ -264,6 +291,7 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     final m = widget.match;
     _ensureCaches(m);
+    if ((m.stage == TenkoviStageTv.fly && !m.paused) || _blasts.isNotEmpty) _wake();
     final r = m.round;
     final byId = {for (final p in widget.players) p.id: p};
     StripName strip(int id, {int? points, int? place}) {
@@ -561,10 +589,11 @@ class _ScenePainter extends CustomPainter {
       }
 
       // The commander's face over the turret, the HP bar and the name.
-      if (p != null && p.character.isNotEmpty) {
+      final face = s._faces[t.id];
+      if (face != null) {
         canvas.save();
         canvas.translate(tx - 35, gy - 83);
-        CharacterFace.paintOn(canvas, const Size(70, 70), p.character, color);
+        canvas.drawPicture(face);
         canvas.restore();
       }
       final f = t.hp / Tenkovi.maxHp;

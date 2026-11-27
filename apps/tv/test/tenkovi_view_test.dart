@@ -63,6 +63,32 @@ void main() {
     m.dispose();
   });
 
+  testWidgets('idle during the aim the view asks for no frame; it wakes for the volley and sleeps again', (t) async {
+    final m = _match(3);
+    await _show(t, m, 3);
+    await t.pump(const Duration(milliseconds: 100));
+    expect(t.binding.hasScheduledFrame, isFalse, reason: 'nothing moves while players aim');
+    m.onFire(1, const TenkoviFire(90, 5, TenkoviShell.grenade));
+    await t.pump();
+    expect(t.binding.hasScheduledFrame, isFalse, reason: 'a tick is not a reason to draw');
+    m.onFire(2, const TenkoviFire(90, 5, TenkoviShell.grenade));
+    m.onFire(3, const TenkoviFire(90, 5, TenkoviShell.grenade));
+    await t.pump();
+    expect(m.stage, TenkoviStageTv.fly);
+    expect(t.binding.hasScheduledFrame, isTrue, reason: 'the shells are in the air');
+    for (var i = 0; i < 600 && m.stage == TenkoviStageTv.fly; i++) {
+      await _frame(t);
+    }
+    for (var i = 0; i < 60; i++) {
+      await _frame(t); // the blasts fade
+    }
+    if (m.stage == TenkoviStageTv.aim) {
+      expect(t.binding.hasScheduledFrame, isFalse, reason: 'idle again');
+    }
+    await t.pump(const Duration(seconds: 3));
+    m.dispose();
+  });
+
   testWidgets('the volley flies on the ticker, then the next turn starts', (t) async {
     final m = _match(3);
     await _show(t, m, 3);
