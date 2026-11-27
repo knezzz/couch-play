@@ -382,39 +382,54 @@ class HostSettingsList extends StatelessWidget {
         ),
       );
 
-  /// The stepper's value in its 88 px box. Two lines as before; but when one
-  /// WORD is wider than the box (Nasumično, Uravnoteženo) it would be torn in
-  /// the middle, so the value is scaled down onto one line instead.
-  Widget _value(HomeRow r) {
+  /// The stepper's value in its 88 px box. A word is never torn in the middle
+  /// ("Nasumičn" / "o"): a single word is always scaled down onto one line when
+  /// it is wider than the box (no measuring, so no font can disagree with it:
+  /// the first version measured with a style that was not the rendered one, and
+  /// a word 1-2 px under the box in the check was over it in the browser).
+  /// Several words keep the old two lines; if one of THEM is too wide the whole
+  /// value is scaled, measured with the style the Text really gets.
+  Widget _value(BuildContext context, HomeRow r) {
     const style = TextStyle(
       fontSize: 17,
       fontWeight: FontWeight.w700,
       height: 1.2,
     );
+    Text text(int lines) => Text(
+      r.display,
+      key: ValueKey('val-${r.key}'),
+      textAlign: TextAlign.center,
+      maxLines: lines,
+      overflow: TextOverflow.ellipsis,
+      style: style,
+    );
+    if (!r.display.contains(' ')) {
+      return SizedBox(
+        width: 88,
+        child: FittedBox(fit: BoxFit.scaleDown, child: text(1)),
+      );
+    }
+    final effective = DefaultTextStyle.of(context).style.merge(style);
+    final scaler = MediaQuery.textScalerOf(context);
     var widest = 0.0;
     for (final w in r.display.split(' ')) {
       final p = TextPainter(
-        text: TextSpan(text: w, style: style),
+        text: TextSpan(text: w, style: effective),
+        textScaler: scaler,
         textDirection: TextDirection.ltr,
       )..layout();
       if (p.width > widest) widest = p.width;
     }
-    final tooWide = widest > 88;
-    final text = Text(
-      r.display,
-      key: ValueKey('val-${r.key}'),
-      textAlign: TextAlign.center,
-      maxLines: tooWide ? 1 : 2,
-      overflow: TextOverflow.ellipsis,
-      style: style,
-    );
+    final tooWide = widest > 84;
     return SizedBox(
       width: 88,
-      child: tooWide ? FittedBox(fit: BoxFit.scaleDown, child: text) : text,
+      child: tooWide
+          ? FittedBox(fit: BoxFit.scaleDown, child: text(1))
+          : text(2),
     );
   }
 
-  Widget _row(HomeRow r) {
+  Widget _row(BuildContext context, HomeRow r) {
     final prev = r.prev, next = r.next;
     final number = r.isNumber;
     return Container(
@@ -446,7 +461,7 @@ class HostSettingsList extends StatelessWidget {
               prev == null ? null : () => onSend(r.messageFor!(prev)),
               ValueKey('dec-${r.key}'),
             ),
-            _value(r),
+            _value(context, r),
             _step(
               Strings.moreOf(r.label),
               number ? Icons.add : Icons.chevron_right,
@@ -491,7 +506,7 @@ class HostSettingsList extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       for (final r in rows)
-        Padding(padding: const EdgeInsets.only(bottom: 10), child: _row(r)),
+        Padding(padding: const EdgeInsets.only(bottom: 10), child: _row(context, r)),
     ],
   );
 }

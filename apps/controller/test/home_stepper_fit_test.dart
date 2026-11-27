@@ -60,11 +60,8 @@ void main() {
       _lobby(GameKind.tenkovi, const GameSettings(tenkoviMap: TenkoviMapPick.earth)),
       390,
     );
-    final v = t.widget<Text>(find.byKey(const ValueKey('val-tenkoviRounds')));
-    expect(v.maxLines, 2, reason: 'the old two-line box for words that fit');
-    expect(find.ancestor(
-      of: find.byKey(const ValueKey('val-tenkoviRounds')),
-      matching: find.byType(FittedBox),
-    ), findsNothing);
+    final v = find.byKey(const ValueKey('val-tenkoviRounds'));
+    final shown = t.getBottomRight(v) - t.getTopLeft(v);
+    expect(shown.dx, closeTo(t.getSize(v).width, 0.01), reason: 'scale 1: it looks as before');
   });
 }
