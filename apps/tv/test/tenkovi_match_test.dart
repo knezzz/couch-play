@@ -153,7 +153,7 @@ void main() {
     r.match.dispose();
   });
 
-  testWidgets('only away tanks left alive (2 or more): the round ends at once and they tie at the top', (t) async {
+  testWidgets('only away tanks left alive (2 or more): after a 30 s grace the round ends and they tie at the top', (t) async {
     final r = Rig(n: 4, rounds: 2);
     r.match.setAway(3, true);
     r.match.setAway(4, true);
@@ -163,7 +163,11 @@ void main() {
     r.match.onFire(2, const TenkoviFire(90, 0, TenkoviShell.grenade));
     expect(r.match.stage, TenkoviStageTv.fly);
     r.fly();
-    expect(r.match.stage, TenkoviStageTv.end, reason: 'nobody connected is alive: no stall');
+    expect(r.match.stage, TenkoviStageTv.aim, reason: 'the away phones get a grace first');
+    await t.pump(const Duration(seconds: 29));
+    expect(r.match.stage, TenkoviStageTv.aim);
+    await t.pump(const Duration(seconds: 2));
+    expect(r.match.stage, TenkoviStageTv.end, reason: 'nobody connected is alive and they did not come back');
     expect(r.match.lastWinner, isNull);
     expect(r.match.lastSurvivors, [3, 4]);
     expect(r.match.lastPoints, {1: 0, 2: 0, 3: 2, 4: 2});
@@ -183,8 +187,65 @@ void main() {
     r.match.setAway(3, true);
     expect(r.match.stage, TenkoviStageTv.aim, reason: 'tank 4 is alive and connected');
     r.match.setAway(4, true);
+    expect(r.match.stage, TenkoviStageTv.aim, reason: 'a grace first');
+    await t.pump(const Duration(seconds: 31));
     expect(r.match.stage, TenkoviStageTv.end);
     expect(r.match.lastPoints, {1: 0, 2: 0, 3: 2, 4: 2});
+    r.match.dispose();
+  });
+
+  testWidgets('a phone blip does not end a round: every living phone drops and comes back, 2 and 3 players', (t) async {
+    for (final n in [2, 3]) {
+      final r = Rig(n: n, rounds: 1);
+      for (var i = 1; i <= n; i++) {
+        r.match.setAway(i, true);
+      }
+      await t.pump(const Duration(seconds: 5));
+      expect(r.match.stage, TenkoviStageTv.aim, reason: ' players, everybody away');
+      for (var i = 1; i <= n; i++) {
+        r.match.setAway(i, false);
+      }
+      await t.pump(const Duration(seconds: 60));
+      expect(r.match.stage, TenkoviStageTv.aim, reason: ' players back: nothing ended');
+      expect(r.match.match.played, 0);
+      expect(r.match.round.living.length, n);
+      r.match.dispose();
+    }
+  });
+
+  testWidgets('away tanks come back within the grace: the round goes on, nothing is scored', (t) async {
+    final r = Rig(n: 4, rounds: 1);
+    r.match.round.tank(1).hp = 0;
+    r.match.round.tank(2).hp = 0;
+    r.match.round.outAt[1] = 0;
+    r.match.round.outAt[2] = 0;
+    r.match.setAway(3, true);
+    r.match.setAway(4, true);
+    await t.pump(const Duration(seconds: 20));
+    r.match.setAway(3, false);
+    await t.pump(const Duration(seconds: 60));
+    expect(r.match.stage, TenkoviStageTv.aim, reason: 'tank 3 is alive and connected again');
+    expect(r.match.match.played, 0);
+    r.match.dispose();
+  });
+
+  testWidgets('the grace does not run under a pause', (t) async {
+    final r = Rig(n: 4, rounds: 1);
+    r.match.round.tank(1).hp = 0;
+    r.match.round.tank(2).hp = 0;
+    r.match.round.outAt[1] = 0;
+    r.match.round.outAt[2] = 0;
+    r.match.setAway(3, true);
+    r.match.setAway(4, true);
+    await t.pump(const Duration(seconds: 10));
+    r.match.pause();
+    await t.pump(const Duration(seconds: 60));
+    expect(r.match.stage, TenkoviStageTv.aim, reason: 'paused: the session owns the wait');
+    r.match.resume();
+    await t.pump(const Duration(seconds: 29));
+    expect(r.match.stage, TenkoviStageTv.aim, reason: 'a fresh 30 s after the resume');
+    await t.pump(const Duration(seconds: 2));
+    expect(r.match.stage, TenkoviStageTv.end);
     r.match.dispose();
   });
 

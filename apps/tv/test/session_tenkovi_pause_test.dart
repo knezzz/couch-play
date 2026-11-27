@@ -158,6 +158,27 @@ void main() {
     s.dispose();
   });
 
+  testWidgets('a phone blip: every phone of 2 or 3 players drops one by one and returns: the round was not ended, nothing scored', (t) async {
+    for (final n in [2, 3]) {
+      setUpSession(n, rounds: 1);
+      for (var i = 0; i < n; i++) {
+        ps[i].close();
+        await t.pump();
+      }
+      expect(s.paused, isTrue);
+      await advance(t, 5000);
+      for (var i = 0; i < n; i++) {
+        await back(t, i);
+      }
+      expect(s.paused, isFalse);
+      await advance(t, 60000);
+      expect(s.phase, Phase.tenkovi, reason: ' players: the match is still on');
+      expect(s.tenkovi!.match.played, 0);
+      expect(s.tenkovi!.stage, TenkoviStageTv.aim);
+      s.dispose();
+    }
+  });
+
   testWidgets('3 players lose two: paused for the last one to leave, as Curve does', (t) async {
     setUpSession(3);
     ps[1].close();

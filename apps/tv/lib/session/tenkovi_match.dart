@@ -90,6 +90,7 @@ class TenkoviTvMatch {
 
   void dispose() {
     _timer?.cancel();
+    _stallTimer?.cancel();
     _loop?.cancel();
   }
 
@@ -135,6 +136,8 @@ class TenkoviTvMatch {
     paused = true;
     _loop?.cancel();
     _timer?.cancel();
+    _stallTimer?.cancel();
+    _stallTimer = null;
     notify?.call();
   }
 
@@ -152,6 +155,7 @@ class TenkoviTvMatch {
     }
     _tellAll();
     _maybeFire();
+    _checkStall();
     notify?.call();
   }
 
@@ -220,6 +224,8 @@ class TenkoviTvMatch {
   }
 
   void _endRound() {
+    _stallTimer?.cancel();
+    _stallTimer = null;
     lastWinner = round.winner;
     lastSurvivors = [for (final t in round.living) t.id]..sort();
     lastPoints = match.finish();
@@ -253,13 +259,34 @@ class TenkoviTvMatch {
     notify?.call();
   }
 
-  /// Every connected tank is out and 2 or more absent ones are alive (a drop or a
-  /// kick): nobody can fire, so the round ends now. The absent tanks tie at the
-  /// top, everyone else gets the players they outlived.
+  /// How long absent players get to come back before their round is ended.
+  static const stallGrace = Duration(seconds: 30);
+  Timer? _stallTimer;
+
+  /// Every connected tank is out and 2 or more absent ones are alive, while at
+  /// least 2 phones are still connected (fewer is the session's 30 s pause): nobody
+  /// can fire.
+  bool get _stalled =>
+      !paused &&
+      stage == TenkoviStageTv.aim &&
+      round.living.length >= 2 &&
+      connected.length >= 2 &&
+      !round.living.any((t) => connected.contains(t.id));
+
+  /// Gives the absent players the same 30 s as a pause; a living tank that comes
+  /// back, a pause, or the end of the turn cancels it. When it runs out the round
+  /// ends: the absent tanks tie at the top, everyone else gets the players they
+  /// outlived.
   void _checkStall() {
-    if (paused || stage != TenkoviStageTv.aim || round.living.length < 2) return;
-    if (round.living.any((t) => connected.contains(t.id))) return;
-    _endRound();
+    if (!_stalled) {
+      _stallTimer?.cancel();
+      _stallTimer = null;
+      return;
+    }
+    _stallTimer ??= Timer(stallGrace, () {
+      _stallTimer = null;
+      if (_stalled) _endRound();
+    });
   }
 
   void rejoin(int id) {
