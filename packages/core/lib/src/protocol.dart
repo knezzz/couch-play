@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'tenkovi.dart';
 import 'uljez.dart';
 import 'wolf.dart';
 
-enum GameKind { quiz, curve, vukodlak, uljez, objasni, koliko, blef, tkobi, sumo }
+enum GameKind { quiz, curve, vukodlak, uljez, objasni, koliko, blef, tkobi, sumo, tenkovi }
 
 /// Value equality from the JSON form, so every wire type compares by content.
 mixin _JsonEq {
@@ -96,6 +97,9 @@ class GameSettings with _JsonEq {
   /// Sumo: the map and whether power-ups appear on the ring.
   final SumoMap sumoMap;
   final bool sumoPowerUps;
+  /// Tenkovi: the map (or a new one every round) and the rounds (1 / 3 / 5).
+  final TenkoviMapPick tenkoviMap;
+  final int tenkoviRounds;
 
   /// Packs are multi-select in every game: the ids of the packs that are
   /// switched OFF, per game. Empty (the default) = every pack is ticked, so a
@@ -140,6 +144,8 @@ class GameSettings with _JsonEq {
     this.tkobiPrompts = 10,
     this.sumoMap = SumoMap.classic,
     this.sumoPowerUps = true,
+    this.tenkoviMap = TenkoviMapPick.random,
+    this.tenkoviRounds = 3,
     this.quizOffPacks = const {},
     this.uljezOffPacks = const {},
     this.objasniOffPacks = const {},
@@ -168,6 +174,10 @@ class GameSettings with _JsonEq {
       tkobiPrompts: (j['tkobiPrompts'] as int?) ?? 10,
       sumoMap: SumoMap.values.asNameMap()[j['sumoMap']] ?? SumoMap.classic,
       sumoPowerUps: (j['sumoPowerUps'] as bool?) ?? true,
+      tenkoviMap: j['tenkoviMap'] == null
+          ? TenkoviMapPick.random
+          : (TenkoviMapPick.values.asNameMap()[j['tenkoviMap']] ?? TenkoviMapPick.random),
+      tenkoviRounds: (j['tenkoviRounds'] as int?) ?? 3,
       quizOffPacks: _ids(j['quizOffPacks']),
       uljezOffPacks: _ids(j['uljezOffPacks']),
       objasniOffPacks: _ids(j['objasniOffPacks']),
@@ -195,6 +205,8 @@ class GameSettings with _JsonEq {
       tkobiPrompts: tkobiPrompts,
       sumoMap: sumoMap,
       sumoPowerUps: sumoPowerUps,
+      tenkoviMap: tenkoviMap,
+      tenkoviRounds: tenkoviRounds,
       quizOffPacks: off[GameKind.quiz] ?? quizOffPacks,
       uljezOffPacks: off[GameKind.uljez] ?? uljezOffPacks,
       objasniOffPacks: off[GameKind.objasni] ?? objasniOffPacks,
@@ -226,6 +238,8 @@ class GameSettings with _JsonEq {
       tkobiPrompts: oneOf(tkobiPrompts, const [5, 10, 15]),
       sumoMap: sumoMap,
       sumoPowerUps: sumoPowerUps,
+      tenkoviMap: tenkoviMap,
+      tenkoviRounds: oneOf(tenkoviRounds, const [1, 3, 5]),
       quizOffPacks: quizOffPacks,
       uljezOffPacks: uljezOffPacks,
       objasniOffPacks: objasniOffPacks,
@@ -253,6 +267,8 @@ class GameSettings with _JsonEq {
         'tkobiPrompts': tkobiPrompts,
         'sumoMap': sumoMap.name,
         'sumoPowerUps': sumoPowerUps,
+        'tenkoviMap': tenkoviMap.name,
+        'tenkoviRounds': tenkoviRounds,
         'quizOffPacks': (quizOffPacks.toList()..sort()),
         'uljezOffPacks': (uljezOffPacks.toList()..sort()),
         'objasniOffPacks': (objasniOffPacks.toList()..sort()),
@@ -480,6 +496,25 @@ sealed class Message with _JsonEq {
             wordNo: (m['wordNo'] as int?) ?? 0,
             seconds: m['seconds'] as int,
             scores: [for (final e in m['scores'] as List) e as int]),
+        'tkFire' => TenkoviFire(m['angle'] as int, m['power'] as int,
+            TenkoviShell.values.byName(m['shell'] as String)),
+        'tkTurn' => TenkoviTurn(
+            stage: m['stage'] as String,
+            round: m['round'] as int,
+            rounds: m['rounds'] as int,
+            map: TenkoviMap.values.byName(m['map'] as String),
+            wind: m['wind'] as int,
+            alive: m['alive'] as bool,
+            hp: m['hp'] as int,
+            heavy: m['heavy'] as bool,
+            cluster: m['cluster'] as bool,
+            ready: m['ready'] as int,
+            total: m['total'] as int,
+            sent: m['sent'] == null ? null : [for (final e in m['sent'] as List) e as int],
+            last: m['last'] == null ? null : [for (final e in m['last'] as List) e as int],
+            points: (m['points'] as int?) ?? 0,
+            score: (m['score'] as int?) ?? 0,
+            winner: m['winner'] as int?),
         'pong' => Pong(m['t'] as int),
         'waiting' => Waiting(m['reason'] as String),
         'error' => ErrorMsg(m['message'] as String),
@@ -1482,3 +1517,71 @@ LobbyChange? _change(Object? v) {
 
 List<LobbyChange> _changes(Object? v) =>
     v is List ? [for (final e in v) ?_change(e)] : const [];
+
+/// Phone -> TV: Pucaj. The aim of THIS phone's tank; the TV keeps it until the
+/// volley fires and sends it to nobody.
+class TenkoviFire extends Message {
+  final int angle, power;
+  final TenkoviShell shell;
+  const TenkoviFire(this.angle, this.power, this.shell);
+  @override
+  String get type => 'tkFire';
+  @override
+  Map<String, Object?> get fields => {'angle': angle, 'power': power, 'shell': shell.name};
+}
+
+/// TV -> each phone, the same shape for all of them. Nothing in it is another
+/// player's aim: [ready] is only a count, [sent] and [last] are this phone's
+/// own aim (null before Pucaj, or the first turn).
+class TenkoviTurn extends Message {
+  /// 'aim' (set the shot), 'fly' (the volley is in the air), 'end' (the round is over).
+  final String stage;
+  final int round, rounds, wind, hp, ready, total, points, score;
+  final TenkoviMap map;
+  final bool alive, heavy, cluster;
+
+  /// This phone's pressed aim [angle, power, shell index], and its last volley's [angle, power].
+  final List<int>? sent, last;
+
+  /// The player who won the round; null is a draw (only at 'end').
+  final int? winner;
+  const TenkoviTurn({
+    required this.stage,
+    required this.round,
+    required this.rounds,
+    required this.map,
+    required this.wind,
+    required this.alive,
+    required this.hp,
+    required this.heavy,
+    required this.cluster,
+    required this.ready,
+    required this.total,
+    this.sent,
+    this.last,
+    this.points = 0,
+    this.score = 0,
+    this.winner,
+  });
+  @override
+  String get type => 'tkTurn';
+  @override
+  Map<String, Object?> get fields => {
+        'stage': stage,
+        'round': round,
+        'rounds': rounds,
+        'map': map.name,
+        'wind': wind,
+        'alive': alive,
+        'hp': hp,
+        'heavy': heavy,
+        'cluster': cluster,
+        'ready': ready,
+        'total': total,
+        'sent': sent,
+        'last': last,
+        'points': points,
+        'score': score,
+        'winner': winner,
+      };
+}

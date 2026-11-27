@@ -9,6 +9,9 @@ enum TenkoviMap { earth, moon, mars }
 
 enum TenkoviShell { grenade, heavy, cluster, bomblet }
 
+/// The host's choice of map: one of the three, or a new one every round.
+enum TenkoviMapPick { earth, moon, mars, random }
+
 extension TenkoviMapRules on TenkoviMap {
   /// px/s^2 downwards.
   double get gravity => switch (this) {
