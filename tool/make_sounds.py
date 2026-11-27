@@ -148,8 +148,12 @@ SOUNDS = {
     'heartbeat': seq([x * 1.25 for x in env(mix(tone(90, 0.1, slide=60), [x * 0.3 for x in tone(180, 0.1, slide=120)]), 4.0)], gap(0.08),
                      [x * 0.75 for x in env(mix(tone(110, 0.09, slide=75), [x * 0.3 for x in tone(220, 0.09, slide=150)]), 4.0)]),
     'timeUp': seq(tone(N['G5'], 0.14), tone(N['E5'], 0.14), tone(N['C5'], 0.4)),
+    # Task 55: Sumo
+    'sumoDash': mix([x * 0.5 for x in noise(0.18, decay=5.0)], tone(300, 0.18, slide=900)),
+    'sumoBump': mix(env(tone(140, 0.12, slide=70), 6.0), [x * 0.4 for x in noise(0.05, decay=8.0)]),
+    'sumoFall': env(tone(800, 0.5, slide=120), 2.5),
 }
-GAIN = {'menuMove': 0.8, 'quizTick': 0.8, 'nightAmbience': 0.7,
+GAIN = {'menuMove': 0.8, 'quizTick': 0.8, 'nightAmbience': 0.7, 'sumoBump': 0.8,
         'tickUrgent': 0.5 / PEAK, 'heartbeat': 0.5 / PEAK}  # urgent end-of-question sounds may peak at 50 %  # quieter than PEAK: frequent or long
 RATES = {'nightAmbience': AMB_RATE, 'howl': AMB_RATE}
 

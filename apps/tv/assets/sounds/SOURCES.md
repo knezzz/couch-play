@@ -32,3 +32,6 @@ script to regenerate them; the names match `Sound` in `lib/sound/sfx.dart`.
 | tickUrgent.wav | quiz: the fast ticking at the end of a question | 30 ms high click, 50 % |
 | heartbeat.wav | quiz: once a second in the last 5 s | low double thump (lub-dub), 50 % |
 | timeUp.wav | quiz: time runs out before everyone answered | three falling notes |
+| sumoDash.wav | Sumo: a wrestler dashes | 0.18 s noise whoosh over a rising tone |
+| sumoBump.wav | Sumo: two wrestlers hit hard | 0.12 s low thud, 80 % |
+| sumoFall.wav | Sumo: a wrestler leaves the ring | 0.5 s falling whistle |

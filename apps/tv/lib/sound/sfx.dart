@@ -23,6 +23,9 @@ enum Sound {
   tickUrgent,
   heartbeat,
   timeUp,
+  sumoDash,
+  sumoBump,
+  sumoFall,
 }
 
 /// The session calls this on each event. Fire and forget: it must never block
