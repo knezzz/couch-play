@@ -232,6 +232,7 @@ abstract final class Strings {
   static const tonight = 'Večeras';
   static const gameCurve = 'Curve';
   static const gameSumo = 'Sumo';
+  static String sumoRoundHead(int round, int target) => 'Runda $round · do $target';
   static const sumoCountdownHint = 'Povuci palcem i gurni ostale s ringa.';
   static String sumoMapName(SumoMap m) => switch (m) { SumoMap.classic => 'Klasični', SumoMap.ice => 'Led', SumoMap.random => 'Nasumično' };
   static const sumoNeedsTwo = 'Za Sumo trebaju barem 2 igrača.';

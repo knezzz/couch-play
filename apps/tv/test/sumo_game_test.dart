@@ -77,10 +77,59 @@ void main() {
     final g = make(s);
     final d = await shot(t, g);
     // The free height is 1080 x (1 - 0.058); the ring is centred in it.
-    final cy = ((1080 * (1 - CurveGame.bandFraction) - SumoGame.hintRoom) / 2).round();
+    final cy = (SumoGame.topBar + (1080 * (1 - CurveGame.bandFraction) - SumoGame.topBar - SumoGame.hintRoom) / 2).round();
     expect(alpha(d, 960, cy + 6), 255, reason: 'the floor');
     expect(alpha(d, 960, 1070), 0, reason: 'the band under the ring is free for the names');
     expect(alpha(d, 20, 540), 0, reason: 'outside the ring there is the TV background, nothing drawn');
+  });
+
+  testWidgets('the top bar: each player\'s face in its colour, the round and the map, over the ring', (t) async {
+    final s = sim(n: 3);
+    s.scores[0] = 12;
+    final g = SumoGame(s, playerColors, bottomBand: CurveGame.bandFraction)..onGameResize(Vector2(1920, 1080));
+    final d = await shot(t, g);
+    // Under the bar's height there is something drawn (text and faces), and the ring starts below it.
+    var lit = 0;
+    for (var x = 0; x < 1920; x += 2) {
+      for (var y = 10; y < 78; y += 2) {
+        if (alpha(d, x, y) > 0) lit++;
+      }
+    }
+    expect(lit, greaterThan(300), reason: 'text and faces in the bar');
+    expect(alpha(d, 960, SumoGame.topBar.toInt() - 6), 0, reason: 'the ring does not reach into the bar');
+    // The face of player 0 (colour 0) sits right after the round text: some pixel of that colour in the bar.
+    var coloured = 0;
+    for (var x = 0; x < 900; x++) {
+      for (var y = 30; y < 60; y++) {
+        if (px(d, x, y) >> 8 == (playerColors[0].toARGB32() & 0xFFFFFF)) coloured++;
+      }
+    }
+    expect(coloured, greaterThan(50), reason: 'player 0 face colour');
+  });
+
+  testWidgets('each face is recorded once per game, not painted anew for every wrestler every frame', (t) async {
+    final s = sim(n: 4);
+    final g = make(s);
+    g.render(Canvas(PictureRecorder()));
+    expect(g.debugFaces, 4);
+    for (var i = 0; i < 20; i++) {
+      g.render(Canvas(PictureRecorder()));
+    }
+    expect(g.debugFaces, 4);
+    s.grant(0, SumoPower.big);
+    g.render(Canvas(PictureRecorder()));
+    expect(g.debugFaces, 4, reason: 'Velik scales the same picture');
+  });
+
+  testWidgets('the bar is laid out once: the same picture frame after frame, redone only on a resize', (t) async {
+    final g = make(sim());
+    g.render(Canvas(PictureRecorder()));
+    final first = g.debugBar;
+    g.render(Canvas(PictureRecorder()));
+    expect(identical(g.debugBar, first), isTrue);
+    g.onGameResize(Vector2(1280, 720));
+    g.render(Canvas(PictureRecorder()));
+    expect(identical(g.debugBar, first), isFalse);
   });
 
   testWidgets('the ring shows the shrunk edge: a dark floor beyond, the lit floor inside', (t) async {
@@ -89,8 +138,8 @@ void main() {
     for (var i = 0; i < 60 * 40; i++) {
       s.tick(); // 40 s: the ring is about half size
     }
-    final cy = ((1080 * (1 - CurveGame.bandFraction) - SumoGame.hintRoom) / 2).round();
-    final k = min(1920.0, 1080 * (1 - CurveGame.bandFraction) - SumoGame.hintRoom) / (2 * 440 * 1.07);
+    final cy = (SumoGame.topBar + (1080 * (1 - CurveGame.bandFraction) - SumoGame.topBar - SumoGame.hintRoom) / 2).round();
+    final k = min(1920.0, 1080 * (1 - CurveGame.bandFraction) - SumoGame.topBar - SumoGame.hintRoom) / (2 * 440 * 1.02);
     final d = await shot(t, g);
     final inside = px(d, 960 + (s.radius * k * 0.5).round(), cy);
     final beyond = px(d, 960 + ((s.radius + 40) * k).round(), cy);
@@ -101,7 +150,7 @@ void main() {
   testWidgets('ice and classic look different', (t) async {
     final a = await shot(t, make(sim()));
     final b = await shot(t, make(sim(map: SumoMap.ice)));
-    final cy = ((1080 * (1 - CurveGame.bandFraction) - SumoGame.hintRoom) / 2).round();
+    final cy = (SumoGame.topBar + (1080 * (1 - CurveGame.bandFraction) - SumoGame.topBar - SumoGame.hintRoom) / 2).round();
     expect(px(a, 960 + 300, cy), isNot(px(b, 960 + 300, cy)));
   });
 
@@ -113,8 +162,8 @@ void main() {
     final plain = await shot(t, g);
     g.ring = {0};
     final ringed = await shot(t, g);
-    final cy = ((1080 * (1 - CurveGame.bandFraction) - SumoGame.hintRoom) / 2).round();
-    final k = min(1920.0, 1080 * (1 - CurveGame.bandFraction) - SumoGame.hintRoom) / (2 * 440 * 1.07);
+    final cy = (SumoGame.topBar + (1080 * (1 - CurveGame.bandFraction) - SumoGame.topBar - SumoGame.hintRoom) / 2).round();
+    final k = min(1920.0, 1080 * (1 - CurveGame.bandFraction) - SumoGame.topBar - SumoGame.hintRoom) / (2 * 440 * 1.02);
     final x = 960, y = cy - ((52 + 22) * k).round(); // the ring's top (radius r + 22), above the wrestler
     expect(px(ringed, x, y), isNot(px(plain, x, y)));
     expect(px(ringed, x, y) >> 8, 0xFFFFFF, reason: 'white');

@@ -104,6 +104,7 @@ class SumoSim implements RoundSim {
   List<CurveEvent>? _events;
   int _t = 0, _countdownLeft = 0, _dead = 0, _spawnLeft = 0, _nextPowerUpId = 0;
   bool _ice = false;
+  int _round = 0;
 
   @override
   final Map<int, int> scores = {};
@@ -117,6 +118,9 @@ class SumoSim implements RoundSim {
   int get tickHz => config.tickHz;
   @override
   bool get countingDown => _countdownLeft > 0;
+
+  /// The round of the match, 1-based (counts every [startRound]).
+  int get round => _round;
 
   /// True on an ice round (the map, or the draw for Nasumično).
   bool get ice => _ice;
@@ -236,6 +240,7 @@ class SumoSim implements RoundSim {
 
   @override
   void startRound() {
+    _round++;
     _t = 0;
     _powerUps.clear();
     _pending.clear();

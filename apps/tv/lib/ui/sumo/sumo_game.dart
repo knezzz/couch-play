@@ -71,12 +71,14 @@ class SumoGame extends FlameGame {
   @override
   void render(Canvas canvas) {
     final free = size.y * (1 - bottomBand);
-    final avail = free - hintRoom; // the countdown hint sits under the ring, over no part of it
+    // Under the top bar and over the names strip, with the countdown hint's room kept under the ring.
+    final avail = free - topBar - hintRoom;
     final r0 = sim.config.arenaRadius;
-    final k = min(size.x, avail) / (2 * r0 * 1.07);
+    final k = min(size.x, avail) / (2 * r0 * 1.02);
+    _drawTopBar(canvas);
     canvas
       ..save()
-      ..translate(size.x / 2, avail / 2)
+      ..translate(size.x / 2, topBar + avail / 2)
       ..scale(k);
     _drawFloor(canvas, r0);
     for (final p in sim.powerUps) {
@@ -94,7 +96,52 @@ class SumoGame extends FlameGame {
   }
 
   /// Screen pixels kept free under the ring for the countdown hint (a 40 px line and air).
-  static const hintRoom = 80.0;
+  static const hintRoom = 64.0;
+
+  /// The height of the bar on top (SumoTv board: round and target, each player's face and score, the map).
+  static const topBar = 88.0;
+
+  // The top bar is laid out once (the scores change only between rounds, and every round is a new game)
+  // and kept as one picture. It is redone only if the screen size changes.
+  Picture? _bar;
+
+  /// For the test: the recorded bar (the same object frame after frame).
+  Picture? get debugBar => _bar;
+
+  /// For the test: how many face pictures are recorded (one per wrestler, kept for the game).
+  int get debugFaces => _faces.length;
+  double _barWidth = 0;
+  void _drawTopBar(Canvas canvas) {
+    if (_bar == null || _barWidth != size.x) {
+      _bar?.dispose();
+      _barWidth = size.x;
+      final rec = PictureRecorder();
+      final c = Canvas(rec);
+      TextPainter text(String t, FontWeight w, Color color) => TextPainter(
+            text: TextSpan(text: t, style: TextStyle(fontFamily: CurveGame.fontFamily, fontSize: 40, fontWeight: w, color: color)),
+            textDirection: TextDirection.ltr,
+          )..layout();
+      void put(TextPainter tp, double x) => tp.paint(c, Offset(x, (topBar - tp.height) / 2));
+      var x = 40.0;
+      final head = text(Strings.sumoRoundHead(sim.round, sim.target), FontWeight.w700, const Color(0xFFA9A9BC));
+      put(head, x);
+      x += head.width + 30;
+      for (final h in sim.heads) {
+        c
+          ..save()
+          ..translate(x, (topBar - 52) / 2);
+        CharacterFace.paintOn(c, const Size.square(52), characters[h.id] ?? '', _color(h.id));
+        c.restore();
+        final score = text('${sim.scores[h.id] ?? 0}', FontWeight.w900, const Color(0xFFF4F4F8));
+        put(score, x + 52 + 10);
+        x += 52 + 10 + score.width + 30;
+      }
+      final map = text(sim.ice ? Strings.sumoMapName(SumoMap.ice) : Strings.sumoMapName(SumoMap.classic), FontWeight.w400, const Color(0xFFA9A9BC));
+      put(map, size.x - 40 - map.width);
+      _bar = rec.endRecording();
+    }
+    canvas.drawPicture(_bar!);
+  }
 
   // The old edge: a dashed circle at the full radius, recorded once (72 arcs are not worth redrawing at 60 Hz).
   late final Picture _oldEdge = () {
@@ -137,19 +184,20 @@ class SumoGame extends FlameGame {
   void _drawWrestler(Canvas canvas, SumoHead h, bool counting) {
     final c = Offset(h.x, h.y), r = h.r;
     if (sim.ice && !counting) {
-      final v = sim.velocityOf(h.id);
-      if (v.$1 * v.$1 + v.$2 * v.$2 > 150 * 150) {
-        canvas.drawLine(c, Offset(h.x - v.$1 * 0.18, h.y - v.$2 * 0.18),
-            _stroke..strokeWidth = r * 1.5..strokeCap = StrokeCap.round..color = _color(h.id).withValues(alpha: 0.3));
+      if (h.vx * h.vx + h.vy * h.vy > 150 * 150) {
+        canvas.drawLine(c, Offset(h.x - h.vx * 0.18, h.y - h.vy * 0.18),
+            _stroke..strokeWidth = r * 1.5..strokeCap = StrokeCap.round..color = _streak(h.id));
       }
     }
     canvas.drawCircle(Offset(h.x, h.y + 12), r + 6, _fill..color = const Color(0x59000000));
     canvas.drawCircle(c, r + 6, _fill..color = _ink);
-    final box = r / 0.36;
+    // The face is recorded once at the normal size and scaled (Velik is bigger).
+    final box = r / 0.36, k = r / sim.config.wrestlerRadius;
     canvas
       ..save()
-      ..translate(h.x - box / 2, h.y - box / 2);
-    CharacterFace.paintOn(canvas, Size.square(box), characters[h.id] ?? '', _color(h.id));
+      ..translate(h.x - box / 2, h.y - box / 2)
+      ..scale(k);
+    canvas.drawPicture(_face(h.id));
     canvas.restore();
     if (ring.contains(h.id)) {
       canvas.drawCircle(c, r + 22, _stroke..strokeWidth = 8..color = const Color(0xFFFFFFFF));
@@ -186,6 +234,16 @@ class SumoGame extends FlameGame {
   }
 
   final _labels = <SumoPower, TextPainter>{};
+  final _faces = <int, Picture>{};
+  final _streaks = <int, Color>{};
+
+  Picture _face(int id) => _faces[id] ??= () {
+        final rec = PictureRecorder();
+        CharacterFace.paintOn(Canvas(rec), Size.square(sim.config.wrestlerRadius / 0.36), characters[id] ?? '', _color(id));
+        return rec.endRecording();
+      }();
+
+  Color _streak(int id) => _streaks[id] ??= _color(id).withValues(alpha: 0.3);
 
   static final _kettle = Path()
     ..moveTo(-18, 16)
@@ -255,6 +313,6 @@ class SumoGame extends FlameGame {
       textDirection: TextDirection.ltr,
       textAlign: TextAlign.center,
     )..layout(maxWidth: size.x - 80);
-    tp.paint(canvas, Offset((size.x - tp.width) / 2, free - 14 - tp.height));
+    tp.paint(canvas, Offset((size.x - tp.width) / 2, free - 12 - tp.height));
   }
 }

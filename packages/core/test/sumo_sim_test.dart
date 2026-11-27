@@ -462,6 +462,14 @@ void main() {
     });
   });
 
+  test('the round number counts from 1 with every startRound', () {
+    final s = make([0, 1]);
+    expect(s.round, 1);
+    s.startRound();
+    s.startRound();
+    expect(s.round, 3);
+  });
+
   test('the same seed and the same inputs give the same game', () {
     List<double> play() {
       final s = make([0, 1, 2, 3], seed: 7, config: const SumoConfig(countdown: 0, powerUps: true));
