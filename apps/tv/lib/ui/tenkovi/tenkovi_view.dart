@@ -292,7 +292,9 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
         if (id != winner) others.add(strip(id, points: pts[id] ?? 0, place: place));
       }
       banner = WinnerBanner(
-        who: winner == null ? [for (final id in m.ids) strip(id)] : [strip(winner)],
+        who: winner == null
+            ? [for (final id in (m.lastSurvivors.isEmpty ? m.ids : m.lastSurvivors)) strip(id)]
+            : [strip(winner)],
         others: winner == null ? const [] : others,
         tie: winner == null,
       );

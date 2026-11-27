@@ -153,6 +153,49 @@ void main() {
     r.match.dispose();
   });
 
+  testWidgets('only away tanks left alive (2 or more): the round ends at once and they tie at the top', (t) async {
+    final r = Rig(n: 4, rounds: 2);
+    r.match.setAway(3, true);
+    r.match.setAway(4, true);
+    r.match.round.tank(1).hp = 10;
+    r.match.round.tank(2).hp = 10;
+    r.match.onFire(1, const TenkoviFire(90, 0, TenkoviShell.grenade));
+    r.match.onFire(2, const TenkoviFire(90, 0, TenkoviShell.grenade));
+    expect(r.match.stage, TenkoviStageTv.fly);
+    r.fly();
+    expect(r.match.stage, TenkoviStageTv.end, reason: 'nobody connected is alive: no stall');
+    expect(r.match.lastWinner, isNull);
+    expect(r.match.lastSurvivors, [3, 4]);
+    expect(r.match.lastPoints, {1: 0, 2: 0, 3: 2, 4: 2});
+    expect(r.last(1).stage, 'end');
+    await t.pump(const Duration(seconds: 3));
+    expect(r.match.stage, TenkoviStageTv.aim);
+    expect(r.match.roundNo, 2);
+    r.match.dispose();
+  });
+
+  testWidgets('the same when the last away tank is set away after the others are out (a kick)', (t) async {
+    final r = Rig(n: 4, rounds: 1);
+    r.match.round.tank(1).hp = 0;
+    r.match.round.tank(2).hp = 0;
+    r.match.round.outAt[1] = 0;
+    r.match.round.outAt[2] = 0;
+    r.match.setAway(3, true);
+    expect(r.match.stage, TenkoviStageTv.aim, reason: 'tank 4 is alive and connected');
+    r.match.setAway(4, true);
+    expect(r.match.stage, TenkoviStageTv.end);
+    expect(r.match.lastPoints, {1: 0, 2: 0, 3: 2, 4: 2});
+    r.match.dispose();
+  });
+
+  testWidgets('a connected tank that is alive is waited for, away ones or not', (t) async {
+    final r = Rig(n: 4);
+    r.match.setAway(3, true);
+    r.match.setAway(4, true);
+    expect(r.match.stage, TenkoviStageTv.aim);
+    r.match.dispose();
+  });
+
   testWidgets('a round ends at one tank: points, a break, then the next round', (t) async {
     final r = Rig(rounds: 2);
     // Take two tanks down to nothing so the next volley decides the round.

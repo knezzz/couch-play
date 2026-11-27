@@ -58,6 +58,10 @@ class TenkoviTvMatch {
   Map<int, int> lastPoints = const {};
   int? lastWinner;
 
+  /// Who was still alive when the round ended: one tank, or several when only
+  /// absent players were left and the round was ended for them.
+  List<int> lastSurvivors = const [];
+
   /// What happened in the ticks since the TV last looked (blasts to draw, sounds are
   /// played here). The TV drains it.
   final events = <TenkoviEvent>[];
@@ -211,11 +215,13 @@ class TenkoviTvMatch {
     stage = TenkoviStageTv.aim;
     _tellAll();
     _maybeFire(); // everyone left may be away
+    _checkStall();
     notify?.call();
   }
 
   void _endRound() {
     lastWinner = round.winner;
+    lastSurvivors = [for (final t in round.living) t.id]..sort();
     lastPoints = match.finish();
     stage = TenkoviStageTv.end;
     sfx.play(Sound.roundWin);
@@ -243,7 +249,17 @@ class TenkoviTvMatch {
     away ? _away.add(id) : _away.remove(id);
     _tellAll();
     _maybeFire();
+    _checkStall();
     notify?.call();
+  }
+
+  /// Every connected tank is out and 2 or more absent ones are alive (a drop or a
+  /// kick): nobody can fire, so the round ends now. The absent tanks tie at the
+  /// top, everyone else gets the players they outlived.
+  void _checkStall() {
+    if (paused || stage != TenkoviStageTv.aim || round.living.length < 2) return;
+    if (round.living.any((t) => connected.contains(t.id))) return;
+    _endRound();
   }
 
   void rejoin(int id) {

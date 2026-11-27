@@ -232,6 +232,19 @@ void main() {
       expect(p[b.id], 0);
     });
 
+    test('a round ended with several tanks alive: they tie at the top, the rest get players outlived', () {
+      final r = _round(n: 4, seed: 8);
+      r.tank(0).hp = 0;
+      r.tank(1).hp = 0;
+      r.outAt[0] = 1;
+      r.outAt[1] = 1;
+      expect(r.winner, isNull);
+      expect(r.points(), {0: 0, 1: 0, 2: 2, 3: 2});
+      // One tank out earlier than the other: it did not outlive it.
+      r.outAt[1] = 2;
+      expect(r.points(), {0: 0, 1: 1, 2: 2, 3: 2});
+    });
+
     test('a volley does not end the round while two tanks live', () {
       final r = _round(n: 3, seed: 8);
       _volley(r, {0: const TenkoviAim(90, 5, TenkoviShell.grenade)});

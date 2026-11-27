@@ -329,14 +329,16 @@ class TenkoviRound {
 
   /// Points for the round, as in Curve: the players you outlived. A tank that
   /// went out in a later volley outlived the ones out earlier; the survivor
-  /// outlived everyone. Everyone out in the last volley: a draw, no points.
+  /// outlived everyone. If the round is ended with several tanks still alive
+  /// (only absent players are left), they tie at the top: each outlived all the
+  /// tanks that are out. Everyone out in the last volley: a draw, no points.
   Map<int, int> points() {
     final live = living;
     if (live.isEmpty) return {for (final t in tanks) t.id: 0};
     return {
       for (final t in tanks)
         t.id: t.alive
-            ? tanks.length - 1
+            ? tanks.length - live.length
             : outAt.values.where((v) => v < outAt[t.id]!).length,
     };
   }
