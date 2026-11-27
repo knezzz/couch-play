@@ -9,6 +9,13 @@ import 'package:tv/ui/curve/curve_game.dart';
 import 'package:tv/ui/sumo/sumo_game.dart';
 
 /// Task 55: the Sumo field on the TV (boards SumoTv, SumoTvIce).
+/// One frame into a recorder that is finished and released (a bare recorder is left dangling).
+void _frame(SumoGame g) {
+  final rec = PictureRecorder();
+  g.render(Canvas(rec));
+  rec.endRecording().dispose();
+}
+
 void main() {
   SumoGame make(SumoSim sim, {double band = CurveGame.bandFraction, bool Function()? hold, void Function(List<CurveEvent>)? onEvents}) =>
       SumoGame(sim, playerColors, bottomBand: band, holdWhen: hold, onEvents: onEvents)..onGameResize(Vector2(1920, 1080));
@@ -110,26 +117,35 @@ void main() {
   testWidgets('each face is recorded once per game, not painted anew for every wrestler every frame', (t) async {
     final s = sim(n: 4);
     final g = make(s);
-    g.render(Canvas(PictureRecorder()));
+    _frame(g);
     expect(g.debugFaces, 4);
     for (var i = 0; i < 20; i++) {
-      g.render(Canvas(PictureRecorder()));
+      _frame(g);
     }
     expect(g.debugFaces, 4);
     s.grant(0, SumoPower.big);
-    g.render(Canvas(PictureRecorder()));
+    _frame(g);
     expect(g.debugFaces, 4, reason: 'Velik scales the same picture');
   });
 
-  testWidgets('the bar is laid out once: the same picture frame after frame, redone only on a resize', (t) async {
+  testWidgets('the bar is laid out once: not again frame after frame, redone only on a resize', (t) async {
     final g = make(sim());
-    g.render(Canvas(PictureRecorder()));
-    final first = g.debugBar;
-    g.render(Canvas(PictureRecorder()));
-    expect(identical(g.debugBar, first), isTrue);
+    void frame() {
+      final rec = PictureRecorder();
+      g.render(Canvas(rec));
+      rec.endRecording().dispose();
+    }
+
+    frame();
+    expect(g.debugBarBuilds, 1);
+    for (var i = 0; i < 10; i++) {
+      frame();
+    }
+    expect(g.debugBarBuilds, 1);
     g.onGameResize(Vector2(1280, 720));
-    g.render(Canvas(PictureRecorder()));
-    expect(identical(g.debugBar, first), isFalse);
+    frame();
+    frame();
+    expect(g.debugBarBuilds, 2);
   });
 
   testWidgets('the ring shows the shrunk edge: a dark floor beyond, the lit floor inside', (t) async {

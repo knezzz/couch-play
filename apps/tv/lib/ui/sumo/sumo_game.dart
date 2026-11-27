@@ -108,6 +108,10 @@ class SumoGame extends FlameGame {
   /// For the test: the recorded bar (the same object frame after frame).
   Picture? get debugBar => _bar;
 
+  /// For the test: how many times the bar was laid out.
+  int get debugBarBuilds => _barBuilds;
+  int _barBuilds = 0;
+
   /// For the test: how many face pictures are recorded (one per wrestler, kept for the game).
   int get debugFaces => _faces.length;
   double _barWidth = 0;
@@ -115,6 +119,7 @@ class SumoGame extends FlameGame {
     if (_bar == null || _barWidth != size.x) {
       _bar?.dispose();
       _barWidth = size.x;
+      _barBuilds++;
       final rec = PictureRecorder();
       final c = Canvas(rec);
       TextPainter text(String t, FontWeight w, Color color) => TextPainter(
