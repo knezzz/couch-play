@@ -14,6 +14,5 @@ class TenkoviText {
   static const volley = 'Pucaju svi!';
   static const wind = 'Vjetar';
   static const noWind = 'Bez vjetra';
-  static const roundWinner = 'Pobjednik runde';
   static const draw = 'Neriješeno';
 }

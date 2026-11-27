@@ -39,10 +39,10 @@ class TenkoviStrings {
   static const privacyNote = 'Tvoj hitac se ne vidi na TV-u dok svi ne pucaju.';
   static String ready(int n, int of) => 'Spremno $n od $of';
   static const volley = 'Pucaju svi. Gledaj TV.';
-  static const out = 'Ispao si u ovoj rundi. Gledaj TV.';
+  static const out = 'Tvoj tenk je izvan igre u ovoj rundi. Gledaj TV.';
 
   static const roundOver = 'Runda je gotova';
-  static const youWon = 'Pobijedio si rundu!';
+  static const youWon = 'Runda je tvoja!';
   static const draw = 'Neriješeno';
   static String roundPoints(int p, int total) => 'Bodovi u rundi: +$p · Ukupno: $total';
   static const nextRound = 'Sljedeća runda uskoro.';

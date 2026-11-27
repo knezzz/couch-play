@@ -41,8 +41,8 @@ class TenkoviAim {
   final TenkoviShell shell;
 
   @override
-  bool operator ==(Object o) =>
-      o is TenkoviAim && o.angle == angle && o.power == power && o.shell == shell;
+  bool operator ==(Object other) =>
+      other is TenkoviAim && other.angle == angle && other.power == power && other.shell == shell;
   @override
   int get hashCode => Object.hash(angle, power, shell);
 }

@@ -459,7 +459,7 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | Pucaj je poslan / Čekamo ostale / Još ciljaju · 3 | Pucaj je poslan / Čekamo ostale / Još ciljaju · 3 (names) | Fire sent / Waiting for the others / Still aiming | under the hold card; public (the TV shows the same) |
 | Pucaju svi / Gledaj TV | Pucaju svi / Gledaj TV | Everyone fires / Watch the TV | under the hold card during the volley |
 | privacyNote | Tvoj hitac se ne vidi na TV-u dok svi ne pucaju. | Your shot is not shown on the TV until everyone has fired. | phone aim screen footer (not at 360x640) |
-| out | Ispao si u ovoj rundi. Gledaj TV. | You are out this round. Watch the TV. | phone, tank at 0 HP |
-| roundOver / youWon / draw / roundPoints | Runda je gotova / Pobijedio si rundu! / Neriješeno / Bodovi u rundi: +3 · Ukupno: 5 | Round over / You won the round! / Draw / Round points: +3 · Total: 5 | phone, round end |
+| out | Tvoj tenk je izvan igre u ovoj rundi. Gledaj TV. | Your tank is out of the game this round. Watch the TV. | phone, tank at 0 HP |
+| roundOver / youWon / draw / roundPoints | Runda je gotova / Runda je tvoja! / Neriješeno / Bodovi u rundi: +3 · Ukupno: 5 | Round over / You won the round! / Draw / Round points: +3 · Total: 5 | phone, round end |
 | tenkoviNeedPlayers / tenkoviName | Tenkovi traži 2 do 8 igrača na mobitelima. / Tenkovi | Needs 2 to 8 players on phones | error to the host; results label |
 | winner banner | RUNDU OSVAJA / Neriješeno (the Curve banner, with every player's +points) | Round goes to / Draw | TV round end |
