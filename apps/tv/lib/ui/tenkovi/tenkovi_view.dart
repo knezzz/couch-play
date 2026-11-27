@@ -46,6 +46,7 @@ class _Trail {
   final path = Path();
   final dots = <Offset>[];
   bool started = false;
+  int frames = 0;
 }
 
 /// Colors per map: sky top, sky horizon, far hills, ground, ground edge.
@@ -77,7 +78,6 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   late final Ticker _ticker;
   final _repaint = ValueNotifier<int>(0);
   Duration _last = Duration.zero;
-  double _acc = 0;
 
   TenkoviRound? _round; // the round the cached pictures belong to
   int _terrainVersion = -1;
@@ -105,20 +105,11 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
     _last = elapsed;
     final m = widget.match;
     var busy = _blasts.isNotEmpty;
-    if (m.stage == TenkoviStageTv.fly) {
+    // The match flies the volley itself (so a pause or a hidden view cannot lose
+    // it); the view only draws what is in the air, once a frame.
+    if (m.stage == TenkoviStageTv.fly && !m.paused) {
       busy = true;
-      _acc += dt.clamp(0, 0.1);
-      var steps = 0;
-      const step = 1 / Tenkovi.tickHz;
-      while (_acc >= step && steps < 6) {
-        _acc -= step;
-        steps++;
-        m.tick();
-        _sampleTrails(m.round);
-        if (m.stage != TenkoviStageTv.fly) break;
-      }
-    } else {
-      _acc = 0;
+      _sampleTrails(m.round);
     }
     _drain(m);
     for (final b in _blasts) {
@@ -138,7 +129,7 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       } else {
         t.path.lineTo(p.x, y);
       }
-      if (p.age % 3 == 0) t.dots.add(Offset(p.x, y));
+      if (++t.frames % 3 == 0) t.dots.add(Offset(p.x, y));
     }
   }
 

@@ -11,10 +11,18 @@ import 'package:tv/ui/tv_theme.dart';
 const _chars = ['owl', 'rabbit', 'bear', 'fox', 'cat', 'dog', 'frog', 'pig'];
 
 final _changes = ValueNotifier<int>(0);
+var _at = Duration.zero;
+
+/// One 16 ms frame of fake time, on the clock the match flies by.
+Future<void> _frame(WidgetTester t) async {
+  _at += const Duration(milliseconds: 16);
+  await t.pump(const Duration(milliseconds: 16));
+}
 
 // Like main.dart: every session change rebuilds the view.
 TenkoviTvMatch _match(int n, {int rounds = 2}) => TenkoviTvMatch(
       notify: () => _changes.value++,
+      clock: () => _at,
       ids: [for (var i = 1; i <= n; i++) i],
       settings: GameSettings(tenkoviRounds: rounds, tenkoviMap: TenkoviMapPick.mars),
       send: (_, _) {},
@@ -65,7 +73,7 @@ void main() {
     await t.pump();
     expect(find.text(TenkoviText.volley), findsOneWidget);
     for (var i = 0; i < 400 && m.stage == TenkoviStageTv.fly; i++) {
-      await t.pump(const Duration(milliseconds: 16));
+      await _frame(t);
     }
     expect(m.stage, isNot(TenkoviStageTv.fly));
     await t.pump(const Duration(seconds: 3)); // round break if the round ended
@@ -82,7 +90,7 @@ void main() {
     m.round.outAt[3] = 0;
     m.onFire(1, const TenkoviFire(90, 5, TenkoviShell.grenade));
     for (var i = 0; i < 400 && m.stage == TenkoviStageTv.fly; i++) {
-      await t.pump(const Duration(milliseconds: 16));
+      await _frame(t);
     }
     await t.pump();
     if (m.stage == TenkoviStageTv.end) {

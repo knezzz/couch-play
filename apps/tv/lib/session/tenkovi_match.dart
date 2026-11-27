@@ -24,7 +24,11 @@ class TenkoviTvMatch {
     this.notify,
     this.onOver,
     this.breakTime = const Duration(seconds: 6),
-  });
+    Duration Function()? clock,
+  }) : clock = clock ?? _wall;
+
+  static final _stopwatch = Stopwatch()..start();
+  static Duration _wall() => _stopwatch.elapsed;
 
   final List<int> ids;
   final GameSettings settings;
@@ -34,6 +38,9 @@ class TenkoviTvMatch {
   final void Function()? notify;
   final void Function(Map<int, int> scores)? onOver;
   final Duration breakTime;
+
+  /// The match runs its own volley (see [_loop]): the TV view only draws.
+  final Duration Function() clock;
 
   late TenkoviMatch match;
   TenkoviStageTv stage = TenkoviStageTv.aim;
@@ -77,7 +84,72 @@ class TenkoviTvMatch {
     _newRound();
   }
 
-  void dispose() => _timer?.cancel();
+  void dispose() {
+    _timer?.cancel();
+    _loop?.cancel();
+  }
+
+  // --- the volley loop and the pause ---
+
+  Timer? _loop;
+  Duration _loopLast = Duration.zero;
+  double _acc = 0;
+
+  /// True while the session has the whole game frozen (nobody to play, or one
+  /// player left): nothing advances and no Pucaj is taken.
+  bool paused = false;
+
+  /// The volley flies here at 1/60 s steps from [clock], whether or not any
+  /// screen is drawing; a frame that comes late catches up (at most 6 steps).
+  void _startLoop() {
+    _loop?.cancel();
+    _loopLast = clock();
+    _acc = 0;
+    _loop = Timer.periodic(const Duration(milliseconds: 16), (_) => _pump());
+  }
+
+  void _pump() {
+    if (paused || stage != TenkoviStageTv.fly) return;
+    final now = clock();
+    _acc += (now - _loopLast).inMicroseconds / 1e6;
+    _loopLast = now;
+    if (_acc > 0.1) _acc = 0.1;
+    const step = 1 / Tenkovi.tickHz;
+    var n = 0;
+    while (_acc >= step && n < 6 && stage == TenkoviStageTv.fly) {
+      _acc -= step;
+      n++;
+      tick();
+    }
+    if (stage != TenkoviStageTv.fly) _loop?.cancel();
+  }
+
+  /// Freezes the match: a volley in the air stops where it is and goes on from
+  /// there on [resume]; nothing fires twice and nothing is lost.
+  void pause() {
+    if (paused) return;
+    paused = true;
+    _loop?.cancel();
+    _timer?.cancel();
+    notify?.call();
+  }
+
+  /// Carries on: the volley flies again, a round break starts its card again,
+  /// and everybody is told the turn once more.
+  void resume() {
+    if (!paused) return;
+    paused = false;
+    switch (stage) {
+      case TenkoviStageTv.fly:
+        _startLoop();
+      case TenkoviStageTv.end:
+        _startBreak();
+      default:
+    }
+    _tellAll();
+    _maybeFire();
+    notify?.call();
+  }
 
   void _newRound() {
     match.start();
@@ -88,7 +160,7 @@ class TenkoviTvMatch {
 
   /// Pucaj from a phone.
   void onFire(int id, TenkoviFire m) {
-    if (stage != TenkoviStageTv.aim || !ids.contains(id)) return;
+    if (paused || stage != TenkoviStageTv.aim || !ids.contains(id)) return;
     if (!round.submit(id, TenkoviAim(m.angle, m.power, m.shell))) return;
     sfx.play(Sound.menuConfirm);
     _tellAll(); // the count; each phone's own aim only to itself
@@ -97,7 +169,7 @@ class TenkoviTvMatch {
   }
 
   void _maybeFire() {
-    if (stage != TenkoviStageTv.aim || !round.shouldFire(connected)) return;
+    if (paused || stage != TenkoviStageTv.aim || !round.shouldFire(connected)) return;
     for (final e in round.aims.entries) {
       if (connected.contains(e.key)) {
         _last[e.key] = [e.value.angle, e.value.power];
@@ -111,13 +183,14 @@ class TenkoviTvMatch {
       });
     events.addAll(round.fire(connected));
     stage = TenkoviStageTv.fly;
+    _startLoop();
     sfx.play(Sound.cannon);
     _tellAll();
   }
 
-  /// One 1/60 s step while the volley flies; the TV calls it from its ticker.
+  /// One 1/60 s step while the volley flies (the loop calls it; tests may too).
   void tick() {
-    if (stage != TenkoviStageTv.fly) return;
+    if (paused || stage != TenkoviStageTv.fly) return;
     final ev = round.tick();
     for (final e in ev) {
       switch (e) {
@@ -148,6 +221,10 @@ class TenkoviTvMatch {
     sfx.play(Sound.roundWin);
     _tellAll();
     notify?.call();
+    _startBreak();
+  }
+
+  void _startBreak() {
     _timer?.cancel();
     _timer = Timer(breakTime, () {
       if (match.over) {

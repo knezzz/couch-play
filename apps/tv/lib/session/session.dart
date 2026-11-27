@@ -490,6 +490,7 @@ class Session {
         if (_tenkovi?.ids.contains(p.id) == true) {
           _tenkovi!.setAway(p.id, false);
           _tenkovi!.rejoin(p.id);
+          _resumeTenkovi();
         } else {
           peer.send(_waiting);
         }
@@ -513,6 +514,7 @@ class Session {
     _blef?.setAway(p.id, true);
     _tkobi?.setAway(p.id, true);
     _tenkovi?.setAway(p.id, true);
+    _checkTenkoviPause(p);
     _keepGameHost();
     if (_phase == Phase.lobby) _broadcastLobby();
     _notify();
@@ -1086,6 +1088,37 @@ class Session {
   TenkoviTvMatch? _tenkovi;
   TenkoviTvMatch? get tenkovi => _tenkovi;
 
+  /// Fewer than 2 tanks connected: the whole game freezes (a volley in the air
+  /// stops where it is) and waits 30 s, for everyone if nobody is here, else
+  /// for [p]. With 3 or more players a dropped tank just stays and does not fire.
+  void _checkTenkoviPause(Player p) {
+    final t = _tenkovi;
+    if (_phase != Phase.tenkovi || t == null || t.stage == TenkoviStageTv.over) return;
+    final here = t.connected.length;
+    if (here >= 2) return;
+    if (_paused) {
+      // Already waiting for one: if the last one goes too, wait for everyone.
+      if (here == 0 && _waitingFor != null) _pause(null);
+      return;
+    }
+    t.pause();
+    _pause(here == 0 ? null : p);
+  }
+
+  /// Someone is back: with 2 or more here again the match carries on (scores
+  /// kept); otherwise it goes on waiting, now for whoever is still away.
+  void _resumeTenkovi() {
+    final t = _tenkovi;
+    if (!_paused || t == null) return;
+    if (t.connected.length < 2) {
+      final away = [for (final id in t.ids) if (!t.connected.contains(id)) _byId(id)].nonNulls.firstOrNull;
+      if (_waitingFor == null && away != null) _pause(away);
+      return;
+    }
+    _stopWait();
+    t.resume();
+  }
+
   void _startTenkovi(List<Player> parts) {
     _tenkovi?.dispose();
     _gameHost = hostId;
@@ -1094,6 +1127,7 @@ class Session {
     _tenkovi = TenkoviTvMatch(
       ids: [for (final p in parts) p.id],
       settings: _settings,
+      clock: _clock,
       send: (id, m) => _byId(id)?.socket?.send(m),
       random: _random,
       sfx: sfx,
@@ -1651,11 +1685,12 @@ class Session {
       _stopWait();
       if (_phase == Phase.curve) finishGame(_gameScores());
       if (_phase == Phase.quiz && _quiz != null) finishGame(Map.of(_quiz!.totals));
+      if (_phase == Phase.tenkovi && _tenkovi != null) finishGame(_tenkovi!.scores, game: PartyText.tenkoviName);
     });
     if (who == null) return; // nobody to tell
     final msg = Waiting(Strings.waitingForReturn(who.name));
     for (final q in _players) {
-      if (_simIdOf.containsKey(q.id)) q.socket?.send(msg);
+      if (_simIdOf.containsKey(q.id) || (_tenkovi?.ids.contains(q.id) ?? false)) q.socket?.send(msg);
     }
   }
 

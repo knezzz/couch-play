@@ -394,7 +394,12 @@ class _TvAppState extends State<TvApp> {
               : _session.phase == Phase.tkobi && _session.tkobi != null
               ? TkobiView(match: _session.tkobi!, players: _session.playerInfos)
               : _session.phase == Phase.tenkovi && _session.tenkovi != null
-              ? TenkoviView(match: _session.tenkovi!, players: _session.playerInfos)
+              ? Scaffold(
+                  body: Stack(fit: StackFit.expand, children: [
+                    TenkoviView(match: _session.tenkovi!, players: _session.playerInfos),
+                    ?_pauseOverlay(),
+                  ]),
+                )
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,
