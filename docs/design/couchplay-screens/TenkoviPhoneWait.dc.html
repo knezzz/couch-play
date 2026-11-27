@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Tenkovi after Pucaj</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: Roboto, system-ui, sans-serif; color: #F4F4F8; background:#101014">
+<div style="position:absolute;inset:0;padding:56px 20px 32px;background:#101014;color:#E8E8EE;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px;font-weight:700;flex-grow:1">Ana</span><span style="font-size:16px;color:#8A8A96">Okret 4</span></div>
+<button aria-label="Drži za svoj hitac" onPointerDown="{{down}}" onPointerUp="{{up}}" onPointerLeave="{{up}}" style="height:330px;font:inherit;color:#E8E8EE;background:#18181E;border:2px solid #26262E;border-radius:28px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;touch-action:none;user-select:none"><sc-if value="{{hidden}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><path d="M30 64 Q30 30 50 30 Q70 30 70 64 M22 64 L78 64 L78 78 L22 78 Z" fill="none" stroke="#5A5A66" stroke-width="5" stroke-linejoin="round"></path><circle cx="50" cy="48" r="4" fill="#5A5A66"></circle></svg><span style="font-size:24px;font-weight:700">Drži prst ovdje</span><span style="font-size:17px;color:#8A8A96;line-height:1.4">Tvoj hitac se vidi samo dok držiš.<br>Pusti i nestaje.</span></sc-if><sc-if value="{{shown}}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;color:#8A8A96;letter-spacing:3px;font-weight:700">TVOJ HITAC</span><span style="font-size:40px;font-weight:900">Granata</span><span style="font-size:22px;line-height:1.45;color:#B8B8C2">Kut 52° · Snaga 70</span></sc-if></button>
+<div style="display:flex;align-items:center;gap:12px;background:#18181E;border-radius:18px;padding:14px 16px"><span style="width:36px;height:36px;border-radius:50%;background:#3DDC84;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10 L8 15 L17 4" fill="none" stroke="#14141E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:20px;font-weight:700">Pucaj je poslan</span><span style="font-size:16px;color:#8A8A96">Čekamo ostale</span></span></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;color:#8A8A96;font-weight:700">Još ciljaju · 3</span><div style="display:flex;flex-wrap:wrap;gap:6px 18px"><span style="font-size:22px;font-weight:700;color:#2ECC71">Marko</span><span style="font-size:22px;font-weight:700;color:#22B8F0">Petra</span><span style="font-size:22px;font-weight:700;color:#FF7A2F">Dora</span></div></div>
+<div style="font-size:14px;color:#6E6E7A;text-align:center;line-height:1.4;margin-top:auto">Ovaj ekran je siv i isti za sve, da nitko ne vidi tuđe ciljanje.</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { held: false }; }
+  renderVals() {
+    const h = this.state.held;
+    return { ...{  }, hidden: !h, shown: h, down: () => this.setState({ held: true }), up: () => this.setState({ held: false }) };
+  }
+}
+</script>
+</body>
+</html>

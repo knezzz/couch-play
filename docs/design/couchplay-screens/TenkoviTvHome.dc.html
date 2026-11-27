@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Tenkovi home card</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; box-sizing: border-box; position: relative; overflow: hidden; font-family: Roboto, system-ui, sans-serif; color: #F4F4F8; background:#14141E">
+<div style="position:absolute;inset:0;background:linear-gradient(170deg,#0E1633,#24336B)"></div>
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true"><path d="M0 1080 L0 900 C200 840 360 930 560 880 S900 820 1100 900 S1560 840 1920 890 L1920 1080 Z" fill="#05070F" opacity="0.8"></path>
+<path d="M120 880 Q400 320 700 870" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="8" stroke-dasharray="3 22" stroke-linecap="round"></path><path d="M1800 880 Q1520 400 1250 870" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="8" stroke-dasharray="3 22" stroke-linecap="round"></path>
+<rect x="76" y="868" width="92" height="30" rx="10" fill="#FF4D6D" opacity="0.85"></rect><circle cx="122" cy="860" r="26" fill="#FF4D6D" opacity="0.85"></circle><rect x="1754" y="868" width="92" height="30" rx="10" fill="#22B8F0" opacity="0.85"></rect><circle cx="1800" cy="860" r="26" fill="#22B8F0" opacity="0.85"></circle>
+<circle cx="700" cy="860" r="64" fill="#FF7A2F" opacity="0.55"></circle><circle cx="700" cy="860" r="30" fill="#F5E94B" opacity="0.8"></circle><circle cx="1250" cy="860" r="48" fill="#FF7A2F" opacity="0.5"></circle><circle cx="1580" cy="190" r="70" fill="#F4F4F8" opacity="0.12"></circle><defs><radialGradient id="shade" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#000000" stop-opacity="0.15"></stop><stop offset="100%" stop-color="#000000" stop-opacity="0.75"></stop></radialGradient></defs><rect x="0" y="0" width="1920" height="1080" fill="url(#shade)"></rect></svg>
+<div style="position:absolute;left:-80px;top:440px;width:300px;height:200px;border-radius:32px;background:rgba(255,255,255,0.07);color:#F4F4F8;font-size:48px;font-weight:900;opacity:0.5;text-align:right;padding:68px 32px 0 0;box-sizing:border-box">Sumo</div>
+<div style="position:absolute;right:-80px;top:440px;width:300px;height:200px;border-radius:32px;background:rgba(255,255,255,0.07);color:#F4F4F8;font-size:48px;font-weight:900;opacity:0.5;text-align:left;padding:68px 0 0 32px;box-sizing:border-box">Curve</div>
+<div style="position:absolute;left:0;right:0;top:360px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center"><div style="font-size:200px;font-weight:900;letter-spacing:-4px;line-height:1;text-shadow:0 8px 40px rgba(0,0,0,0.6)">Tenkovi</div><div style="font-size:44px;color:#E6E6F0;text-shadow:0 2px 12px rgba(0,0,0,0.7)">Svi ciljaju, svi pucaju odjednom.</div><div style="font-size:40px;color:#C9C9D8">2–8 igrača · Zemlja · 3 runde</div></div>
+<div style="position:absolute;left:0;right:0;top:820px;display:flex;justify-content:center;gap:14px"><span style="width:14px;height:14px;border-radius:7px;background:rgba(255,255,255,0.35)"></span><span style="width:14px;height:14px;border-radius:7px;background:rgba(255,255,255,0.35)"></span><span style="width:14px;height:14px;border-radius:7px;background:rgba(255,255,255,0.35)"></span><span style="width:14px;height:14px;border-radius:7px;background:rgba(255,255,255,0.35)"></span><span style="width:14px;height:14px;border-radius:7px;background:rgba(255,255,255,0.35)"></span><span style="width:40px;height:14px;border-radius:7px;background:#F4F4F8"></span></div>
+<div style="position:absolute;left:48px;top:40px;display:flex;align-items:center;gap:20px;background:rgba(0,0,0,0.5);border-radius:24px;padding:14px 28px 14px 14px"><div style="width:168px;height:168px;background:#FFFFFF;border-radius:14px;box-sizing:border-box;padding:14px;display:flex"><div style="flex-grow:1;border:3px dashed #14141E;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#14141E;font-size:40px;font-weight:700">QR</div></div><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:40px;font-weight:900">Skeniraj i pridruži se</span><span style="font-size:40px;font-weight:700">192.168.1.5:8080</span></div></div>
+<div style="position:absolute;right:72px;top:48px;display:flex;align-items:center;gap:14px"><dc-import name="Face" animal="fox" color="#FF4D6D" size="{{s52}}" hint-size="52px,52px"></dc-import><dc-import name="Face" animal="owl" color="#FFB020" size="{{s52}}" hint-size="52px,52px"></dc-import><dc-import name="Face" animal="frog" color="#2ECC71" size="{{s52}}" hint-size="52px,52px"></dc-import><dc-import name="Face" animal="rabbit" color="#22B8F0" size="{{s52}}" hint-size="52px,52px"></dc-import><dc-import name="Face" animal="panda" color="#9B5CFF" size="{{s52}}" hint-size="52px,52px"></dc-import><span style="font-size:40px;color:#C9C9D8;margin-left:6px">5 igrača</span></div>
+<div style="position:absolute;left:0;right:0;bottom:44px;display:flex;justify-content:center;gap:48px;font-size:40px;color:#C9C9D8"><span>◀ ▶ igra</span><span>OK igraj</span><span>▼ postavke</span><span>Natrag izlaz</span></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() { return { s52: 52 }; }
+}
+</script>
+</body>
+</html>
