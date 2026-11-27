@@ -35,7 +35,7 @@ void main() {
   }
 
   test('Sumo is on the home, after the other games', () {
-    expect(homeGames.last, GameKind.sumo);
+    expect(homeGames[homeGames.length - 2], GameKind.sumo, reason: "Tenkovi follows it");
     expect(homeGames.toSet().length, homeGames.length);
   });
 
