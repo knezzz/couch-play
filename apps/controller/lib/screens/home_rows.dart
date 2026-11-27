@@ -148,6 +148,13 @@ List<HomeRow> homeRows(GameKind k, LobbyState l) {
         (v) => copySettings(s, curveCountdown: v),
         fmt: Strings.seconds,
       ),
+      number(
+        'curveTarget',
+        Strings.winPoints,
+        winPointsChoices,
+        (v) => copySettings(s, curveTarget: v),
+        fmt: Strings.winPointsValue,
+      ),
       botsRow(),
     ],
     GameKind.quiz => [
@@ -269,6 +276,13 @@ List<HomeRow> homeRows(GameKind k, LobbyState l) {
         wrap: true,
         messageFor: (i) =>
             SetSettings(copySettings(s, sumoPowerUps: i == 1)),
+      ),
+      number(
+        'sumoTarget',
+        Strings.winPoints,
+        winPointsChoices,
+        (v) => copySettings(s, sumoTarget: v),
+        fmt: Strings.winPointsValue,
       ),
     ],
     GameKind.tenkovi => [

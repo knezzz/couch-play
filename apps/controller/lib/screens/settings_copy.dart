@@ -21,6 +21,8 @@ GameSettings copySettings(
   int? tkobiPrompts,
   SumoMap? sumoMap,
   bool? sumoPowerUps,
+  int? curveTarget,
+  int? sumoTarget,
   TenkoviMapPick? tenkoviMap,
   int? tenkoviRounds,
   // Replace one game's switched-off packs. The old single pack ids are never
@@ -44,6 +46,8 @@ GameSettings copySettings(
   tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
   sumoMap: sumoMap ?? s.sumoMap,
   sumoPowerUps: sumoPowerUps ?? s.sumoPowerUps,
+  curveTarget: curveTarget ?? s.curveTarget,
+  sumoTarget: sumoTarget ?? s.sumoTarget,
   tenkoviMap: tenkoviMap ?? s.tenkoviMap,
   tenkoviRounds: tenkoviRounds ?? s.tenkoviRounds,
   quizOffPacks: offFor == GameKind.quiz ? off! : s.quizOffPacks,

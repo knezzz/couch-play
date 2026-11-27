@@ -56,6 +56,7 @@ Future<void> _shot(
   Widget w, {
   double h = 844,
   double width = 390,
+  double scrollBy = 0, // the phone home scrolls: show the rows further down
 }) async {
   t.view.physicalSize = Size(width * 2, h * 2);
   t.view.devicePixelRatio = 2;
@@ -74,6 +75,10 @@ Future<void> _shot(
     ),
   );
   await t.pumpAndSettle();
+  if (scrollBy > 0) {
+    await t.drag(find.byType(Scrollable).first, Offset(0, -scrollBy));
+    await t.pumpAndSettle();
+  }
   await t.runAsync(() async {
     final b = key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final img = await b.toImage(pixelRatio: 2);
@@ -292,6 +297,17 @@ void main() {
     await _shot(t, 'SumoPhone', sumo());
     await _shot(t, 'SumoPhoneSmall', sumo(), h: 640, width: 360);
     // Mid-drag with the Dash recharging, the picture the board draws.
+    // Task 57: the phone home with "Bodovi za pobjedu", at 360x640, host view, both games.
+    for (final (g, name) in [(GameKind.curve, 'Curve'), (GameKind.sumo, 'Sumo')]) {
+      await _shot(
+        t,
+        'PhoneHome${name}_target_360x640',
+        LobbyScreen(FakeConnection(), _lobby(selected: g, s: const GameSettings(curveTarget: 30, sumoTarget: 70)), 0),
+        h: 640,
+        width: 360,
+        scrollBy: 400,
+      );
+    }
     await _shot(t, 'SumoPhone_out', SumoScreen(FakeConnection(), alive: false, name: 'Ana', character: 'owl', colorIndex: 1, score: 12, round: 3));
   });
 }

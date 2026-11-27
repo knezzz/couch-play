@@ -463,3 +463,6 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | roundOver / youWon / draw / roundPoints | Runda je gotova / Runda je tvoja! / Neriješeno / Bodovi u rundi: +3 · Ukupno: 5 | Round over / You won the round! / Draw / Round points: +3 · Total: 5 | phone, round end |
 | tenkoviNeedPlayers / tenkoviName | Tenkovi traži 2 do 8 igrača na mobitelima. / Tenkovi | Needs 2 to 8 players on phones | error to the host; results label |
 | winner banner | RUNDU OSVAJA / Neriješeno (the Curve banner, with every player's +points) | Round goes to / Draw | TV round end |
+| settingWinPoints / winPoints | Bodovi za pobjedu | Points to win | TV settings panel and phone home, Curve and Sumo |
+| winPointsName / winPointsValue(n) | Automatski / 30 | Automatic (10 x (players - 1)) / 30 | the value of that row; Automatski is today's rule |
+| winPointsTail(n) / homeMeta "do N" | · do 30 | · up to 30 | line under the game name, only for a fixed number (nothing for Automatski) |

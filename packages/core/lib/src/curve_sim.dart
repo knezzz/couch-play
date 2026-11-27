@@ -217,10 +217,13 @@ class CurveSim implements RoundSim {
   CurveSim(List<int> playerIds,
       {this.config = const CurveConfig(),
       Random? random,
-      Map<int, String>? names})
+      Map<int, String>? names,
+
+      /// Points that win the match; null = 10 x (players - 1).
+      int? target})
       : _random = random ?? Random(),
         names = names ?? const {},
-        target = 10 * (playerIds.length - 1),
+        target = target ?? 10 * (playerIds.length - 1),
         _cols = config.arenaW ~/ config.cell,
         _rows = config.arenaH ~/ config.cell,
         _owner = Uint16List((config.arenaW ~/ config.cell) *

@@ -85,7 +85,7 @@ abstract final class Strings {
   static const settingImpostors = 'Broj uljeza';
   static String settingsLine(GameSettings s) =>
       'Kviz: ${s.quizQuestions} pitanja · odgovor ${s.quizSeconds} s · pauza ${s.revealSeconds} s'
-      '     Curve: ${curveModeName(s.curveMode)} · pauza prije runde ${s.curveCountdown} s';
+      '     Curve: ${curveModeName(s.curveMode)} · pauza prije runde ${s.curveCountdown} s${winPointsTail(s.curveTarget)}';
 
   // --- Console home ---
 
@@ -143,7 +143,7 @@ abstract final class Strings {
 
   /// The line under the description: who can play and what is set.
   static String homeMeta(GameKind k, GameSettings s, String? pack) => switch (k) {
-        GameKind.curve => '2–8 igrača · ${curveModeName(s.curveMode)} · pauza ${s.curveCountdown} s',
+        GameKind.curve => '2–8 igrača · ${curveModeName(s.curveMode)} · pauza ${s.curveCountdown} s${winPointsTail(s.curveTarget)}',
         GameKind.quiz => '1–8 igrača · ${pack ?? '–'} · ${s.quizQuestions} pitanja · ${s.quizSeconds} s',
         GameKind.vukodlak => '5–8 igrača · bez robota',
         GameKind.uljez => '3–8 igrača · ${_pk(pack)}bez robota',
@@ -151,7 +151,7 @@ abstract final class Strings {
         GameKind.koliko => '2–8 igrača · ${_pk(pack)}bez robota',
         GameKind.blef => '3–8 igrača · ${_pk(pack)}bez robota',
         GameKind.tkobi => '3–8 igrača · ${_pk(pack)}bez robota',
-        GameKind.sumo => '2–8 igrača · ${sumoMapName(s.sumoMap)} · ${s.sumoPowerUps ? 'pojačanja' : 'bez pojačanja'}',
+        GameKind.sumo => '2–8 igrača · ${sumoMapName(s.sumoMap)} · ${s.sumoPowerUps ? 'pojačanja' : 'bez pojačanja'}${winPointsTail(s.sumoTarget)}',
         GameKind.tenkovi => '2–8 igrača · ${tenkoviMapName(s.tenkoviMap)} · ${roundsWord(s.tenkoviRounds)}',
       };
 
@@ -238,6 +238,11 @@ abstract final class Strings {
   static const sumoNeedsTwo = 'Za Sumo trebaju barem 2 igrača.';
   static const sumoNoBots = 'Sumo se igra bez robota.';
   static const settingMap = 'Mapa';
+  static const settingWinPoints = 'Bodovi za pobjedu';
+  /// 0 is Automatski (10 x (players - 1)), else the number.
+  static String winPointsName(int n) => n == 0 ? 'Automatski' : '$n';
+  /// " · do 30" after a fixed target on the lines under a game's name; nothing for Automatski.
+  static String winPointsTail(int n) => n == 0 ? '' : ' · do $n';
   static const settingPowerUps = 'Pojačanja';
   static const settingRounds = 'Broj rundi';
   static String tenkoviMapName(TenkoviMapPick m) => switch (m) {

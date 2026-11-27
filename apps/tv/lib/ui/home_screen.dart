@@ -680,19 +680,20 @@ class _SettingsPanel extends StatelessWidget {
         [(Strings.settingReveal, '${settings.revealSeconds} s', 'revealSeconds'), (Strings.settingBots, '$bots', 'bots')],
       ],
       GameKind.curve => [
-        // With the legend the card is wide: all three on one row, to keep it short.
+        // With the legend the card is wide: all four on one row, to keep it short.
         if (wide)
           [
             (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
             (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
             (Strings.settingBots, '$bots', 'bots'),
+            (Strings.settingWinPoints, Strings.winPointsName(settings.curveTarget), 'curveTarget'),
           ]
         else ...[
           [
             (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
             (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
           ],
-          [(Strings.settingBots, '$bots', 'bots')],
+          [(Strings.settingBots, '$bots', 'bots'), (Strings.settingWinPoints, Strings.winPointsName(settings.curveTarget), 'curveTarget')],
         ],
       ],
       GameKind.vukodlak => [
@@ -729,6 +730,7 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingMap, Strings.sumoMapName(settings.sumoMap), 'sumoMap'),
             (Strings.settingPowerUps, settings.sumoPowerUps ? Strings.yes : Strings.no, 'sumoPowerUps'),
           ],
+          [(Strings.settingWinPoints, Strings.winPointsName(settings.sumoTarget), 'sumoTarget')],
         ],
       GameKind.tenkovi => [
           [

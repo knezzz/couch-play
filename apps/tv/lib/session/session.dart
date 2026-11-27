@@ -1316,6 +1316,7 @@ class Session {
     final sim = CurveSim([for (final p in parts) p.colorIndex],
         config: CurveConfig.forMode(_settings.curveMode,
             countdown: _settings.curveCountdown.toDouble()),
+        target: _settings.curveTarget == 0 ? null : _settings.curveTarget, // fixed now, for the whole match
         random: _random, names: {for (final p in parts) p.colorIndex: p.name});
     _sim = sim;
     _bots = Bots(sim, [for (final p in parts) if (p.bot) p.colorIndex], _random);
@@ -1338,6 +1339,7 @@ class Session {
     _sim = SumoSim([for (final p in parts) p.colorIndex],
         config: SumoConfig.forSettings(_settings.sumoMap,
             powerUps: _settings.sumoPowerUps),
+        target: _settings.sumoTarget == 0 ? null : _settings.sumoTarget,
         random: _random, names: {for (final p in parts) p.colorIndex: p.name});
     _bots = null;
     _curveRound = 1;

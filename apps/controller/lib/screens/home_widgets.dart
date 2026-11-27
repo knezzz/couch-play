@@ -82,6 +82,11 @@ String playersRange(GameKind k) {
   return '$r igrača';
 }
 
+bool _isTarget(HomeRow r) => r.key == 'curveTarget' || r.key == 'sumoTarget';
+
+/// "Bodovi za pobjedu" on Automatski says nothing on the line (it is today's rule); a number says "do 30".
+bool _autoTarget(HomeRow r) => _isTarget(r) && r.raw == 0;
+
 /// The settings line under the title: the range of players, then each plain
 /// setting; "bez robota" when the game has no bots row.
 String homeMeta(GameKind k, LobbyState l) {
@@ -89,8 +94,12 @@ String homeMeta(GameKind k, LobbyState l) {
   final parts = [
     playersRange(k),
     for (final r in rows)
-      if (r.opens != HomeOpens.roles)
-        r.key == 'bots' ? '${r.display} rob.' : r.display,
+      if (r.opens != HomeOpens.roles && !_autoTarget(r))
+        r.key == 'bots'
+            ? '${r.display} rob.'
+            : _isTarget(r)
+                ? 'do ${r.display}'
+                : r.display,
   ];
   if (!rows.any((r) => r.key == 'bots')) parts.add('bez robota');
   return parts.join(' · ');

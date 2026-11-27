@@ -83,10 +83,10 @@ const _dashGrace = 12; // ticks (0.2 s) before the recharge ends within which a 
 const _heavyMass = 3.0, _bigMass = 1.6, _bigRadius = 1.5, _fastFactor = 1.5, _heavyAccel = 0.85;
 
 class SumoSim implements RoundSim {
-  SumoSim(List<int> playerIds, {this.config = const SumoConfig(), Random? random, Map<int, String>? names})
+  SumoSim(List<int> playerIds, {this.config = const SumoConfig(), Random? random, Map<int, String>? names, int? target})
       : _random = random ?? Random(),
         names = names ?? const {},
-        target = 10 * (playerIds.length - 1) {
+        target = target ?? 10 * (playerIds.length - 1) {
     for (final id in playerIds) {
       _ws.add(_W(id));
       scores[id] = 0;

@@ -52,6 +52,9 @@ class PlayerInfo with _JsonEq {
 /// the green (helpful) kinds.
 enum CurveMode { chaos, balanced, peaceful, onlyYou }
 
+/// The choices of "Bodovi za pobjedu" (Curve and Sumo); 0 is Automatski: 10 x (players - 1).
+const winPointsChoices = [0, 10, 20, 30, 50, 70, 100];
+
 /// Sumo's maps: normal grip, ice (sliding), or one of them at random each round.
 enum SumoMap { classic, ice, random }
 
@@ -97,6 +100,9 @@ class GameSettings with _JsonEq {
   /// Sumo: the map and whether power-ups appear on the ring.
   final SumoMap sumoMap;
   final bool sumoPowerUps;
+
+  /// Points that win a Curve or a Sumo match: 0 = Automatski (10 x (players - 1)), else one of [winPointsChoices].
+  final int curveTarget, sumoTarget;
   /// Tenkovi: the map (or a new one every round) and the rounds (1 / 3 / 5).
   final TenkoviMapPick tenkoviMap;
   final int tenkoviRounds;
@@ -144,6 +150,8 @@ class GameSettings with _JsonEq {
     this.tkobiPrompts = 10,
     this.sumoMap = SumoMap.classic,
     this.sumoPowerUps = true,
+    this.curveTarget = 0,
+    this.sumoTarget = 0,
     this.tenkoviMap = TenkoviMapPick.random,
     this.tenkoviRounds = 3,
     this.quizOffPacks = const {},
@@ -174,6 +182,8 @@ class GameSettings with _JsonEq {
       tkobiPrompts: (j['tkobiPrompts'] as int?) ?? 10,
       sumoMap: SumoMap.values.asNameMap()[j['sumoMap']] ?? SumoMap.classic,
       sumoPowerUps: (j['sumoPowerUps'] as bool?) ?? true,
+      curveTarget: _winPoints(j['curveTarget']),
+      sumoTarget: _winPoints(j['sumoTarget']),
       tenkoviMap: j['tenkoviMap'] == null
           ? TenkoviMapPick.random
           : (TenkoviMapPick.values.asNameMap()[j['tenkoviMap']] ?? TenkoviMapPick.random),
@@ -184,6 +194,9 @@ class GameSettings with _JsonEq {
       kolikoOffPacks: _ids(j['kolikoOffPacks']),
       blefOffPacks: _ids(j['blefOffPacks']),
       tkobiOffPacks: _ids(j['tkobiOffPacks']));
+
+  /// A win-points value from JSON or from a caller: one of the choices, else Automatski (0).
+  static int _winPoints(Object? v) => v is int && winPointsChoices.contains(v) ? v : 0;
 
   static Set<String> _ids(Object? v) => v == null ? const {} : {for (final e in v as List) e as String};
 
@@ -205,6 +218,8 @@ class GameSettings with _JsonEq {
       tkobiPrompts: tkobiPrompts,
       sumoMap: sumoMap,
       sumoPowerUps: sumoPowerUps,
+      curveTarget: curveTarget,
+      sumoTarget: sumoTarget,
       tenkoviMap: tenkoviMap,
       tenkoviRounds: tenkoviRounds,
       quizOffPacks: off[GameKind.quiz] ?? quizOffPacks,
@@ -238,6 +253,8 @@ class GameSettings with _JsonEq {
       tkobiPrompts: oneOf(tkobiPrompts, const [5, 10, 15]),
       sumoMap: sumoMap,
       sumoPowerUps: sumoPowerUps,
+      curveTarget: _winPoints(curveTarget),
+      sumoTarget: _winPoints(sumoTarget),
       tenkoviMap: tenkoviMap,
       tenkoviRounds: oneOf(tenkoviRounds, const [1, 3, 5]),
       quizOffPacks: quizOffPacks,
@@ -267,6 +284,8 @@ class GameSettings with _JsonEq {
         'tkobiPrompts': tkobiPrompts,
         'sumoMap': sumoMap.name,
         'sumoPowerUps': sumoPowerUps,
+        'curveTarget': curveTarget,
+        'sumoTarget': sumoTarget,
         'tenkoviMap': tenkoviMap.name,
         'tenkoviRounds': tenkoviRounds,
         'quizOffPacks': (quizOffPacks.toList()..sort()),
