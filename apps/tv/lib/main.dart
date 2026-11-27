@@ -21,6 +21,7 @@ import 'ui/curve/name_strip.dart';
 import 'ui/curve/round_break_card.dart';
 import 'ui/curve/winner_banner.dart';
 import 'ui/home_screen.dart';
+import 'ui/sumo/sumo_game.dart';
 import 'ui/pack_tiles.dart';
 import 'ui/pause_card.dart';
 import 'ui/perf_log.dart';
@@ -79,8 +80,8 @@ class _TvAppState extends State<TvApp> {
 
   // The CurveGame on screen. Trails are never cleared by the game itself, so
   // every round gets a fresh one.
-  CurveGame? _game;
-  CurveSim? _gameSim;
+  FlameGame? _game; // a CurveGame or a SumoGame
+  RoundSim? _gameSim;
   int _gameRound = -1;
   var _botsSeeded = false;
 
@@ -157,9 +158,16 @@ class _TvAppState extends State<TvApp> {
       _resultsTimer?.cancel();
       _resultsTimer = null;
     }
-    final sim = _session.sim;
+    final sim = _session.roundSim;
     final m = _session.moment;
-    _game?.ring = m == null || m.tie ? const {} : m.ids.toSet(); // the winner's head
+    final ringed = m == null || m.tie ? const <int>{} : m.ids.toSet(); // the winner's head
+    switch (_game) {
+      case CurveGame g:
+        g.ring = ringed;
+      case SumoGame g:
+        g.ring = ringed;
+      default:
+    }
     if (_session.phase == Phase.curve && sim != null) {
       if (sim != _gameSim || _session.curveRound != _gameRound) {
         _newGame(sim);
@@ -187,8 +195,8 @@ class _TvAppState extends State<TvApp> {
     });
   }
 
-  void _newGame(CurveSim sim) {
-    if (_qaPowerUp.isNotEmpty) {
+  void _newGame(RoundSim sim) {
+    if (sim is CurveSim && _qaPowerUp.isNotEmpty) {
       final human = _session.players.where((p) => !p.bot).firstOrNull;
       final h = human == null
           ? null
@@ -201,18 +209,27 @@ class _TvAppState extends State<TvApp> {
     setState(() {
       _gameSim = sim;
       _gameRound = _session.curveRound;
-      _game = CurveGame(sim, playerColors,
-          characters: {for (final p in _session.playerInfos) p.colorIndex: p.character},
-          onBeforeTick: _session.beforeGameTick,
-          onEvents: _onCurveEvents,
-          bottomBand: CurveGame.bandFraction,
-          // Stopped while the winner shows (no sim work, nothing to catch up afterwards).
-          holdWhen: () => _session.paused || _session.moment != null);
+      final characters = {for (final p in _session.playerInfos) p.colorIndex: p.character};
+      // Stopped while the winner shows (no sim work, nothing to catch up afterwards).
+      bool hold() => _session.paused || _session.moment != null;
+      _game = sim is SumoSim
+          ? SumoGame(sim, playerColors,
+              characters: characters,
+              onBeforeTick: _session.beforeGameTick,
+              onEvents: _onCurveEvents,
+              bottomBand: CurveGame.bandFraction,
+              holdWhen: hold)
+          : CurveGame(sim as CurveSim, playerColors,
+              characters: characters,
+              onBeforeTick: _session.beforeGameTick,
+              onEvents: _onCurveEvents,
+              bottomBand: CurveGame.bandFraction,
+              holdWhen: hold);
     });
   }
 
   /// The match's players for the strip and the banner, in colour order.
-  List<StripName> _stripNames(CurveSim sim, Iterable<int> ids) {
+  List<StripName> _stripNames(RoundSim sim, Iterable<int> ids) {
     final infos = {for (final p in _session.playerInfos) p.colorIndex: p};
     return [
       for (final id in ids)
@@ -288,7 +305,7 @@ class _TvAppState extends State<TvApp> {
   }
 
   /// The sim lets play go on when two or more pass the target on the same top score.
-  bool _tiedAtTop(CurveSim sim) {
+  bool _tiedAtTop(RoundSim sim) {
     final best = sim.scores.values.fold(0, max);
     return best >= sim.target && sim.scores.values.where((v) => v == best).length > 1;
   }

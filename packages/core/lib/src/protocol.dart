@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'uljez.dart';
 import 'wolf.dart';
 
-enum GameKind { quiz, curve, vukodlak, uljez, objasni, koliko, blef, tkobi }
+enum GameKind { quiz, curve, vukodlak, uljez, objasni, koliko, blef, tkobi, sumo }
 
 /// Value equality from the JSON form, so every wire type compares by content.
 mixin _JsonEq {
@@ -51,6 +51,9 @@ class PlayerInfo with _JsonEq {
 /// the green (helpful) kinds.
 enum CurveMode { chaos, balanced, peaceful, onlyYou }
 
+/// Sumo's maps: normal grip, ice (sliding), or one of them at random each round.
+enum SumoMap { classic, ice, random }
+
 /// What the host can set in the lobby. Seconds, or a count of questions.
 class GameSettings with _JsonEq {
   /// Time to answer a question: 10-60 in steps of 5.
@@ -89,6 +92,10 @@ class GameSettings with _JsonEq {
 
   /// Tko bi?: prompts (5 / 10 / 15).
   final int tkobiPrompts;
+
+  /// Sumo: the map and whether power-ups appear on the ring.
+  final SumoMap sumoMap;
+  final bool sumoPowerUps;
 
   /// Packs are multi-select in every game: the ids of the packs that are
   /// switched OFF, per game. Empty (the default) = every pack is ticked, so a
@@ -131,6 +138,8 @@ class GameSettings with _JsonEq {
     this.kolikoQuestions = 10,
     this.blefQuestions = 7,
     this.tkobiPrompts = 10,
+    this.sumoMap = SumoMap.classic,
+    this.sumoPowerUps = true,
     this.quizOffPacks = const {},
     this.uljezOffPacks = const {},
     this.objasniOffPacks = const {},
@@ -157,6 +166,8 @@ class GameSettings with _JsonEq {
       kolikoQuestions: (j['kolikoQuestions'] as int?) ?? 10,
       blefQuestions: (j['blefQuestions'] as int?) ?? 7,
       tkobiPrompts: (j['tkobiPrompts'] as int?) ?? 10,
+      sumoMap: SumoMap.values.asNameMap()[j['sumoMap']] ?? SumoMap.classic,
+      sumoPowerUps: (j['sumoPowerUps'] as bool?) ?? true,
       quizOffPacks: _ids(j['quizOffPacks']),
       uljezOffPacks: _ids(j['uljezOffPacks']),
       objasniOffPacks: _ids(j['objasniOffPacks']),
@@ -182,6 +193,8 @@ class GameSettings with _JsonEq {
       kolikoQuestions: kolikoQuestions,
       blefQuestions: blefQuestions,
       tkobiPrompts: tkobiPrompts,
+      sumoMap: sumoMap,
+      sumoPowerUps: sumoPowerUps,
       quizOffPacks: off[GameKind.quiz] ?? quizOffPacks,
       uljezOffPacks: off[GameKind.uljez] ?? uljezOffPacks,
       objasniOffPacks: off[GameKind.objasni] ?? objasniOffPacks,
@@ -211,6 +224,8 @@ class GameSettings with _JsonEq {
       kolikoQuestions: oneOf(kolikoQuestions, const [5, 10, 15]),
       blefQuestions: oneOf(blefQuestions, const [5, 7, 10]),
       tkobiPrompts: oneOf(tkobiPrompts, const [5, 10, 15]),
+      sumoMap: sumoMap,
+      sumoPowerUps: sumoPowerUps,
       quizOffPacks: quizOffPacks,
       uljezOffPacks: uljezOffPacks,
       objasniOffPacks: objasniOffPacks,
@@ -236,6 +251,8 @@ class GameSettings with _JsonEq {
         'kolikoQuestions': kolikoQuestions,
         'blefQuestions': blefQuestions,
         'tkobiPrompts': tkobiPrompts,
+        'sumoMap': sumoMap.name,
+        'sumoPowerUps': sumoPowerUps,
         'quizOffPacks': (quizOffPacks.toList()..sort()),
         'uljezOffPacks': (uljezOffPacks.toList()..sort()),
         'objasniOffPacks': (objasniOffPacks.toList()..sort()),
@@ -303,6 +320,8 @@ sealed class Message with _JsonEq {
         'character' => SetCharacter(m['id'] as String),
         'steer' =>
           Steer(left: m['left'] as bool, right: m['right'] as bool),
+        'sumoMove' => SumoMove(m['dir'] as int, m['force'] as int),
+        'sumoDash' => const SumoDash(),
         'answer' => Answer(m['index'] as int),
         'start' => StartGame(
             GameKind.values.byName(m['game'] as String), m['packId'] as String?),
@@ -357,7 +376,8 @@ sealed class Message with _JsonEq {
             score: m['score'] as int,
             target: m['target'] as int,
             round: m['round'] as int?,
-            end: m['end'] == null ? null : RoundEnd.values.byName(m['end'] as String)),
+            end: m['end'] == null ? null : RoundEnd.values.byName(m['end'] as String),
+            sumo: (m['sumo'] as bool?) ?? false),
         'results' => Results(list('placements', Placement.fromJson)),
         'effect' => Effect(m['name'] as String),
         'role' => RoleMsg(WolfRole.values.byName(m['role'] as String),
@@ -504,6 +524,25 @@ class Steer extends Message {
   String get type => 'steer';
   @override
   Map<String, Object?> get fields => {'left': left, 'right': right};
+}
+
+/// Phone -> TV, Sumo: where the joystick points ([dir] 0-15, 0 = right, counter-clockwise
+/// in steps of 22.5 degrees) and how hard it is pulled ([force] 0-3, 0 = let go). Sent when
+/// either changes, never per frame.
+class SumoMove extends Message {
+  final int dir, force;
+  const SumoMove(this.dir, this.force);
+  @override
+  String get type => 'sumoMove';
+  @override
+  Map<String, Object?> get fields => {'dir': dir, 'force': force};
+}
+
+/// Phone -> TV, Sumo: the Dash button was pressed.
+class SumoDash extends Message {
+  const SumoDash();
+  @override
+  String get type => 'sumoDash';
 }
 
 class Answer extends Message {
@@ -766,12 +805,16 @@ class CurveStatus extends Message {
   /// Set once the round is over (the same message that carries the new score);
   /// null while it runs and from an older TV.
   final RoundEnd? end;
+
+  /// True when the match is Sumo (the same status serves both games); false from an older TV.
+  final bool sumo;
   const CurveStatus(
       {required this.alive,
       required this.score,
       required this.target,
       this.round,
-      this.end});
+      this.end,
+      this.sumo = false});
   @override
   String get type => 'curve';
   @override
@@ -781,6 +824,7 @@ class CurveStatus extends Message {
         'target': target,
         'round': round,
         'end': end?.name,
+        'sumo': sumo,
       };
 }
 

@@ -18,6 +18,7 @@ const homeGames = [
   GameKind.koliko,
   GameKind.blef,
   GameKind.tkobi,
+  GameKind.sumo,
 ];
 
 /// The console home (docs/design/couchplay-screens/V2Home.dc.html), on a 1920x1080
@@ -722,6 +723,12 @@ class _SettingsPanel extends StatelessWidget {
       GameKind.tkobi => [
           [(Strings.settingQuestions, '${settings.tkobiPrompts}', 'tkobiPrompts')],
         ],
+      GameKind.sumo => [
+          [
+            (Strings.settingMap, Strings.sumoMapName(settings.sumoMap), 'sumoMap'),
+            (Strings.settingPowerUps, settings.sumoPowerUps ? Strings.yes : Strings.no, 'sumoPowerUps'),
+          ],
+        ],
       },
     ];
     Widget item((String, String, String) it) {
@@ -899,6 +906,7 @@ class _Backdrop extends StatelessWidget {
           GameKind.koliko => const [Color(0xFF0B1F1A), Color(0xFF12304A)],
           GameKind.blef => const [Color(0xFF3A2008), Color(0xFF2A0E0E)],
           GameKind.tkobi => const [Color(0xFF2A1030), Color(0xFF3A1430)],
+          GameKind.sumo => const [Color(0xFF2A1020), Color(0xFF15101E)],
         },
       ),
     ),
@@ -1020,6 +1028,18 @@ class _ArtPainter extends CustomPainter {
           final a = -pi / 2 + i * 2 * pi / 8;
           canvas.drawCircle(Offset(960 + 760 * cos(a), 640 + 380 * sin(a)), 56, Paint()..color = playerColors[i].withValues(alpha: 0.4));
         }
+      case GameKind.sumo:
+        // The ring on the right with four wrestlers in it (SumoTvHome board), a second ring bottom left.
+        final ring = Paint()..color = const Color(0x47FFFFFF)..style = PaintingStyle.stroke..strokeWidth = 12;
+        canvas.drawCircle(const Offset(1520, 560), 260, Paint()..color = const Color(0x0DFFFFFF));
+        canvas.drawCircle(const Offset(1520, 560), 260, ring);
+        canvas.drawCircle(const Offset(1520, 560), 330, Paint()..color = const Color(0x1FFFFFFF)..style = PaintingStyle.stroke..strokeWidth = 12);
+        canvas.drawCircle(const Offset(1440, 580), 66, Paint()..color = playerColors[0].withValues(alpha: 0.7));
+        canvas.drawCircle(const Offset(1610, 500), 52, Paint()..color = playerColors[3].withValues(alpha: 0.7));
+        canvas.drawCircle(const Offset(1560, 680), 44, Paint()..color = playerColors[1].withValues(alpha: 0.65));
+        canvas.drawCircle(const Offset(1400, 440), 38, Paint()..color = playerColors[2].withValues(alpha: 0.6));
+        canvas.drawCircle(const Offset(260, 880), 220, Paint()..color = const Color(0x1AFFFFFF)..style = PaintingStyle.stroke..strokeWidth = 14);
+        canvas.drawCircle(const Offset(240, 860), 54, Paint()..color = playerColors[4].withValues(alpha: 0.55));
     }
     canvas.restore();
   }

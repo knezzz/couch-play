@@ -322,4 +322,82 @@ void main() {
     await shot(t, key, '18-curve-round-8-places-1920x1080', settle: const Duration(milliseconds: 300));
     await finish(t, s);
   });
+
+  // --- Task 55: Sumo at 1920x1080, to compare with the boards SumoTv, SumoTvIce, SumoTvWinner ---
+
+  /// A real Sumo match of [n] players on a real Session; nobody pushes.
+  Future<Session> sumo(WidgetTester t, GlobalKey key, int n, {SumoMap map = SumoMap.classic}) async {
+    final s = await start(t, full, key);
+    final host = join(s, longNames[0], token: 't0');
+    for (var i = 1; i < n; i++) {
+      join(s, longNames[i], token: 'p$i');
+    }
+    host.say(SetSettings(GameSettings(sumoMap: map, sumoPowerUps: false)));
+    host.say(const StartGame(GameKind.sumo, null));
+    await t.pump();
+    return s;
+  }
+
+  // The board's 8 places: dx, dy from the centre of the ring.
+  const w8 = [(-200.0, -130.0), (160.0, -240.0), (230.0, 40.0), (-10.0, 215.0), (-290.0, 70.0), (80.0, 20.0), (-120.0, -270.0), (190.0, 205.0)];
+
+  testWidgets('19 Sumo mid-round: 8 wrestlers, the ring shrunk, 2 power-ups, one effect 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await sumo(t, key, 8);
+    final sim = s.sumo!;
+    for (var i = 0; i < 120 + 25 * 60; i++) {
+      sim.tick(); // past the countdown and 25 s of play: the ring has begun to shrink
+    }
+    for (var i = 0; i < 8; i++) {
+      sim.place(i, w8[i].$1, w8[i].$2);
+      sim.setVelocity(i, 0, 0);
+    }
+    sim.placePowerUp(SumoPower.heavy, -150, 130);
+    sim.placePowerUp(SumoPower.fast, -20, -130);
+    sim.grant(2, SumoPower.big);
+    await t.pump(const Duration(milliseconds: 20));
+    await shot(t, key, '19-sumo-mid-round-1920x1080', settle: Duration.zero);
+    await finish(t, s);
+  });
+
+  testWidgets('20 Sumo on ice: wrestlers sliding 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await sumo(t, key, 8, map: SumoMap.ice);
+    final sim = s.sumo!;
+    for (var i = 0; i < 120; i++) {
+      sim.tick();
+    }
+    for (var i = 0; i < 8; i++) {
+      sim.place(i, w8[i].$1, w8[i].$2);
+      sim.setVelocity(i, i.isEven ? 220 : -180, i % 3 == 0 ? 120 : -100);
+    }
+    await t.pump(const Duration(milliseconds: 20));
+    await shot(t, key, '20-sumo-ice-1920x1080', settle: Duration.zero);
+    await finish(t, s);
+  });
+
+  testWidgets('21 Sumo round winner: the banner, the last wrestler ringed 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await sumo(t, key, 8);
+    final sim = s.sumo!;
+    for (var i = 0; i < 120; i++) {
+      sim.tick();
+    }
+    for (var i = 1; i < 8; i++) {
+      sim.place(i, 480.0 + i * 5, 0); // out, one after the other
+    }
+    sim.place(0, 0, 330); // below the banner
+    await until(t, s, () => s.moment != null);
+    await shot(t, key, '21-sumo-winner-1920x1080', settle: const Duration(milliseconds: 300));
+    await finish(t, s);
+  });
+
+  testWidgets('22 Sumo countdown 1920x1080', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await sumo(t, key, 8);
+    await t.pump(const Duration(milliseconds: 600));
+    expect(s.sumo!.countingDown, isTrue);
+    await shot(t, key, '22-sumo-countdown-1920x1080', settle: Duration.zero);
+    await finish(t, s);
+  });
 }

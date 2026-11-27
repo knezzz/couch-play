@@ -35,7 +35,7 @@ abstract final class Strings {
         CurveMode.onlyYou => 'Samo za tebe',
       };
   /// The host's game card on the lobby, same words as the phone's game details.
-  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?' };
+  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?', GameKind.sumo => 'Sumo' };
   /// 2000 -> '2 000' (no-break space).
   static String _g(int n) => n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => '\u00A0');
 
@@ -57,6 +57,7 @@ abstract final class Strings {
         GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
         GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
         GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
+        GameKind.sumo => 'Gurni ostale s ringa.',
       };
   /// Bottom of the lobby while the host has a game's card open (the phones say the same).
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
@@ -149,6 +150,7 @@ abstract final class Strings {
         GameKind.koliko => '2–8 igrača · ${_pk(pack)}bez robota',
         GameKind.blef => '3–8 igrača · ${_pk(pack)}bez robota',
         GameKind.tkobi => '3–8 igrača · ${_pk(pack)}bez robota',
+        GameKind.sumo => '2–8 igrača · ${sumoMapName(s.sumoMap)} · ${s.sumoPowerUps ? 'pojačanja' : 'bez pojačanja'}',
       };
 
   // --- Vukodlak (the village on the TV) ---
@@ -227,6 +229,14 @@ abstract final class Strings {
   static String place(int n) => '$n.';
   static const tonight = 'Večeras';
   static const gameCurve = 'Curve';
+  static const gameSumo = 'Sumo';
+  static const sumoCountdownHint = 'Povuci palcem i gurni ostale s ringa.';
+  static String sumoMapName(SumoMap m) => switch (m) { SumoMap.classic => 'Klasični', SumoMap.ice => 'Led', SumoMap.random => 'Nasumično' };
+  static const sumoNeedsTwo = 'Za Sumo trebaju barem 2 igrača.';
+  static const sumoNoBots = 'Sumo se igra bez robota.';
+  static const settingMap = 'Mapa';
+  static const settingPowerUps = 'Pojačanja';
+  static const sumoPowerLabels = {SumoPower.heavy: 'TEŽAK', SumoPower.big: 'VELIK', SumoPower.fast: 'BRZ'};
   static String gameQuiz(String packTitle) => 'Kviz · $packTitle';
   static String backToLobby(int seconds) => 'Povratak na početni zaslon za $seconds s';
 

@@ -150,6 +150,7 @@ abstract final class Strings {
     GameKind.koliko => 'Koliko?',
     GameKind.blef => 'Blef',
     GameKind.tkobi => 'Tko bi?',
+    GameKind.sumo => sumoName,
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
@@ -160,6 +161,7 @@ abstract final class Strings {
     GameKind.koliko => 'Pogodi broj. Tko je najbliže, nosi bodove.',
     GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
     GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
+    GameKind.sumo => sumoBlurb,
   };
   static const hostTag = '★ DOMAĆIN';
 
@@ -434,6 +436,22 @@ abstract final class Strings {
       'Runda $round · ${curveScore(n)}';
   static const curveHint =
       'Drži za skretanje. Kad te zahvati „Obrnuto”, lijevo i desno se zamijene: na TV-u uz tvoju liniju vidiš crvene strelice.';
+
+  // Sumo
+  static const sumoName = 'Sumo';
+  static const sumoDragHint = 'Povuci bilo gdje';
+  static const sumoDash = 'Dash';
+  static const sumoOut = 'Pao si s ringa. Gledaj TV.';
+  static const sumoHint = 'Lijevo: povuci za kretanje, jače povlačenje = jače guranje. Desno: Dash, kratki jaki udarac.';
+  static String sumoRecharge(double s) => 'još ${s.toStringAsFixed(s < 1 ? 1 : 0).replaceAll('.', ',')} s';
+  static String sumoMap(SumoMap m) => switch (m) {
+    SumoMap.classic => 'Klasični',
+    SumoMap.ice => 'Led',
+    SumoMap.random => 'Nasumično',
+  };
+  static const sumoMapLabel = 'Mapa';
+  static const sumoPowerUpsLabel = 'Pojačanja';
+  static const sumoBlurb = 'Gurni ostale s ringa.';
 
   // Results
   static const gameOver = 'Igra je gotova.';

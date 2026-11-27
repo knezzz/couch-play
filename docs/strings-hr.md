@@ -433,3 +433,13 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | kolikoQuestionOf / kolikoUnit / kolikoAnswered / kolikoCorrect / kolikoNoAnswer | Pitanje 3 od 10 / Odgovor u: m / Odgovorilo: 3 od 5 / Točno: 2 864 m / bez odgovora | Question 3 of 10 / Answer in: m / Answered: 3 of 5 / Correct: 2 864 m / no answer | TV, Koliko? |
 | blefQuestionOf / blefWriteHint / blefSent / blefPicked / blefTruth / blefAuthor / blefChoice / blefNobody | Pitanje 2 od 7 / Smisli lažan odgovor koji zvuči istinito. / Poslano: 2 od 4 / Odabrano: 1 od 4 / Točan odgovor / Lažni odgovor, autor: Ana / Izbor / nitko | Question 2 of 7 / Make up a fake answer that sounds true. / Sent: 2 of 4 / Picked: 1 of 4 / Correct answer / Fake answer, author: Ana / Choice / nobody | TV, Blef (nouns, not gendered verbs) |
 | tkobiQuestionOf / tkobiVoted | Pitanje 3 od 10 / Glasalo: 3 od 5 | Question 3 of 10 / Voted: 3 of 5 | TV, Tko bi? |
+| gameSumo / gameName(sumo) / gameBlurb(sumo) | Sumo / Sumo / Gurni ostale s ringa. | Sumo / Sumo / Push the others off the ring. | TV home, results label; phone carousel and details |
+| homeMeta(sumo) | 2–8 igrača · Klasični · pojačanja | 2–8 players · Classic · power-ups | TV home line under the blurb |
+| sumoMapName / sumoMap | Klasični / Led / Nasumično | Classic / Ice / Random | TV settings panel, phone settings row |
+| settingMap / settingPowerUps / sumoMapLabel / sumoPowerUpsLabel | Mapa / Pojačanja | Map / Power-ups | settings rows (TV panel, phone home) |
+| sumoPowerLabels | TEŽAK / VELIK / BRZ | HEAVY / BIG / FAST | TV, the word under a power-up on the ring (as the boards) |
+| sumoCountdownHint | Povuci palcem i gurni ostale s ringa. | Drag with your thumb and push the others off the ring. | TV, Sumo countdown |
+| sumoNeedsTwo / sumoNoBots | Za Sumo trebaju barem 2 igrača. / Sumo se igra bez robota. | Sumo needs at least 2 players. / Sumo is played without bots. | TV home, why OK did nothing |
+| sumoDragHint / sumoDash / sumoRecharge(s) | Povuci bilo gdje / Dash / još 1,2 s | Drag anywhere / Dash / 1.2 s left | phone, Sumo controls |
+| sumoOut | Pao si s ringa. Gledaj TV. | You fell off the ring. Watch the TV. | phone, Sumo, out for the round |
+| sumoHint | Lijevo: povuci za kretanje, jače povlačenje = jače guranje. Desno: Dash, kratki jaki udarac. | Left: drag to move, a harder pull pushes harder. Right: Dash, a short strong push. | phone, Sumo controls |

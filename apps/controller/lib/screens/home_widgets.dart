@@ -56,13 +56,19 @@ import 'home_rows.dart';
     t1: const Color(0xFF9B5CFF),
     t2: const Color(0xFFFF4D6D),
   ),
+  GameKind.sumo => (
+    a: const Color(0xFF2A1020),
+    b: const Color(0xFF15101E),
+    t1: const Color(0xFFFF4D6D),
+    t2: const Color(0xFF22B8F0),
+  ),
 };
 
 /// "2–8 igrača".
 String playersRange(GameKind k) {
   final r = switch (k) {
     GameKind.quiz => '1–8',
-    GameKind.curve || GameKind.koliko => '2–8',
+    GameKind.curve || GameKind.koliko || GameKind.sumo => '2–8',
     GameKind.vukodlak => '5–8',
     GameKind.objasni => '4–8',
     _ => '3–8',

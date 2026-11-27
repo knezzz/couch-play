@@ -289,6 +289,12 @@ class Session {
       case Steer(:final left, :final right):
         final p = _playerOf(peer);
         if (p != null) _steer(p, left, right);
+      case SumoMove(:final dir, :final force):
+        final p = _playerOf(peer);
+        if (p != null) _sumoMove(p, dir, force);
+      case SumoDash():
+        final p = _playerOf(peer);
+        if (p != null) _sumoDash(p);
       case StartGame(:final game, :final packId):
         _start(peer, game, packId);
       case Kick(:final playerId):
@@ -422,7 +428,7 @@ class Session {
         if (sid != null && _gone.remove(p.id)) _sim?.revive(sid);
         // The old socket's last Steer must not keep turning the head; if it
         // never reported closing, nothing else zeroes it.
-        if (sid != null) _sim?.setInput(sid, left: false, right: false);
+        if (sid != null) _sim?.clearInput(sid);
         // Only someone in this match can end its pause.
         if (sid != null) _resumeIfEnough();
         final status = _statusFor(p);
@@ -603,6 +609,11 @@ class Session {
         final parts = participants(GameKind.curve);
         if (parts.length < 2) return Strings.curveNeedsTwo;
         _startCurve(parts);
+      case GameKind.sumo:
+        if (_players.any((p) => p.bot)) return Strings.sumoNoBots;
+        final parts = participants(GameKind.sumo);
+        if (parts.length < 2) return Strings.sumoNeedsTwo;
+        _startSumo(parts);
       case GameKind.vukodlak:
         if (!wolfTvReady) return Strings.vukodlakSoon;
         if (_players.any((p) => p.bot)) return WolfText.noBots;
@@ -998,7 +1009,9 @@ class Session {
 
   // --- Curve ---
 
-  CurveSim? _sim;
+  // Curve and Sumo share the round machinery (countdown, moment, break, drop-outs, results):
+  // the session only talks to the sim through RoundSim.
+  RoundSim? _sim;
   Bots? _bots;
   var _curveRound = 0;
   // Player id -> sim id (the color index) for everyone in the running match.
@@ -1006,7 +1019,13 @@ class Session {
   final _gone = <int>{}; // player ids killed by a disconnect or a kick
 
   /// The running Curve match, or null.
-  CurveSim? get sim => _sim;
+  CurveSim? get sim => switch (_sim) { final CurveSim s => s, _ => null };
+
+  /// The running Curve or Sumo match, or null (what the TV loop and the overlays use).
+  RoundSim? get roundSim => _sim;
+
+  /// The running Sumo match, or null.
+  SumoSim? get sumo => switch (_sim) { final SumoSim s => s, _ => null };
   Bots? get bots => _bots;
 
   /// Bumped for every round of a match; the TV makes a fresh `CurveGame` each time.
@@ -1232,10 +1251,46 @@ class Session {
     _notify();
   }
 
+  void _startSumo(List<Player> parts) {
+    _closeHostView();
+    _wasCounting = false;
+    _countTicks = 0;
+    _simIdOf
+      ..clear()
+      ..addEntries(parts.map((p) => MapEntry(p.id, p.colorIndex)));
+    _gone.clear();
+    _sim = SumoSim([for (final p in parts) p.colorIndex],
+        config: SumoConfig.forSettings(_settings.sumoMap,
+            powerUps: _settings.sumoPowerUps, countdown: _settings.curveCountdown.toDouble()),
+        random: _random, names: {for (final p in parts) p.colorIndex: p.name});
+    _bots = null;
+    _curveRound = 1;
+    _roundBase = {};
+    _gameHost = hostId;
+    _phase = Phase.curve;
+    _sendStatuses();
+    _notify();
+  }
+
   void _steer(Player p, bool left, bool right) {
     final sid = _simIdOf[p.id];
-    if (_phase != Phase.curve || sid == null || _gone.contains(p.id)) return;
-    _sim?.setInput(sid, left: left, right: right);
+    final sim = _sim;
+    if (_phase != Phase.curve || sid == null || _gone.contains(p.id) || sim is! CurveSim) return;
+    sim.setInput(sid, left: left, right: right);
+  }
+
+  void _sumoMove(Player p, int dir, int force) {
+    final sid = _simIdOf[p.id];
+    final sim = _sim;
+    if (_phase != Phase.curve || sid == null || _gone.contains(p.id) || sim is! SumoSim) return;
+    sim.setMove(sid, dir, force);
+  }
+
+  void _sumoDash(Player p) {
+    final sid = _simIdOf[p.id];
+    final sim = _sim;
+    if (_phase != Phase.curve || sid == null || _gone.contains(p.id) || sim is! SumoSim) return;
+    sim.dash(sid);
   }
 
   CurveStatus? _statusFor(Player p, {RoundEnd? end}) {
@@ -1248,7 +1303,8 @@ class Session {
         score: sim.scores[sid] ?? 0,
         target: sim.target,
         round: _curveRound,
-        end: end);
+        end: end,
+        sumo: sim is SumoSim);
   }
 
   void _sendStatuses() {
@@ -1483,7 +1539,7 @@ class Session {
     if (_phase != Phase.curve) return;
     final sid = _simIdOf[p.id];
     if (sid == null || !_gone.add(p.id)) return;
-    _sim?.setInput(sid, left: false, right: false);
+    _sim?.clearInput(sid);
     if (returnable && !p.bot) {
       if (_humansLeft() == 0) {
         _pause(null); // nobody is connected: wait for anyone
@@ -1591,7 +1647,7 @@ class Session {
     }
     for (final e in _simIdOf.entries) {
       // A button held through the wait must not turn the new round's head.
-      sim.setInput(e.value, left: false, right: false);
+      sim.clearInput(e.value);
       if (_gone.contains(e.key)) sim.kill(e.value); // still away: out of this round
     }
     sim.startRound();
@@ -1626,7 +1682,7 @@ class Session {
     if (sim.countingDown) {
       if (!_wasCounting) _countTicks = 0;
       _wasCounting = true;
-      if (_countTicks++ % sim.config.tickHz == 0) sfx.play(Sound.countdownBeep);
+      if (_countTicks++ % sim.tickHz == 0) sfx.play(Sound.countdownBeep);
     } else if (_wasCounting) {
       _wasCounting = false;
       sfx.play(Sound.countdownGo);
@@ -1638,10 +1694,9 @@ class Session {
   /// (the match ends inside the same loop, or Back was pressed), when the bots are
   /// gone: it must do nothing then (a null check here crashed the BRAVIA).
   void beforeGameTick() {
-    final bots = _bots;
-    if (_phase != Phase.curve || _sim == null || bots == null) return;
+    if (_phase != Phase.curve || _sim == null) return;
     beforeTick();
-    bots.tick();
+    _bots?.tick(); // Sumo has no bots
   }
 
   /// Feed this the events of every `CurveSim.tick()` (CurveGame.onEvents).
@@ -1654,13 +1709,13 @@ class Session {
       switch (e) {
         case Died(:final id):
           died.add(id);
-          sfx.play(Sound.crash);
+          sfx.play(_sim is SumoSim ? Sound.sumoFall : Sound.crash);
           final p = _byId(_simIdOf.entries.where((x) => x.value == id).firstOrNull?.key ?? -1);
           final status = p == null ? null : _statusFor(p);
           if (status != null) {
             // The event itself says they died, whatever the head reads.
             p!.socket?.send(CurveStatus(
-                alive: false, score: status.score, target: status.target, round: status.round));
+                alive: false, score: status.score, target: status.target, round: status.round, sumo: status.sumo));
           }
           p?.socket?.send(const Effect('colorPulse')); // bots have no socket
         case RoundOver(:final survivorId):
@@ -1670,7 +1725,12 @@ class Session {
           matchOver = true;
           matchWinner = winnerId;
         case PickedUp():
+        case SumoPickedUp():
           sfx.play(Sound.pickup);
+        case Dashed():
+          sfx.play(Sound.sumoDash);
+        case Bumped():
+          sfx.play(Sound.sumoBump);
       }
     }
     if (matchOver) {
@@ -1797,7 +1857,7 @@ class Session {
   /// Results, and moves to the results phase. [gameScores] is keyed by player
   /// id. Quiz calls this too (Task 11).
   void finishGame(Map<int, int> gameScores, {String? game}) {
-    _lastGame = game ?? (_quizPack == null ? Strings.gameCurve : Strings.gameQuiz(_quizPack!.title));
+    _lastGame = game ?? (_sim is SumoSim ? Strings.gameSumo : _quizPack == null ? Strings.gameCurve : Strings.gameQuiz(_quizPack!.title));
     // Someone kicked mid-game is no longer a player and gets no place.
     final placements = placementPoints({
       for (final e in gameScores.entries)

@@ -248,6 +248,28 @@ List<HomeRow> homeRows(GameKind k, LobbyState l) {
         15,
       ], (v) => copySettings(s, tkobiPrompts: v)),
     ],
+    GameKind.sumo => [
+      HomeRow(
+        key: 'sumoMap',
+        label: Strings.sumoMapLabel,
+        raw: json['sumoMap'],
+        text: (r) => Strings.sumoMap(SumoMap.values.byName('$r')),
+        values: [for (final m in SumoMap.values) m.name],
+        wrap: true,
+        messageFor: (i) =>
+            SetSettings(copySettings(s, sumoMap: SumoMap.values[i])),
+      ),
+      HomeRow(
+        key: 'sumoPowerUps',
+        label: Strings.sumoPowerUpsLabel,
+        raw: s.sumoPowerUps,
+        text: (r) => r == true ? Strings.yes : Strings.no,
+        values: const [false, true],
+        wrap: true,
+        messageFor: (i) =>
+            SetSettings(copySettings(s, sumoPowerUps: i == 1)),
+      ),
+    ],
   };
 }
 

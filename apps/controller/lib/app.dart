@@ -11,6 +11,7 @@ import 'screens/kick.dart';
 import 'screens/lobby_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/results_screen.dart';
+import 'screens/sumo_screen.dart';
 import 'screens/wait_screen.dart';
 import 'screens/blef_flow.dart';
 import 'screens/koliko_flow.dart';
@@ -75,6 +76,7 @@ class _AppState extends State<App> {
   int _curveScore = 0;
   int? _curveRound;
   RoundEnd? _curveEnd;
+  bool _curveSumo = false; // the round game on the TV is Sumo, not Curve
   QuizQuestion? _question;
   QuizReveal? _reveal;
   int _quizTotal = 0; // running total, from the last reveal
@@ -162,6 +164,7 @@ class _AppState extends State<App> {
           _curveScore = m.score;
           _curveRound = m.round;
           _curveEnd = m.end;
+          _curveSumo = m.sumo;
           _screen = _Screen.curve;
         case QuizQuestion():
           _question = m;
@@ -274,6 +277,16 @@ class _AppState extends State<App> {
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : LobbyScreen(widget.conn, _lobby!, _myId, addPack: widget.addPack),
     _Screen.wait => WaitScreen(_waitReason),
+    _Screen.curve when _curveSumo => SumoScreen(
+      widget.conn,
+      alive: _alive,
+      name: _me?.name ?? '',
+      character: _me?.character ?? '',
+      colorIndex: _myColor,
+      score: _curveScore,
+      round: _curveRound,
+      end: _curveEnd,
+    ),
     _Screen.curve => CurveScreen(
       widget.conn,
       alive: _alive,

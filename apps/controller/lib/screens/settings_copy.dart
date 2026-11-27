@@ -19,6 +19,8 @@ GameSettings copySettings(
   int? kolikoQuestions,
   int? blefQuestions,
   int? tkobiPrompts,
+  SumoMap? sumoMap,
+  bool? sumoPowerUps,
   // Replace one game's switched-off packs. The old single pack ids are never
   // sent (null): the TV would turn one into 'only that pack'.
   GameKind? offFor,
@@ -38,6 +40,8 @@ GameSettings copySettings(
   kolikoQuestions: kolikoQuestions ?? s.kolikoQuestions,
   blefQuestions: blefQuestions ?? s.blefQuestions,
   tkobiPrompts: tkobiPrompts ?? s.tkobiPrompts,
+  sumoMap: sumoMap ?? s.sumoMap,
+  sumoPowerUps: sumoPowerUps ?? s.sumoPowerUps,
   quizOffPacks: offFor == GameKind.quiz ? off! : s.quizOffPacks,
   uljezOffPacks: offFor == GameKind.uljez ? off! : s.uljezOffPacks,
   objasniOffPacks: offFor == GameKind.objasni ? off! : s.objasniOffPacks,

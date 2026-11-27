@@ -11,4 +11,5 @@ const supportedGames = [
   GameKind.koliko,
   GameKind.blef,
   GameKind.tkobi,
+  GameKind.sumo,
 ];

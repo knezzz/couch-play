@@ -112,11 +112,64 @@ class MatchOver extends CurveEvent {
   final int winnerId;
 }
 
-class CurveHead {
+/// Sumo's power-ups: heavier, bigger, faster.
+enum SumoPower { heavy, big, fast }
+
+/// Sumo: a wrestler dashed (for the sound).
+class Dashed extends CurveEvent {
+  Dashed(this.id);
+  final int id;
+}
+
+/// Sumo: two wrestlers hit hard.
+class Bumped extends CurveEvent {
+  Bumped();
+}
+
+/// Sumo: a wrestler took a power-up.
+class SumoPickedUp extends CurveEvent {
+  SumoPickedUp(this.playerId, this.kind);
+  final int playerId;
+  final SumoPower kind;
+}
+
+/// What the session needs of a head to run a match: who it is and whether it is still in.
+abstract interface class RoundHead {
+  int get id;
+  bool get alive;
+}
+
+/// What the session needs of a real-time round game (Curve, Sumo): rounds, scores to a target,
+/// a countdown, fixed ticks that return events, and the drop-out hooks. The session and the
+/// TV loop never look at anything game-specific through this.
+abstract interface class RoundSim {
+  Iterable<RoundHead> get heads;
+
+  /// Player names by sim id, for the renderer (the sim itself never reads them).
+  Map<int, String> get names;
+  Map<int, int> get scores;
+  int get target;
+  bool get roundOver;
+  bool get matchOver;
+  bool get countingDown;
+  int get tickHz;
+  List<CurveEvent> tick();
+  void startRound();
+  void kill(int id);
+  void revive(int id);
+
+  /// Lets go of the controls (a phone that left, or a new round).
+  void clearInput(int id);
+}
+
+class CurveHead implements RoundHead {
   const CurveHead(this.id, this.x, this.y, this.heading, this.alive, this.inGap);
+  @override
   final int id;
   final double x, y, heading;
-  final bool alive, inGap;
+  @override
+  final bool alive;
+  final bool inGap;
 }
 
 /// [width] is the line width when painted: lineWidth x 1..4 (1 + fat stacks).
@@ -160,7 +213,7 @@ const maxFatStacks = 3;
 
 const _speedUp = 1.6, _slowDown = 0.6;
 
-class CurveSim {
+class CurveSim implements RoundSim {
   CurveSim(List<int> playerIds,
       {this.config = const CurveConfig(),
       Random? random,
@@ -184,6 +237,7 @@ class CurveSim {
   final CurveConfig config;
 
   /// Player names for the renderer; the sim itself never reads them.
+  @override
   final Map<int, String> names;
   final Random _random;
   final int _cols, _rows;
@@ -200,15 +254,26 @@ class CurveSim {
   int _spawnLeft = 0, _wrapLeft = 0, _nextPowerUpId = 0;
   bool _cleared = false;
 
+  @override
   final Map<int, int> scores = {};
+  @override
   final int target;
+  @override
   bool roundOver = false, matchOver = false;
   int? winner;
 
+  @override
   Iterable<CurveHead> get heads => _heads.values
       .map((h) => CurveHead(h.id, h.x, h.y, h.heading, h.alive, h.inGap));
 
+  @override
+  int get tickHz => config.tickHz;
+
+  @override
+  void clearInput(int id) => setInput(id, left: false, right: false);
+
   /// True while the pre-round countdown runs (heads are frozen).
+  @override
   bool get countingDown => _countdownLeft > 0;
 
   Iterable<CurvePowerUp> get powerUps => _powerUps;
@@ -267,6 +332,7 @@ class CurveSim {
     h.right = right;
   }
 
+  @override
   void kill(int id) {
     final h = _heads[id];
     if (h == null) return;
@@ -278,6 +344,7 @@ class CurveSim {
 
   /// Takes [id] back into the match: it races again from the next [startRound]
   /// (this round stays lost). Its score is kept.
+  @override
   void revive(int id) => _gone.remove(id);
 
   /// Test hook: put a head somewhere specific.
@@ -306,6 +373,7 @@ class CurveSim {
   void placePowerUp(PowerUpKind kind, double x, double y) =>
       _powerUps.add(CurvePowerUp(_nextPowerUpId++, kind, x, y));
 
+  @override
   void startRound() {
     _owner.fillRange(0, _owner.length, 0);
     _paintTick.fillRange(0, _paintTick.length, 0);
@@ -361,6 +429,7 @@ class CurveSim {
   void _emit(CurveEvent e) => (_events ??= <CurveEvent>[]).add(e);
 
   /// Events of this tick; an empty const list when nothing happened.
+  @override
   List<CurveEvent> tick() {
     _events = null;
     if (roundOver) return const [];
