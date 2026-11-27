@@ -238,7 +238,6 @@ abstract final class Strings {
   static const sumoNeedsTwo = 'Za Sumo trebaju barem 2 igrača.';
   static const sumoNoBots = 'Sumo se igra bez robota.';
   static const settingMap = 'Mapa';
-  static const settingWinPoints = 'Bodovi za pobjedu';
   /// 0 is Automatski (10 x (players - 1)), else the number.
   static String winPointsName(int n) => n == 0 ? 'Automatski' : '$n';
   /// " · do 30" after a fixed target on the lines under a game's name; nothing for Automatski.

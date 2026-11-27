@@ -7,7 +7,7 @@ import 'package:tv/session/session.dart';
 
 import 'session_test.dart' show FakePeer, join;
 
-/// Task 57: "Bodovi za pobjedu" reaches the match for Curve and for Sumo, and is remembered.
+/// Task 57: "Bodova do pobjede" reaches the match for Curve and for Sumo, and is remembered.
 void main() {
   late Session s;
 

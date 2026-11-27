@@ -150,7 +150,7 @@ List<HomeRow> homeRows(GameKind k, LobbyState l) {
       ),
       number(
         'curveTarget',
-        Strings.winPoints,
+        Strings.targetPoints,
         winPointsChoices,
         (v) => copySettings(s, curveTarget: v),
         fmt: Strings.winPointsValue,
@@ -279,7 +279,7 @@ List<HomeRow> homeRows(GameKind k, LobbyState l) {
       ),
       number(
         'sumoTarget',
-        Strings.winPoints,
+        Strings.targetPoints,
         winPointsChoices,
         (v) => copySettings(s, sumoTarget: v),
         fmt: Strings.winPointsValue,

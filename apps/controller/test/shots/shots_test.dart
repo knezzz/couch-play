@@ -297,7 +297,7 @@ void main() {
     await _shot(t, 'SumoPhone', sumo());
     await _shot(t, 'SumoPhoneSmall', sumo(), h: 640, width: 360);
     // Mid-drag with the Dash recharging, the picture the board draws.
-    // Task 57: the phone home with "Bodovi za pobjedu", at 360x640, host view, both games.
+    // Task 57: the phone home with "Bodova do pobjede", at 360x640, host view, both games.
     for (final (g, name) in [(GameKind.curve, 'Curve'), (GameKind.sumo, 'Sumo')]) {
       await _shot(
         t,

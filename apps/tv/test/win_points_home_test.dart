@@ -5,7 +5,7 @@ import 'package:tv/strings.dart';
 import 'package:tv/ui/home_screen.dart';
 import 'package:tv/ui/tv_theme.dart';
 
-/// Task 57: "Bodovi za pobjedu" on the TV: the settings panel, and the line under the game's name.
+/// Task 57: "Bodova do pobjede" on the TV: the settings panel, and the line under the game's name.
 void main() {
   Future<void> pump(WidgetTester t, GameKind game, GameSettings settings, {bool panel = true}) async {
     t.view
@@ -31,9 +31,9 @@ void main() {
   }
 
   for (final game in [GameKind.curve, GameKind.sumo]) {
-    testWidgets('$game: the panel shows Bodovi za pobjedu, Automatski by default', (t) async {
+    testWidgets('$game: the panel shows Bodova do pobjede, Automatski by default', (t) async {
       await pump(t, game, const GameSettings());
-      expect(find.textContaining('Bodovi za pobjedu', findRichText: true), findsOneWidget);
+      expect(find.textContaining('Bodova do pobjede', findRichText: true), findsOneWidget);
       expect(find.textContaining('Automatski', findRichText: true), findsOneWidget);
     });
 

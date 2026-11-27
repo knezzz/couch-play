@@ -52,7 +52,7 @@ class PlayerInfo with _JsonEq {
 /// the green (helpful) kinds.
 enum CurveMode { chaos, balanced, peaceful, onlyYou }
 
-/// The choices of "Bodovi za pobjedu" (Curve and Sumo); 0 is Automatski: 10 x (players - 1).
+/// The choices of "Bodova do pobjede" (Curve and Sumo); 0 is Automatski: 10 x (players - 1).
 const winPointsChoices = [0, 10, 20, 30, 50, 70, 100];
 
 /// Sumo's maps: normal grip, ice (sliding), or one of them at random each round.

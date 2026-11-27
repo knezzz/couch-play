@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Task 57: "Bodovi za pobjedu", a setting for Curve and for Sumo. 0 is Automatski, today's 10 x (players - 1).
+/// Task 57: "Bodova do pobjede", a setting for Curve and for Sumo. 0 is Automatski, today's 10 x (players - 1).
 void main() {
   group('the setting', () {
     test('the default is Automatski for both games', () {

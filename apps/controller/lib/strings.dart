@@ -176,7 +176,6 @@ abstract final class Strings {
   static String rolesCount(int n) =>
       '$n ${n % 10 == 1 && n % 100 != 11 ? 'uloga' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'uloge' : 'uloga')}';
   static const targetPoints = 'Bodova do pobjede';
-  static const winPoints = 'Bodovi za pobjedu';
   /// 0 is Automatski (10 x (players - 1)), else the number.
   static String winPointsValue(int n) => n == 0 ? 'Automatski' : '$n';
   static const settingsForAll = 'Postavke · svi ih vide';

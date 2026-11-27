@@ -84,7 +84,7 @@ String playersRange(GameKind k) {
 
 bool _isTarget(HomeRow r) => r.key == 'curveTarget' || r.key == 'sumoTarget';
 
-/// "Bodovi za pobjedu" on Automatski says nothing on the line (it is today's rule); a number says "do 30".
+/// "Bodova do pobjede" on Automatski says nothing on the line (it is today's rule); a number says "do 30".
 bool _autoTarget(HomeRow r) => _isTarget(r) && r.raw == 0;
 
 /// The settings line under the title: the range of players, then each plain

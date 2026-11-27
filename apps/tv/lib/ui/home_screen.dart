@@ -686,14 +686,14 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
             (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
             (Strings.settingBots, '$bots', 'bots'),
-            (Strings.settingWinPoints, Strings.winPointsName(settings.curveTarget), 'curveTarget'),
+            (Strings.settingTarget, Strings.winPointsName(settings.curveTarget), 'curveTarget'),
           ]
         else ...[
           [
             (Strings.settingMode, Strings.curveModeName(settings.curveMode), 'curveMode'),
             (Strings.settingCountdown, '${settings.curveCountdown} s', 'curveCountdown'),
           ],
-          [(Strings.settingBots, '$bots', 'bots'), (Strings.settingWinPoints, Strings.winPointsName(settings.curveTarget), 'curveTarget')],
+          [(Strings.settingBots, '$bots', 'bots'), (Strings.settingTarget, Strings.winPointsName(settings.curveTarget), 'curveTarget')],
         ],
       ],
       GameKind.vukodlak => [
@@ -730,7 +730,7 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingMap, Strings.sumoMapName(settings.sumoMap), 'sumoMap'),
             (Strings.settingPowerUps, settings.sumoPowerUps ? Strings.yes : Strings.no, 'sumoPowerUps'),
           ],
-          [(Strings.settingWinPoints, Strings.winPointsName(settings.sumoTarget), 'sumoTarget')],
+          [(Strings.settingTarget, Strings.winPointsName(settings.sumoTarget), 'sumoTarget')],
         ],
       GameKind.tenkovi => [
           [

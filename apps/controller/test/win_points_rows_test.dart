@@ -5,7 +5,7 @@ import 'package:controller/strings.dart';
 import 'package:core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Task 57: the "Bodovi za pobjedu" row of Curve and Sumo on the phone home.
+/// Task 57: the "Bodova do pobjede" row of Curve and Sumo on the phone home.
 void main() {
   LobbyState lobby(GameSettings s) => LobbyState(
         hostId: 0,
@@ -17,7 +17,7 @@ void main() {
   for (final (game, key) in [(GameKind.curve, 'curveTarget'), (GameKind.sumo, 'sumoTarget')]) {
     test('$game has the row, Automatski first, stepping through the choices', () {
       final row = homeRows(game, lobby(const GameSettings())).firstWhere((r) => r.key == key);
-      expect(row.label, 'Bodovi za pobjedu');
+      expect(row.label, 'Bodova do pobjede');
       expect(row.display, 'Automatski');
       expect(row.values, [0, 10, 20, 30, 50, 70, 100]);
       expect(row.prev, isNull, reason: 'Automatski is the first');
@@ -61,6 +61,6 @@ void main() {
     expect(changeValue(c, 0, l), 'Automatski');
     expect(changeValue(c, 30, l), '30');
     expect(copySettings(const GameSettings(), curveTarget: 20).curveTarget, 20);
-    expect(Strings.winPoints, 'Bodovi za pobjedu');
+    expect(Strings.targetPoints, 'Bodova do pobjede');
   });
 }
