@@ -12,4 +12,5 @@ const supportedGames = [
   GameKind.blef,
   GameKind.tkobi,
   GameKind.sumo,
+  GameKind.tenkovi,
 ];

@@ -2,6 +2,7 @@ import 'package:core/core.dart';
 
 import '../strings.dart';
 import 'settings_copy.dart';
+import 'tenkovi_text.dart';
 
 /// What a row opens instead of stepping.
 enum HomeOpens { packs, roles }
@@ -268,6 +269,26 @@ List<HomeRow> homeRows(GameKind k, LobbyState l) {
         wrap: true,
         messageFor: (i) =>
             SetSettings(copySettings(s, sumoPowerUps: i == 1)),
+      ),
+    ],
+    GameKind.tenkovi => [
+      HomeRow(
+        key: 'tenkoviMap',
+        label: TenkoviStrings.mapLabel,
+        raw: json['tenkoviMap'],
+        text: (r) => TenkoviStrings.mapName(
+          TenkoviMapPick.values.asNameMap()['$r'] ?? TenkoviMapPick.random,
+        ),
+        values: [for (final m in TenkoviMapPick.values) m.name],
+        wrap: true,
+        messageFor: (i) =>
+            SetSettings(copySettings(s, tenkoviMap: TenkoviMapPick.values[i])),
+      ),
+      number(
+        'tenkoviRounds',
+        TenkoviStrings.roundsLabel,
+        const [1, 3, 5],
+        (v) => copySettings(s, tenkoviRounds: v),
       ),
     ],
   };

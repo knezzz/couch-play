@@ -87,7 +87,7 @@ void main() {
 
     testWidgets('the edges name the neighbours, wrapping round', (t) async {
       await _show(t, _lobby(selected: GameKind.quiz), 0);
-      expect(find.text('‹\n${Strings.gameName(GameKind.sumo)}'), findsOneWidget);
+      expect(find.text('‹\n${Strings.gameName(supportedGames.last)}'), findsOneWidget);
       expect(find.text('›\n${Strings.curve}'), findsOneWidget);
     });
 

@@ -16,6 +16,7 @@ import 'screens/wait_screen.dart';
 import 'screens/blef_flow.dart';
 import 'screens/koliko_flow.dart';
 import 'screens/objasni_flow.dart';
+import 'screens/tenkovi_flow.dart';
 import 'screens/tkobi_flow.dart';
 import 'screens/uljez_flow.dart';
 import 'screens/wolf_flow.dart';
@@ -34,6 +35,7 @@ enum _Screen {
   koliko,
   blef,
   tkobi,
+  tenkovi,
   kicked,
 }
 
@@ -87,6 +89,7 @@ class _AppState extends State<App> {
   final _koliko = KolikoInbox();
   final _blef = BlefInbox();
   final _tkobi = TkobiInbox();
+  final _tenkovi = TenkoviInbox();
   // Vukodlak and Uljez share VotePrompt; the game that started last owns it.
   bool _uljezOn = false;
   List<PlayerInfo>? _inGame; // GamePlayers: who is still in, until a lobby state
@@ -145,6 +148,7 @@ class _AppState extends State<App> {
           _host = null; // the lobby state says who hosts
           _uljezOn = false; // back in the lobby: no game is on
           _wolf.reset();
+          _tenkovi.reset();
           _inGame = null;
           final me = m.players.where((p) => p.id == _myId).firstOrNull;
           if (me != null && !_rejoining) {
@@ -179,6 +183,9 @@ class _AppState extends State<App> {
         case Results():
           _placements = m.placements;
           _screen = _Screen.results;
+        case TenkoviTurn():
+          _tenkovi.on(m);
+          _screen = _Screen.tenkovi;
         case TkobiAsk() || TkobiResult():
           _tkobi.on(m);
           _screen = _Screen.tkobi;
@@ -309,6 +316,7 @@ class _AppState extends State<App> {
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : TkobiFlow(widget.conn, _lobby!, _tkobi),
+    _Screen.tenkovi => TenkoviFlow(widget.conn, _myId, _tenkovi),
     _Screen.blef => BlefFlow(
       widget.conn,
       _blef,

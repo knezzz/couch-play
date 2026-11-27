@@ -151,6 +151,7 @@ abstract final class Strings {
     GameKind.blef => 'Blef',
     GameKind.tkobi => 'Tko bi?',
     GameKind.sumo => sumoName,
+    GameKind.tenkovi => 'Tenkovi',
   };
   static String gameBlurb(GameKind k) => switch (k) {
     GameKind.quiz => 'Pitanja s četiri odgovora. Odgovaraš na svom mobitelu.',
@@ -162,6 +163,7 @@ abstract final class Strings {
     GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
     GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
     GameKind.sumo => sumoBlurb,
+    GameKind.tenkovi => 'Svi ciljaju, svi pucaju odjednom.',
   };
   static const hostTag = '★ DOMAĆIN';
 
