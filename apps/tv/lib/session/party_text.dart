@@ -10,6 +10,8 @@ class PartyText {
   static const kolikoNeedPlayers = 'Koliko? traži 2 do 8 igrača na mobitelima.';
   static const blefNeedPlayers = 'Blef traži 3 do 8 igrača na mobitelima.';
   static const tkobiNeedPlayers = 'Tko bi? traži 3 do 8 igrača na mobitelima.';
+  static const tenkoviNeedPlayers = 'Tenkovi traži 2 do 8 igrača na mobitelima.';
+  static const tenkoviName = 'Tenkovi';
   static const objasniName = 'Objasni';
   static const kolikoName = 'Koliko?';
   static const blefName = 'Blef';

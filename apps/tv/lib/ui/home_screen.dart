@@ -19,6 +19,7 @@ const homeGames = [
   GameKind.blef,
   GameKind.tkobi,
   GameKind.sumo,
+  GameKind.tenkovi,
 ];
 
 /// The console home (docs/design/couchplay-screens/V2Home.dc.html), on a 1920x1080
@@ -729,6 +730,12 @@ class _SettingsPanel extends StatelessWidget {
             (Strings.settingPowerUps, settings.sumoPowerUps ? Strings.yes : Strings.no, 'sumoPowerUps'),
           ],
         ],
+      GameKind.tenkovi => [
+          [
+            (Strings.settingMap, Strings.tenkoviMapName(settings.tenkoviMap), 'tenkoviMap'),
+            (Strings.settingRounds, '${settings.tenkoviRounds}', 'tenkoviRounds'),
+          ],
+        ],
       },
     ];
     Widget item((String, String, String) it) {
@@ -907,6 +914,7 @@ class _Backdrop extends StatelessWidget {
           GameKind.blef => const [Color(0xFF3A2008), Color(0xFF2A0E0E)],
           GameKind.tkobi => const [Color(0xFF2A1030), Color(0xFF3A1430)],
           GameKind.sumo => const [Color(0xFF2A1020), Color(0xFF15101E)],
+          GameKind.tenkovi => const [Color(0xFF0E1A2E), Color(0xFF2A1A12)],
         },
       ),
     ),
@@ -1040,6 +1048,25 @@ class _ArtPainter extends CustomPainter {
         canvas.drawCircle(const Offset(1400, 440), 38, Paint()..color = playerColors[2].withValues(alpha: 0.6));
         canvas.drawCircle(const Offset(260, 880), 220, Paint()..color = const Color(0x1AFFFFFF)..style = PaintingStyle.stroke..strokeWidth = 14);
         canvas.drawCircle(const Offset(240, 860), 54, Paint()..color = playerColors[4].withValues(alpha: 0.55));
+      case GameKind.tenkovi:
+        // Hills with three tanks, and the faint arcs of shells crossing.
+        double hillY(double x) => 780 + 70 * sin(x / 210) + 30 * sin(x / 83);
+        final hill = Path()..moveTo(0, 1080)..lineTo(0, hillY(0));
+        for (var x = 40.0; x <= 1920; x += 40) {
+          hill.lineTo(x, hillY(x));
+        }
+        hill..lineTo(1920, 1080)..close();
+        canvas.drawPath(hill, Paint()..color = const Color(0x4D7FD8A8));
+        final arc = Paint()
+          ..color = const Color(0x55FFFFFF)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6;
+        canvas.drawPath(Path()..moveTo(300, hillY(300) - 30)..quadraticBezierTo(630, 80, 960, hillY(960) - 30), arc);
+        canvas.drawPath(Path()..moveTo(1560, hillY(1560) - 30)..quadraticBezierTo(1260, 140, 960, hillY(960) - 30), arc);
+        for (var i = 0; i < 3; i++) {
+          final x = 300.0 + i * 630;
+          canvas.drawCircle(Offset(x, hillY(x) - 22), 34, Paint()..color = playerColors[i * 3].withValues(alpha: 0.7));
+        }
     }
     canvas.restore();
   }

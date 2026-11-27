@@ -168,6 +168,9 @@ class TenkoviRound {
   /// Tanks knocked out, by volley number (1-based); the same number is a tie.
   final outAt = <int, int>{};
 
+  /// Bumped for every crater: the TV redraws the ground only when this changes.
+  int terrainVersion = 0;
+
   /// True while shells are in the air.
   bool get flying => projectiles.isNotEmpty;
   List<TenkoviTank> get living => [for (final t in tanks) if (t.alive) t];
@@ -318,6 +321,7 @@ class TenkoviRound {
 
   /// Takes a bowl out of the ground: the surface only ever goes down.
   void _crater(double cx, double cy, double r) {
+    terrainVersion++;
     for (var x = max(0, (cx - r).floor()); x <= min(Tenkovi.w - 1, (cx + r).ceil()); x++) {
       final dx = x - cx;
       if (dx * dx > r * r) continue;

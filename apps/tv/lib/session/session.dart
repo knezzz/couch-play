@@ -14,6 +14,7 @@ import 'bots.dart';
 import 'game_ready.dart';
 import 'blef_match.dart';
 import 'koliko_match.dart';
+import 'tenkovi_match.dart';
 import 'tkobi_match.dart';
 import 'objasni_match.dart';
 import 'party_text.dart';
@@ -23,7 +24,7 @@ import 'wolf_match.dart';
 import 'wolf_text.dart';
 import '../strings.dart';
 
-enum Phase { lobby, quiz, curve, wolf, uljez, objasni, koliko, blef, tkobi, results }
+enum Phase { lobby, quiz, curve, wolf, uljez, objasni, koliko, blef, tkobi, tenkovi, results }
 
 const maxPlayers = 8;
 const _staleAfter = Duration(minutes: 10);
@@ -137,6 +138,7 @@ class Session {
     _objasni?.dispose();
     _koliko?.dispose();
     _blef?.dispose();
+    _tenkovi?.dispose();
     _tkobi?.dispose();
     _roundBreakTimer?.cancel();
     _momentTimer?.cancel();
@@ -163,6 +165,7 @@ class Session {
       Phase.koliko => _koliko?.ids,
       Phase.blef => _blef?.ids,
       Phase.tkobi => _tkobi?.ids,
+      Phase.tenkovi => _tenkovi?.ids,
       Phase.quiz => _quizIds,
       Phase.curve => _simIdOf.keys,
       _ => null,
@@ -322,6 +325,9 @@ class Session {
         _wolf?.onVote(p.id, m);
         _uljez?.onVote(p.id, m);
         _tkobi?.onVote(p.id, m);
+      case TenkoviFire():
+        final p = _playerOf(peer);
+        if (p != null) _tenkovi?.onFire(p.id, m);
       case Guess():
         final p = _playerOf(peer);
         if (p != null) _uljez?.onGuess(p.id, m);
@@ -414,7 +420,7 @@ class Session {
     if (old != null && old != peer) old.close();
     peer.send(Welcome(p.id, p.colorIndex, p.token, character: p.character));
     // The (public) lobby too: a reloaded phone needs the names and colours.
-    if (_phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi) peer.send(_lobbyMsg());
+    if (_phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi || _phase == Phase.tenkovi) peer.send(_lobbyMsg());
     final host = hostId;
     if (_phase != Phase.lobby && host != null) peer.send(HostIs(host)); // after the lobby state
     final gp = _gamePlayers();
@@ -480,6 +486,13 @@ class Session {
         } else {
           peer.send(_waiting);
         }
+      case Phase.tenkovi:
+        if (_tenkovi?.ids.contains(p.id) == true) {
+          _tenkovi!.setAway(p.id, false);
+          _tenkovi!.rejoin(p.id);
+        } else {
+          peer.send(_waiting);
+        }
       case Phase.results:
         peer.send(_waiting);
     }
@@ -499,6 +512,7 @@ class Session {
     _koliko?.setAway(p.id, true);
     _blef?.setAway(p.id, true);
     _tkobi?.setAway(p.id, true);
+    _tenkovi?.setAway(p.id, true);
     _keepGameHost();
     if (_phase == Phase.lobby) _broadcastLobby();
     _notify();
@@ -661,6 +675,11 @@ class Session {
         final pack = _unionTkobi();
         if (pack == null) return Strings.packUnavailable;
         _startTkobi(parts, pack);
+      case GameKind.tenkovi:
+        if (_players.any((p) => p.bot)) return PartyText.noBots;
+        final parts = participants(GameKind.tenkovi);
+        if (parts.length < 2 || parts.length > 8) return PartyText.tenkoviNeedPlayers;
+        _startTenkovi(parts);
     }
     onStart?.call(game, packId);
     return null;
@@ -705,6 +724,7 @@ class Session {
     _koliko?.setAway(target.id, true);
     _blef?.setAway(target.id, true);
     _tkobi?.setAway(target.id, true);
+    _tenkovi?.setAway(target.id, true);
     _remove(target); // bots can be kicked too
     if (wasHost) _keepGameHost();
     socket?.send(const Kicked());
@@ -1057,6 +1077,28 @@ class Session {
       sfx: sfx,
       notify: _notify,
       onOver: (scores) => finishGame(scores, game: PartyText.tkobiName),
+    )..start();
+    _notify();
+  }
+
+  // --- Tenkovi ---
+
+  TenkoviTvMatch? _tenkovi;
+  TenkoviTvMatch? get tenkovi => _tenkovi;
+
+  void _startTenkovi(List<Player> parts) {
+    _tenkovi?.dispose();
+    _gameHost = hostId;
+    _closeHostView();
+    _phase = Phase.tenkovi;
+    _tenkovi = TenkoviTvMatch(
+      ids: [for (final p in parts) p.id],
+      settings: _settings,
+      send: (id, m) => _byId(id)?.socket?.send(m),
+      random: _random,
+      sfx: sfx,
+      notify: _notify,
+      onOver: (scores) => finishGame(scores, game: PartyText.tenkoviName),
     )..start();
     _notify();
   }
@@ -1885,7 +1927,7 @@ class Session {
   /// The host's Back + Yes: abandons a running quiz or Curve match. No
   /// placement points, scores stay as they were; phones go back to the lobby.
   void endGame() {
-    if (_phase == Phase.quiz || _phase == Phase.curve || _phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi) returnToLobby();
+    if (_phase == Phase.quiz || _phase == Phase.curve || _phase == Phase.wolf || _phase == Phase.uljez || _phase == Phase.objasni || _phase == Phase.koliko || _phase == Phase.blef || _phase == Phase.tkobi || _phase == Phase.tenkovi) returnToLobby();
   }
 
   /// Leaves the results phase. The TV calls it 8 s after [finishGame].
@@ -1909,6 +1951,8 @@ class Session {
     _blef = null;
     _tkobi?.dispose();
     _tkobi = null;
+    _tenkovi?.dispose();
+    _tenkovi = null;
     _endRoundBreak();
     _sim = null;
     _bots = null;

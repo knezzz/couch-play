@@ -35,7 +35,7 @@ abstract final class Strings {
         CurveMode.onlyYou => 'Samo za tebe',
       };
   /// The host's game card on the lobby, same words as the phone's game details.
-  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?', GameKind.sumo => 'Sumo' };
+  static String gameName(GameKind k) => switch (k) { GameKind.quiz => 'Kviz', GameKind.curve => 'Curve', GameKind.vukodlak => 'Vukodlak', GameKind.uljez => 'Uljez', GameKind.objasni => 'Objasni', GameKind.koliko => 'Koliko?', GameKind.blef => 'Blef', GameKind.tkobi => 'Tko bi?', GameKind.sumo => 'Sumo', GameKind.tenkovi => 'Tenkovi' };
   /// 2000 -> '2 000' (no-break space).
   static String _g(int n) => n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => '\u00A0');
 
@@ -58,6 +58,7 @@ abstract final class Strings {
         GameKind.blef => 'Izmisli lažan odgovor i pronađi pravi.',
         GameKind.tkobi => 'Tko bi se najvjerojatnije...? Glasaj za nekoga u sobi.',
         GameKind.sumo => 'Gurni ostale s ringa.',
+        GameKind.tenkovi => 'Svi ciljaju, svi pucaju odjednom.',
       };
   /// Bottom of the lobby while the host has a game's card open (the phones say the same).
   static String watching(String host, GameKind k) => '$host gleda: ${gameName(k)}';
@@ -151,6 +152,7 @@ abstract final class Strings {
         GameKind.blef => '3–8 igrača · ${_pk(pack)}bez robota',
         GameKind.tkobi => '3–8 igrača · ${_pk(pack)}bez robota',
         GameKind.sumo => '2–8 igrača · ${sumoMapName(s.sumoMap)} · ${s.sumoPowerUps ? 'pojačanja' : 'bez pojačanja'}',
+        GameKind.tenkovi => '2–8 igrača · ${tenkoviMapName(s.tenkoviMap)} · ${roundsWord(s.tenkoviRounds)}',
       };
 
   // --- Vukodlak (the village on the TV) ---
@@ -236,6 +238,15 @@ abstract final class Strings {
   static const sumoNoBots = 'Sumo se igra bez robota.';
   static const settingMap = 'Mapa';
   static const settingPowerUps = 'Pojačanja';
+  static const settingRounds = 'Broj rundi';
+  static String tenkoviMapName(TenkoviMapPick m) => switch (m) {
+        TenkoviMapPick.earth => 'Zemlja',
+        TenkoviMapPick.moon => 'Mjesec',
+        TenkoviMapPick.mars => 'Mars',
+        TenkoviMapPick.random => 'Nasumično',
+      };
+  /// 1 runda, 3 runde, 5 rundi.
+  static String roundsWord(int n) => '$n ${n == 1 ? 'runda' : n < 5 ? 'runde' : 'rundi'}';
   static const sumoPowerLabels = {SumoPower.heavy: 'TEŽAK', SumoPower.big: 'VELIK', SumoPower.fast: 'BRZ'};
   static String gameQuiz(String packTitle) => 'Kviz · $packTitle';
   static String backToLobby(int seconds) => 'Povratak na početni zaslon za $seconds s';

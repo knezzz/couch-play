@@ -28,6 +28,7 @@ import 'ui/perf_log.dart';
 import 'ui/results_screen.dart';
 import 'ui/blef/blef_view.dart';
 import 'ui/koliko/koliko_view.dart';
+import 'ui/tenkovi/tenkovi_view.dart';
 import 'ui/tkobi/tkobi_view.dart';
 import 'ui/objasni/objasni_view.dart';
 import 'ui/uljez/uljez_view.dart';
@@ -327,7 +328,7 @@ class _TvAppState extends State<TvApp> {
       navigatorKey: _nav,
       builder: (_, child) => BackGuard(
         navigatorKey: _nav,
-        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef || _session.phase == Phase.tkobi,
+        active: () => _session.phase == Phase.quiz || _session.phase == Phase.curve || _session.phase == Phase.wolf || _session.phase == Phase.uljez || _session.phase == Phase.objasni || _session.phase == Phase.koliko || _session.phase == Phase.blef || _session.phase == Phase.tkobi || _session.phase == Phase.tenkovi,
         changes: _session.changes,
         onEnd: _session.endGame,
         // Back also offers "Ukloni igrača" (the way out when a phone has left mid-game).
@@ -392,6 +393,8 @@ class _TvAppState extends State<TvApp> {
               ? BlefView(match: _session.blef!, players: _session.playerInfos)
               : _session.phase == Phase.tkobi && _session.tkobi != null
               ? TkobiView(match: _session.tkobi!, players: _session.playerInfos)
+              : _session.phase == Phase.tenkovi && _session.tenkovi != null
+              ? TenkoviView(match: _session.tenkovi!, players: _session.playerInfos)
               : _session.phase == Phase.results
               ? ResultsScreen(
                   placements: _session.placements,
