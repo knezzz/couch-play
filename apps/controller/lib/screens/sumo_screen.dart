@@ -111,7 +111,12 @@ class _SumoScreenState extends State<SumoScreen> with SingleTickerProviderStateM
     }
     final f = d / _stickRadius;
     final force = f < 0.4 ? 1 : (f < 0.75 ? 2 : 3);
-    final dir = (atan2(-v.dy, v.dx) / (pi / 8)).round() & 15;
+    final q = atan2(-v.dy, v.dx) / (pi / 8); // the direction in steps of 22.5 degrees
+    // Hysteresis: once moving, stay on the current step until the thumb is 4.5 degrees past its edge,
+    // so a thumb on the line between two steps does not flip back and forth.
+    var off = (q - _dir) % 16;
+    if (off > 8) off -= 16;
+    final dir = _force != 0 && off.abs() < 0.7 ? _dir : q.round() & 15;
     if (dir != _dir || force != _force) _send(dir, force);
   }
 

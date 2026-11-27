@@ -69,6 +69,21 @@ void main() {
     await done(t);
   });
 
+  testWidgets('a thumb on the line between two steps does not flip back and forth', (t) async {
+    final c = _Fake();
+    await t.pumpWidget(app(c));
+    final g = await t.startGesture(const Offset(150, 300));
+    await g.moveBy(const Offset(60, 0)); // step 0
+    final n = c.moves.length;
+    // 13 degrees: past the 11.25 degree edge of step 0 by less than the 4.5 degree hysteresis: still step 0
+    await g.moveBy(const Offset(0, -14));
+    expect(c.moves.length, n, reason: 'still direction 0');
+    await g.moveBy(const Offset(0, -20)); // 29 degrees: well past, so step 1 (22.5 degrees)
+    expect((c.moves.last as SumoMove).dir, 1);
+    await g.up();
+    await done(t);
+  });
+
   testWidgets('the right half is Dash: one press, then it recharges for 2 s', (t) async {
     final c = _Fake();
     await t.pumpWidget(app(c));
@@ -97,7 +112,7 @@ void main() {
     final dash = await t.startGesture(const Offset(600, 300));
     expect(c.moves.last, const SumoDash());
     await dash.up();
-    expect(c.moves.where((m) => m is SumoMove).last, const SumoMove(0, 3), reason: 'the stick was not let go');
+    expect(c.moves.whereType<SumoMove>().last, const SumoMove(0, 3), reason: 'the stick was not let go');
     await stick.up();
     expect(c.moves.last, const SumoMove(0, 0));
     await t.pump(const Duration(seconds: 3));

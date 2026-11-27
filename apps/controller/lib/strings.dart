@@ -443,7 +443,7 @@ abstract final class Strings {
   static const sumoName = 'Sumo';
   static const sumoDragHint = 'Povuci bilo gdje';
   static const sumoDash = 'Dash';
-  static const sumoOut = 'Pao si s ringa. Gledaj TV.';
+  static const sumoOut = 'Izvan ringa! Gledaj TV.';
   static const sumoHint = 'Lijevo: povuci za kretanje, jače povlačenje = jače guranje. Desno: Dash, kratki jaki udarac.';
   static String sumoRecharge(double s) => 'još ${s.toStringAsFixed(s < 1 ? 1 : 0).replaceAll('.', ',')} s';
   static String sumoMap(SumoMap m) => switch (m) {

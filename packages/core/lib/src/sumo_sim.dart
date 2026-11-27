@@ -52,10 +52,10 @@ class SumoPowerUp {
 }
 
 class SumoHead implements RoundHead {
-  const SumoHead(this.id, this.x, this.y, this.r, this.alive);
+  const SumoHead(this.id, this.x, this.y, this.r, this.alive, this.vx, this.vy);
   @override
   final int id;
-  final double x, y, r;
+  final double x, y, r, vx, vy;
   @override
   final bool alive;
 }
@@ -76,6 +76,7 @@ const _levels = [0.0, 0.45, 0.75, 1.0];
 const _accelClassic = 1400.0, _capClassic = 420.0, _dampClassic = 3.5;
 const _accelIce = 500.0, _capIce = 560.0, _dampIce = 0.45;
 const _restitution = 0.85;
+const _dashGrace = 12; // ticks (0.2 s) before the recharge ends within which a press is kept
 const _heavyMass = 3.0, _bigMass = 1.6, _bigRadius = 1.5, _fastFactor = 1.5, _heavyAccel = 0.85;
 
 class SumoSim implements RoundSim {
@@ -121,7 +122,7 @@ class SumoSim implements RoundSim {
   bool get ice => _ice;
 
   @override
-  Iterable<SumoHead> get heads => _ws.map((w) => SumoHead(w.id, w.x, w.y, radiusOf(w.id), w.alive));
+  Iterable<SumoHead> get heads => _ws.map((w) => SumoHead(w.id, w.x, w.y, _radius(w), w.alive, w.vx, w.vy));
 
   Iterable<SumoPowerUp> get powerUps => _powerUps;
 
@@ -144,12 +145,11 @@ class SumoSim implements RoundSim {
     return null;
   }
 
-  double massOf(int id) {
-    final w = _w(id);
-    return (w.has(SumoPower.heavy) ? _heavyMass : 1) * (w.has(SumoPower.big) ? _bigMass : 1);
-  }
+  double _mass(_W w) => (w.has(SumoPower.heavy) ? _heavyMass : 1) * (w.has(SumoPower.big) ? _bigMass : 1);
+  double _radius(_W w) => config.wrestlerRadius * (w.has(SumoPower.big) ? _bigRadius : 1);
 
-  double radiusOf(int id) => config.wrestlerRadius * (_w(id).has(SumoPower.big) ? _bigRadius : 1);
+  double massOf(int id) => _mass(_w(id));
+  double radiusOf(int id) => _radius(_w(id));
 
   (double, double) velocityOf(int id) {
     final w = _w(id);
@@ -181,10 +181,13 @@ class SumoSim implements RoundSim {
     w.force = force.clamp(0, 3);
   }
 
+  /// A Dash press. It is kept until it fires: at the go when pressed in the countdown, or when the
+  /// recharge ends when pressed within [_dashGrace] ticks of it (the phone's ring and the TV's count
+  /// differ by the trip). A press long before that is dropped, so hammering gives one dash per cooldown.
   void dash(int id) {
     final w = _wOrNull(id);
-    if (w == null || !w.alive || countingDown) return;
-    w.wantDash = true;
+    if (w == null || !w.alive) return;
+    if (countingDown || w.dashCd <= _dashGrace) w.wantDash = true;
   }
 
   @override
@@ -299,9 +302,9 @@ class SumoSim implements RoundSim {
         w.vx += ux * config.dashSpeed;
         w.vy += uy * config.dashSpeed;
         w.dashCd = (config.dashCooldown * config.tickHz).round();
+        w.wantDash = false;
         _emit(Dashed(w.id));
       }
-      w.wantDash = false;
       if (w.force > 0) {
         final f = _levels[w.force];
         final fast = w.has(SumoPower.fast) ? _fastFactor : 1.0;
@@ -340,7 +343,7 @@ class SumoSim implements RoundSim {
         for (var j = i + 1; j < _ws.length; j++) {
           final b = _ws[j];
           if (!b.alive) continue;
-          final ra = radiusOf(a.id), rb = radiusOf(b.id);
+          final ra = _radius(a), rb = _radius(b);
           var dx = b.x - a.x, dy = b.y - a.y;
           var d = sqrt(dx * dx + dy * dy);
           if (d >= ra + rb) continue;
@@ -350,7 +353,7 @@ class SumoSim implements RoundSim {
             d = 1;
           }
           final nx = dx / d, ny = dy / d;
-          final ma = massOf(a.id), mb = massOf(b.id);
+          final ma = _mass(a), mb = _mass(b);
           final over = ra + rb - d;
           a.x -= nx * over * mb / (ma + mb);
           a.y -= ny * over * mb / (ma + mb);

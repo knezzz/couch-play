@@ -215,12 +215,63 @@ void main() {
       expect(s.velocityOf(0).$1, greaterThan(600));
     });
 
-    test('a dash while the countdown runs does nothing', () {
+    test('a dash pressed during the countdown fires at the go, not before', () {
       final s = make([0, 1], config: const SumoConfig(countdown: 2, powerUps: false));
+      s.place(0, 0, 0);
+      s.place(1, 300, 300);
+      s.setMove(0, 0, 0);
+      s.dash(0);
+      for (var i = 0; i < 120; i++) {
+        expect(s.tick().whereType<Dashed>(), isEmpty, reason: 'tick $i is still the countdown');
+      }
+      expect(speed(s, 0), 0);
+      expect(s.tick().whereType<Dashed>().single.id, 0, reason: 'the first tick of play');
+      expect(s.velocityOf(0).$1, greaterThan(600));
+    });
+
+    test('a dash that arrives a few ticks before the recharge ends is kept and fires when it does', () {
+      final s = make([0, 1]);
+      s.place(1, 300, 300);
+      s.setMove(0, 0, 0);
       s.dash(0);
       s.tick();
-      expect(speed(s, 0), 0);
-      expect(s.dashLeft(0), 0);
+      for (var i = 0; i < 112; i++) {
+        s.tick(); // 8 ticks of recharge left (cooldown 120)
+      }
+      expect(s.dashLeft(0), closeTo(8 / 120, 0.01));
+      s.dash(0);
+      var fired = 0;
+      for (var i = 0; i < 20; i++) {
+        fired += s.tick().whereType<Dashed>().length;
+      }
+      expect(fired, 1);
+    });
+
+    test('a dash long before the recharge ends is dropped, not kept', () {
+      final s = make([0, 1]);
+      s.place(1, 300, 300);
+      s.dash(0);
+      s.tick();
+      s.dash(0); // 119 ticks to go
+      var fired = 0;
+      for (var i = 0; i < 300; i++) {
+        fired += s.tick().whereType<Dashed>().length;
+        if (s.heads.first.alive == false) break;
+      }
+      expect(fired, 0, reason: 'only the first dash; the early press is gone');
+    });
+
+    test('hammering Dash still gives at most one dash per 2 s', () {
+      final s = make([0, 1], config: const SumoConfig(countdown: 0, powerUps: false, shrinkStart: 100));
+      s.place(1, 0, -400);
+      var fired = 0;
+      for (var i = 0; i < 300 && !s.roundOver; i++) {
+        s.dash(0);
+        s.place(0, 0, 0); // stays in the ring
+        s.setVelocity(0, 0, 0);
+        fired += s.tick().whereType<Dashed>().length;
+      }
+      expect(fired, 3, reason: '5 s: at 0 s, 2 s and 4 s');
     });
   });
 

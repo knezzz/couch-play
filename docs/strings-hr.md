@@ -441,7 +441,7 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | sumoCountdownHint | Povuci palcem i gurni ostale s ringa. | Drag with your thumb and push the others off the ring. | TV, Sumo countdown |
 | sumoNeedsTwo / sumoNoBots | Za Sumo trebaju barem 2 igrača. / Sumo se igra bez robota. | Sumo needs at least 2 players. / Sumo is played without bots. | TV home, why OK did nothing |
 | sumoDragHint / sumoDash / sumoRecharge(s) | Povuci bilo gdje / Dash / još 1,2 s | Drag anywhere / Dash / 1.2 s left | phone, Sumo controls |
-| sumoOut | Pao si s ringa. Gledaj TV. | You fell off the ring. Watch the TV. | phone, Sumo, out for the round |
+| sumoOut | Izvan ringa! Gledaj TV. | Out of the ring! Watch the TV. | phone, Sumo, out for the round |
 | sumoHint | Lijevo: povuci za kretanje, jače povlačenje = jače guranje. Desno: Dash, kratki jaki udarac. | Left: drag to move, a harder pull pushes harder. Right: Dash, a short strong push. | phone, Sumo controls |
 
 ### Tenkovi (Task 56, build-core; `apps/tv/lib/ui/tenkovi/tenkovi_text.dart`, `apps/controller/lib/screens/tenkovi_text.dart`, boards TenkoviTv* / TenkoviPhone*)
