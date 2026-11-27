@@ -143,7 +143,7 @@ Home (one game full screen, QR, players, the "Večeras" strip) → host picks a 
   "Robot 1", and score like players: they take part in placement points and appear on the session scoreboard. Bot
   skill: look ahead and steer away from trails and walls, and sometimes go for a nearby power-up. They must stay
   cheap enough to run 7 of them at 60 Hz on the TV.
-- Last one alive scores; every other surviving-longer player also gets points (points = number of players you outlived). First to `10 × (players − 1)` wins, as in Curve Fever.
+- Last one alive scores; every other surviving-longer player also gets points (points = number of players you outlived). First to `10 × (players − 1)` wins, as in Curve Fever. **Points to win (person, 2026-11-27):** a host setting "Bodovi za pobjedu": Automatski (the formula above, the default) or a fixed 10, 20, 30, 50, 70 or 100; the target is fixed when the match starts.
 - Simulation runs on the TV at a fixed 60 Hz tick; collision against a trail occupancy grid.
 - **Power-ups (user request, 2026-11-14, replaces "no power-ups in v1"):** icons appear on the board from time to
   time; the first line to drive over one triggers it for a few seconds. Kinds (the list below is current):
