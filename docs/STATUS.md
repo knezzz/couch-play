@@ -59,8 +59,9 @@ Owner: PM (`product-pm@couchplay`). Plan: `docs/plans/2026-11-13-couchplay.md`.
 | 52 | Curve: names along the bottom in line colors during play; clear round-winner moment; UX pass on a whole round (person, 2026-11-21) | done (483f782, f36538a, f615c3b, 4328237, 5ac2510, 4890ca7; review clean after 1 must-fix; QA phones pass; TV from 1080p renders); not on the TV, frame rate with 8 trails unchecked | lead |
 | 53 | Vukodlak phone: role card first, then the action, back to the role card after sending (person, 2026-11-22) | done (24296d6 + 9ba8421, review clean after 1 must-fix, QA 8 phones 3 days pass; switch only Travarica and Vođa čopora while the power is left); not on the TV | lead |
 | 54 | Vukodlak: 8 players fit a 360x640 phone without scrolling (person, 2026-11-22) | done (126a5d5, review clean; fits a 640 px browser viewport, a real 360x640 phone in Chrome still scrolls ~1.5 rows: person chose keep as is, 2026-11-22) | lead |
-| 55 | Sumo: push others off a ring (person, 2026-11-27; spec 2026-11-27-action-games-design.md) | routed: design boards first | lead |
-| 56 | Tenkovi: everyone aims, all fire at once (person, 2026-11-27; same spec) | routed: design boards first | lead |
+| 55 | Sumo: push others off a ring (person, 2026-11-27; spec 2026-11-27-action-games-design.md) | done (cd07b76..6b8f5f3, review + QA 8/4/2 phones; house steppers and shared home art instead of the boards') | lead |
+| 56 | Tenkovi: everyone aims, all fire at once (person, 2026-11-27; same spec) | done (5e06278..ea70735, 0254ed4, 265574c; aim privacy proven by identical bytes/sounds/pixels; dot trails, no smoke) | lead |
+| 57 | Bodova do pobjede in Curve and Sumo (person, 2026-11-27) | done (c447661, 7bc4d98; review clean, QA pass) | lead |
 
 ## Open questions for the person
 
@@ -392,3 +393,4 @@ Added seats running: 3 of 3 (builder-2, content, content-2). Each goes when its 
 - 2026-11-27: Person asked for two new real-time games: Sumo and Tenkovi (artillery, all fire at once, no aiming hints, wind, Moon). Person's choices: tanks 100 HP, no moving, maps Zemlja / Mjesec / Mars; Sumo with Dash, shrinking ring, ice map and power-ups. Spec `docs/specs/2026-11-27-action-games-design.md`, plan Tasks 55-56, routed to the lead with design boards first.
 - 2026-11-27: Sumo i Tenkovi boards (359ec5b, 17 boards) approved by the person as drawn ("Looks good, go"): floating joystick + right-half Dash, kettlebell/arrows/lightning icons, slider + −/+ aim (0° right, 180° left), no barrels while aiming, names on tanks. Build started.
 - 2026-11-27: Person asked to choose the points to win in Curve and Sumo: Task 57 "Bodovi za pobjedu" (Automatski default + 10/20/30/50/70/100), routed. PM call: Sumo gets its own 3 s countdown (Curve keeps its setting).
+- 2026-11-27: Tasks 55-57 accepted. TV install of 265574c (person: "install on tv as well"): APK 91.0 MB (+0.3), adb Success, not started, TV left on its screensaver, no captures (person stopped them). Not checked yet: the real TV with 8 players at 60 Hz, real-phone feel (joystick, Dash, aim sliders), sounds, Tenkovi edge cases (mutual knockout, draw, Kasetna split, tank drop, self damage, Broj rundi 1/5, host leaving). Feel notes: random-aim Tenkovi rounds 20-49 turns (no turn cap, waiting for a real play); Led Dash softened (375 vs ring 440).
