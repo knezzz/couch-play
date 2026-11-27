@@ -382,6 +382,38 @@ class HostSettingsList extends StatelessWidget {
         ),
       );
 
+  /// The stepper's value in its 88 px box. Two lines as before; but when one
+  /// WORD is wider than the box (Nasumično, Uravnoteženo) it would be torn in
+  /// the middle, so the value is scaled down onto one line instead.
+  Widget _value(HomeRow r) {
+    const style = TextStyle(
+      fontSize: 17,
+      fontWeight: FontWeight.w700,
+      height: 1.2,
+    );
+    var widest = 0.0;
+    for (final w in r.display.split(' ')) {
+      final p = TextPainter(
+        text: TextSpan(text: w, style: style),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      if (p.width > widest) widest = p.width;
+    }
+    final tooWide = widest > 88;
+    final text = Text(
+      r.display,
+      key: ValueKey('val-${r.key}'),
+      textAlign: TextAlign.center,
+      maxLines: tooWide ? 1 : 2,
+      overflow: TextOverflow.ellipsis,
+      style: style,
+    );
+    return SizedBox(
+      width: 88,
+      child: tooWide ? FittedBox(fit: BoxFit.scaleDown, child: text) : text,
+    );
+  }
+
   Widget _row(HomeRow r) {
     final prev = r.prev, next = r.next;
     final number = r.isNumber;
@@ -414,21 +446,7 @@ class HostSettingsList extends StatelessWidget {
               prev == null ? null : () => onSend(r.messageFor!(prev)),
               ValueKey('dec-${r.key}'),
             ),
-            SizedBox(
-              width: 88,
-              child: Text(
-                r.display,
-                key: ValueKey('val-${r.key}'),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  height: 1.2,
-                ),
-              ),
-            ),
+            _value(r),
             _step(
               Strings.moreOf(r.label),
               number ? Icons.add : Icons.chevron_right,

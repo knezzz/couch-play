@@ -167,6 +167,16 @@ class _WaitBlock extends StatelessWidget {
             ],
           ),
         ],
+        const SizedBox(height: 10),
+        const SizedBox(
+          width: double.infinity,
+          child: Text(
+            TenkoviStrings.sameForAll,
+            key: ValueKey('tenkovi-same-for-all'),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Color(0xFF6E6E7A), height: 1.4),
+          ),
+        ),
       ],
     ),
   );

@@ -163,6 +163,15 @@ void main() {
     await expectHiddenUntilHeld(t, 'Granata');
   });
 
+  testWidgets('the wait screen carries the board\'s grey line, the same on every phone and whatever was aimed', (t) async {
+    final c = await _app(t);
+    await _send(t, c, _turn(sent: [10, 20, 0], waiting: [2, 3]));
+    expect(find.text('Ovaj ekran je siv i isti za sve, da nitko ne vidi tuđe ciljanje.'), findsOneWidget);
+    await _send(t, c, _turn(stage: 'fly', last: [137, 83]));
+    expect(find.text('Ovaj ekran je siv i isti za sve, da nitko ne vidi tuđe ciljanje.'), findsOneWidget);
+    expect(find.textContaining('137'), findsNothing);
+  });
+
   testWidgets('a used-up special shell cannot be picked and Pucaj falls back to the Granata', (t) async {
     final c = await _app(t);
     await _send(t, c, _turn(heavy: false));

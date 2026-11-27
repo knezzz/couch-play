@@ -36,6 +36,7 @@ class TenkoviStrings {
   static const volleyTitle = 'Pucaju svi';
   static const watchTv = 'Gledaj TV';
   static String stillAiming(int n) => 'Još ciljaju · $n';
+  static const sameForAll = 'Ovaj ekran je siv i isti za sve, da nitko ne vidi tuđe ciljanje.';
   static const privacyNote = 'Tvoj hitac se ne vidi na TV-u dok svi ne pucaju.';
   static String ready(int n, int of) => 'Spremno $n od $of';
   static const volley = 'Pucaju svi. Gledaj TV.';
