@@ -28,7 +28,7 @@ and "clear round winner" screens, and the session board. Choices marked *(person
   ring around the wrestler that drains). Host setting like Curve's modes: with or without power-ups. Icons, timings and
   spawn rate are left to the builder, in the Curve icon style.
 - **Scoring:** as Curve: points = number of players you outlived in the round; first to `10 × (players − 1)` wins,
-  or the host's "Bodovi za pobjedu" setting as in Curve (person, 2026-11-27).
+  or the host's "Bodova do pobjede" setting as in Curve (person, 2026-11-27).
   Clear round winner, then every player's round points, as in Curve.
 - **Drop-outs:** a player who disconnects is out for that round and comes back from the next one (Curve's rules).
 - Left out for now: bots.
