@@ -111,7 +111,7 @@ class TenkoviTvMatch {
       });
     events.addAll(round.fire(connected));
     stage = TenkoviStageTv.fly;
-    sfx.play(Sound.countdownGo);
+    sfx.play(Sound.cannon);
     _tellAll();
   }
 
@@ -122,9 +122,9 @@ class TenkoviTvMatch {
     for (final e in ev) {
       switch (e) {
         case TkBlast(:final shell):
-          sfx.play(shell == TenkoviShell.heavy ? Sound.drum : Sound.crash);
+          sfx.play(shell == TenkoviShell.heavy ? Sound.bigBlast : Sound.blast);
         case TkKnockout():
-          sfx.play(Sound.howl);
+          sfx.play(Sound.crash);
         case TkVolleyDone(:final over):
           events.addAll(ev);
           return over ? _endRound() : _nextTurn();

@@ -443,3 +443,23 @@ Free text in `NightPrompt.text` / `Morning.text` is padded to 200 characters; no
 | sumoDragHint / sumoDash / sumoRecharge(s) | Povuci bilo gdje / Dash / još 1,2 s | Drag anywhere / Dash / 1.2 s left | phone, Sumo controls |
 | sumoOut | Pao si s ringa. Gledaj TV. | You fell off the ring. Watch the TV. | phone, Sumo, out for the round |
 | sumoHint | Lijevo: povuci za kretanje, jače povlačenje = jače guranje. Desno: Dash, kratki jaki udarac. | Left: drag to move, a harder pull pushes harder. Right: Dash, a short strong push. | phone, Sumo controls |
+
+### Tenkovi (Task 56, build-core; `apps/tv/lib/ui/tenkovi/tenkovi_text.dart`, `apps/controller/lib/screens/tenkovi_text.dart`, boards TenkoviTv* / TenkoviPhone*)
+
+| key | hr | en | where |
+|---|---|---|---|
+| gameName / blurb / meta | Tenkovi / Svi ciljaju, svi pucaju odjednom. / 2–8 igrača · Zemlja · 3 runde | Tanks / Everyone aims, everyone fires at once. / 2–8 players · Earth · 3 rounds | TV home card, phone carousel |
+| settings Mapa / Broj rundi | Mapa: Zemlja, Mjesec, Mars, Nasumično / Broj rundi: 1, 3, 5 | Map: Earth, Moon, Mars, Random / Rounds | TV panel and phone home (host steps them) |
+| round header | Runda 2 od 3 · okret 4 | Round 2 of 3 · turn 4 | TV top left, phone aim header |
+| wind (TV pill, phone tile) | Vjetar → 6 (arrow and number); Bez vjetra | Wind; no wind | TV and every phone, coming turn |
+| ready | ✓ Spremno 5 / 8 | Ready 5 / 8 | TV top right while aiming (a count only; ticks over the tanks) |
+| volley | Pucaju svi! | Everyone fires! | TV while the shells fly |
+| phone aim | Kut / Snaga / Projektil; Granata ∞, Teška bomba 1, Kasetna 1 (0 when used); Prošli put 45°, 70; Pucaj | Angle / Power / Projectile; Grenade, Heavy bomb, Cluster; Last time; Fire | phone aim screen |
+| TVOJ HITAC + Kut 52° · Snaga 70 | the shell name, then the angle and power | Your shot | phone hold card after Pucaj; visible only while held |
+| Pucaj je poslan / Čekamo ostale / Još ciljaju · 3 | Pucaj je poslan / Čekamo ostale / Još ciljaju · 3 (names) | Fire sent / Waiting for the others / Still aiming | under the hold card; public (the TV shows the same) |
+| Pucaju svi / Gledaj TV | Pucaju svi / Gledaj TV | Everyone fires / Watch the TV | under the hold card during the volley |
+| privacyNote | Tvoj hitac se ne vidi na TV-u dok svi ne pucaju. | Your shot is not shown on the TV until everyone has fired. | phone aim screen footer (not at 360x640) |
+| out | Ispao si u ovoj rundi. Gledaj TV. | You are out this round. Watch the TV. | phone, tank at 0 HP |
+| roundOver / youWon / draw / roundPoints | Runda je gotova / Pobijedio si rundu! / Neriješeno / Bodovi u rundi: +3 · Ukupno: 5 | Round over / You won the round! / Draw / Round points: +3 · Total: 5 | phone, round end |
+| tenkoviNeedPlayers / tenkoviName | Tenkovi traži 2 do 8 igrača na mobitelima. / Tenkovi | Needs 2 to 8 players on phones | error to the host; results label |
+| winner banner | RUNDU OSVAJA / Neriješeno (the Curve banner, with every player's +points) | Round goes to / Draw | TV round end |

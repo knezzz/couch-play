@@ -207,7 +207,7 @@ void main() {
     r.match.onFire(2, _up);
     r.match.onFire(3, _up);
     r.fly();
-    expect(r.played, contains(Sound.crash));
+    expect(r.played, containsAll([Sound.cannon, Sound.blast]));
     r.match.dispose();
   });
 }

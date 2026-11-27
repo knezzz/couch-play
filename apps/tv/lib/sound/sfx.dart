@@ -26,6 +26,9 @@ enum Sound {
   sumoDash,
   sumoBump,
   sumoFall,
+  cannon,
+  blast,
+  bigBlast,
 }
 
 /// The session calls this on each event. Fire and forget: it must never block

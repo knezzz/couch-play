@@ -152,6 +152,10 @@ SOUNDS = {
     'sumoDash': mix([x * 0.5 for x in noise(0.18, decay=5.0)], tone(300, 0.18, slide=900)),
     'sumoBump': mix(env(tone(140, 0.12, slide=70), 6.0), [x * 0.4 for x in noise(0.05, decay=8.0)]),
     'sumoFall': env(tone(800, 0.5, slide=120), 2.5),
+    # Task 56: Tenkovi
+    'cannon': mix(env(noise(0.22, decay=9.0), 1.0), env(tone(160, 0.22, slide=60), 8.0)),
+    'blast': mix(noise(0.55, decay=5.0), env(tone(95, 0.55, slide=38), 5.0)),
+    'bigBlast': mix(noise(0.9, decay=4.0), env(tone(70, 0.9, slide=28), 4.0)),
 }
 GAIN = {'menuMove': 0.8, 'quizTick': 0.8, 'nightAmbience': 0.7, 'sumoBump': 0.8,
         'tickUrgent': 0.5 / PEAK, 'heartbeat': 0.5 / PEAK}  # urgent end-of-question sounds may peak at 50 %  # quieter than PEAK: frequent or long

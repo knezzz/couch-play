@@ -35,3 +35,6 @@ script to regenerate them; the names match `Sound` in `lib/sound/sfx.dart`.
 | sumoDash.wav | Sumo: a wrestler dashes | 0.18 s noise whoosh over a rising tone |
 | sumoBump.wav | Sumo: two wrestlers hit hard | 0.12 s low thud, 80 % |
 | sumoFall.wav | Sumo: a wrestler leaves the ring | 0.5 s falling whistle |
+| cannon.wav | Tenkovi: the volley leaves the barrels | 0.22 s noise puff and a falling thump |
+| blast.wav | Tenkovi: a shell lands | 0.55 s noise and a low falling tone |
+| bigBlast.wav | Tenkovi: a Teška bomba lands | 0.9 s longer, deeper blast |
