@@ -395,6 +395,27 @@ void main() {
     await finish(t, s);
   });
 
+  testWidgets('23 Sumo at 960x540 (a TV at device pixel ratio 2), 8 players, 3-digit scores: the top bar scales 960x540', skip: skipFull != null, (t) async {
+    final key = GlobalKey();
+    final s = await sumo(t, key, 8, map: SumoMap.ice);
+    final sim = s.sumo!;
+    for (var i = 0; i < 8; i++) {
+      sim.scores[i] = 100 + 7 * i;
+    }
+    for (var i = 0; i < 120; i++) {
+      sim.tick();
+    }
+    for (var i = 0; i < 8; i++) {
+      sim.place(i, w8[i].$1, w8[i].$2);
+      sim.setVelocity(i, 0, 0);
+    }
+    // The view shrinks to the logical size a TV at ratio 2 reports; the game lays the bar out again for it.
+    t.view.physicalSize = const Size(960, 540);
+    await t.pump(const Duration(milliseconds: 20));
+    await shot(t, key, '23-sumo-960x540-8-players', settle: Duration.zero);
+    await finish(t, s);
+  });
+
   testWidgets('22 Sumo countdown 1920x1080', skip: skipFull != null, (t) async {
     final key = GlobalKey();
     final s = await sumo(t, key, 8);

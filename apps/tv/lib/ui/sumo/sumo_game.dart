@@ -72,13 +72,13 @@ class SumoGame extends FlameGame {
   void render(Canvas canvas) {
     final free = size.y * (1 - bottomBand);
     // Under the top bar and over the names strip, with the countdown hint's room kept under the ring.
-    final avail = free - topBar - hintRoom;
+    final avail = free - barHeight - hintRoom * _scale;
     final r0 = sim.config.arenaRadius;
     final k = min(size.x, avail) / (2 * r0 * 1.02);
     _drawTopBar(canvas);
     canvas
       ..save()
-      ..translate(size.x / 2, topBar + avail / 2)
+      ..translate(size.x / 2, barHeight + avail / 2)
       ..scale(k);
     _drawFloor(canvas, r0);
     for (final p in sim.powerUps) {
@@ -114,35 +114,70 @@ class SumoGame extends FlameGame {
 
   /// For the test: how many face pictures are recorded (one per wrestler, kept for the game).
   int get debugFaces => _faces.length;
-  double _barWidth = 0;
+  /// The bar, the hint room and the sizes inside them are designed on a 1920 x 1080 box and scaled with the
+  /// view the way the other TV screens are (a TV often reports 960 x 540 logical pixels, a window anything).
+  double get _scale => min(size.x / 1920, size.y / 1080);
+
+  /// The bar's height on screen.
+  double get barHeight => topBar * _scale;
+
+  /// For the test: the boxes laid out in the bar, in screen pixels (the round text, each face and score, the map).
+  List<Rect> get debugBarRects => _barRects;
+  List<Rect> _barRects = const [];
+
+  double _barW = 0, _barH = 0;
   void _drawTopBar(Canvas canvas) {
-    if (_bar == null || _barWidth != size.x) {
+    if (_bar == null || _barW != size.x || _barH != size.y) {
       _bar?.dispose();
-      _barWidth = size.x;
+      _barW = size.x;
+      _barH = size.y;
       _barBuilds++;
-      final rec = PictureRecorder();
-      final c = Canvas(rec);
+      final sc = _scale;
+      final rects = <Rect>[];
       TextPainter text(String t, FontWeight w, Color color) => TextPainter(
             text: TextSpan(text: t, style: TextStyle(fontFamily: CurveGame.fontFamily, fontSize: 40, fontWeight: w, color: color)),
             textDirection: TextDirection.ltr,
           )..layout();
-      void put(TextPainter tp, double x) => tp.paint(c, Offset(x, (topBar - tp.height) / 2));
-      var x = 40.0;
+      final heads = sim.heads.toList();
       final head = text(Strings.sumoRoundHead(sim.round, sim.target), FontWeight.w700, const Color(0xFFA9A9BC));
+      final scores = [for (final h in heads) text('${sim.scores[h.id] ?? 0}', FontWeight.w900, const Color(0xFFF4F4F8))];
+      final map = text(Strings.sumoMapName(sim.ice ? SumoMap.ice : SumoMap.classic), FontWeight.w400, const Color(0xFFA9A9BC));
+      final itemsW = scores.fold(0.0, (a, t) => a + 52 + 10 + t.width);
+      final n = heads.length;
+      // Fit the 1920-wide design: gaps of 30 shrink to 14; if that is still too wide (8 players with 3-digit
+      // scores and a long map name) the whole bar is drawn a little smaller instead of overlapping.
+      final designW = size.x / sc;
+      var gap = min(30.0, (designW - 80 - head.width - itemsW - map.width) / (n + 1));
+      var f = 1.0;
+      if (gap < 14) {
+        gap = 14;
+        f = designW / (80 + head.width + itemsW + map.width + 14 * (n + 1));
+      }
+      final w = designW / f, bh = topBar / f; // virtual width and height under the extra scale f
+      final k = sc * f;
+      final rec = PictureRecorder();
+      final c = Canvas(rec)..scale(k);
+      void put(TextPainter tp, double x) {
+        final y = (bh - tp.height) / 2;
+        tp.paint(c, Offset(x, y));
+        rects.add(Rect.fromLTWH(x * k, y * k, tp.width * k, tp.height * k));
+      }
+
+      var x = 40.0;
       put(head, x);
-      x += head.width + 30;
-      for (final h in sim.heads) {
+      x += head.width + gap;
+      for (var i = 0; i < n; i++) {
         c
           ..save()
-          ..translate(x, (topBar - 52) / 2);
-        CharacterFace.paintOn(c, const Size.square(52), characters[h.id] ?? '', _color(h.id));
+          ..translate(x, (bh - 52) / 2);
+        CharacterFace.paintOn(c, const Size.square(52), characters[heads[i].id] ?? '', _color(heads[i].id));
         c.restore();
-        final score = text('${sim.scores[h.id] ?? 0}', FontWeight.w900, const Color(0xFFF4F4F8));
-        put(score, x + 52 + 10);
-        x += 52 + 10 + score.width + 30;
+        rects.add(Rect.fromLTWH(x * k, (bh - 52) / 2 * k, 52 * k, 52 * k));
+        put(scores[i], x + 52 + 10);
+        x += 52 + 10 + scores[i].width + gap;
       }
-      final map = text(sim.ice ? Strings.sumoMapName(SumoMap.ice) : Strings.sumoMapName(SumoMap.classic), FontWeight.w400, const Color(0xFFA9A9BC));
-      put(map, size.x - 40 - map.width);
+      put(map, w - 40 - map.width);
+      _barRects = rects;
       _bar = rec.endRecording();
     }
     canvas.drawPicture(_bar!);
@@ -326,13 +361,19 @@ class SumoGame extends FlameGame {
   }
 
   TextPainter? _hint;
-  // Screen pixels, not ring units: 40 px, the sofa minimum, whatever the scale.
+  double _hintScale = 0;
+  // Screen pixels (not ring units): 40 px on the 1920 x 1080 design, scaled with the view like the bar.
   void _drawHint(Canvas canvas, double free) {
-    final tp = _hint ??= TextPainter(
-      text: TextSpan(text: Strings.sumoCountdownHint, style: TextStyle(fontFamily: CurveGame.fontFamily, fontSize: 40, color: const Color(0xFFA9A9BC))),
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.center,
-    )..layout(maxWidth: size.x - 80);
-    tp.paint(canvas, Offset((size.x - tp.width) / 2, free - 12 - tp.height));
+    final sc = _scale;
+    if (_hint == null || _hintScale != sc) {
+      _hintScale = sc;
+      _hint = TextPainter(
+        text: TextSpan(text: Strings.sumoCountdownHint, style: TextStyle(fontFamily: CurveGame.fontFamily, fontSize: 40 * sc, color: const Color(0xFFA9A9BC))),
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      )..layout(maxWidth: size.x - 80 * sc);
+    }
+    final tp = _hint!;
+    tp.paint(canvas, Offset((size.x - tp.width) / 2, free - 12 * sc - tp.height));
   }
 }

@@ -26,18 +26,18 @@ void main() {
         random: Random(3),
       );
 
-  Future<ByteData> shot(WidgetTester t, SumoGame g) async {
+  Future<ByteData> shot(WidgetTester t, SumoGame g, [int w = 1920, int h = 1080]) async {
     late ByteData d;
     await t.runAsync(() async {
       final rec = PictureRecorder();
       g.render(Canvas(rec));
-      d = (await (await rec.endRecording().toImage(1920, 1080)).toByteData())!;
+      d = (await (await rec.endRecording().toImage(w, h)).toByteData())!;
     });
     return d;
   }
 
-  int px(ByteData d, int x, int y) => d.getUint32((y * 1920 + x) * 4);
-  int alpha(ByteData d, int x, int y) => d.getUint8((y * 1920 + x) * 4 + 3);
+  int px(ByteData d, int x, int y, [int w = 1920]) => d.getUint32((y * w + x) * 4);
+  int alpha(ByteData d, int x, int y, [int w = 1920]) => d.getUint8((y * w + x) * 4 + 3);
 
   testWidgets('it runs the sim on a fixed 60 Hz tick and passes the events on', (t) async {
     final s = sim();
@@ -139,6 +139,43 @@ void main() {
     g.onRemove(); // twice is harmless
     _frame(g); // and drawing again just records again
     expect(g.debugFaces, 3);
+  });
+
+  // The TV reports 1920x1080, or 960x540 (device pixel ratio 2), or a window: the bar is designed on a 1920x1080 box
+  // and scales with the view like the ring and the other screens, so nothing overlaps at any of these.
+  for (final (w, h) in [(1920.0, 1080.0), (960.0, 540.0), (800.0, 450.0), (800.0, 628.0)]) {
+    for (final n in [2, 4, 8]) {
+      testWidgets('the top bar with $n players at ${w.toInt()}x${h.toInt()}: nothing overlaps, all inside the view, above the ring', (t) async {
+        final s = sim(n: n);
+        for (var i = 0; i < n; i++) {
+          s.scores[i] = 100 + i; // the widest scores
+        }
+        final g = SumoGame(s, playerColors, bottomBand: CurveGame.bandFraction)..onGameResize(Vector2(w, h));
+        _frame(g);
+        final boxes = g.debugBarRects;
+        expect(boxes.length, greaterThanOrEqualTo(2 + 2 * n), reason: 'round text, map, a face and a score per player');
+        for (var i = 0; i < boxes.length; i++) {
+          expect(boxes[i].left, greaterThanOrEqualTo(0), reason: 'box $i');
+          expect(boxes[i].right, lessThanOrEqualTo(w), reason: 'box $i inside the view');
+          expect(boxes[i].bottom, lessThanOrEqualTo(g.barHeight + 0.5), reason: 'box $i inside the bar');
+          for (var j = i + 1; j < boxes.length; j++) {
+            expect(boxes[i].overlaps(boxes[j]), isFalse, reason: 'box $i ${boxes[i]} and box $j ${boxes[j]}');
+          }
+        }
+        final scale = min(w / 1920, h / 1080);
+        expect(boxes.last.height, lessThanOrEqualTo(60 * scale), reason: 'the map name scales with the view, not a fixed 40 px');
+        expect(boxes.last.height, greaterThan(20 * scale), reason: 'and is not shrunk to nothing');
+      });
+    }
+  }
+
+  testWidgets('the ring starts below the bar at a small size too', (t) async {
+    final g = SumoGame(sim(n: 2), playerColors, bottomBand: CurveGame.bandFraction)..onGameResize(Vector2(960, 540));
+    final d = await shot(t, g, 960, 540);
+    for (var y = 0; y < g.barHeight.floor() - 1; y++) {
+      expect(alpha(d, 480, y, 960), 0, reason: 'row $y at the middle is empty: only the ring could be there');
+    }
+    expect(alpha(d, 480, (g.barHeight + 20).round(), 960), 255, reason: 'the ring just below');
   });
 
   testWidgets('the bar is laid out once: not again frame after frame, redone only on a resize', (t) async {
