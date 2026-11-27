@@ -1058,3 +1058,9 @@ Spec: main design spec, Vukodlak, "Phone flow around actions".
 ### Task 54: Vukodlak lists fit a small phone (added 2026-11-22, person request)
 
 - [x] All 8 names (and the sum answers) fit at 360x640 without scrolling, night and day vote; every phone alike at night; names not cut. Tests first; review; QA at 360x640 and 390x844 with 8 phones.
+
+### Tasks 55–56: Sumo and Tenkovi (added 2026-11-27, person request)
+
+Spec: `docs/specs/2026-11-27-action-games-design.md` (all rules there). Each game: design boards for the TV and phone screens first (UX pass, the person sees them), then core rules and physics (tests first, fixed 60 Hz tick), protocol + session, TV screens (Flame, console look), phone screens, settings on the phone home, sounds, a home card. QA on macOS release with 2–8 players and 360–390 px phones; review. The real-TV check (8 players at 60 Hz) joins the next TV install, which needs the person's yes.
+- [ ] **Task 55: Sumo** (joystick + Dash, ring shrinks, Klasični / Led, power-ups Težak, Velik, Brz).
+- [ ] **Task 56: Tenkovi** (angle, power, projectile, Pucaj; all fire at once with no hints; 100 HP; Zemlja / Mjesec / Mars with wind and gravity).
