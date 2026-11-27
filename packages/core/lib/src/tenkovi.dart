@@ -112,8 +112,8 @@ class Tenkovi {
   static const w = 1600, h = 900, tickHz = 60;
   static const maxHp = 100;
   static const tankR = 22.0;
-  /// Where a shell leaves: the turret (48 above the ground) plus a barrel of 55.
-  static const turretUp = 48.0;
+  /// Where a shell leaves: the turret (32 above the ground) plus a barrel of 55.
+  static const turretUp = 32.0;
   static const barrel = 55.0;
   static const powerToSpeed = 10.0;
   static const windAccel = 8.0;

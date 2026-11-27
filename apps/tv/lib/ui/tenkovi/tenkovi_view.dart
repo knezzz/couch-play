@@ -40,6 +40,65 @@ class _Blast {
   double age = 0; // seconds
 }
 
+/// A damage number over a tank: laid out once when the hit lands.
+class _Pop {
+  _Pop(this.id, int damage)
+    : tp = TextPainter(
+        text: TextSpan(
+          text: '\u2212$damage',
+          style: const TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFFFF6B6B),
+            shadows: [
+              Shadow(
+                offset: Offset(0, 2),
+                blurRadius: 6,
+                color: Color(0xCC000000),
+              ),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+  final int id;
+  final TextPainter tp;
+  double age = 0; // seconds
+}
+
+/// One tank as the board draws it: a hull with tracks and a turret in the
+/// player's colour, 80 wide (96 px at 1080p), its base at the origin.
+ui.Picture _recordTank(Color color) {
+  final rec = ui.PictureRecorder();
+  final c = Canvas(rec);
+  c.drawRRect(
+    RRect.fromRectAndRadius(
+      const Rect.fromLTWH(-40, -15, 80, 15),
+      const Radius.circular(7.5),
+    ),
+    Paint()..color = const Color(0xFF262636),
+  );
+  final wheel = Paint()..color = const Color(0xFF3A3A4C);
+  for (final wx in const [-25.0, -8.3, 8.3, 25.0]) {
+    c.drawCircle(Offset(wx, -7.5), 5.8, wheel);
+  }
+  final turret = Path()
+    ..moveTo(-35, -15)
+    ..lineTo(-25, -35)
+    ..lineTo(25, -35)
+    ..lineTo(35, -15)
+    ..close();
+  c.drawPath(turret, Paint()..color = color);
+  c.drawPath(
+    turret,
+    Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..color = const Color(0x4D14141E),
+  );
+  return rec.endRecording();
+}
+
 class _Trail {
   _Trail(this.color);
   final Color color;
@@ -50,31 +109,34 @@ class _Trail {
 }
 
 /// Colors per map: sky top, sky horizon, far hills, ground, ground edge.
-({Color sky0, Color sky1, Color far, Color ground, Color edge}) _palette(TenkoviMap m) => switch (m) {
-      TenkoviMap.earth => (
-          sky0: const Color(0xFF131A33),
-          sky1: const Color(0xFF2E3F78),
-          far: const Color(0xFF1F2B52),
-          ground: const Color(0xFF4B3A32),
-          edge: const Color(0xFF6D8F4E),
-        ),
-      TenkoviMap.moon => (
-          sky0: const Color(0xFF03040A),
-          sky1: const Color(0xFF0B0D1C),
-          far: const Color(0xFF1A1B2A),
-          ground: const Color(0xFF7C7C8A),
-          edge: const Color(0xFFB8B8C8),
-        ),
-      TenkoviMap.mars => (
-          sky0: const Color(0xFF2B1613),
-          sky1: const Color(0xFF8C4A32),
-          far: const Color(0xFF9A3E26),
-          ground: const Color(0xFF6B3322),
-          edge: const Color(0xFFD9764F),
-        ),
-    };
+({Color sky0, Color sky1, Color far, Color ground, Color edge}) _palette(
+  TenkoviMap m,
+) => switch (m) {
+  TenkoviMap.earth => (
+    sky0: const Color(0xFF131A33),
+    sky1: const Color(0xFF2E3F78),
+    far: const Color(0xFF1F2B52),
+    ground: const Color(0xFF4B3A32),
+    edge: const Color(0xFF6D8F4E),
+  ),
+  TenkoviMap.moon => (
+    sky0: const Color(0xFF03040A),
+    sky1: const Color(0xFF0B0D1C),
+    far: const Color(0xFF1A1B2A),
+    ground: const Color(0xFF7C7C8A),
+    edge: const Color(0xFFB8B8C8),
+  ),
+  TenkoviMap.mars => (
+    sky0: const Color(0xFF2B1613),
+    sky1: const Color(0xFF8C4A32),
+    far: const Color(0xFF9A3E26),
+    ground: const Color(0xFF6B3322),
+    edge: const Color(0xFFD9764F),
+  ),
+};
 
-class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStateMixin {
+class _TenkoviViewState extends State<TenkoviView>
+    with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
   final _repaint = ValueNotifier<int>(0);
   Duration _last = Duration.zero;
@@ -83,7 +145,14 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   int _terrainVersion = -1;
   ui.Picture? _ground;
   final _names = <int, TextPainter>{};
-  final _faces = <int, ui.Picture>{}; // each commander's face, recorded once per round
+  final _bodies =
+      <
+        int,
+        ui.Picture
+      >{}; // each tank (hull, tracks, turret), recorded once per round
+  final _wrecks =
+      <int, ui.Picture>{}; // the same in grey, for a tank that is out
+  final _pops = <_Pop>[]; // damage numbers over a hit tank, fading
   final _trails = <TenkoviShot, _Trail>{};
   List<Offset> _oldDots = const []; // the faint dots of the last volley
   final _blasts = <_Blast>[];
@@ -104,7 +173,7 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   void dispose() {
     _ticker.dispose();
     _ground?.dispose();
-    for (final f in _faces.values) {
+    for (final f in [..._bodies.values, ..._wrecks.values]) {
       f.dispose();
     }
     super.dispose();
@@ -114,7 +183,7 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
     final dt = (elapsed - _last).inMicroseconds / 1e6;
     _last = elapsed;
     final m = widget.match;
-    var busy = _blasts.isNotEmpty;
+    var busy = _blasts.isNotEmpty || _pops.isNotEmpty;
     // The match flies the volley itself (so a pause or a hidden view cannot lose
     // it); the view only draws what is in the air, once a frame.
     if (m.stage == TenkoviStageTv.fly && !m.paused) {
@@ -126,10 +195,14 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       b.age += dt;
     }
     _blasts.removeWhere((b) => b.age > 0.6);
+    for (final p in _pops) {
+      p.age += dt;
+    }
+    _pops.removeWhere((p) => p.age > 1.4);
     _repaint.value++;
     // Nothing in the air and no blast left: stop asking for frames (the aim can
     // last minutes; the TV must be idle then).
-    if (!busy && _blasts.isEmpty) _ticker.stop();
+    if (!busy && _blasts.isEmpty && _pops.isEmpty) _ticker.stop();
   }
 
   void _sampleTrails(TenkoviRound r) {
@@ -160,6 +233,8 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
           if (_trails.isEmpty) _oldDots = const [];
         case TkBlast(:final x, :final y, :final radius):
           _blasts.add(_Blast(x, y, radius));
+        case TkHurt(:final id, :final damage):
+          _pops.add(_Pop(id, damage));
         case TkVolleyDone():
           _oldDots = [for (final t in _trails.values) ...t.dots];
           _trails.clear();
@@ -179,23 +254,18 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       _trails.clear();
       _oldDots = const [];
       _blasts.clear();
+      _pops.clear();
       _names.clear();
-      for (final f in _faces.values) {
+      for (final f in [..._bodies.values, ..._wrecks.values]) {
         f.dispose();
       }
-      _faces.clear();
+      _bodies.clear();
+      _wrecks.clear();
       for (final t in r.tanks) {
         final p = widget.players.where((p) => p.id == t.id).firstOrNull;
-        if (p != null && p.character.isNotEmpty) {
-          final rec = ui.PictureRecorder();
-          CharacterFace.paintOn(
-            Canvas(rec),
-            const Size(70, 70),
-            p.character,
-            playerColors[p.colorIndex % playerColors.length],
-          );
-          _faces[t.id] = rec.endRecording();
-        }
+        final color = playerColors[(p?.colorIndex ?? 0) % playerColors.length];
+        _bodies[t.id] = _recordTank(color);
+        _wrecks[t.id] = _recordTank(const Color(0xFF55555F));
         _names[t.id] = TextPainter(
           text: TextSpan(
             text: p?.name ?? '',
@@ -203,7 +273,13 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
               fontSize: 33,
               fontWeight: FontWeight.w700,
               color: playerColors[(p?.colorIndex ?? 0) % playerColors.length],
-              shadows: const [Shadow(offset: Offset(0, 2), blurRadius: 6, color: Color(0xB3000000))],
+              shadows: const [
+                Shadow(
+                  offset: Offset(0, 2),
+                  blurRadius: 6,
+                  color: Color(0xB3000000),
+                ),
+              ],
             ),
           ),
           textDirection: TextDirection.ltr,
@@ -226,13 +302,27 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
     final pal = _palette(r.map);
     c.drawRect(
       const Rect.fromLTWH(0, 0, w, h),
-      Paint()..shader = ui.Gradient.linear(Offset.zero, const Offset(0, h * 0.75), [pal.sky0, pal.sky1]),
+      Paint()
+        ..shader = ui.Gradient.linear(Offset.zero, const Offset(0, h * 0.75), [
+          pal.sky0,
+          pal.sky1,
+        ]),
     );
     final rnd = Random(5);
     if (r.map != TenkoviMap.mars) {
-      final star = Paint()..color = Color.fromRGBO(255, 255, 255, r.map == TenkoviMap.moon ? 0.8 : 0.35);
+      final star = Paint()
+        ..color = Color.fromRGBO(
+          255,
+          255,
+          255,
+          r.map == TenkoviMap.moon ? 0.8 : 0.35,
+        );
       for (var i = 0; i < (r.map == TenkoviMap.moon ? 70 : 18); i++) {
-        c.drawCircle(Offset(rnd.nextDouble() * w, rnd.nextDouble() * 420), 1.5 + rnd.nextDouble() * 1.3, star);
+        c.drawCircle(
+          Offset(rnd.nextDouble() * w, rnd.nextDouble() * 420),
+          1.5 + rnd.nextDouble() * 1.3,
+          star,
+        );
       }
     } else {
       // The dust storm: a few long faint streaks.
@@ -242,20 +332,43 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
         ..strokeCap = StrokeCap.round;
       for (var i = 0; i < 26; i++) {
         final x = rnd.nextDouble() * w, y = 60 + rnd.nextDouble() * 520;
-        c.drawLine(Offset(x, y), Offset(x + 90 + rnd.nextDouble() * 160, y + 8), dust);
+        c.drawLine(
+          Offset(x, y),
+          Offset(x + 90 + rnd.nextDouble() * 160, y + 8),
+          dust,
+        );
       }
     }
     if (r.map == TenkoviMap.moon) {
       // The Earth in the sky.
-      c.drawCircle(const Offset(1250, 208), 87, Paint()..color = const Color(0x245A9BFF));
-      c.drawCircle(const Offset(1250, 208), 67, Paint()..color = const Color(0xFF2B6CC4));
-      c.drawCircle(const Offset(1232, 196), 24, Paint()..color = const Color(0xFF4DAA5C));
-      c.drawCircle(const Offset(1274, 226), 17, Paint()..color = const Color(0xFF4DAA5C));
+      c.drawCircle(
+        const Offset(1250, 208),
+        87,
+        Paint()..color = const Color(0x245A9BFF),
+      );
+      c.drawCircle(
+        const Offset(1250, 208),
+        67,
+        Paint()..color = const Color(0xFF2B6CC4),
+      );
+      c.drawCircle(
+        const Offset(1232, 196),
+        24,
+        Paint()..color = const Color(0xFF4DAA5C),
+      );
+      c.drawCircle(
+        const Offset(1274, 226),
+        17,
+        Paint()..color = const Color(0xFF4DAA5C),
+      );
     }
     // Far hills: a calm silhouette behind the ground.
     final far = Path()..moveTo(0, h);
     for (var x = 0; x <= Tenkovi.w; x += 20) {
-      far.lineTo(x.toDouble(), 330 + 52 * sin(x / 310 + 1) + 26 * sin(x / 120) + 60);
+      far.lineTo(
+        x.toDouble(),
+        330 + 52 * sin(x / 310 + 1) + 26 * sin(x / 120) + 60,
+      );
     }
     far
       ..lineTo(w, h)
@@ -291,7 +404,11 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     final m = widget.match;
     _ensureCaches(m);
-    if ((m.stage == TenkoviStageTv.fly && !m.paused) || _blasts.isNotEmpty) _wake();
+    if ((m.stage == TenkoviStageTv.fly && !m.paused) ||
+        _blasts.isNotEmpty ||
+        _pops.isNotEmpty) {
+      _wake();
+    }
     final r = m.round;
     final byId = {for (final p in widget.players) p.id: p};
     StripName strip(int id, {int? points, int? place}) {
@@ -306,22 +423,30 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       );
     }
 
-    final ending = m.stage == TenkoviStageTv.end || m.stage == TenkoviStageTv.over;
+    final ending =
+        m.stage == TenkoviStageTv.end || m.stage == TenkoviStageTv.over;
     Widget? banner;
     if (ending) {
       final pts = m.lastPoints;
-      final order = [...m.ids]..sort((a, b) => (pts[b] ?? 0).compareTo(pts[a] ?? 0));
+      final order = [...m.ids]
+        ..sort((a, b) => (pts[b] ?? 0).compareTo(pts[a] ?? 0));
       final winner = m.lastWinner;
       var place = 0, prev = -1;
       final others = <StripName>[];
       for (final (i, id) in order.indexed) {
         if ((pts[id] ?? 0) != prev) place = i + 1;
         prev = pts[id] ?? 0;
-        if (id != winner) others.add(strip(id, points: pts[id] ?? 0, place: place));
+        if (id != winner) {
+          others.add(strip(id, points: pts[id] ?? 0, place: place));
+        }
       }
       banner = WinnerBanner(
         who: winner == null
-            ? [for (final id in (m.lastSurvivors.isEmpty ? m.ids : m.lastSurvivors)) strip(id)]
+            ? [
+                for (final id
+                    in (m.lastSurvivors.isEmpty ? m.ids : m.lastSurvivors))
+                  strip(id),
+              ]
             : [strip(winner)],
         others: winner == null ? const [] : others,
         tie: winner == null,
@@ -333,85 +458,129 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
     final turn = r.volleys + (m.stage == TenkoviStageTv.aim ? 1 : 0);
     return Scaffold(
       backgroundColor: tvBg,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          RepaintBoundary(
-            child: CustomPaint(painter: _ScenePainter(this, byId), size: Size.infinite),
-          ),
-          Positioned.fill(
-            child: Material(
-              type: MaterialType.transparency,
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: SizedBox(
-                  width: 1920,
-                  height: 1080,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 40,
-                        top: 0,
-                        height: 100,
-                        child: Center(
-                          child: Text(
-                            '${TenkoviText.round(m.roundNo, m.rounds)} · ${TenkoviText.turn(turn)}',
-                            key: const ValueKey('tenkovi-header'),
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFFC9C9D8),
-                              shadows: [Shadow(offset: Offset(0, 2), blurRadius: 6, color: Color(0xB3000000))],
+      // The scene and the texts share one 16:9 box, so they line up in any window.
+      body: Center(
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              RepaintBoundary(
+                child: CustomPaint(
+                  painter: _ScenePainter(this, byId),
+                  size: Size.infinite,
+                ),
+              ),
+              Positioned.fill(
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: SizedBox(
+                      width: 1920,
+                      height: 1080,
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: 40,
+                            top: 0,
+                            height: 100,
+                            child: Center(
+                              child: Text(
+                                '${TenkoviText.round(m.roundNo, m.rounds)} · ${TenkoviText.turn(turn)}',
+                                key: const ValueKey('tenkovi-header'),
+                                style: const TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFFC9C9D8),
+                                  shadows: [
+                                    Shadow(
+                                      offset: Offset(0, 2),
+                                      blurRadius: 6,
+                                      color: Color(0xB3000000),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          Positioned(
+                            left: 660,
+                            top: 10,
+                            child: _WindPill(wind: r.wind),
+                          ),
+                          Positioned(
+                            right: 40,
+                            top: 0,
+                            height: 100,
+                            child: Center(
+                              child: m.stage == TenkoviStageTv.fly
+                                  ? const Text(
+                                      TenkoviText.volley,
+                                      style: TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w900,
+                                        color: tvText,
+                                      ),
+                                    )
+                                  : m.stage == TenkoviStageTv.aim
+                                  ? Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          const TextSpan(
+                                            text: '✓ ',
+                                            style: TextStyle(
+                                              color: Color(0xFF3DDC84),
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: TenkoviText.ready(
+                                              readyN,
+                                              living,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      key: const ValueKey('tenkovi-ready'),
+                                      style: const TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w900,
+                                        color: tvText,
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(0, 2),
+                                            blurRadius: 6,
+                                            color: Color(0xB3000000),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                          ),
+                        ],
                       ),
-                      Positioned(left: 660, top: 10, child: _WindPill(wind: r.wind)),
-                      Positioned(
-                        right: 40,
-                        top: 0,
-                        height: 100,
-                        child: Center(
-                          child: m.stage == TenkoviStageTv.fly
-                              ? const Text(
-                                  TenkoviText.volley,
-                                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: tvText),
-                                )
-                              : m.stage == TenkoviStageTv.aim
-                              ? Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(text: '✓ ', style: TextStyle(color: Color(0xFF3DDC84))),
-                                      TextSpan(text: TenkoviText.ready(readyN, living)),
-                                    ],
-                                  ),
-                                  key: const ValueKey('tenkovi-ready'),
-                                  style: const TextStyle(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w900,
-                                    color: tvText,
-                                    shadows: [Shadow(offset: Offset(0, 2), blurRadius: 6, color: Color(0xB3000000))],
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+              if (ending)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 8,
+                  height: 70,
+                  child: NameStrip(
+                    names: [for (final t in r.tanks) strip(t.id)],
+                  ),
+                ),
+              ?banner,
+              // Under the round card the tank labels are not drawn (a test looks for this).
+              if (ending)
+                const SizedBox.shrink(key: ValueKey('tenkovi-labels-hidden')),
+            ],
           ),
-          if (ending)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 8,
-              height: 70,
-              child: NameStrip(names: [for (final t in r.tanks) strip(t.id)]),
-            ),
-          ?banner,
-        ],
+        ),
       ),
     );
   }
@@ -423,27 +592,52 @@ class _WindPill extends StatelessWidget {
   final int wind;
   @override
   Widget build(BuildContext context) => Container(
-        key: const ValueKey('tenkovi-wind'),
-        height: 80,
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        decoration: BoxDecoration(color: const Color(0xB814141E), borderRadius: BorderRadius.circular(24)),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(TenkoviText.wind, style: TextStyle(fontSize: 40, color: Color(0xFFC9C9D8))),
-            const SizedBox(width: 22),
-            if (wind != 0) ...[
-              Transform.scale(
-                scaleX: wind < 0 ? -1 : 1,
-                child: const SizedBox(width: 120, height: 40, child: CustomPaint(painter: _ArrowPainter())),
-              ),
-              const SizedBox(width: 22),
-              Text('${wind.abs()}', style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, height: 1, color: tvText)),
-            ] else
-              const Text(TenkoviText.noWind, style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: tvText)),
-          ],
+    key: const ValueKey('tenkovi-wind'),
+    height: 80,
+    padding: const EdgeInsets.symmetric(horizontal: 32),
+    decoration: BoxDecoration(
+      color: const Color(0xB814141E),
+      borderRadius: BorderRadius.circular(24),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          TenkoviText.wind,
+          style: TextStyle(fontSize: 40, color: Color(0xFFC9C9D8)),
         ),
-      );
+        const SizedBox(width: 22),
+        if (wind != 0) ...[
+          Transform.scale(
+            scaleX: wind < 0 ? -1 : 1,
+            child: const SizedBox(
+              width: 120,
+              height: 40,
+              child: CustomPaint(painter: _ArrowPainter()),
+            ),
+          ),
+          const SizedBox(width: 22),
+          Text(
+            '${wind.abs()}',
+            style: const TextStyle(
+              fontSize: 64,
+              fontWeight: FontWeight.w900,
+              height: 1,
+              color: tvText,
+            ),
+          ),
+        ] else
+          const Text(
+            TenkoviText.noWind,
+            style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.w900,
+              color: tvText,
+            ),
+          ),
+      ],
+    ),
+  );
 }
 
 class _ArrowPainter extends CustomPainter {
@@ -474,13 +668,7 @@ class _ScenePainter extends CustomPainter {
   final _TenkoviViewState s;
   final Map<int, PlayerInfo> byId;
 
-  static final _hull = Paint()..color = const Color(0xFF262636);
-  static final _wheel = Paint()..color = const Color(0xFF3A3A4C);
   static final _paint = Paint();
-  static final _outline = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.5
-    ..color = const Color(0x4D14141E);
   static final _shadow = Paint()..color = const Color(0x47000000);
   static final _barBack = Paint()..color = const Color(0xFF14141E);
   static final _barLine = Paint()
@@ -519,12 +707,6 @@ class _ScenePainter extends CustomPainter {
     ..strokeWidth = 9
     ..strokeCap = StrokeCap.round;
 
-  static final _turretPath = Path()
-    ..moveTo(-35, -15)
-    ..lineTo(-25, -35)
-    ..lineTo(25, -35)
-    ..lineTo(35, -15)
-    ..close();
   static const _check = [Offset(-8, 0), Offset(-2, 7), Offset(10, -7)];
 
   @override
@@ -551,6 +733,8 @@ class _ScenePainter extends CustomPainter {
     }
 
     final aiming = m.stage == TenkoviStageTv.aim;
+    final ending =
+        m.stage == TenkoviStageTv.end || m.stage == TenkoviStageTv.over;
     final ready = m.ready;
     for (final t in r.tanks) {
       final p = byId[t.id];
@@ -558,23 +742,27 @@ class _ScenePainter extends CustomPainter {
       final gy = fy(t.y);
       final tx = t.x.toDouble();
       // The hull follows the slope under it.
-      final l = r.ground[max(0, t.x - 24)], rt = r.ground[min(Tenkovi.w - 1, t.x + 24)];
+      final l = r.ground[max(0, t.x - 24)],
+          rt = r.ground[min(Tenkovi.w - 1, t.x + 24)];
       final tilt = -atan2(rt - l, 48);
-      canvas.drawOval(Rect.fromCenter(center: Offset(tx, gy + 2), width: 80, height: 13), _shadow);
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(tx, gy + 2), width: 80, height: 13),
+        _shadow,
+      );
       canvas.save();
       canvas.translate(tx, gy);
       canvas.rotate(tilt);
-      if (!t.alive) {
-        canvas.saveLayer(const Rect.fromLTWH(-60, -60, 120, 80), Paint()..color = const Color(0x59FFFFFF));
+      final body = (t.alive ? s._bodies : s._wrecks)[t.id];
+      if (body != null) {
+        if (!t.alive) {
+          canvas.saveLayer(
+            const Rect.fromLTWH(-60, -60, 120, 80),
+            Paint()..color = const Color(0x59FFFFFF),
+          );
+        }
+        canvas.drawPicture(body);
+        if (!t.alive) canvas.restore();
       }
-      canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-40, -15, 80, 15), const Radius.circular(7.5)), _hull);
-      for (final wx in const [-25.0, -8.3, 8.3, 25.0]) {
-        canvas.drawCircle(Offset(wx, -7.5), 5.8, _wheel);
-      }
-      _paint.color = t.alive ? color : const Color(0xFF55555F);
-      canvas.drawPath(_turretPath, _paint);
-      canvas.drawPath(_turretPath, _outline);
-      if (!t.alive) canvas.restore();
       canvas.restore();
       if (!t.alive) continue;
 
@@ -588,16 +776,13 @@ class _ScenePainter extends CustomPainter {
         canvas.drawLine(from, to, _barrel..color = color);
       }
 
-      // The commander's face over the turret, the HP bar and the name.
-      final face = s._faces[t.id];
-      if (face != null) {
-        canvas.save();
-        canvas.translate(tx - 35, gy - 83);
-        canvas.drawPicture(face);
-        canvas.restore();
-      }
+      // The HP bar and the name above the tank (not under the round card).
+      if (ending) continue;
       final f = t.hp / Tenkovi.maxHp;
-      final bar = RRect.fromRectAndRadius(Rect.fromLTWH(tx - 53, gy - 112, 107, 17), const Radius.circular(8.5));
+      final bar = RRect.fromRectAndRadius(
+        Rect.fromLTWH(tx - 53, gy - 92, 107, 17),
+        const Radius.circular(8.5),
+      );
       canvas.drawRRect(bar, _barBack);
       canvas.save();
       canvas.clipRRect(bar);
@@ -606,14 +791,14 @@ class _ScenePainter extends CustomPainter {
           : f > 0.25
           ? const Color(0xFFFFB020)
           : const Color(0xFFFF4D6D);
-      canvas.drawRect(Rect.fromLTWH(tx - 53, gy - 112, 107 * f, 17), _paint);
+      canvas.drawRect(Rect.fromLTWH(tx - 53, gy - 92, 107 * f, 17), _paint);
       canvas.restore();
       canvas.drawRRect(bar, _barLine);
       final np = s._names[t.id];
-      if (np != null) np.paint(canvas, Offset(tx - np.width / 2, gy - 162));
+      if (np != null) np.paint(canvas, Offset(tx - np.width / 2, gy - 138));
       if (aiming && ready.contains(t.id)) {
         canvas.save();
-        canvas.translate(tx + 55, gy - 93);
+        canvas.translate(tx + 62, gy - 58);
         canvas.drawCircle(Offset.zero, 20, _tickBg);
         canvas.drawCircle(Offset.zero, 20, _tickRing);
         canvas.drawPoints(ui.PointMode.polygon, _check, _tickMark);
@@ -628,14 +813,36 @@ class _ScenePainter extends CustomPainter {
         ..strokeWidth = small ? 3.3 : 4.2
         ..color = s._trails[p]?.color ?? s._colorOf(p.owner);
       final c = Offset(p.x, fy(p.y));
-      final rad = big ? 14.0 : small ? 8.0 : 10.0;
+      final rad = big
+          ? 14.0
+          : small
+          ? 8.0
+          : 10.0;
       canvas.drawCircle(c, rad, _head);
       canvas.drawCircle(c, rad, _headRing);
+    }
+    // Damage numbers over the hit tanks: they rise and fade.
+    for (final pop in s._pops) {
+      final t = r.tank(pop.id);
+      final k = (pop.age / 1.4).clamp(0.0, 1.0);
+      canvas.saveLayer(
+        null,
+        Paint()..color = Color.fromRGBO(255, 255, 255, 1 - k * k),
+      );
+      pop.tp.paint(
+        canvas,
+        Offset(t.x - pop.tp.width / 2, fy(t.y) - 195 - 50 * k),
+      );
+      canvas.restore();
     }
     for (final b in s._blasts) {
       final k = (b.age / 0.6).clamp(0.0, 1.0);
       _blastFill.color = Color.fromRGBO(255, 190, 80, 0.55 * (1 - k));
-      canvas.drawCircle(Offset(b.x, fy(b.y)), b.r * (0.6 + 0.6 * k), _blastFill);
+      canvas.drawCircle(
+        Offset(b.x, fy(b.y)),
+        b.r * (0.6 + 0.6 * k),
+        _blastFill,
+      );
       _blast
         ..strokeWidth = 4
         ..color = Color.fromRGBO(255, 255, 255, 0.8 * (1 - k));

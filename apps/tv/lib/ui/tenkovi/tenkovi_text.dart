@@ -11,7 +11,7 @@ class TenkoviText {
   static const aimKicker = 'Nišanite';
   static String ready(int n, int of) => 'Spremno $n / $of';
   static String turn(int n) => 'okret $n';
-  static const volley = 'Pucaju svi!';
+  static const volley = 'Paljba!';
   static const wind = 'Vjetar';
   static const noWind = 'Bez vjetra';
   static const draw = 'Neriješeno';

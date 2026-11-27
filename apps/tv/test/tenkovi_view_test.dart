@@ -79,11 +79,34 @@ void main() {
     for (var i = 0; i < 600 && m.stage == TenkoviStageTv.fly; i++) {
       await _frame(t);
     }
-    for (var i = 0; i < 60; i++) {
-      await _frame(t); // the blasts fade
+    for (var i = 0; i < 120; i++) {
+      await _frame(t); // the blasts and damage numbers fade
     }
     if (m.stage == TenkoviStageTv.aim) {
       expect(t.binding.hasScheduledFrame, isFalse, reason: 'idle again');
+    }
+    await t.pump(const Duration(seconds: 3));
+    m.dispose();
+  });
+
+  testWidgets('a hit shows its damage number for a moment: the ticker stays awake for it, then sleeps', (t) async {
+    final m = _match(3);
+    await _show(t, m, 3);
+    for (var i = 1; i <= 3; i++) {
+      m.onFire(i, const TenkoviFire(90, 5, TenkoviShell.grenade));
+    }
+    await t.pump();
+    final victim = m.round.tanks.last;
+    m.round.projectiles.add(TenkoviShot(m.round.tanks.first.id, TenkoviShell.grenade, victim.x + 0.0, victim.y + 13, 0, -900));
+    for (var i = 0; i < 60; i++) {
+      await _frame(t);
+    }
+    expect(t.binding.hasScheduledFrame, isTrue, reason: 'a damage number is still fading');
+    for (var i = 0; i < 200; i++) {
+      await _frame(t);
+    }
+    if (m.stage == TenkoviStageTv.aim) {
+      expect(t.binding.hasScheduledFrame, isFalse);
     }
     await t.pump(const Duration(seconds: 3));
     m.dispose();
@@ -98,6 +121,7 @@ void main() {
     expect(m.stage, TenkoviStageTv.fly);
     await t.pump();
     expect(find.text(TenkoviText.volley), findsOneWidget);
+    expect(find.text('Paljba!'), findsOneWidget, reason: 'the board\'s label');
     for (var i = 0; i < 400 && m.stage == TenkoviStageTv.fly; i++) {
       await _frame(t);
     }
@@ -121,6 +145,7 @@ void main() {
     await t.pump();
     if (m.stage == TenkoviStageTv.end) {
       expect(find.byKey(const ValueKey('winner-banner')), findsOneWidget);
+      expect(find.byKey(const ValueKey('tenkovi-labels-hidden')), findsOneWidget, reason: 'no tank labels under the card');
     }
     await t.pump(const Duration(seconds: 3));
     m.dispose();
