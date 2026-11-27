@@ -19,6 +19,8 @@ LobbyState _lobby() => LobbyState(
 TenkoviTurn _turn({
   String stage = 'aim',
   int round = 1,
+  int turn = 1,
+  List<int> waiting = const [],
   int wind = 4,
   bool alive = true,
   int hp = 100,
@@ -34,6 +36,8 @@ TenkoviTurn _turn({
   stage: stage,
   round: round,
   rounds: 3,
+  turn: turn,
+  waiting: waiting,
   map: TenkoviMap.earth,
   wind: wind,
   alive: alive,
@@ -71,10 +75,9 @@ void main() {
   testWidgets('the aim screen: angle, power, projectile, wind, life; starts at 45 and 50', (t) async {
     final c = await _app(t);
     await _send(t, c, _turn());
-    expect(find.text('Runda 1 od 3'), findsOneWidget);
     expect(find.byKey(const ValueKey('tenkovi-wind')), findsOneWidget);
-    expect(find.textContaining('→ 4'), findsOneWidget);
-    expect(find.text('Život 100'), findsOneWidget);
+    expect(find.text('4'), findsOneWidget, reason: 'the wind number');
+    expect(find.text('Runda 1 od 3 · okret 1'), findsOneWidget);
     expect(find.byKey(const ValueKey('angle-value')), findsOneWidget);
     expect(t.widget<Text>(find.byKey(const ValueKey('angle-value'))).data, '45°');
     expect(t.widget<Text>(find.byKey(const ValueKey('power-value'))).data, '50');
@@ -98,7 +101,7 @@ void main() {
     await _send(t, c, _turn(last: [120, 70]));
     expect(t.widget<Text>(find.byKey(const ValueKey('angle-value'))).data, '120°');
     expect(t.widget<Text>(find.byKey(const ValueKey('power-value'))).data, '70');
-    expect(find.text('Prošli put: 120°, 70'), findsOneWidget);
+    expect(find.text('120°, 70'), findsOneWidget);
     // Fine steps, then back to last time.
     await t.tap(find.byKey(const ValueKey('angle-plus')));
     await t.tap(find.byKey(const ValueKey('power-minus')));
@@ -133,15 +136,20 @@ void main() {
     // The TV answers with the phone's own aim: the card hides it.
     await _send(t, c, _turn(ready: 1, sent: [120, 70, TenkoviShell.cluster.index], last: [120, 70]));
     expect(find.byKey(const ValueKey('tenkovi-fire')), findsNothing);
-    await expectHiddenUntilHeld(t, '120°, snaga 70\nKasetna');
-    expect(find.textContaining('Spremno 1 od 4'), findsNothing, reason: 'only while held, like the rest of the card');
+    await expectHiddenUntilHeld(t, 'Kasetna');
+    final g = await holdCard(t);
+    expect(find.text('Kut 120° · Snaga 70'), findsOneWidget);
+    await g.up();
+    await t.pump();
+    expect(find.text('Kut 120° · Snaga 70'), findsNothing);
+    expect(find.text('Pucaj je poslan'), findsOneWidget, reason: 'public, not part of the hidden aim');
   });
 
   testWidgets('the hidden card looks the same on every phone: no aim, no shell, no count of rounds of anything private', (t) async {
     final c = await _app(t);
     await _send(t, c, _turn(sent: [10, 20, 0]));
     expect(find.textContaining('10°'), findsNothing);
-    expect(find.textContaining('20'), findsNothing);
+    expect(find.textContaining('Snaga 20'), findsNothing);
     expect(find.textContaining('Granata'), findsNothing);
     expect(find.byKey(const ValueKey('role-card')), findsOneWidget);
   });
@@ -152,7 +160,7 @@ void main() {
     await t.tap(find.byKey(const ValueKey('tenkovi-fire')));
     await t.pump();
     await _send(t, c, _turn(stage: 'fly', last: [45, 50]));
-    await expectHiddenUntilHeld(t, '45°, snaga 50\nGranata');
+    await expectHiddenUntilHeld(t, 'Granata');
   });
 
   testWidgets('a used-up special shell cannot be picked and Pucaj falls back to the Granata', (t) async {
@@ -163,7 +171,7 @@ void main() {
     await t.tap(find.byKey(const ValueKey('tenkovi-fire')));
     await t.pump();
     expect(c.sent.whereType<TenkoviFire>().single.shell, TenkoviShell.grenade);
-    expect(find.text('iskorišteno'), findsOneWidget);
+    expect(t.widget<Text>(find.byKey(const ValueKey('ammo-heavy'))).data, '0');
   });
 
   testWidgets('a tank that is out sees a quiet screen, no aim controls', (t) async {

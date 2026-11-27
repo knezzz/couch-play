@@ -11,15 +11,20 @@ import '../curve/winner_banner.dart';
 import '../tv_theme.dart';
 import 'tenkovi_text.dart';
 
-/// Tenkovi on the TV: hills across the full width, tanks, and the volley.
+/// Tenkovi on the TV (boards TenkoviTvAim, TenkoviTvVolley, TenkoviTvMaps,
+/// TenkoviTvWinner): hills across the full width, tanks, and the volley.
 ///
-/// PRIVACY: before the volley this reads only [TenkoviTvMatch.ready] (who has
-/// pressed Pucaj). Tanks are drawn with no barrel at all, so nothing here can
-/// show an angle; shells appear only once the match has fired them.
+/// PRIVACY: before the volley this reads only [TenkoviTvMatch.ready] and
+/// [TenkoviTvMatch.round]'s public state. Tanks are drawn with no barrel while
+/// players aim; a barrel is drawn only for a volley that has already fired
+/// ([TenkoviTvMatch.volleyAims] is empty until then), and shells appear only
+/// once fired.
 ///
 /// PERFORMANCE: the sky and the ground are one cached [ui.Picture], redrawn
 /// only when a crater changes [TenkoviRound.terrainVersion]; each frame draws
-/// 8 tanks, the shells and a few blasts, with no per-frame text layout.
+/// 8 tanks, the shells and a few blasts, with no per-frame text layout (names
+/// are laid out once per round) and no per-frame Path building (trails grow
+/// one Path per shell).
 class TenkoviView extends StatefulWidget {
   const TenkoviView({required this.match, required this.players, super.key});
   final TenkoviTvMatch match;
@@ -35,6 +40,39 @@ class _Blast {
   double age = 0; // seconds
 }
 
+class _Trail {
+  _Trail(this.color);
+  final Color color;
+  final path = Path();
+  final dots = <Offset>[];
+  bool started = false;
+}
+
+/// Colors per map: sky top, sky horizon, far hills, ground, ground edge.
+({Color sky0, Color sky1, Color far, Color ground, Color edge}) _palette(TenkoviMap m) => switch (m) {
+      TenkoviMap.earth => (
+          sky0: const Color(0xFF131A33),
+          sky1: const Color(0xFF2E3F78),
+          far: const Color(0xFF1F2B52),
+          ground: const Color(0xFF4B3A32),
+          edge: const Color(0xFF6D8F4E),
+        ),
+      TenkoviMap.moon => (
+          sky0: const Color(0xFF03040A),
+          sky1: const Color(0xFF0B0D1C),
+          far: const Color(0xFF1A1B2A),
+          ground: const Color(0xFF7C7C8A),
+          edge: const Color(0xFFB8B8C8),
+        ),
+      TenkoviMap.mars => (
+          sky0: const Color(0xFF2B1613),
+          sky1: const Color(0xFF8C4A32),
+          far: const Color(0xFF9A3E26),
+          ground: const Color(0xFF6B3322),
+          edge: const Color(0xFFD9764F),
+        ),
+    };
+
 class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
   final _repaint = ValueNotifier<int>(0);
@@ -45,8 +83,8 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   int _terrainVersion = -1;
   ui.Picture? _ground;
   final _names = <int, TextPainter>{};
-  final _trails = <TenkoviShot, List<Offset>>{};
-  Path? _oldPath; // the faint trails of the last volley, built once when it ended
+  final _trails = <TenkoviShot, _Trail>{};
+  List<Offset> _oldDots = const []; // the faint dots of the last volley
   final _blasts = <_Blast>[];
 
   @override
@@ -79,11 +117,10 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
         _sampleTrails(m.round);
         if (m.stage != TenkoviStageTv.fly) break;
       }
-      _drain(m);
     } else {
       _acc = 0;
-      _drain(m);
     }
+    _drain(m);
     for (final b in _blasts) {
       b.age += dt;
     }
@@ -93,9 +130,21 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
 
   void _sampleTrails(TenkoviRound r) {
     for (final p in r.projectiles) {
-      if (p.age % 3 != 0) continue;
-      (_trails[p] ??= []).add(Offset(p.x, p.y));
+      final t = _trails[p] ??= _Trail(_colorOf(p.owner));
+      final y = Tenkovi.h - p.y;
+      if (!t.started) {
+        t.path.moveTo(p.x, y);
+        t.started = true;
+      } else {
+        t.path.lineTo(p.x, y);
+      }
+      if (p.age % 3 == 0) t.dots.add(Offset(p.x, y));
     }
+  }
+
+  Color _colorOf(int id) {
+    final p = widget.players.where((p) => p.id == id).firstOrNull;
+    return playerColors[(p?.colorIndex ?? 0) % playerColors.length];
   }
 
   void _drain(TenkoviTvMatch m) {
@@ -103,20 +152,12 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
     for (final e in m.events) {
       switch (e) {
         case TkFired():
-          // A new volley wipes the faint trails of the last one.
-          if (_trails.isEmpty) _oldPath = null;
+          // A new volley wipes the faint dots of the last one.
+          if (_trails.isEmpty) _oldDots = const [];
         case TkBlast(:final x, :final y, :final radius):
           _blasts.add(_Blast(x, y, radius));
         case TkVolleyDone():
-          final path = Path();
-          for (final t in _trails.values) {
-            if (t.length < 2) continue;
-            path.moveTo(t.first.dx, Tenkovi.h - t.first.dy);
-            for (var i = 1; i < t.length; i++) {
-              path.lineTo(t[i].dx, Tenkovi.h - t[i].dy);
-            }
-          }
-          _oldPath = path;
+          _oldDots = [for (final t in _trails.values) ...t.dots];
           _trails.clear();
         default:
       }
@@ -132,7 +173,7 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       _round = r;
       _terrainVersion = -1;
       _trails.clear();
-      _oldPath = null;
+      _oldDots = const [];
       _blasts.clear();
       _names.clear();
       for (final t in r.tanks) {
@@ -141,15 +182,16 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
           text: TextSpan(
             text: p?.name ?? '',
             style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
+              fontSize: 33,
+              fontWeight: FontWeight.w700,
               color: playerColors[(p?.colorIndex ?? 0) % playerColors.length],
+              shadows: const [Shadow(offset: Offset(0, 2), blurRadius: 6, color: Color(0xB3000000))],
             ),
           ),
           textDirection: TextDirection.ltr,
           maxLines: 1,
           ellipsis: '…',
-        )..layout(maxWidth: 190);
+        )..layout(maxWidth: 220);
       }
     }
     if (_terrainVersion != r.terrainVersion) {
@@ -163,36 +205,64 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
     final rec = ui.PictureRecorder();
     final c = Canvas(rec);
     const w = 1600.0, h = 900.0;
-    final (sky0, sky1, g0, g1) = switch (r.map) {
-      TenkoviMap.earth => (const Color(0xFF1B3A66), const Color(0xFF7FB8E8), const Color(0xFF3FA05A), const Color(0xFF1F5A34)),
-      TenkoviMap.moon => (const Color(0xFF05060F), const Color(0xFF14183A), const Color(0xFF9A9AA8), const Color(0xFF4A4A58)),
-      TenkoviMap.mars => (const Color(0xFF3A1A14), const Color(0xFFD08050), const Color(0xFFC0482C), const Color(0xFF6A2418)),
-    };
+    final pal = _palette(r.map);
     c.drawRect(
       const Rect.fromLTWH(0, 0, w, h),
-      Paint()..shader = ui.Gradient.linear(Offset.zero, const Offset(0, h), [sky0, sky1]),
+      Paint()..shader = ui.Gradient.linear(Offset.zero, const Offset(0, h * 0.75), [pal.sky0, pal.sky1]),
     );
-    if (r.map == TenkoviMap.moon) {
-      final star = Paint()..color = const Color(0xCCFFFFFF);
-      final rnd = Random(5);
-      for (var i = 0; i < 70; i++) {
-        c.drawCircle(Offset(rnd.nextDouble() * w, rnd.nextDouble() * 500), 1 + rnd.nextDouble() * 1.6, star);
+    final rnd = Random(5);
+    if (r.map != TenkoviMap.mars) {
+      final star = Paint()..color = Color.fromRGBO(255, 255, 255, r.map == TenkoviMap.moon ? 0.8 : 0.35);
+      for (var i = 0; i < (r.map == TenkoviMap.moon ? 70 : 18); i++) {
+        c.drawCircle(Offset(rnd.nextDouble() * w, rnd.nextDouble() * 420), 1.5 + rnd.nextDouble() * 1.3, star);
       }
-      // The Earth, small and blue, over the horizon.
-      c.drawCircle(const Offset(1280, 150), 58, Paint()..color = const Color(0xFF3F7FD8));
-      c.drawCircle(const Offset(1262, 140), 26, Paint()..color = const Color(0xFF4FB070));
+    } else {
+      // The dust storm: a few long faint streaks.
+      final dust = Paint()
+        ..color = const Color(0x22FFC9A0)
+        ..strokeWidth = 5
+        ..strokeCap = StrokeCap.round;
+      for (var i = 0; i < 26; i++) {
+        final x = rnd.nextDouble() * w, y = 60 + rnd.nextDouble() * 520;
+        c.drawLine(Offset(x, y), Offset(x + 90 + rnd.nextDouble() * 160, y + 8), dust);
+      }
     }
-    final path = Path()..moveTo(0, h);
-    for (var x = 0; x < Tenkovi.w; x += 4) {
-      path.lineTo(x.toDouble(), h - r.ground[x]);
+    if (r.map == TenkoviMap.moon) {
+      // The Earth in the sky.
+      c.drawCircle(const Offset(1250, 208), 87, Paint()..color = const Color(0x245A9BFF));
+      c.drawCircle(const Offset(1250, 208), 67, Paint()..color = const Color(0xFF2B6CC4));
+      c.drawCircle(const Offset(1232, 196), 24, Paint()..color = const Color(0xFF4DAA5C));
+      c.drawCircle(const Offset(1274, 226), 17, Paint()..color = const Color(0xFF4DAA5C));
     }
-    path
+    // Far hills: a calm silhouette behind the ground.
+    final far = Path()..moveTo(0, h);
+    for (var x = 0; x <= Tenkovi.w; x += 20) {
+      far.lineTo(x.toDouble(), 330 + 52 * sin(x / 310 + 1) + 26 * sin(x / 120) + 60);
+    }
+    far
+      ..lineTo(w, h)
+      ..close();
+    c.drawPath(far, Paint()..color = pal.far);
+    final top = Path()..moveTo(0, h - r.ground[0]);
+    final fill = Path()..moveTo(0, h);
+    fill.lineTo(0, h - r.ground[0]);
+    for (var x = 4; x < Tenkovi.w; x += 4) {
+      top.lineTo(x.toDouble(), h - r.ground[x]);
+      fill.lineTo(x.toDouble(), h - r.ground[x]);
+    }
+    top.lineTo(w, h - r.ground[Tenkovi.w - 1]);
+    fill
       ..lineTo(w, h - r.ground[Tenkovi.w - 1])
       ..lineTo(w, h)
       ..close();
+    c.drawPath(fill, Paint()..color = pal.ground);
     c.drawPath(
-      path,
-      Paint()..shader = ui.Gradient.linear(Offset(0, h - 560), const Offset(0, h), [g0, g1]),
+      top,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.5
+        ..strokeJoin = StrokeJoin.round
+        ..color = pal.edge,
     );
     return rec.endRecording();
   }
@@ -217,8 +287,9 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
       );
     }
 
+    final ending = m.stage == TenkoviStageTv.end || m.stage == TenkoviStageTv.over;
     Widget? banner;
-    if (m.stage == TenkoviStageTv.end || m.stage == TenkoviStageTv.over) {
+    if (ending) {
       final pts = m.lastPoints;
       final order = [...m.ids]..sort((a, b) => (pts[b] ?? 0).compareTo(pts[a] ?? 0));
       final winner = m.lastWinner;
@@ -237,17 +308,15 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
     }
 
     final living = r.living.where((t) => m.connected.contains(t.id)).length;
-    final wind = r.wind;
+    final readyN = m.ready.where(m.connected.contains).length;
+    final turn = r.volleys + (m.stage == TenkoviStageTv.aim ? 1 : 0);
     return Scaffold(
       backgroundColor: tvBg,
       body: Stack(
         fit: StackFit.expand,
         children: [
           RepaintBoundary(
-            child: CustomPaint(
-              painter: _ScenePainter(this, byId),
-              size: Size.infinite,
-            ),
+            child: CustomPaint(painter: _ScenePainter(this, byId), size: Size.infinite),
           ),
           Positioned.fill(
             child: Material(
@@ -260,56 +329,66 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
                   child: Stack(
                     children: [
                       Positioned(
-                        left: 48,
-                        top: 32,
-                        child: _Hud(
-                          line1: TenkoviText.round(m.roundNo, m.rounds),
-                          line2: TenkoviText.map(r.map),
+                        left: 40,
+                        top: 0,
+                        height: 100,
+                        child: Center(
+                          child: Text(
+                            '${TenkoviText.round(m.roundNo, m.rounds)} · ${TenkoviText.turn(turn)}',
+                            key: const ValueKey('tenkovi-header'),
+                            style: const TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFC9C9D8),
+                              shadows: [Shadow(offset: Offset(0, 2), blurRadius: 6, color: Color(0xB3000000))],
+                            ),
+                          ),
                         ),
                       ),
+                      Positioned(left: 660, top: 10, child: _WindPill(wind: r.wind)),
                       Positioned(
-                        right: 48,
-                        top: 32,
-                        child: _WindHud(wind: wind),
+                        right: 40,
+                        top: 0,
+                        height: 100,
+                        child: Center(
+                          child: m.stage == TenkoviStageTv.fly
+                              ? const Text(
+                                  TenkoviText.volley,
+                                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: tvText),
+                                )
+                              : m.stage == TenkoviStageTv.aim
+                              ? Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      const TextSpan(text: '✓ ', style: TextStyle(color: Color(0xFF3DDC84))),
+                                      TextSpan(text: TenkoviText.ready(readyN, living)),
+                                    ],
+                                  ),
+                                  key: const ValueKey('tenkovi-ready'),
+                                  style: const TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w900,
+                                    color: tvText,
+                                    shadows: [Shadow(offset: Offset(0, 2), blurRadius: 6, color: Color(0xB3000000))],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
                       ),
-                      if (m.stage == TenkoviStageTv.aim)
-                        Positioned(
-                          top: 40,
-                          left: 0,
-                          right: 0,
-                          child: Center(
-                            child: Text(
-                              '${TenkoviText.aimKicker} · ${TenkoviText.ready(m.ready.where(m.connected.contains).length, living)}',
-                              key: const ValueKey('tenkovi-ready'),
-                              style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: tvText),
-                            ),
-                          ),
-                        ),
-                      if (m.stage == TenkoviStageTv.fly)
-                        const Positioned(
-                          top: 40,
-                          left: 0,
-                          right: 0,
-                          child: Center(
-                            child: Text(
-                              TenkoviText.volley,
-                              style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: tvText),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),
               ),
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 8,
-            height: 70,
-            child: NameStrip(names: [for (final t in r.tanks) strip(t.id)]),
-          ),
+          if (ending)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 8,
+              height: 70,
+              child: NameStrip(names: [for (final t in r.tanks) strip(t.id)]),
+            ),
           ?banner,
         ],
       ),
@@ -317,35 +396,56 @@ class _TenkoviViewState extends State<TenkoviView> with SingleTickerProviderStat
   }
 }
 
-class _Hud extends StatelessWidget {
-  const _Hud({required this.line1, required this.line2});
-  final String line1, line2;
+/// "Vjetar" and the wind of the coming turn: an arrow and a number.
+class _WindPill extends StatelessWidget {
+  const _WindPill({required this.wind});
+  final int wind;
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(line1, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w800, color: tvText)),
-          Text(line2, style: const TextStyle(fontSize: 30, color: tvMuted)),
-        ],
+  Widget build(BuildContext context) => Container(
+        key: const ValueKey('tenkovi-wind'),
+        height: 80,
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        decoration: BoxDecoration(color: const Color(0xB814141E), borderRadius: BorderRadius.circular(24)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(TenkoviText.wind, style: TextStyle(fontSize: 40, color: Color(0xFFC9C9D8))),
+            const SizedBox(width: 22),
+            if (wind != 0) ...[
+              Transform.scale(
+                scaleX: wind < 0 ? -1 : 1,
+                child: const SizedBox(width: 120, height: 40, child: CustomPaint(painter: _ArrowPainter())),
+              ),
+              const SizedBox(width: 22),
+              Text('${wind.abs()}', style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, height: 1, color: tvText)),
+            ] else
+              const Text(TenkoviText.noWind, style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: tvText)),
+          ],
+        ),
       );
 }
 
-/// The wind of the coming turn: an arrow and a number.
-class _WindHud extends StatelessWidget {
-  const _WindHud({required this.wind});
-  final int wind;
+class _ArrowPainter extends CustomPainter {
+  const _ArrowPainter();
   @override
-  Widget build(BuildContext context) => Column(
-        key: const ValueKey('tenkovi-wind'),
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const Text(TenkoviText.wind, style: TextStyle(fontSize: 30, color: tvMuted)),
-          Text(
-            wind == 0 ? TenkoviText.noWind : '${wind < 0 ? '←' : '→'} ${wind.abs()}',
-            style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w900, color: tvText),
-          ),
-        ],
-      );
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = tvText
+      ..strokeWidth = 11
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(const Offset(4, 20), const Offset(84, 20), p);
+    canvas.drawPath(
+      Path()
+        ..moveTo(80, 2)
+        ..lineTo(114, 20)
+        ..lineTo(80, 38)
+        ..close(),
+      Paint()..color = tvText,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ArrowPainter old) => false;
 }
 
 class _ScenePainter extends CustomPainter {
@@ -353,21 +453,58 @@ class _ScenePainter extends CustomPainter {
   final _TenkoviViewState s;
   final Map<int, PlayerInfo> byId;
 
-  static final _shot = Paint()..color = const Color(0xFFFFFFFF);
+  static final _hull = Paint()..color = const Color(0xFF262636);
+  static final _wheel = Paint()..color = const Color(0xFF3A3A4C);
+  static final _paint = Paint();
+  static final _outline = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.5
+    ..color = const Color(0x4D14141E);
+  static final _shadow = Paint()..color = const Color(0x47000000);
+  static final _barBack = Paint()..color = const Color(0xFF14141E);
+  static final _barLine = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1.7
+    ..color = const Color(0xFF2A2A3A);
+  static final _tickBg = Paint()..color = const Color(0xFF3DDC84);
+  static final _tickRing = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 3.3
+    ..color = const Color(0xFF14141E);
+  static final _tickMark = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 5
+    ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.round
+    ..color = const Color(0xFF14141E);
+  static final _dots = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 4
+    ..strokeCap = StrokeCap.round
+    ..color = const Color(0x33FFFFFF);
   static final _trail = Paint()
     ..style = PaintingStyle.stroke
-    ..strokeWidth = 3
-    ..color = const Color(0x40FFFFFF);
-  static final _trailNew = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 3
-    ..color = const Color(0x99FFFFFF);
-  static final _body = Paint();
-  static final _barBack = Paint()..color = const Color(0xAA000000);
-  static final _bar = Paint();
-  static final _tick = Paint()..color = const Color(0xFF7FD8A8);
+    ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.round;
+  static final _head = Paint()..color = const Color(0xFFF4F4F8);
+  static final _headRing = Paint()..style = PaintingStyle.stroke;
   static final _blast = Paint()..style = PaintingStyle.stroke;
   static final _blastFill = Paint();
+  static final _barrelDark = Paint()
+    ..strokeWidth = 15
+    ..strokeCap = StrokeCap.round
+    ..color = const Color(0xFF14141E);
+  static final _barrel = Paint()
+    ..strokeWidth = 9
+    ..strokeCap = StrokeCap.round;
+
+  static final _turretPath = Path()
+    ..moveTo(-35, -15)
+    ..lineTo(-25, -35)
+    ..lineTo(25, -35)
+    ..lineTo(35, -15)
+    ..close();
+  static const _check = [Offset(-8, 0), Offset(-2, 7), Offset(10, -7)];
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -377,62 +514,101 @@ class _ScenePainter extends CustomPainter {
     canvas.scale(size.width / Tenkovi.w, size.height / Tenkovi.h);
     canvas.drawPicture(g);
     double fy(double y) => Tenkovi.h - y;
+    final m = s.widget.match;
 
-    // Faint trails of the last volley, then the one in the air.
-    if (s._oldPath != null) canvas.drawPath(s._oldPath!, _trail);
+    if (s._oldDots.isNotEmpty) {
+      canvas.drawPoints(ui.PointMode.points, s._oldDots, _dots);
+    }
+    // The volley in the air: each shot's trail in its player's colour.
     for (final t in s._trails.values) {
-      _line(canvas, t, _trailNew, fy);
+      for (final (a, w) in const [(0.18, 5.0), (0.4, 6.7), (0.9, 8.3)]) {
+        _trail
+          ..color = t.color.withValues(alpha: a)
+          ..strokeWidth = w;
+        canvas.drawPath(t.path, _trail);
+      }
     }
 
-    final aiming = s.widget.match.stage == TenkoviStageTv.aim;
-    final ready = s.widget.match.ready;
+    final aiming = m.stage == TenkoviStageTv.aim;
+    final ready = m.ready;
     for (final t in r.tanks) {
       final p = byId[t.id];
       final color = playerColors[(p?.colorIndex ?? 0) % playerColors.length];
       final gy = fy(t.y);
+      final tx = t.x.toDouble();
+      // The hull follows the slope under it.
+      final l = r.ground[max(0, t.x - 24)], rt = r.ground[min(Tenkovi.w - 1, t.x + 24)];
+      final tilt = -atan2(rt - l, 48);
+      canvas.drawOval(Rect.fromCenter(center: Offset(tx, gy + 2), width: 80, height: 13), _shadow);
       canvas.save();
-      canvas.translate(t.x.toDouble(), gy);
+      canvas.translate(tx, gy);
+      canvas.rotate(tilt);
       if (!t.alive) {
-        _body.color = const Color(0xFF55555F);
-        canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-24, -14, 48, 14), const Radius.circular(6)), _body);
-        canvas.restore();
-        continue;
+        canvas.saveLayer(const Rect.fromLTWH(-60, -60, 120, 80), Paint()..color = const Color(0x59FFFFFF));
       }
-      // A tank has no barrel: nothing here can show an angle.
-      _body.color = color;
-      canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-24, -14, 48, 14), const Radius.circular(6)), _body);
-      canvas.drawCircle(const Offset(0, -16), 15, _body);
+      canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-40, -15, 80, 15), const Radius.circular(7.5)), _hull);
+      for (final wx in const [-25.0, -8.3, 8.3, 25.0]) {
+        canvas.drawCircle(Offset(wx, -7.5), 5.8, _wheel);
+      }
+      _paint.color = t.alive ? color : const Color(0xFF55555F);
+      canvas.drawPath(_turretPath, _paint);
+      canvas.drawPath(_turretPath, _outline);
+      if (!t.alive) canvas.restore();
+      canvas.restore();
+      if (!t.alive) continue;
+
+      // Barrel: only for a volley that has already fired.
+      final a = m.volleyAims[t.id];
+      if (a != null && m.stage == TenkoviStageTv.fly) {
+        final rad = a.angle * pi / 180;
+        final from = Offset(tx, gy - Tenkovi.turretUp);
+        final to = from + Offset(cos(rad), -sin(rad)) * Tenkovi.barrel;
+        canvas.drawLine(from, to, _barrelDark);
+        canvas.drawLine(from, to, _barrel..color = color);
+      }
+
+      // The commander's face over the turret, the HP bar and the name.
       if (p != null && p.character.isNotEmpty) {
         canvas.save();
-        canvas.translate(-13, -29);
-        CharacterFace.paintOn(canvas, const Size(26, 26), p.character, color);
+        canvas.translate(tx - 35, gy - 83);
+        CharacterFace.paintOn(canvas, const Size(70, 70), p.character, color);
         canvas.restore();
       }
-      // HP bar and name.
       final f = t.hp / Tenkovi.maxHp;
-      canvas.drawRect(const Rect.fromLTWH(-32, -50, 64, 9), _barBack);
-      _bar.color = Color.lerp(const Color(0xFFFF4D6D), const Color(0xFF7FD8A8), f)!;
-      canvas.drawRect(Rect.fromLTWH(-30, -48, 60 * f, 5), _bar);
-      final np = s._names[t.id];
-      if (np != null) np.paint(canvas, Offset(-np.width / 2, -84));
-      if (aiming && ready.contains(t.id)) {
-        canvas.drawCircle(const Offset(40, -34), 11, _tick);
-        canvas.drawLine(const Offset(34, -34), const Offset(39, -29), _tickMark);
-        canvas.drawLine(const Offset(39, -29), const Offset(47, -40), _tickMark);
-      }
+      final bar = RRect.fromRectAndRadius(Rect.fromLTWH(tx - 53, gy - 112, 107, 17), const Radius.circular(8.5));
+      canvas.drawRRect(bar, _barBack);
+      canvas.save();
+      canvas.clipRRect(bar);
+      _paint.color = f > 0.5
+          ? const Color(0xFF3DDC84)
+          : f > 0.25
+          ? const Color(0xFFFFB020)
+          : const Color(0xFFFF4D6D);
+      canvas.drawRect(Rect.fromLTWH(tx - 53, gy - 112, 107 * f, 17), _paint);
       canvas.restore();
+      canvas.drawRRect(bar, _barLine);
+      final np = s._names[t.id];
+      if (np != null) np.paint(canvas, Offset(tx - np.width / 2, gy - 162));
+      if (aiming && ready.contains(t.id)) {
+        canvas.save();
+        canvas.translate(tx + 55, gy - 93);
+        canvas.drawCircle(Offset.zero, 20, _tickBg);
+        canvas.drawCircle(Offset.zero, 20, _tickRing);
+        canvas.drawPoints(ui.PointMode.polygon, _check, _tickMark);
+        canvas.restore();
+      }
     }
 
     for (final p in r.projectiles) {
-      canvas.drawCircle(
-        Offset(p.x, fy(p.y)),
-        switch (p.shell) {
-          TenkoviShell.heavy => 8,
-          TenkoviShell.bomblet => 3.5,
-          _ => 5,
-        },
-        _shot,
-      );
+      final big = p.shell == TenkoviShell.heavy;
+      final small = p.shell == TenkoviShell.bomblet;
+      _headRing
+        ..strokeWidth = small ? 3.3 : 4.2
+        ..color = s._trails[p]?.color ?? s._colorOf(p.owner);
+      final c = Offset(p.x, fy(p.y));
+      final rad = big ? 14.0 : small ? 8.0 : 10.0;
+      canvas.drawCircle(c, rad, _head);
+      canvas.drawCircle(c, rad, _headRing);
     }
     for (final b in s._blasts) {
       final k = (b.age / 0.6).clamp(0.0, 1.0);
@@ -443,21 +619,6 @@ class _ScenePainter extends CustomPainter {
         ..color = Color.fromRGBO(255, 255, 255, 0.8 * (1 - k));
       canvas.drawCircle(Offset(b.x, fy(b.y)), b.r * (0.8 + 0.8 * k), _blast);
     }
-  }
-
-  static final _tickMark = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 3
-    ..strokeCap = StrokeCap.round
-    ..color = const Color(0xFF14141E);
-
-  void _line(Canvas c, List<Offset> pts, Paint paint, double Function(double) fy) {
-    if (pts.length < 2) return;
-    final path = Path()..moveTo(pts.first.dx, fy(pts.first.dy));
-    for (var i = 1; i < pts.length; i++) {
-      path.lineTo(pts[i].dx, fy(pts[i].dy));
-    }
-    c.drawPath(path, paint);
   }
 
   @override

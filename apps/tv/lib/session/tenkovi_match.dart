@@ -43,6 +43,10 @@ class TenkoviTvMatch {
   /// The last volley's aim of each tank (its own phone gets it back as "Prošli put").
   final _last = <int, List<int>>{};
 
+  /// The aims of the volley in the air. Public from the moment it fires: the TV
+  /// turns each barrel to its angle, as the board shows.
+  final volleyAims = <int, TenkoviAim>{};
+
   /// Round points and winner of the round that just ended (stage end).
   Map<int, int> lastPoints = const {};
   int? lastWinner;
@@ -99,6 +103,12 @@ class TenkoviTvMatch {
         _last[e.key] = [e.value.angle, e.value.power];
       }
     }
+    volleyAims
+      ..clear()
+      ..addAll({
+        for (final e in round.aims.entries)
+          if (connected.contains(e.key)) e.key: e.value,
+      });
     events.addAll(round.fire(connected));
     stage = TenkoviStageTv.fly;
     sfx.play(Sound.countdownGo);
@@ -180,6 +190,7 @@ class TenkoviTvMatch {
         _ => 'end',
       },
       round: roundNo.clamp(1, rounds),
+      turn: round.volleys + (stage == TenkoviStageTv.aim ? 1 : 0),
       rounds: rounds,
       map: round.map,
       wind: round.wind,
@@ -194,6 +205,9 @@ class TenkoviTvMatch {
       points: stage == TenkoviStageTv.end || stage == TenkoviStageTv.over ? (lastPoints[id] ?? 0) : 0,
       score: match.scores[id] ?? 0,
       winner: stage == TenkoviStageTv.end || stage == TenkoviStageTv.over ? lastWinner : null,
+      waiting: stage == TenkoviStageTv.aim
+          ? [for (final t in round.living) if (connected.contains(t.id) && !round.aims.containsKey(t.id)) t.id]
+          : const [],
     );
   }
 }

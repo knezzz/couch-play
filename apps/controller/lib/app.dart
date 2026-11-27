@@ -316,7 +316,9 @@ class _AppState extends State<App> {
       _lobby == null
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : TkobiFlow(widget.conn, _lobby!, _tkobi),
-    _Screen.tenkovi => TenkoviFlow(widget.conn, _myId, _tenkovi),
+    _Screen.tenkovi => _lobby == null
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          : TenkoviFlow(widget.conn, _lobby!, _myId, _tenkovi),
     _Screen.blef => BlefFlow(
       widget.conn,
       _blef,

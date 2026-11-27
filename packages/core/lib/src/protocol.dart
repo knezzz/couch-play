@@ -502,6 +502,7 @@ sealed class Message with _JsonEq {
             stage: m['stage'] as String,
             round: m['round'] as int,
             rounds: m['rounds'] as int,
+            turn: (m['turn'] as int?) ?? 1,
             map: TenkoviMap.values.byName(m['map'] as String),
             wind: m['wind'] as int,
             alive: m['alive'] as bool,
@@ -514,7 +515,8 @@ sealed class Message with _JsonEq {
             last: m['last'] == null ? null : [for (final e in m['last'] as List) e as int],
             points: (m['points'] as int?) ?? 0,
             score: (m['score'] as int?) ?? 0,
-            winner: m['winner'] as int?),
+            winner: m['winner'] as int?,
+            waiting: [for (final e in (m['waiting'] as List?) ?? const []) e as int]),
         'pong' => Pong(m['t'] as int),
         'waiting' => Waiting(m['reason'] as String),
         'error' => ErrorMsg(m['message'] as String),
@@ -1536,7 +1538,7 @@ class TenkoviFire extends Message {
 class TenkoviTurn extends Message {
   /// 'aim' (set the shot), 'fly' (the volley is in the air), 'end' (the round is over).
   final String stage;
-  final int round, rounds, wind, hp, ready, total, points, score;
+  final int round, rounds, turn, wind, hp, ready, total, points, score;
   final TenkoviMap map;
   final bool alive, heavy, cluster;
 
@@ -1545,10 +1547,14 @@ class TenkoviTurn extends Message {
 
   /// The player who won the round; null is a draw (only at 'end').
   final int? winner;
+
+  /// Who has not pressed Pucaj yet (public: the TV shows who is ready).
+  final List<int> waiting;
   const TenkoviTurn({
     required this.stage,
     required this.round,
     required this.rounds,
+    this.turn = 1,
     required this.map,
     required this.wind,
     required this.alive,
@@ -1562,6 +1568,7 @@ class TenkoviTurn extends Message {
     this.points = 0,
     this.score = 0,
     this.winner,
+    this.waiting = const [],
   });
   @override
   String get type => 'tkTurn';
@@ -1570,6 +1577,7 @@ class TenkoviTurn extends Message {
         'stage': stage,
         'round': round,
         'rounds': rounds,
+        'turn': turn,
         'map': map.name,
         'wind': wind,
         'alive': alive,
@@ -1583,5 +1591,6 @@ class TenkoviTurn extends Message {
         'points': points,
         'score': score,
         'winner': winner,
+        'waiting': waiting,
       };
 }

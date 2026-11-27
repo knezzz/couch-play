@@ -15,6 +15,7 @@ void main() {
       stage: 'aim',
       round: 2,
       rounds: 3,
+      turn: 4,
       map: TenkoviMap.mars,
       wind: -7,
       alive: true,
@@ -25,6 +26,7 @@ void main() {
       total: 5,
       sent: [45, 70, 1],
       last: [50, 60],
+      waiting: [1, 3],
     );
     expect(round(aim), aim);
     const bare = TenkoviTurn(

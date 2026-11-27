@@ -40,14 +40,13 @@ void main() {
   testWidgets('aim stage: round, map, wind and only a count of who is ready', (t) async {
     final m = _match(8);
     await _show(t, m, 8);
-    expect(find.text('Runda 1 od 2'), findsOneWidget);
-    expect(find.text('Mars'), findsOneWidget);
+    expect(find.text('Runda 1 od 2 · okret 1'), findsOneWidget);
     expect(find.byKey(const ValueKey('tenkovi-wind')), findsOneWidget);
     expect(find.text(TenkoviText.ready(0, 8)), findsNothing, reason: 'shown with the kicker');
-    expect(find.textContaining('Spremno 0 od 8'), findsOneWidget);
+    expect(find.textContaining('Spremno 0 / 8'), findsOneWidget);
     m.onFire(1, const TenkoviFire(137, 83, TenkoviShell.heavy));
     await t.pump();
-    expect(find.textContaining('Spremno 1 od 8'), findsOneWidget);
+    expect(find.textContaining('Spremno 1 / 8'), findsOneWidget);
     // No angle, power or shell name anywhere on the screen.
     expect(find.textContaining('137'), findsNothing);
     expect(find.textContaining('83'), findsNothing);

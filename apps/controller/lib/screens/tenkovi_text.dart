@@ -18,17 +18,25 @@ class TenkoviStrings {
         TenkoviShell.cluster => 'Kasetna',
         TenkoviShell.bomblet => 'Kasetna',
       };
-  static const used = 'iskorišteno';
+  static const none = '0';
   static const unlimited = '∞';
   static const one = '1';
 
-  static String lastTime(int a, int p) => 'Prošli put: $a°, $p';
+  static String lastValues(int a, int p) => '$a°, $p';
   static const lastTimeButton = 'Prošli put';
   static const fire = 'Pucaj';
 
   static const sentCaps = 'TVOJ HITAC';
-  static String sentText(int a, int p, TenkoviShell s) => '$a°, snaga $p\n${shellName(s)}';
-  static String sentTextShort(int a, int p) => '$a°, snaga $p';
+  static String angleAndPower(int a, int p) => 'Kut $a° · Snaga $p';
+  static const holdHint = 'Tvoj hitac se vidi samo dok držiš.\nPusti i nestaje.';
+  static String turn(int n) => 'Okret $n';
+  static String roundTurn(int n, int of, int turn) => 'Runda $n od $of · okret $turn';
+  static const sentTitle = 'Pucaj je poslan';
+  static const waitOthers = 'Čekamo ostale';
+  static const volleyTitle = 'Pucaju svi';
+  static const watchTv = 'Gledaj TV';
+  static String stillAiming(int n) => 'Još ciljaju · $n';
+  static const privacyNote = 'Tvoj hitac se ne vidi na TV-u dok svi ne pucaju.';
   static String ready(int n, int of) => 'Spremno $n od $of';
   static const volley = 'Pucaju svi. Gledaj TV.';
   static const out = 'Ispao si u ovoj rundi. Gledaj TV.';
@@ -49,5 +57,5 @@ class TenkoviStrings {
         TenkoviMapPick.random => 'Nasumično',
       };
   static const name = 'Tenkovi';
-  static const blurb = 'Svi nišane odjednom i pucaju zajedno. Nitko ne vidi tuđi hitac.';
+  static const blurb = 'Svi ciljaju, svi pucaju odjednom.';
 }

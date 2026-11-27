@@ -9,7 +9,8 @@ class TenkoviText {
       };
   static String round(int n, int of) => 'Runda $n od $of';
   static const aimKicker = 'Nišanite';
-  static String ready(int n, int of) => 'Spremno $n od $of';
+  static String ready(int n, int of) => 'Spremno $n / $of';
+  static String turn(int n) => 'okret $n';
   static const volley = 'Pucaju svi!';
   static const wind = 'Vjetar';
   static const noWind = 'Bez vjetra';
