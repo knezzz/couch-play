@@ -384,7 +384,10 @@ void main() {
       sim.tick();
     }
     for (var i = 1; i < 8; i++) {
-      sim.place(i, 480.0 + i * 5, 0); // out, one after the other
+      // On the edge, each going out at its own speed: out one after the other (the faster first).
+      final a = i * 2 * pi / 7;
+      sim.place(i, 435 * cos(a), 435 * sin(a));
+      sim.setVelocity(i, 30.0 * (8 - i) * cos(a), 30.0 * (8 - i) * sin(a));
     }
     sim.place(0, 0, 330); // below the banner
     await until(t, s, () => s.moment != null);
