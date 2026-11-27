@@ -8,6 +8,7 @@ import 'package:controller/screens/curve_screen.dart';
 import 'package:controller/screens/join_screen.dart';
 import 'package:controller/screens/lobby_screen.dart';
 import 'package:controller/screens/pack_grid.dart';
+import 'package:controller/screens/sumo_screen.dart';
 import 'package:controller/screens/uljez_screens.dart';
 import 'package:controller/screens/wolf_screens.dart';
 import 'package:controller/theme.dart';
@@ -54,8 +55,9 @@ Future<void> _shot(
   String name,
   Widget w, {
   double h = 844,
+  double width = 390,
 }) async {
-  t.view.physicalSize = Size(390 * 2, h * 2);
+  t.view.physicalSize = Size(width * 2, h * 2);
   t.view.devicePixelRatio = 2;
   addTearDown(t.view.reset);
   final key = GlobalKey();
@@ -282,5 +284,14 @@ void main() {
         onGuess: (_) {},
       ),
     );
+  });
+
+  // Task 55: the Sumo controls, next to the boards SumoPhone (390x844) and SumoPhoneSmall (360x640).
+  testWidgets('sumo shots', (t) async {
+    Widget sumo() => SumoScreen(FakeConnection(), name: 'Ana', character: 'owl', colorIndex: 1, score: 12, round: 3);
+    await _shot(t, 'SumoPhone', sumo());
+    await _shot(t, 'SumoPhoneSmall', sumo(), h: 640, width: 360);
+    // Mid-drag with the Dash recharging, the picture the board draws.
+    await _shot(t, 'SumoPhone_out', SumoScreen(FakeConnection(), alive: false, name: 'Ana', character: 'owl', colorIndex: 1, score: 12, round: 3));
   });
 }
